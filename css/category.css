@@ -9,12 +9,12 @@
 .wall-category--plain .wall-category-title {
   align-items: center;
   justify-content: flex-start;
-  font-size: 2.5em;
+  font-size: 2.6em;
   font-weight: bold;
 }
 .wall-category--plain .wall-category-title .title-icon {
-  height: 1.666666666666667em;
-  width: 1.666666666666667em;
+  height: 1.733333333333333em;
+  width: 1.733333333333333em;
   margin-right: 10px;
 }
 .wall-category--plain .wall-category-description {
@@ -27,17 +27,6 @@
   margin-right: 8px;
   transition: color 200ms ease-out;
 }
-.wall-category-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-}
-.wall-category-description {
-  font-family: sourceHanSerif;
-  text-align: center;
-  margin: 10px 0;
-}
 .wall-category-title .title-icon {
   height: 50px;
   width: 50px;
@@ -47,13 +36,6 @@
 .wall-category-tags {
   width: 100%;
 }
-.wall-category-tags .tag {
-  display: inline-block;
-  border: 1px solid #eee;
-  border-radius: 50%;
-  padding: 8px 10px;
-  box-sizing: border-box;
-}
 .post-card,
 .post-card--sticky {
   display: block;
@@ -62,7 +44,7 @@
 }
 .post-card--sticky,
 .post-card--sticky--sticky {
-  background: #fcfcfb;
+  background: #fafaf9;
 }
 .post-list {
   max-width: 900px;
@@ -153,4 +135,41 @@
   .post-cover {
     margin: 10px 0;
   }
+}
+/* 标签样式：素雅的线框印记 */
+.wall-category-tags .tag,
+.post-tag {
+  display: inline-block;
+  border: 1px solid #b0aca6;
+  color: #6b6863 !important;
+  border-radius: 2px; /* 极客方正边缘 */
+  padding: 4px 12px;
+  margin: 0 6px 10px 0;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+.wall-category-tags .tag:hover,
+.post-tag:hover {
+  border-color: #1a4b75;
+  color: #1a4b75 !important;
+  background-color: rgba(26,75,117,0.05);
+}
+/* 首页分类标题：宋体 + 诗意排版 */
+.wall-category-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  color: #1e1b18;
+  letter-spacing: 2px;
+}
+.wall-category-description {
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  text-align: center;
+  margin: 16px 0 32px 0;
+  color: #6b6863;
+  font-style: italic;
 }

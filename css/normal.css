@@ -1,7 +1,7 @@
 html {
-  font-family: sans-serif;
-  font-size: 18px;
-  color: #555;
+  font-family: -apple-system, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 17px;
+  color: #393633;
   text-align: justify;
   scroll-behavior: smooth;
 }
@@ -13,18 +13,61 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: #f8f8f6; /* 应用 #f8f8f6 */
+  color: #393633;
+  text-align: justify;
+  line-height: 1.8; /* 优化行高 */
+  letter-spacing: 0.02em; /* 增加微小的字间距 */
+  -webkit-font-smoothing: antialiased; /* 让字体渲染更清爽 */
 }
+/* 赋予中式排版灵魂：所有标题使用衬线字体（宋体） */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  color: #1e1b18;
+  font-weight: bold;
+  margin-top: 1.5em;
+  margin-bottom: 0.8em;
+}
+/* 链接交互：鼠标悬浮时显示朱砂红底部虚线 */
 a {
-  color: #555;
+  color: #1a4b75;
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 a:hover {
-  color: #222;
+  color: #e03636;
+  border-bottom: 1px dashed #e03636;
 }
+/* 中式批注风格的引用块 (Blockquote) */
 blockquote {
-  border-left: 4px solid #ddd;
+  margin: 2em 0;
+  padding: 16px 20px;
+  background-color: rgba(200,160,97,0.08); /* 极淡的秋石金底色 */
+  border-left: 4px solid #1a4b75; /* 靛青色引线 */
+  border-radius: 0 4px 4px 0;
+  color: #5d5a56;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif; /* 引用内容使用宋体，增加人文气息 */
+  font-size: 1.05em;
+  line-height: 1.8;
+  position: relative;
+/* 添加一个引用引号的水印装饰 */
+}
+blockquote::before {
+  content: '“';
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  font-size: 4em;
+  color: rgba(26,75,117,0.08);
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+}
+blockquote p {
   margin: 0;
-  padding-left: 1em;
-  color: #666;
 }
 iframe,
 img,
@@ -34,7 +77,7 @@ video {
 table {
   border-collapse: collapse;
   border-spacing: 0;
-  font-size: 0.875em;
+  font-size: 0.9em;
   width: 100%;
   margin: 0 0 20px;
 }
@@ -43,7 +86,7 @@ td,
 th {
   padding: 8px;
   vertical-align: middle;
-  border: 1px solid #ddd;
+  border: 1px solid #d6d6d2;
 }
 caption {
   border: none;
@@ -56,7 +99,46 @@ tbody tr:nth-of-type(odd) {
 }
 figure figcaption {
   text-align: center;
-  font-size: 0.8125em;
+  font-size: 0.85em;
+  color: $blak-lighter;
+}
+p img,
+figure img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+iframe,
+img,
+video {
+  max-width: 100%;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 0.9em;
+  width: 100%;
+  margin: 0 0 20px;
+}
+caption,
+td,
+th {
+  padding: 8px;
+  vertical-align: middle;
+  border: 1px solid #d6d6d2;
+}
+caption {
+  border: none;
+}
+th {
+  border-bottom-width: 3px;
+}
+tbody tr:nth-of-type(odd) {
+  background: $whitesoke-light;
+}
+figure figcaption {
+  text-align: center;
+  font-size: 0.85em;
   color: $blak-lighter;
 }
 p img,

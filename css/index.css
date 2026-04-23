@@ -1,26 +1,31 @@
 /* get timeline color config from __config.yml */
-.wall-bg,
-.wall-bg::before {
+.wall-bg {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  overflow: hidden; /* 【新增】必须添加，防止放大的模糊边缘溢出影响页面结构 */
+  overflow: hidden;
+  z-index: 1;
 }
-/* 针对背景图片的模糊与填充处理 */
 .wall img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 确保图片按比例铺满整个容器 */
-  filter: blur(4px); /* 核心：设置模糊度（毛玻璃效果），数值越大越模糊 */
-  transform: scale(1.05); /* 核心细节：将图片轻微放大 5%，完美隐藏模糊后产生的四周白边 */
+  object-fit: cover;
+  filter: blur(4px) grayscale(0.2);
+  transform: scale(1.1);
+  transition: transform 2s ease-out;
 }
+/* 首页蒙层：宣纸质感的半透明叠加 */
 .wall-bg::before {
-  z-index: 2;
   content: ' ';
-  background-color: rgba(255,255,255,0.7);
-  transition: background-color 200ms ease-in;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(248,248,246,0.75); /* 使用 #f8f8f6 的透明版 */
+  z-index: 2;
 }
 .wall-main:hover+.wall-bg::before {
   background-color: rgba(255,255,255,0.6);
@@ -29,28 +34,36 @@
   animation: spark 1s ease infinite;
 }
 .wall-main {
-  cursor: pointer;
   position: relative;
-  text-align: center;
-  margin-top: -20vh;
   z-index: 3;
+  text-align: center;
+  margin-top: -15vh;
 }
+/* 标题：中式排版的张力 */
 .wall-title {
-  font-weight: 600;
-  font-size: 72px;
-  animation: flyIn 500ms ease-out;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-weight: 800;
+  font-size: 84px; /* 进一步放大，形成视觉压迫力 */
+  color: #110f0d;
+  letter-spacing: 0.1em;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
 }
 .wall-subtitle {
-  font-size: 36px;
-  font-weight: bold;
-  margin-top: 10px;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-size: 32px;
+  color: #1a4b75; /* 靛青色副标题 */
+  font-weight: 400;
+  opacity: 0.9;
+  letter-spacing: 0.4em; /* 极宽的间距，更有意境 */
 }
 .wall-description {
-  font-size: 20px;
-  font-weight: 400;
-  margin: 10px 0;
-  font-family: sourceHanSerif;
-  letter-spacing: 0.2em;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-size: 18px;
+  color: #6b6863;
+  margin: 30px 0;
+  font-style: italic;
+  letter-spacing: 0.15em;
 }
 #heart-curve {
   position: absolute;
@@ -70,12 +83,15 @@
 .hello-world .cursor {
   height: 2px;
   width: 20px;
-  background-color: #555;
+  background-color: #393633;
 }
+/* 装饰：古典公式 */
 .normal-eqt {
-  position: absolute;
-  top: calc(50% + 100px);
-  right: 50%;
+  opacity: 0.4;
+  filter: sepia(0.5) contrast(1.2); /* 使公式看起来像古籍印刷 */
+  transition: opacity 0.5s ease;
+}
+.normal-eqt:hover {
   opacity: 0.8;
 }
 .normal-eqt img {
@@ -111,7 +127,7 @@
   transition: all 200ms ease-out;
 }
 .about-photo:hover {
-  box-shadow: 0 0 14px 0 #eee;
+  box-shadow: 0 0 14px 0 #e3e3e0;
   transform: translateY(-4px);
 }
 .about-text {
@@ -294,7 +310,7 @@
   left: -9px;
   top: 0;
   margin: auto;
-  border: 2px solid #eee;
+  border: 2px solid #e3e3e0;
 }
 .line-anchor {
   position: relative;
@@ -326,7 +342,7 @@
   bottom: -20px;
   margin: 0 auto;
   width: 2px;
-  background-color: #eee;
+  background-color: #e3e3e0;
   z-index: -1;
 }
 .timeline-post {
@@ -409,10 +425,10 @@
   top: 23px;
 }
 .line-anchor--end::after {
-  background-color: #eee;
+  background-color: #e3e3e0;
 }
 .line-anchor--now::after {
-  border: 2px solid #eee;
+  border: 2px solid #e3e3e0;
 }
 .line-date-tag {
   display: inline-block;
@@ -456,16 +472,16 @@
   }
   .timeline-list .line-date {
     border-radius: 4px;
-    border: 2px solid #f5f5f5;
+    border: 2px solid #f1f1ee;
   }
   .timeline-list .line-title {
     background: #fff;
     border-radius: 4px;
-    border: 2px solid #f5f5f5;
+    border: 2px solid #f1f1ee;
     padding: 4px;
   }
   .about-detail {
-    font-size: 18px;
+    font-size: 17px;
   }
   .hello-world {
     top: 15%;
