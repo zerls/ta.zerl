@@ -60,7 +60,7 @@
     
     
   <link rel="stylesheet" type="text/css" href="/css/post.css"/>
-  
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
 
   <meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
   direction: ltr;
@@ -556,12 +556,14 @@ mjx-container[display="true"] + br {
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/2025/12/06/PRTGI/" title="PRTGI" rel="bookmark">PRTGI</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/15/体积云实时渲染解析/" title="体积云实时渲染解析" rel="bookmark">体积云实时渲染解析</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2026/03/20/GPUDrivenTerrain/" title="GPUDrivenTerrain" rel="bookmark">GPUDrivenTerrain</a></div></div><div class="null-item"><div class="null-title"><a href="/2025/12/06/PRTGI/" title="PRTGI" rel="bookmark">PRTGI</a></div></div></div>
     
   </div>
 </div>
 
     
+    
+      <div id="gitalk-container"></div>
     
   </div>
 
@@ -637,6 +639,15 @@ mjx-container[display="true"] + br {
     
     <script src="/js/copy-code.js"></script>
     
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
   
 
   </body>
