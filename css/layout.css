@@ -248,7 +248,7 @@ mjx-container {
   font-size: 16px;
   color: #2c5fa5;
   display: inline-block;
-  margin-right: 8px;
+  margin: 0px 8px;
   transition: color 200ms ease-out;
 }
 .post-tag:hover {
