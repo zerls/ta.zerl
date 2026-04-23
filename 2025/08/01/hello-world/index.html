@@ -62,7 +62,119 @@
   <link rel="stylesheet" type="text/css" href="/css/post.css"/>
   
 
-  <meta name="generator" content="Hexo 7.3.0"></head>
+  <meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
   <body>
     
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
@@ -83,6 +195,10 @@
               
                 <a class="nav-menu-item" href="/cg">图形学</a>
               
+                <a class="nav-menu-item" href="/note">笔记</a>
+              
+                <a class="nav-menu-item" href="/now">Now</a>
+              
             
             
           </div>
@@ -101,7 +217,8 @@
   
 
 
-          <span class="post-date">2025-08-01</span>
+          <span class="post-date">创建时间：2025-08-01</span>
+          <span class="post-date">更新时间：2025-08-31</span>
         </div>
       </div>
       
@@ -146,11 +263,36 @@
     
     <div class="post-nav">
   
-    <div class="post-nav-item-left"></div>
+    <a class="post-nav-item-left" href="/2026/03/15/%E4%BD%93%E7%A7%AF%E4%BA%91%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93%E8%A7%A3%E6%9E%90/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>体积云实时渲染解析</div>
+    </a>
   
   <div class="vhr"></div>
   
-    <div class="post-nav-item-right"></div>
+    <a class="post-nav-item-right" href="/2025/01/01/Now/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      进行时
+    </a>
   
 </div>
 
@@ -162,7 +304,7 @@
 </div>
   <div class="realated__body">
     
-      
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2026/03/15/体积云实时渲染解析/" title="体积云实时渲染解析" rel="bookmark">体积云实时渲染解析</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/20/GPUDrivenTerrain/" title="GPUDrivenTerrain" rel="bookmark">GPUDrivenTerrain</a></div></div></div>
     
   </div>
 </div>
@@ -173,10 +315,14 @@
 
     </div>
     <div class="foot">
-  <div class="foot-inner">
-    <div class="foot__head">
+  
+    
       
-    </div>
+        
+          
+        
+      
+    
     <div class="foot__body">
       
       
@@ -197,7 +343,7 @@
                  height="20px"
                  width="20px"
                  src="/images/icon/icon-email.svg" />
-            <a class="foot-link" href="mailto:name@example.com">name@example.com</a>
+            <a class="foot-link" href="mailto:starsss747@gmail.com">starsss747@gmail.com</a>
           </div>
         
       
@@ -226,7 +372,7 @@
       </svg>
       <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
     </div>
-  </div>
+  
 </div>
 
     
