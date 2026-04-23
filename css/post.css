@@ -103,19 +103,20 @@
   padding-left: 50px;
   padding-right: 50px;
 }
-.post-inner,
-.post-inner--toc {
+.post-inner {
   margin: 0 auto;
   max-width: 920px;
-}
-.post-inner--toc,
-.post-inner--toc--toc {
-  max-width: 900px;
-  padding-right: 230px;
+/*
+  &--toc {
+    @extend .post-inner;
+    max-width: 1000px;
+    padding-right: 230px;
+
+  }
+  */
 /* 当屏幕宽度大于等于 768px（平板和 PC 端）时，采用更大的高度或比例 */
 }
-.post-inner--toc .post-banner,
-.post-inner--toc--toc .post-banner {
+.post-inner .post-banner {
   width: 100%;
   overflow: hidden;
   background-color: #f4f4f5;
@@ -125,22 +126,19 @@
   margin-bottom: 8px;
 }
 @media (min-width: 768px) {
-  .post-inner--toc .post-banner,
-  .post-inner--toc--toc .post-banner {
+  .post-inner .post-banner {
     height: 220px;
 /* 或者在这里写 aspect-ratio: 21 / 9; */
   }
 }
-.post-inner--toc .post-banner img,
-.post-inner--toc--toc .post-banner img {
+.post-inner .post-banner img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top;
   display: block;
 }
-.post-inner .video-container,
-.post-inner--toc .video-container {
+.post-inner .video-container {
   height: 0;
   margin-bottom: 20px;
   overflow: hidden;
@@ -148,8 +146,7 @@
   position: relative;
   width: 100%;
 }
-.post-inner .video-container iframe,
-.post-inner--toc .video-container iframe {
+.post-inner .video-container iframe {
   height: 100%;
   left: 0;
   margin: 0;
