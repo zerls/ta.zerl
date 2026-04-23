@@ -195,7 +195,7 @@ mjx-container[display="true"] + br {
               
                 <a class="nav-menu-item" href="/cg">图形学</a>
               
-                <a class="nav-menu-item" href="/note">笔记</a>
+                <a class="nav-menu-item" href="/note">札记</a>
               
                 <a class="nav-menu-item" href="/now">Now</a>
               
@@ -211,10 +211,14 @@ mjx-container[display="true"] + br {
   <article class="post-content">
     <div class="post-inner--toc">
       <div class="post-content__head">
+        
+        <div class ="post-banner"> <img src=https://bu.dusays.com/2026/04/23/69e9bac50d5d3.png></div>
+        
         <div class="post-title">体积云实时渲染解析</div>
+        
         <div class="post-info">
           
-  
+  <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" class="post-tag">#体积渲染</a><a href="/tags/RayMarching/" class="post-tag">#RayMarching</a>
 
 
           <span class="post-date">创建时间：2026-03-15</span>
@@ -234,9 +238,7 @@ mjx-container[display="true"] + br {
             
           </div>
         
-        <img src="https://cdn.nlark.com/yuque/0/2025/png/35387335/1763796426651-ad2acb57-5c87-4281-ba95-cf2ded3093e1.png" width="555.3333435058594" title="" crop="0,0,1,1" id="u93b72a52" class="ne-image">
-
-<p>笔者 3 月份参考不同体积云项目和各种论文实现了一套基于物理的体积云 Unity URP渲染系统，现在就一些核心实现进行梳理，理论细节见下述链接。</p>
+        <p>笔者 3 月份参考不同体积云项目和各种论文实现了一套基于物理的体积云 Unity URP渲染系统，现在就一些核心实现进行梳理，理论细节见下述链接。</p>
 <p><a target="_blank" rel="noopener" href="https://www.yuque.com/yuqueyonghunx6wfo/ruvi97/gby4zv0pvgi0egy3">Horizon: Zero Dawn 体积云系统解析</a></p>
 <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>体积云渲染的核心在于模拟光线与云层介质（微小水滴或冰晶）之间的物理交互。通过 <strong>体积光线步进（Volumetric Raymarching）</strong>，我们可以将复杂的物理现象简化为两个关键指标的计算：</p>
 <ul>
@@ -428,7 +430,7 @@ mjx-container[display="true"] + br {
   
   <div class="vhr"></div>
   
-    <a class="post-nav-item-right" href="/2025/08/01/hello-world/">
+    <a class="post-nav-item-right" href="/2025/12/06/PRTGI/">
       <div class="text-align">
         <span class="text-small">下一篇</span>
         <svg t="1670570876164"
@@ -440,7 +442,7 @@ mjx-container[display="true"] + br {
           <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
         </svg>
       </div>
-      Hello World
+      PRTGI
     </a>
   
 </div>
@@ -448,12 +450,12 @@ mjx-container[display="true"] + br {
     
       <div class="related-post">
   <div class="related__head">
-  
+  <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" class="post-tag">#体积渲染</a><a href="/tags/RayMarching/" class="post-tag">#RayMarching</a>
 
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/2025/08/01/hello-world/" title="Hello World" rel="bookmark">Hello World</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/20/GPUDrivenTerrain/" title="GPUDrivenTerrain" rel="bookmark">GPUDrivenTerrain</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2025/10/19/风场/" title="风场" rel="bookmark">风场</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/20/GPUDrivenTerrain/" title="GPUDrivenTerrain" rel="bookmark">GPUDrivenTerrain</a></div></div></div>
     
   </div>
 </div>
@@ -494,12 +496,6 @@ mjx-container[display="true"] + br {
                  src="/images/icon/icon-email.svg" />
             <a class="foot-link" href="mailto:starsss747@gmail.com">starsss747@gmail.com</a>
           </div>
-        
-      
-        
-        
-      
-        
         
       
         
