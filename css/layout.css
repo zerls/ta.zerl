@@ -162,7 +162,6 @@ figure.highlight .copy-button {
   justify-content: center;
   align-items: center;
   position: relative;
-  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
   overflow: hidden;
@@ -445,6 +444,7 @@ mjx-container {
   padding: 0 50px;
   height: 90px;
   font-weight: bold;
+  border-bottom: 1px solid #efefef;
 }
 .head--sticky {
   position: fixed;
@@ -563,7 +563,10 @@ mjx-container {
   align-items: center;
 }
 .foot {
-  background-color: #ebeaf2;
+  background-color: #f6f8fa;
+  border-top: 1px solid #efefef;
+  margin-top: auto;
+  width: 100%;
 }
 .foot-inner {
   color: #aaa;
