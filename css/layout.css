@@ -233,10 +233,44 @@ figure.highlight .copy-button {
   color: #888;
   cursor: pointer;
 }
+@media screen and (max-width: 768px) {
+  code,
+  pre {
+    font-size: 12px !important; /* 移动端字号缩小 */
+  }
+  figure.highlight {
+    margin: 15px 0;
+    border-radius: 4px;
+  }
+  figure.highlight .gutter pre {
+    padding: 10px 5px; /* 缩小行号区域的宽度 */
+  }
+  .md-code-fold {
+    margin: 15px 0;
+  }
+  .md-code-fold summary {
+    font-size: 13px;
+    height: 38px; /* 降低顶部栏高度 */
+/* 缩小左右边距，给标题文字留出更多空间 */
+    padding: 0 60px 0 40px;
+  }
+  .md-code-fold summary::before {
+    display: none;
+  }
+  .md-code-fold figure.highlight .copy-button {
+    top: 4px !important;
+    right: 6px !important;
+    height: 28px !important;
+    padding: 0 6px !important;
+  }
+  .md-code-fold summary::after {
+    display: none !important;
+  }
+}
 .wall {
   user-select: none;
   -webkit-user-select: none;
-  height: calc(100vh - 90px);
+  height: calc(100vh - 80px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -528,21 +562,60 @@ mjx-container {
   justify-content: space-between;
   align-items: center;
   padding: 0 50px;
-  height: 80px; /* 统一高度 */
-  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif; /* 导航使用宋体，更显端正 */
+  height: 80px;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
   font-weight: bold;
-  border-bottom: 1px solid rgba(227,227,224,0.5); /* 极淡的瓦灰线 */
+  border-bottom: 1px solid rgba(227,227,224,0.5);
 }
 .head--sticky {
   position: fixed;
   left: 0;
   right: 0;
   top: 0;
-  z-index: 100; /* 提升层级 */
-  background: rgba(248,248,246,0.75); /* 宣纸色透明底 */
+  z-index: 100;
+  background: rgba(248,248,246,0.75);
   backdrop-filter: blur(15px) saturate(1.2);
   -webkit-backdrop-filter: blur(15px) saturate(1.2);
   transition: all 0.3s ease;
+}
+#navBtn {
+  top: -100px;
+  position: fixed;
+  opacity: 0;
+  display: block;
+  height: 0;
+  width: 0;
+}
+.nav-btn {
+  display: none;
+}
+.nav-logo {
+  position: relative;
+  z-index: 110;
+  height: 60px;
+  width: 60px;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-logo:hover {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  transform: rotate(360deg) scale(1.15);
+}
+.nav-logo img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(227,227,224,0.5);
+  display: block;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+.nav-menu {
+  display: flex;
+  align-items: center;
 }
 .nav-menu-item {
   letter-spacing: 0.1em;
@@ -550,7 +623,7 @@ mjx-container {
   margin: 0 20px;
   color: #4b4844;
   position: relative;
-/* 悬浮交互：靛青文字 + 朱砂红点 */
+  transition: color 0.3s ease;
 }
 .nav-menu-item:hover {
   color: #1a4b75;
@@ -566,107 +639,86 @@ mjx-container {
   background-color: #e03636;
   border-radius: 50%;
 }
-#navBtn {
-  top: -100px;
-  position: fixed;
-  opacity: 0;
-  display: block;
-  height: 0;
-  width: 0;
-}
-.nav-btn {
-  display: none;
-}
-.nav-menu {
-  display: flex;
-  align-items: center;
-}
 @media screen and (max-width: 1023px) {
   .nav {
     height: 60px;
     padding: 0 20px;
     background: rgba(248,248,246,0.95);
-    justify-content: center; /* 标志居中 */
   }
-  .nav-menu {
-    position: fixed;
-    top: 60px;
-    background: rgba(248,248,246,0.98);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid #e3e3e0;
-/* 修复原有高度过度动画问题 */
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: translateY(-100%);
-    visibility: hidden;
-  }
-  .nav-menu.active {
-    transform: translateY(0);
-    visibility: visible;
-  }
-  .nav-menu-item {
-    margin: 20px 0;
-  }
-  .nav-logo {
-    height: 60px;
-    width: 60px;
-    display: block;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-/* 核心：取消所有可能的底描线装饰 */
-  }
-  .nav-logo:hover {
-    text-decoration: none !important;
-    border-bottom: none !important;
-    transform: rotate(360deg) scale(1.15); /* 旋转放大 */
-  }
-  .nav-logo a:hover {
-    text-decoration: none !important;
-    border-bottom: none !important;
-    transform: rotate(360deg) scale(1.15); /* 旋转放大 */
-  }
-  .nav-logo img {
-    height: 100%;
-    width: 100%;
-    border-radius: 50%;
-    border: 2px solid rgba(227,227,224,0.5);
-    display: block;
+  .head--sticky {
+    position: relative;
+    backdrop-filter: none;
+    background: none;
   }
   .nav-btn {
     display: block;
     position: absolute;
-    left: 0;
-    padding: 10px 20px;
-    height: 40px;
-    width: 40px;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 20px; /* 锁死容器高度，取消多余 padding */
+    width: 26px;
+    z-index: 110;
+    cursor: pointer;
+/* 严格数学对齐，距离中心点各 5px */
   }
   .nav-btn::before,
   .nav-btn::after {
-    transition: transform 200ms ease-out;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     content: '';
     background: #2b2825;
-    width: 30px;
+    width: 26px;
     height: 2px;
     border-radius: 1px;
     position: absolute;
+    left: 0;
   }
   .nav-btn::before {
-    top: 25px;
+    top: 4px;
   }
   .nav-btn::after {
-    bottom: 25px;
+    bottom: 4px;
+  }
+  .nav-logo {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    margin: -20px auto 0; /* top 50% 结合负 margin 实现完美垂直水平居中 */
+    z-index: 110;
+  }
+  .nav-menu {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(248,248,246,0.98);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 40px;
+    z-index: 90;
+  }
+  .nav-menu-item {
+    margin: 20px 0;
   }
   #navBtn:checked ~ .nav-right .nav-menu {
-    height: 100%;
+    height: calc(100vh - 60px);
+    padding-top: 20px;
+    border-top: 1px solid #e3e3e0;
   }
   #navBtn:checked ~ .nav-btn::before {
-    transform: translateY(4px) rotateZ(45deg);
+    transform: translateY(5px) rotate(45deg);
   }
   #navBtn:checked ~ .nav-btn::after {
-    transform: translateY(-4px) rotateZ(-45deg);
+    transform: translateY(-5px) rotate(-45deg);
   }
-}
-.nav-right {
-  display: flex;
-  align-items: center;
 }
 .foot {
 /* 暖灰底色，作为页面的稳定收尾 */

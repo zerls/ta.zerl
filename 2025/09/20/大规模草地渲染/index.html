@@ -60,7 +60,9 @@
     
     
   <link rel="stylesheet" type="text/css" href="/css/post.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
 
   <meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
   direction: ltr;
@@ -197,9 +199,10 @@ mjx-container[display="true"] + br {
               
                 <a class="nav-menu-item" href="/note">札记</a>
               
-                <a class="nav-menu-item" href="/now">Now</a>
-              
             
+            <a class="nav-menu-item" href='/now/'>Now</a>
+            
+              
             
           </div>
         </div>
@@ -209,16 +212,20 @@ mjx-container[display="true"] + br {
     <div class="body">
       
   <article class="post-content">
-    
-      <div class="post-inner">
+    <div class="post-inner">
+      
+      
       <div class="post-content__head">
         
-        <div class ="post-banner"> <img src=https://bu.dusays.com/2026/04/23/69e9c1dc8d63e.png></div>
+          <div class="post-banner">
+            <img src="https://bu.dusays.com/2026/04/23/69e9c1dc8d63e.png" alt="Banner">
+          </div>
+        
         
         <div class="post-title">大规模草地渲染</div>
-
+        
         <div class="post-info">
-          <div>           
+          <div>
             <span class="post-date">创建时间：2025-09-20</span>
             <span class="post-date">更新时间：2026-03-10</span>
           </div>
@@ -226,15 +233,47 @@ mjx-container[display="true"] + br {
   <a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">#场景</a><a href="/tags/Mesh/" class="post-tag">#Mesh</a>
 
 
-
         </div>
       </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
       
         <aside class="toc-outer">
           <div class="toc-title">目录</div>
           <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="post-toc-text">概述</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%BA%BF"><span class="post-toc-text">数据管线</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E8%8D%89%E5%8F%B6%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%9D%90%E8%B4%A8"><span class="post-toc-text">草叶建模与材质</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Mesh-%E5%9F%BA%E7%A1%80%E8%8D%89%E5%8F%B6%E7%BD%91%E6%A0%BC%E6%A8%A1%E5%9E%8B%E5%88%9B%E5%BB%BA"><span class="post-toc-text">Mesh 基础草叶网格模型创建</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Tick"><span class="post-toc-text">Tick</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Vertex-Shader-Bezier-%E6%9B%B2%E7%BA%BF%E8%8D%89%E5%8F%B6"><span class="post-toc-text">Vertex Shader Bezier 曲线草叶</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E7%90%86%E8%AE%BA%E4%B8%8E%E5%BA%94%E7%94%A8"><span class="post-toc-text">理论与应用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Unity-%E4%B8%AD%E5%AE%9E%E8%B7%B5-Cubic-Bezier-%E6%9B%B2%E7%BA%BF%E5%87%BD%E6%95%B0"><span class="post-toc-text">Unity 中实践 Cubic Bezier 曲线函数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%AF%B9%E8%8D%89%E5%8F%B6%E5%BD%A2%E7%8A%B6%E8%BF%9B%E8%A1%8C%E5%8F%82%E6%95%B0%E5%8C%96%E8%B0%83%E6%95%B4"><span class="post-toc-text">对草叶形状进行参数化调整</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%9F%BA%E4%BA%8E-Bezier-%E6%9B%B2%E7%BA%BF%E5%AF%BC%E6%95%B0%E7%9A%84%E6%B3%95%E7%BA%BF%E8%AE%A1%E7%AE%97"><span class="post-toc-text">基于 Bezier 曲线导数的法线计算</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%80%BE%E6%96%9C%E6%B3%95%E7%BA%BF%E6%8A%80%E5%B7%A7%E4%B8%8E%E5%9C%86%E6%B6%A6%E8%A7%86%E8%A7%89%E6%95%88%E6%9E%9C"><span class="post-toc-text">倾斜法线技巧与圆润视觉效果</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%B0%86%E6%B3%95%E7%BA%BF%E4%B8%8E%E8%BF%9C%E8%B7%9D%E7%A6%BB%E7%9A%84%E8%A1%A8%E9%9D%A2%E6%B3%95%E7%BA%BF%E6%B7%B7%E5%90%88"><span class="post-toc-text">将法线与远距离的表面法线混合</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="post-toc-text">实现</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Pixel-Shader-%E8%8D%89%E5%8F%B6%E6%9D%90%E8%B4%A8%E4%B8%8E-PBR-%E7%9D%80%E8%89%B2"><span class="post-toc-text">Pixel Shader 草叶材质与 PBR 着色</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E8%87%AA%E7%84%B6%E8%8D%89%E4%B8%9B%E6%95%88%E6%9E%9C"><span class="post-toc-text">自然草丛效果</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Voronoi-%E5%9B%BE%E6%A1%88%E4%B8%8E-Shader-%E5%AE%9E%E7%8E%B0"><span class="post-toc-text">Voronoi 图案与 Shader 实现</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Clumping"><span class="post-toc-text">Clumping</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#C-%E8%8D%89%E4%B8%9B-Clumping-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="post-toc-text">C# 草丛  Clumping 数据结构</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Compute-Shader-%E5%AE%9E%E7%8E%B0%E8%8D%89%E4%B8%9B-Clumping"><span class="post-toc-text">Compute Shader 实现草丛 Clumping</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Vertex-Shader-%E6%94%AF%E6%8C%81%E8%8D%89%E4%B8%9B%E6%95%88%E6%9E%9C"><span class="post-toc-text">Vertex Shader 支持草丛效果</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8C%96%E8%8D%89%E5%9C%B0%E6%94%BE%E7%BD%AE%E4%B8%8E%E9%AB%98%E6%95%88%E6%B8%B2%E6%9F%93"><span class="post-toc-text">程序化草地放置与高效渲染</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Compute-Shader-%E7%A8%8B%E5%BA%8F%E5%8C%96%E8%8D%89%E5%8F%B6%E6%94%BE%E7%BD%AE"><span class="post-toc-text">Compute Shader 程序化草叶放置</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E2%AD%90%EF%B8%8FIndirectDraw-%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E8%8D%89%E5%8F%B6%E6%B8%B2%E6%9F%93"><span class="post-toc-text">⭐️IndirectDraw 大规模实例化草叶渲染</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%BD%A2%E6%95%B0%E6%8D%AE%E7%9A%84%E8%8D%89%E5%8F%B6%E6%94%BE%E7%BD%AE"><span class="post-toc-text">基于地形数据的草叶放置</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%9F%BA%E4%BA%8E%E8%B7%9D%E7%A6%BB%E4%B8%8E%E8%A7%86%E9%94%A5%E7%9A%84%E5%89%94%E9%99%A4%E4%BC%98%E5%8C%96"><span class="post-toc-text">基于距离与视锥的剔除优化</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E2%AD%90Tile-Based-%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93%E4%BC%98%E5%8C%96"><span class="post-toc-text">⭐Tile-Based 草地渲染优化</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E8%8D%89%E5%9C%B0-Tile-%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="post-toc-text">草地 Tile 的概念与数据结构</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%AE%9E%E7%8E%B0-1"><span class="post-toc-text">实现</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%85%B6%E4%BB%96"><span class="post-toc-text">其他</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E9%A3%8E%E5%8A%9B%E7%B3%BB%E7%BB%9F%E4%B8%8E%E5%8A%A8%E7%94%BB%E6%A8%A1%E6%8B%9F"><span class="post-toc-text">风力系统与动画模拟</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E8%8D%89%E5%9C%B0%E9%98%B4%E5%BD%B1"><span class="post-toc-text">草地阴影</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E6%A4%8D%E7%89%A9%E6%95%A3%E5%B8%83"><span class="post-toc-text">植物散布</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E8%BF%9C%E8%B7%9D%E7%A6%BB%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93"><span class="post-toc-text">远距离草地渲染</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E7%8E%A9%E5%AE%B6%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="post-toc-text">玩家可见性</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Future-Work-%E5%90%8E%E7%BB%AD%E4%BC%98%E5%8C%96"><span class="post-toc-text">Future Work 后续优化</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E6%80%BB%E7%BB%93"><span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%8F%82%E8%80%83"><span class="post-toc-text">参考</span></a></li></ol>
-          <a href="#" class="toc-top">回到顶部</a>
         </aside>
+      
+
       
       <div class="post-content__body">
         
@@ -460,17 +499,24 @@ mjx-container[display="true"] + br {
 <p>:::</p>
 
       </div>
+      
     </div>
+
     
-      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
           mermaid.initialize({"startOnload":true});
         }
       </script>
     
   </article>
+
+  
   <div class="post__foot">
+    
     
     <div class="post-nav">
   
@@ -508,6 +554,7 @@ mjx-container[display="true"] + br {
 </div>
 
     
+    
       <div class="related-post">
   <div class="related__head">
   <a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">#场景</a><a href="/tags/Mesh/" class="post-tag">#Mesh</a>
@@ -520,6 +567,7 @@ mjx-container[display="true"] + br {
   </div>
 </div>
 
+    
     
     
       <div id="gitalk-container"></div>
@@ -598,7 +646,8 @@ mjx-container[display="true"] + br {
     
     <script src="/js/copy-code.js"></script>
     
-  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 <script type="text/javascript">
   const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
   let title = location.pathname.substr(0, 50); 

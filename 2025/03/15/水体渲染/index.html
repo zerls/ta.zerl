@@ -60,7 +60,9 @@
     
     
   <link rel="stylesheet" type="text/css" href="/css/post.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
 
   <meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
   direction: ltr;
@@ -197,9 +199,10 @@ mjx-container[display="true"] + br {
               
                 <a class="nav-menu-item" href="/note">札记</a>
               
-                <a class="nav-menu-item" href="/now">Now</a>
-              
             
+            <a class="nav-menu-item" href='/now/'>Now</a>
+            
+              
             
           </div>
         </div>
@@ -209,16 +212,20 @@ mjx-container[display="true"] + br {
     <div class="body">
       
   <article class="post-content">
-    
-      <div class="post-inner">
+    <div class="post-inner">
+      
+      
       <div class="post-content__head">
         
-        <div class ="post-banner"> <img src=https://bu.dusays.com/2026/04/23/69e9f5af1695e.png></div>
+          <div class="post-banner">
+            <img src="https://bu.dusays.com/2026/04/23/69e9f5af1695e.png" alt="Banner">
+          </div>
+        
         
         <div class="post-title">水体渲染</div>
-
+        
         <div class="post-info">
-          <div>           
+          <div>
             <span class="post-date">创建时间：2025-03-15</span>
             <span class="post-date">更新时间：2026-04-11</span>
           </div>
@@ -226,15 +233,47 @@ mjx-container[display="true"] + br {
   <a href="/tags/%E6%B0%B4%E4%BD%93/" class="post-tag">#水体</a>
 
 
-
         </div>
       </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
       
         <aside class="toc-outer">
           <div class="toc-title">目录</div>
           <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="post-toc-text">概述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%87%A0%E4%BD%95%E4%B8%8E%E5%8A%A8%E5%8A%9B%E5%AD%A6%EF%BC%9A%E6%B3%A2%E5%BD%A2%E7%9A%84%E6%A8%A1%E6%8B%9F-Geometry-Dynamics"><span class="post-toc-text">几何与动力学：波形的模拟 (Geometry &amp; Dynamics)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B3%95%E7%BA%BF%E6%89%B0%E5%8A%A8"><span class="post-toc-text">法线扰动</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B5%81%E5%8A%A8%E8%B4%B4%E5%9B%BE-Flowmap"><span class="post-toc-text">流动贴图 (Flowmap)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E7%BA%BF%E6%80%A7%E6%B3%A2%E5%BD%A2%E5%8F%A0%E5%8A%A0%E6%96%B9%E6%B3%95"><span class="post-toc-text">线性波形叠加方法</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Sin-Cos-waves"><span class="post-toc-text">Sin&#x2F;Cos waves</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Gerstner-Waves-%E6%A0%BC%E6%96%AF%E7%89%B9%E7%BA%B3%E6%B3%A2"><span class="post-toc-text">Gerstner Waves (格斯特纳波)</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%AE%8F%E8%A7%82%E6%B5%B7%E6%B4%8B%EF%BC%9A%E7%BB%9F%E8%AE%A1%E6%A8%A1%E5%9E%8B%E6%96%B9%E6%B3%95%E2%80%94%E2%80%94FFT-%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2"><span class="post-toc-text">宏观海洋：统计模型方法——FFT (快速傅里叶变换)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#FFT-%E4%B8%8E-Gerstner-Waves-%E7%9A%84%E5%AF%B9%E6%AF%94%E8%AF%84%E4%BC%B0"><span class="post-toc-text">FFT 与 Gerstner Waves 的对比评估</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%9F%BA%E4%BA%8E%E7%9B%B8%E6%9C%BA%E8%B7%9D%E7%A6%BB%E7%9A%84%E6%9B%B2%E9%9D%A2%E7%BB%86%E5%88%86"><span class="post-toc-text">基于相机距离的曲面细分</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%85%89%E5%AD%A6%E4%B8%8E%E8%B4%A8%E6%84%9F%EF%BC%9A%E6%B0%B4%E4%BD%93%E8%89%B2%E5%BD%A9%E4%B8%8E%E7%89%A9%E7%90%86-Optics-Physics"><span class="post-toc-text">光学与质感：水体色彩与物理 (Optics &amp; Physics)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B7%B1%E5%BA%A6%E4%B8%8E%E9%A2%9C%E8%89%B2%E5%90%B8%E6%94%B6-Color-Depth"><span class="post-toc-text">深度与颜色吸收 (Color &amp; Depth)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B0%B4%E4%BD%93%E5%8F%8D%E5%B0%84"><span class="post-toc-text">水体反射</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E8%8F%B2%E6%B6%85%E5%B0%94%E6%95%88%E5%BA%94%E4%B8%8E-BRDF"><span class="post-toc-text">菲涅尔效应与 BRDF</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#SSR"><span class="post-toc-text">SSR</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%B9%B3%E9%9D%A2%E5%8F%8D%E5%B0%84"><span class="post-toc-text">平面反射</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E7%89%A9%E7%90%86%E6%8A%98%E5%B0%84%E4%B8%8E%E9%98%B2%E7%A9%BF%E5%B8%AE-Refraction-Artifact-Fix"><span class="post-toc-text">物理折射与防穿帮 (Refraction &amp; Artifact Fix)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%8A%98%E5%B0%84%E4%BC%AA%E5%BD%B1"><span class="post-toc-text">修复折射伪影</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%AC%A1%E8%A1%A8%E9%9D%A2%E6%95%A3%E5%B0%84-Subsurface-Scattering-SSS"><span class="post-toc-text">次表面散射 (Subsurface Scattering - SSS)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B0%B4%E4%B8%8B%E7%84%A6%E6%95%A3-Caustics"><span class="post-toc-text">水下焦散 (Caustics)</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E7%BB%86%E8%8A%82%E8%A1%8D%E7%94%9F%EF%BC%9A%E5%8A%A8%E6%80%81%E6%B3%A1%E6%B2%AB%E7%B3%BB%E7%BB%9F-Dynamic-Foam"><span class="post-toc-text">细节衍生：动态泡沫系统 (Dynamic Foam)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%8F%8C%E8%BD%A8%E7%94%9F%E6%88%90%E9%80%BB%E8%BE%91"><span class="post-toc-text">双轨生成逻辑</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B3%95%E7%BA%BF%E9%87%8D%E5%AE%9A%E5%90%91-Reoriented-Normal-Mapping"><span class="post-toc-text">法线重定向 (Reoriented Normal Mapping)</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E6%B0%B4%E4%BD%93%E4%BA%A4%E4%BA%92"><span class="post-toc-text">水体交互</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E6%B5%AE%E5%8A%9B%E4%B8%8E%E7%89%A9%E7%90%86%E4%BA%A4%E4%BA%92-Buoyancy-Interaction"><span class="post-toc-text">浮力与物理交互 (Buoyancy &amp; Interaction)</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%8F%82%E8%80%83"><span class="post-toc-text">参考</span></a></li></ol>
-          <a href="#" class="toc-top">回到顶部</a>
         </aside>
+      
+
       
       <div class="post-content__body">
         
@@ -503,17 +542,24 @@ mjx-container[display="true"] + br {
 
 
       </div>
+      
     </div>
+
     
-      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
           mermaid.initialize({"startOnload":true});
         }
       </script>
     
   </article>
+
+  
   <div class="post__foot">
+    
     
     <div class="post-nav">
   
@@ -533,23 +579,11 @@ mjx-container[display="true"] + br {
   
   <div class="vhr"></div>
   
-    <a class="post-nav-item-right" href="/2025/01/01/Now/">
-      <div class="text-align">
-        <span class="text-small">下一篇</span>
-        <svg t="1670570876164"
-             class="icon"
-             viewBox="0 0 1024 1024"
-             transform="scale(-1,-1)"
-             width="16"
-             height="16">
-          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
-        </svg>
-      </div>
-      进行时
-    </a>
+    <div class="post-nav-item-right"></div>
   
 </div>
 
+    
     
       <div class="related-post">
   <div class="related__head">
@@ -563,6 +597,7 @@ mjx-container[display="true"] + br {
   </div>
 </div>
 
+    
     
     
       <div id="gitalk-container"></div>
@@ -641,7 +676,8 @@ mjx-container[display="true"] + br {
     
     <script src="/js/copy-code.js"></script>
     
-  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 <script type="text/javascript">
   const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
   let title = location.pathname.substr(0, 50); 

@@ -637,6 +637,161 @@
     background-color: transparent;
   }
 }
+#toc-toggle {
+  display: none;
+}
+.floating-tools {
+  position: fixed;
+  right: 30px;
+  bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 110;
+}
+.tool-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px; /* 方正印章感 */
+  background: rgba(248,248,246,0.9);
+  border: 1px solid #e3e3e0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b6863;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* SVG 图标基础设置 */
+/* 悬浮时的中式极客交互：变朱砂红，微上浮 */
+}
+.tool-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s ease;
+}
+.tool-btn:hover {
+  color: #e03636;
+  border-color: rgba(224,54,54,0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(224,54,54,0.15);
+}
+.toc-outer {
+  background: rgba(248,248,246,0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-left: 2px solid #e3e3e0;
+  position: sticky;
+  top: 100px;
+  float: right;
+  width: 250px;
+  margin-right: -300px;
+  max-height: calc(100vh - 140px);
+  padding: 15px 15px 15px 20px;
+  border-radius: 0 4px 4px 0;
+  overflow-y: auto;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 90;
+/* 极简滚动条 */
+/* --- 核心修复：彻底解决 TOC 缩进问题 --- */
+/* 强制给子列表加上缩进 */
+/* 激活状态 */
+}
+.toc-outer::-webkit-scrollbar {
+  width: 4px;
+}
+.toc-outer::-webkit-scrollbar-thumb {
+  background: rgba(26,75,117,0.2);
+  border-radius: 2px;
+}
+.toc-outer .toc-title {
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  color: #1a4b75;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(26,75,117,0.2);
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+}
+.toc-outer ol,
+.toc-outer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.toc-outer .toc-child,
+.toc-outer ol ol,
+.toc-outer ul ul {
+  padding-left: 18px !important;
+}
+.toc-outer .toc-item {
+  margin: 6px 0;
+}
+.toc-outer .post-toc-link {
+  color: #4b4844;
+  font-size: 13px;
+  line-height: 1.5;
+  display: block;
+  transition: all 0.2s ease;
+}
+.toc-outer .post-toc-link:hover {
+  color: #e03636;
+}
+.toc-outer .active > .post-toc-link {
+  color: #1a4b75;
+  font-weight: bold;
+  position: relative;
+}
+.toc-outer .active > .post-toc-link::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: #1a4b75;
+  border-radius: 50%;
+}
+@media screen and (min-width: 1301px) {
+  #toc-toggle:checked ~ * .toc-outer,
+  #toc-toggle:checked ~ .toc-outer {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(20px); /* 向右侧淡出 */
+  }
+}
+@media screen and (max-width: 1300px) {
+  .toc-outer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    max-height: 100vh;
+    width: 280px;
+    margin: 0;
+    border-radius: 0;
+    border-left: 1px solid rgba(227,227,224,0.5);
+    background: rgba(248,248,246,0.98);
+    padding: 80px 20px 30px 25px; /* 顶部留出关闭空间 */
+/* 默认隐藏在屏幕右侧外 */
+    transform: translateX(100%);
+    box-shadow: -4px 0 25px rgba(0,0,0,0.1);
+    z-index: 105; /* 高于导航栏 */
+  }
+  #toc-toggle:checked ~ * .toc-outer,
+  #toc-toggle:checked ~ .toc-outer {
+    transform: translateX(0);
+  }
+}
 .body {
   line-height: 2em;
   padding-left: 50px;
@@ -714,84 +869,6 @@
   margin: 40px 0;
 }
 /* =========================================
-   目录 (TOC) 重构：精巧的悬浮书签
-   ========================================= */
-.toc-outer {
-  background: rgba(248,248,246,0.85); /* 宣纸色，微透毛玻璃 */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-left: 2px solid #e3e3e0; /* 仅保留左侧素雅边线 */
-  position: sticky;
-  top: 100px; /* 距离顶部留出导航栏的空间 */
-  float: right;
-  width: 240px; /* 收窄宽度，更加克制 */
-  margin-right: -300px; /* 彻底移出 920px 的正文区域 */
-  max-height: calc(100vh - 140px);
-  padding: 15px 15px 15px 20px; /* 紧凑的内边距 */
-  border-radius: 0 4px 4px 0;
-  overflow-y: auto;
-/* 定制极简滚动条 */
-/* 核心修复：重置 Hexo 原生列表的稀疏间距 */
-/* 当前激活的目录项 */
-}
-.toc-outer::-webkit-scrollbar {
-  width: 4px;
-}
-.toc-outer::-webkit-scrollbar-thumb {
-  background: rgba(26,75,117,0.2);
-  border-radius: 2px;
-}
-.toc-outer .toc-title {
-  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
-  color: #1a4b75;
-  font-size: 16px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  border-bottom: 1px solid rgba(26,75,117,0.2);
-  margin-bottom: 12px;
-  padding-bottom: 6px;
-}
-.toc-outer ol,
-.toc-outer ul,
-.toc-outer li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.toc-outer .toc-child {
-  padding-left: 14px; /* 子层级轻微缩进 */
-}
-.toc-outer .toc-item {
-  margin: 6px 0; /* 控制极佳的条目间距 */
-}
-.toc-outer .post-toc-link {
-  color: #4b4844;
-  font-size: 13px; /* 字号做精细化处理 */
-  line-height: 1.4; /* 强制覆盖全局的 2em 行高，恢复紧凑感 */
-  display: block;
-  transition: all 0.2s ease;
-}
-.toc-outer .post-toc-link:hover {
-  color: #e03636; /* 悬浮时呈现朱砂红 */
-}
-.toc-outer .active > .post-toc-link {
-  color: #1a4b75;
-  font-weight: bold;
-  position: relative;
-/* 激活状态：左侧增加靛青色圆点指引 */
-}
-.toc-outer .active > .post-toc-link::before {
-  content: '';
-  position: absolute;
-  left: -14px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
-  background-color: #1a4b75;
-  border-radius: 50%;
-}
-/* =========================================
    响应式布局保护 (防止侧边栏挤占正文)
    ========================================= */
 .related-post {
@@ -848,22 +925,6 @@
   }
   .post-inner--toc .post-content__body {
     max-width: 100%;
-  }
-  .toc-outer {
-    display: none;
-  }
-}
-/* 屏幕宽度小于 1300px 时（如 iPad 或小屏笔记本），
-   右侧没有物理空间容纳目录，安全起见直接隐藏，保全正文阅读体验 */
-@media screen and (max-width: 1300px) {
-  .post-inner--toc {
-    padding: 0;
-  }
-  .post-inner--toc .post-content__body {
-    max-width: 100%;
-  }
-  .toc-outer {
-    display: none;
   }
 }
 @media screen and (max-width: 1023px) {

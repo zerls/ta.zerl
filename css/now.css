@@ -1,0 +1,148 @@
+/* =========================================
+   Now 页面排版 - 新中式
+   ========================================= */
+.now-container {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+.now-paper {
+  background-color: #fff;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 50px 60px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  position: relative;
+}
+.now-paper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1a4b75, #e03636);
+  border-radius: 8px 8px 0 0;
+}
+/* =========================================
+   头部排版
+   ========================================= */
+.now-header {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 1px dashed #e3e3e0;
+  padding-bottom: 25px;
+}
+.now-title {
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-size: 32px;
+  color: #1e1b18;
+  letter-spacing: 4px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+.now-description {
+  color: #1a4b75;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-size: 15px;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.now-description svg {
+  margin-right: 6px;
+  opacity: 0.8;
+}
+.now-updated {
+  font-size: 13px;
+  color: #8e8a84;
+  letter-spacing: 1px;
+}
+/* =========================================
+   内容区排版 (修复多级列表并排 Bug)
+   ========================================= */
+.now-content ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 10px 0;
+}
+.now-content ul ul {
+  width: 100%; /* 强制换行 */
+  padding-left: 28px; /* 增加二级及以上缩进 */
+  margin: 8px 0 4px 0; /* 微调上下间距，更显层次 */
+}
+.now-content li {
+  margin-bottom: 6px;
+  line-height: 1.6;
+  color: #393633;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap; /* 必须保留，允许 100% 宽度的子列表换行 */
+}
+.now-content input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #b0aca6;
+  border-radius: 3px;
+  margin: 5px 12px 0 0;
+  cursor: default;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.now-content input[type="checkbox"]:checked {
+  background-color: #1a4b75;
+  border-color: #1a4b75;
+/* 纯 CSS 绘制打勾符号 */
+}
+.now-content input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 3px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.now-content h2 {
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  margin-top: 35px;
+  padding-left: 12px;
+  border-left: 4px solid #e03636;
+  font-size: 20px;
+  color: #1e1b18;
+  margin-bottom: 15px;
+}
+.now-content blockquote {
+  background-color: rgba(200,160,97,0.08);
+  border-left: 4px solid #1a4b75;
+  padding: 15px 20px;
+  border-radius: 0 4px 4px 0;
+  margin: 20px 0;
+  color: #4b4844;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+}
+/* =========================================
+   移动端适配
+   ========================================= */
+@media screen and (max-width: 768px) {
+  .now-container {
+    padding-top: 20px;
+  }
+  .now-paper {
+    padding: 30px 20px;
+    margin: 0 15px;
+  }
+  .now-title {
+    font-size: 26px;
+  }
+  .now-content ul ul {
+    padding-left: 20px;
+  }
+}

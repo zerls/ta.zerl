@@ -6,7 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
     <title>
       
-        Now | Zerl
+        进行时 | Zerl
       
     </title>
     <meta name="description" content=""/>
@@ -59,7 +59,7 @@
           href='/css/layout.css'/>
     
     
-  <link rel="stylesheet" type="text/css" href="/css/category.css" />
+  <link rel="stylesheet" href="/css/now.css" />
 
   <meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
   direction: ltr;
@@ -196,9 +196,10 @@ mjx-container[display="true"] + br {
               
                 <a class="nav-menu-item" href="/note">札记</a>
               
-                <a class="nav-menu-item" href="/now">Now</a>
-              
             
+            <a class="nav-menu-item" href='/now/'>Now</a>
+            
+              
             
           </div>
         </div>
@@ -207,43 +208,49 @@ mjx-container[display="true"] + br {
     </div>
     <div class="body">
       
-  <div class="wall wall-category--plain">
-    <div class="wall-main">
-      <div class="wall-category-title">
-        <div class="title-icon"
-             style="background-image: url(/images/icon/icon-pi.svg)"></div>
-        Now
-      </div>
-      <div class="wall-category-description">当下和未来在进行的工作</div>
-      <div class="wall-category-tags">
-        <div id="tags-outer"></div>
-      </div>
-    </div>
-  </div>
-  <div class="post-list">
-    
+  <div class="now-container">
+    <div class="now-paper">
       
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2025/01/01/Now/" class="post-title hover-line">进行时</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
+      <header class="now-header">
+        <div class="now-title">进行时</div>
+        <div class="now-description">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          记录当下，感知未来
+        </div>
+        <div class="now-updated">最后更新：2026-04-15</div>
+      </header>
 
-</div>
+      <article class="now-content post-content__body">
+        <blockquote>
+<p>当前在做，以及未来要做的事情。<br>此页面将保持长期更新。</p>
+</blockquote>
+<h2 id="当下正在做的事情"><a href="#当下正在做的事情" class="headerlink" title="当下正在做的事情"></a>当下正在做的事情</h2><ul>
+<li>深入研究 Unreal Engine 渲染管线</li>
+<li>基于 Houdini 的程序化资产生成</li>
+</ul>
+<h2 id="正在规划的未来"><a href="#正在规划的未来" class="headerlink" title="正在规划的未来"></a>正在规划的未来</h2><ul>
+<li><input disabled="" type="checkbox"> 全局光照 (GI) 攻坚<ul>
+<li><input disabled="" type="checkbox"> Screen Space Global Illumination (SSGI)</li>
+<li><input disabled="" type="checkbox"> Precomputed Radiance Transfer (PRT GI)</li>
+<li><input disabled="" type="checkbox"> Dynamic Diffuse Global Illumination (DDGI)</li>
+<li><input disabled="" type="checkbox"> ReSTIR GI</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Runtime Virtual Texture (RVT) 实现</li>
+<li><input disabled="" type="checkbox"> Fast Fourier Transform (FFT) 水体模拟</li>
+<li><input disabled="" type="checkbox"> SRP (Scriptable Render Pipeline) 核心笔记整理</li>
+</ul>
+<h2 id="已经完成的事情"><a href="#已经完成的事情" class="headerlink" title="已经完成的事情"></a>已经完成的事情</h2><ul>
+<li><input checked="" disabled="" type="checkbox"> GPU 驱动的草地渲染系统</li>
+<li><input checked="" disabled="" type="checkbox"> 个人博客架构与中式风重构</li>
+</ul>
+
+      </article>
+
     </div>
-  </div>
-
-
-    
-    
   </div>
 
     </div>
@@ -318,7 +325,5 @@ mjx-container[display="true"] + br {
     
     <script src="/js/copy-code.js"></script>
     
-  
-
   </body>
 </html>

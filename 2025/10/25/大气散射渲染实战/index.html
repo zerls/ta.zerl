@@ -60,7 +60,9 @@
     
     
   <link rel="stylesheet" type="text/css" href="/css/post.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
 
   <meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
   direction: ltr;
@@ -197,9 +199,10 @@ mjx-container[display="true"] + br {
               
                 <a class="nav-menu-item" href="/note">札记</a>
               
-                <a class="nav-menu-item" href="/now">Now</a>
-              
             
+            <a class="nav-menu-item" href='/now/'>Now</a>
+            
+              
             
           </div>
         </div>
@@ -209,16 +212,20 @@ mjx-container[display="true"] + br {
     <div class="body">
       
   <article class="post-content">
-    
-      <div class="post-inner">
+    <div class="post-inner">
+      
+      
       <div class="post-content__head">
         
-        <div class ="post-banner"> <img src=https://bu.dusays.com/2026/04/23/69ea1a32ea075.png></div>
+          <div class="post-banner">
+            <img src="https://bu.dusays.com/2026/04/23/69ea1a32ea075.png" alt="Banner">
+          </div>
+        
         
         <div class="post-title">大气散射渲染实战</div>
-
+        
         <div class="post-info">
-          <div>           
+          <div>
             <span class="post-date">创建时间：2025-10-25</span>
             <span class="post-date">更新时间：2025-10-31</span>
           </div>
@@ -226,15 +233,47 @@ mjx-container[display="true"] + br {
   <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" class="post-tag">#体积渲染</a><a href="/tags/RayMarching/" class="post-tag">#RayMarching</a>
 
 
-
         </div>
       </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
       
         <aside class="toc-outer">
           <div class="toc-title">目录</div>
-          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%B8%80-%E3%80%81%E7%BB%BC%E8%BF%B0"><span class="post-toc-text">一 、综述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%BA%8C%E3%80%81%E7%89%A9%E7%90%86%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%95%A3%E5%B0%84%E7%90%86%E8%AE%BA"><span class="post-toc-text">二、物理模型与散射理论</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%85%89%E7%BA%BF%E4%BC%A0%E8%BE%93%E6%96%B9%E7%A8%8B%E4%B8%8E%E7%A7%AF%E5%88%86-Light-Transport"><span class="post-toc-text">光线传输方程与积分 (Light Transport)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E6%9E%84%E5%BB%BA%E5%85%89%E8%B7%AF"><span class="post-toc-text">构建光路</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E9%80%8F%E5%B0%84%E7%8E%87-Transmittance"><span class="post-toc-text">透射率 (Transmittance)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E6%95%A3%E5%B0%84-Scattering"><span class="post-toc-text">散射(Scattering)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%8D%95%E6%AC%A1%E5%86%85%E6%95%A3%E5%B0%84%E7%A7%AF%E5%88%86-Single-In-Scattering"><span class="post-toc-text">单次内散射积分 (Single In-Scattering)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%A4%9A%E9%87%8D%E6%95%A3%E5%B0%84%E8%A1%A5%E5%81%BF-Multi-Scattering"><span class="post-toc-text">多重散射补偿 (Multi-Scattering)</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%AE%8F%E8%A7%82%E5%87%A0%E4%BD%95%E4%B8%8E%E4%BB%8B%E8%B4%A8%E5%AF%86%E5%BA%A6%E6%A8%A1%E5%9E%8B"><span class="post-toc-text">宏观几何与介质密度模型</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%BE%AE%E8%A7%82%E7%89%A9%E7%90%86%E4%BB%8B%E8%B4%A8%E5%B1%9E%E6%80%A7"><span class="post-toc-text">微观物理介质属性</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-%E7%91%9E%E5%88%A9%E6%95%A3%E5%B0%84-Rayleigh-Scattering"><span class="post-toc-text">1. 瑞利散射 (Rayleigh Scattering)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-%E7%B1%B3%E6%B0%8F%E6%95%A3%E5%B0%84-Mie-Scattering"><span class="post-toc-text">2. 米氏散射 (Mie Scattering)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-%E8%87%AD%E6%B0%A7%E5%90%B8%E6%94%B6-Ozone-Absorption"><span class="post-toc-text">3. 臭氧吸收 (Ozone Absorption)</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%B8%89%E3%80%814-LUTs-%E6%9E%B6%E6%9E%84%E4%B8%8E%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="post-toc-text">三、4-LUTs 架构与数据流</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%A4%A7%E6%B0%94%E6%B8%B2%E6%9F%93%E7%9A%84%E7%BB%84%E6%88%90"><span class="post-toc-text">大气渲染的组成</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Sky-Background-%E5%A4%A9%E7%A9%BA%E8%83%8C%E6%99%AF"><span class="post-toc-text">Sky Background 天空背景</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Aerial-Perspective-%E5%A4%A7%E6%B0%94%E9%80%8F%E8%A7%86"><span class="post-toc-text">Aerial Perspective 大气透视</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Precomputed-LUTs"><span class="post-toc-text">Precomputed LUTs</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E6%98%9F%E7%90%83%E7%A9%BA%E9%97%B4"><span class="post-toc-text">星球空间</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Transmittance-LUT"><span class="post-toc-text">Transmittance LUT</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Multi-Scattering-LUT"><span class="post-toc-text">Multi-Scattering LUT</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Sky-View-LUT"><span class="post-toc-text">Sky View LUT</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%9B%9B%E3%80%81%E6%B8%B2%E6%9F%93%E5%AE%9E%E7%8E%B0%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="post-toc-text">四、渲染实现与性能优化策略</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B8%B2%E6%9F%93%E8%B0%83%E5%BA%A6"><span class="post-toc-text">渲染调度</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%A4%A9%E7%A9%BA%E7%9B%92%E6%B8%B2%E6%9F%93"><span class="post-toc-text">天空盒渲染</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E7%A9%BA%E6%B0%94%E9%80%8F%E5%B0%84"><span class="post-toc-text">空气透射</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%BA%94%E3%80%81%E6%80%BB%E7%BB%93%E4%B8%8E%E5%90%8E%E7%BB%AD%E8%BF%AD%E4%BB%A3%E4%BC%98%E5%8C%96"><span class="post-toc-text">五、总结与后续迭代优化</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%8F%82%E8%80%83"><span class="post-toc-text">参考</span></a></li></ol>
-          <a href="#" class="toc-top">回到顶部</a>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%B8%80-%E3%80%81%E7%BB%BC%E8%BF%B0"><span class="post-toc-text">一 、综述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%BA%8C%E3%80%81%E7%89%A9%E7%90%86%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%95%A3%E5%B0%84%E7%90%86%E8%AE%BA"><span class="post-toc-text">二、物理模型与散射理论</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%85%89%E7%BA%BF%E4%BC%A0%E8%BE%93%E6%96%B9%E7%A8%8B%E4%B8%8E%E7%A7%AF%E5%88%86-Light-Transport"><span class="post-toc-text">光线传输方程与积分 (Light Transport)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E6%9E%84%E5%BB%BA%E5%85%89%E8%B7%AF"><span class="post-toc-text">构建光路</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E9%80%8F%E5%B0%84%E7%8E%87-Transmittance"><span class="post-toc-text">透射率 (Transmittance)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E6%95%A3%E5%B0%84-Scattering"><span class="post-toc-text">散射(Scattering)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%8D%95%E6%AC%A1%E5%86%85%E6%95%A3%E5%B0%84%E7%A7%AF%E5%88%86-Single-In-Scattering"><span class="post-toc-text">单次内散射积分 (Single In-Scattering)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%A4%9A%E9%87%8D%E6%95%A3%E5%B0%84%E8%A1%A5%E5%81%BF-Multi-Scattering"><span class="post-toc-text">多重散射补偿 (Multi-Scattering)</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%AE%8F%E8%A7%82%E5%87%A0%E4%BD%95%E4%B8%8E%E4%BB%8B%E8%B4%A8%E5%AF%86%E5%BA%A6%E6%A8%A1%E5%9E%8B"><span class="post-toc-text">宏观几何与介质密度模型</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%BE%AE%E8%A7%82%E7%89%A9%E7%90%86%E4%BB%8B%E8%B4%A8%E5%B1%9E%E6%80%A7"><span class="post-toc-text">微观物理介质属性</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-%E7%91%9E%E5%88%A9%E6%95%A3%E5%B0%84-Rayleigh-Scattering"><span class="post-toc-text">1. 瑞利散射 (Rayleigh Scattering)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-%E7%B1%B3%E6%B0%8F%E6%95%A3%E5%B0%84-Mie-Scattering"><span class="post-toc-text">2. 米氏散射 (Mie Scattering)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-%E8%87%AD%E6%B0%A7%E5%90%B8%E6%94%B6-Ozone-Absorption"><span class="post-toc-text">3. 臭氧吸收 (Ozone Absorption)</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%B8%89%E3%80%814-LUTs-%E6%9E%B6%E6%9E%84%E4%B8%8E%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="post-toc-text">三、4-LUTs 架构与数据流</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%A4%A7%E6%B0%94%E6%B8%B2%E6%9F%93%E7%9A%84%E7%BB%84%E6%88%90"><span class="post-toc-text">大气渲染的组成</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Sky-Background-%E5%A4%A9%E7%A9%BA%E8%83%8C%E6%99%AF"><span class="post-toc-text">Sky Background 天空背景</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Aerial-Perspective-%E5%A4%A7%E6%B0%94%E9%80%8F%E8%A7%86"><span class="post-toc-text">Aerial Perspective 大气透视</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Precomputed-LUTs"><span class="post-toc-text">Precomputed LUTs</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E6%98%9F%E7%90%83%E7%A9%BA%E9%97%B4"><span class="post-toc-text">星球空间</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Transmittance-LUT"><span class="post-toc-text">Transmittance LUT</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Multi-Scattering-LUT"><span class="post-toc-text">Multi-Scattering LUT</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Sky-View-LUT"><span class="post-toc-text">Sky View LUT</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%9B%9B%E3%80%81%E6%B8%B2%E6%9F%93%E5%AE%9E%E7%8E%B0%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="post-toc-text">四、渲染实现与性能优化策略</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B8%B2%E6%9F%93%E8%B0%83%E5%BA%A6"><span class="post-toc-text">渲染调度</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%A4%A9%E7%A9%BA%E7%9B%92%E6%B8%B2%E6%9F%93"><span class="post-toc-text">天空盒渲染</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E7%A9%BA%E6%B0%94%E9%80%8F%E5%B0%84"><span class="post-toc-text">空气透射</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%BA%94%E3%80%81%E6%80%BB%E7%BB%93%E4%B8%8E%E5%90%8E%E7%BB%AD%E8%BF%AD%E4%BB%A3%E4%BC%98%E5%8C%96"><span class="post-toc-text">五、总结与后续迭代优化</span></a></li></ol>
         </aside>
+      
+
       
       <div class="post-content__body">
         
@@ -559,32 +598,71 @@ mjx-container[display="true"] + br {
 
 <h2 id="五、总结与后续迭代优化"><a href="#五、总结与后续迭代优化" class="headerlink" title="五、总结与后续迭代优化"></a>五、总结与后续迭代优化</h2><p>总结来说，这套物理理论不仅是对天空色彩的数学还原，更是构建现代化游戏环境的基架。我们将这套庞大的积分运算通过 4张 LUT（Transmittance, Multi-Scattering, Sky View, Aerial Perspective）进行巧妙降维。这使得我们的渲染管线能够在极低的运行时代价下，为我们复杂的游戏场景，提供绝对物理正确的光照与深度遮挡（体积雾）基准。</p>
 <p>代码仓库如下：</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/zerls/TerrainDemo/tree/main/Assets/Products/SkyRendering/AtmosphericScattering">SkyRendering/AtmosphericScattering</a></p>
+<a href="https://github.com/zerls/TerrainDemo/tree/main/Assets/Products/SkyRendering/AtmosphericScattering" class="md-card" target="_blank" rel="noopener noreferrer">
+            <div class="md-card-icon">📦</div>
+            <div class="md-card-info">
+              <div class="md-card-title">SkyRendering/AtmosphericScattering</div>
+              <div class="md-card-desc">大气渲染</div>
+            </div>
+          </a>
+
 <p>因为时间与精力的限制，后续我们可以考虑在以下几个方向进行深入优化：</p>
 <ol>
 <li><strong>RenderGraph 现代化重构：</strong> Unity 6 的核心是 RenderGraph。我们目前的 <code>ScriptableRenderPass</code> 仍在使用传统的 <code>RTHandle</code> 手动管理内存。将其重构为 RenderGraph API，利用其自动的资源生命周期管理和 Pass 裁剪，能更好地应对未来复杂的依赖关系（如与体积云、大面积草海的交互）。</li>
 <li><strong>体积阴影 (Volumetric Shadows) 的接入：</strong> 目前的系统在计算大气散射时并没有考虑地形或云层的遮挡。我们可以在生成 Sky View LUT 和 Aerial Perspective LUT 的 Raymarching 循环中，加入对 Directional Light Shadow Map（或级联阴影 CSM）的采样，从而实现物理正确的上帝光 (God Rays) 和云隙光 (Crepuscular Rays)。</li>
 <li><del><strong>与体积云 (Volumetric Clouds) 的深度耦合</strong></del>** [ 已完成 ]：** 空气透视系统应当包裹体积云。在渲染云层时，我们需要使用 Transmittance LUT 来计算阳光穿透大气的衰减，并在云层最终渲染阶段，采样 Aerial Perspective LUT 让云层融入远处的雾气中，形成“环境系统”的完美闭环。</li>
 </ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>:::color1<br><a target="_blank" rel="noopener" href="https://www.wolai.com/jJBQxqv9sDPcyQbqV9y7Mc">Chapter 14 Volumetric and Translucency Rendering 体积与半透明渲染</a></p>
-<p><a target="_blank" rel="noopener" href="https://sebh.github.io/publications/">A Scalable and Production Ready Sky and Atmosphere Rendering Technique [Hillaire 2020]</a></p>
-<p>⭐️<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/595576594">实时大气散射渲染实战 | 知乎 | AKG4e3</a></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36498679">[Rendering] 基于物理的大气渲染 | 知乎 | Lele Feng</a> </p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/150963038">UE4新版大气实时渲染-论文导读 | 知乎 | 窝的舔</a> </p>
-<p>:::</p>
+<hr>
+<div class="md-ref">
+            <div class="md-ref-title">
+              <span class="md-ref-icon">📚</span> 参考文献与延伸阅读
+            </div>
+            <div class="md-ref-content"><div id="ref-1" class="md-ref-item">
+            <span class="md-ref-id">[1]</span>
+            <div class="md-ref-text"><p><a target="_blank" rel="noopener" href="https://www.wolai.com/jJBQxqv9sDPcyQbqV9y7Mc">Chapter 14 Volumetric and Translucency Rendering 体积与半透明渲染</a></p>
+</div>
+          </div>
+<div id="ref-2" class="md-ref-item">
+            <span class="md-ref-id">[2]</span>
+            <div class="md-ref-text"><p><a target="_blank" rel="noopener" href="https://sebh.github.io/publications/">A Scalable and Production Ready Sky and Atmosphere Rendering Technique [Hillaire 2020]</a></p>
+</div>
+          </div>
+<div id="ref-3" class="md-ref-item">
+            <span class="md-ref-id">[3]</span>
+            <div class="md-ref-text"><p>⭐️<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/595576594">实时大气散射渲染实战 | 知乎 | AKG4e3</a></p>
+</div>
+          </div>
+<div id="ref-4" class="md-ref-item">
+            <span class="md-ref-id">[4]</span>
+            <div class="md-ref-text"><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36498679">[Rendering] 基于物理的大气渲染 | 知乎 | Lele Feng</a> </p>
+</div>
+          </div>
+<div id="ref-5" class="md-ref-item">
+            <span class="md-ref-id">[5]</span>
+            <div class="md-ref-text"><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/150963038">UE4新版大气实时渲染-论文导读 | 知乎 | 窝的舔</a> </p>
+</div>
+          </div></div>
+          </div>
 
       </div>
+      
     </div>
+
     
-      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
           mermaid.initialize({"startOnload":true});
         }
       </script>
     
   </article>
+
+  
   <div class="post__foot">
+    
     
     <div class="post-nav">
   
@@ -622,6 +700,7 @@ mjx-container[display="true"] + br {
 </div>
 
     
+    
       <div class="related-post">
   <div class="related__head">
   <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" class="post-tag">#体积渲染</a><a href="/tags/RayMarching/" class="post-tag">#RayMarching</a>
@@ -634,6 +713,7 @@ mjx-container[display="true"] + br {
   </div>
 </div>
 
+    
     
     
       <div id="gitalk-container"></div>
@@ -712,7 +792,8 @@ mjx-container[display="true"] + br {
     
     <script src="/js/copy-code.js"></script>
     
-  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 <script type="text/javascript">
   const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
   let title = location.pathname.substr(0, 50); 

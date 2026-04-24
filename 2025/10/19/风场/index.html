@@ -60,7 +60,9 @@
     
     
   <link rel="stylesheet" type="text/css" href="/css/post.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
 
   <meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
   direction: ltr;
@@ -197,9 +199,10 @@ mjx-container[display="true"] + br {
               
                 <a class="nav-menu-item" href="/note">札记</a>
               
-                <a class="nav-menu-item" href="/now">Now</a>
-              
             
+            <a class="nav-menu-item" href='/now/'>Now</a>
+            
+              
             
           </div>
         </div>
@@ -209,14 +212,16 @@ mjx-container[display="true"] + br {
     <div class="body">
       
   <article class="post-content">
-    
-      <div class="post-inner">
+    <div class="post-inner">
+      
+      
       <div class="post-content__head">
         
+        
         <div class="post-title">风场</div>
-
+        
         <div class="post-info">
-          <div>           
+          <div>
             <span class="post-date">创建时间：2025-10-19</span>
             <span class="post-date">更新时间：2026-03-15</span>
           </div>
@@ -224,15 +229,47 @@ mjx-container[display="true"] + br {
   <a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">#场景</a><a href="/tags/Field/" class="post-tag">#Field</a>
 
 
-
         </div>
       </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
       
         <aside class="toc-outer">
           <div class="toc-title">目录</div>
           <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%AE%A1%E7%BA%BF%E8%AE%BE%E8%AE%A1"><span class="post-toc-text">1. 核心架构与管线设计</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%8E%9F%E7%90%86"><span class="post-toc-text">原理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Dynamic-WindDetails"><span class="post-toc-text">Dynamic WindDetails</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%8E%A5%E5%85%A5"><span class="post-toc-text">渲染管线接入</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#C-%E8%B0%83%E5%BA%A6%E4%B8%AD%E5%BF%83"><span class="post-toc-text">C# 调度中心</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E9%A3%8E%E6%BA%90%E5%AF%B9%E8%B1%A1%E6%B1%A0%E7%AE%A1%E7%90%86"><span class="post-toc-text">风源对象池管理</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Buffer-%E5%AD%98%E5%82%A8"><span class="post-toc-text">Buffer 存储</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-%E5%8A%A8%E6%80%81%E9%A3%8E%E6%BA%90%E7%B3%BB%E7%BB%9F-Wind-Motors"><span class="post-toc-text">2. 动态风源系统 (Wind Motors)</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-%E8%AE%A1%E7%AE%97%E6%B5%81%E4%BD%93%E5%8A%9B%E5%AD%A6-CFD-%E6%A8%A1%E6%8B%9F%E7%AE%A1%E7%BA%BF"><span class="post-toc-text">3. 计算流体力学 (CFD) 模拟管线</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E7%A9%BA%E9%97%B4%E5%B9%B3%E7%A7%BB-Shift"><span class="post-toc-text">空间平移 (Shift)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E7%B2%98%E6%80%A7%E6%89%A9%E6%95%A3-Diffusion"><span class="post-toc-text">粘性扩散 (Diffusion)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%B6%A1%E5%BA%A6%E9%99%90%E5%88%B6-Vorticity-Confinement"><span class="post-toc-text">涡度限制 (Vorticity Confinement)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E6%A0%B8%E5%BF%83%E7%97%9B%E7%82%B9%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%BC%95%E5%85%A5%E6%97%8B%E5%BA%A6%EF%BC%9F"><span class="post-toc-text">核心痛点：为什么要引入旋度？</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E7%89%A9%E7%90%86%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86"><span class="post-toc-text">物理数学原理</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E7%8E%B0"><span class="post-toc-text">项目中的工程实现</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%AF%B9%E6%B5%81-Advection-%E5%B9%B3%E6%B5%81-%EF%BC%9A"><span class="post-toc-text">对流 (Advection&#x2F;平流)：</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-%E5%B7%A5%E7%A8%8B%E5%8C%96"><span class="post-toc-text">4. 工程化</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8E%B0%E4%BB%A3%E5%8C%96"><span class="post-toc-text">数据流转现代化</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Debug"><span class="post-toc-text">Debug</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="post-toc-text">结语</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%8F%82%E8%80%83"><span class="post-toc-text">参考</span></a></li></ol>
-          <a href="#" class="toc-top">回到顶部</a>
         </aside>
+      
+
       
       <div class="post-content__body">
         
@@ -401,17 +438,24 @@ mjx-container[display="true"] + br {
 <p>:::</p>
 
       </div>
+      
     </div>
+
     
-      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
           mermaid.initialize({"startOnload":true});
         }
       </script>
     
   </article>
+
+  
   <div class="post__foot">
+    
     
     <div class="post-nav">
   
@@ -449,6 +493,7 @@ mjx-container[display="true"] + br {
 </div>
 
     
+    
       <div class="related-post">
   <div class="related__head">
   <a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">#场景</a><a href="/tags/Field/" class="post-tag">#Field</a>
@@ -461,6 +506,7 @@ mjx-container[display="true"] + br {
   </div>
 </div>
 
+    
     
     
       <div id="gitalk-container"></div>
@@ -539,7 +585,8 @@ mjx-container[display="true"] + br {
     
     <script src="/js/copy-code.js"></script>
     
-  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 <script type="text/javascript">
   const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
   let title = location.pathname.substr(0, 50); 

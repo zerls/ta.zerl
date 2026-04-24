@@ -60,7 +60,9 @@
     
     
   <link rel="stylesheet" type="text/css" href="/css/post.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
 
   <meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
   direction: ltr;
@@ -197,9 +199,10 @@ mjx-container[display="true"] + br {
               
                 <a class="nav-menu-item" href="/note">札记</a>
               
-                <a class="nav-menu-item" href="/now">Now</a>
-              
             
+            <a class="nav-menu-item" href='/now/'>Now</a>
+            
+              
             
           </div>
         </div>
@@ -209,16 +212,20 @@ mjx-container[display="true"] + br {
     <div class="body">
       
   <article class="post-content">
-    
-      <div class="post-inner">
+    <div class="post-inner">
+      
+      
       <div class="post-content__head">
         
-        <div class ="post-banner"> <img src=https://bu.dusays.com/2026/04/23/69e9babf8ecdc.png></div>
+          <div class="post-banner">
+            <img src="https://bu.dusays.com/2026/04/23/69e9babf8ecdc.png" alt="Banner">
+          </div>
+        
         
         <div class="post-title">GPUDrivenTerrain</div>
-
+        
         <div class="post-info">
-          <div>           
+          <div>
             <span class="post-date">创建时间：2026-03-20</span>
             <span class="post-date">更新时间：2026-03-31</span>
           </div>
@@ -226,15 +233,47 @@ mjx-container[display="true"] + br {
   <a href="/tags/%E5%9C%B0%E5%BD%A2/" class="post-tag">#地形</a><a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">#场景</a>
 
 
-
         </div>
       </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
       
         <aside class="toc-outer">
           <div class="toc-title">目录</div>
-          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%B8%80%E3%80%81-%E7%B3%BB%E7%BB%9F%E5%AE%8F%E8%A7%82%E6%9E%B6%E6%9E%84"><span class="post-toc-text">一、 系统宏观架构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%9C%B0%E5%BD%A2%E5%88%86%E5%9D%97"><span class="post-toc-text">地形分块</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="post-toc-text">数据结构</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%EF%BC%88TerrainAsset-TerrainHelper%EF%BC%89"><span class="post-toc-text">资源管理（TerrainAsset &#x2F; TerrainHelper）</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%BA%8C%E3%80%81-GPU-%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF"><span class="post-toc-text">二、 GPU 渲染管线</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Pass-1-%E2%80%94-TraverseQuadTree%EF%BC%88%E5%9B%9B%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86%EF%BC%89"><span class="post-toc-text">Pass 1 — TraverseQuadTree（四叉树遍历）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Pass-2-%E2%80%94-BuildLodMap%EF%BC%88%E6%9E%84%E5%BB%BA-LOD-%E8%B4%B4%E5%9B%BE%EF%BC%89"><span class="post-toc-text">Pass 2 — BuildLodMap（构建 LOD 贴图）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Pass-3-%E2%80%94-CullPatches%EF%BC%88%E5%89%94%E9%99%A4%E4%B8%8E%E7%94%9F%E6%88%90-Patch%EF%BC%89"><span class="post-toc-text">Pass 3 — CullPatches（剔除与生成 Patch）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Pass-4-%E2%80%94-DrawMeshInstancedIndirect%EF%BC%88%E9%97%B4%E6%8E%A5%E7%BB%98%E5%88%B6%EF%BC%89"><span class="post-toc-text">Pass 4 — DrawMeshInstancedIndirect（间接绘制）</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%B8%89%E3%80%81%E5%9B%9B%E5%8F%89%E6%A0%91-QuadTree-LOD"><span class="post-toc-text">三、四叉树 (QuadTree)   LOD</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-%E5%9B%9B%E5%8F%89%E6%A0%91%E7%9A%84%E7%A9%BA%E9%97%B4%E6%9E%B6%E6%9E%84%E5%AE%9A%E4%B9%89"><span class="post-toc-text">1. 四叉树的空间架构定义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-%E6%A0%B8%E5%BF%83%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6%EF%BC%9A%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E7%9A%84-Ping-Pong-%E8%BF%AD%E4%BB%A3"><span class="post-toc-text">2. 核心运行机制：自顶向下的 Ping-Pong 迭代</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-LOD-%E8%AF%84%E4%BB%B7%E5%87%BD%E6%95%B0-EvaluateNode"><span class="post-toc-text">3. LOD 评价函数 (EvaluateNode)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-%E6%98%BE%E5%AD%98%E7%AE%A1%E7%90%86%E4%BC%98%E5%8C%96%EF%BC%9A%E4%B8%80%E7%BB%B4%E7%B4%A2%E5%BC%95-GetNodeId"><span class="post-toc-text">4. 显存管理优化：一维索引 (GetNodeId)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-%E7%94%9F%E6%88%90-LOD-Map"><span class="post-toc-text">5. 生成 LOD Map</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%9B%9B%E3%80%81-GPU%E5%89%94%E9%99%A4"><span class="post-toc-text">四、 GPU剔除</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%BA%94%E3%80%81%E5%9C%B0%E5%BD%A2%E6%9D%90%E8%B4%A8"><span class="post-toc-text">五、地形材质</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E9%AB%98%E5%BA%A6%E5%9C%BA%E9%87%87%E6%A0%B7"><span class="post-toc-text">高度场采样</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#LOD-%E6%8E%A5%E7%BC%9D%E5%A4%84%E7%90%86"><span class="post-toc-text">LOD 接缝处理</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="post-toc-text">结语</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%90%8E%E7%BB%AD%E8%BF%9B%E9%98%B6%E4%B8%8E%E6%8B%93%E5%B1%95%E6%96%B9%E5%90%91-Future-Work"><span class="post-toc-text">后续进阶与拓展方向 (Future Work)</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%8F%82%E8%80%83"><span class="post-toc-text">参考</span></a></li></ol>
-          <a href="#" class="toc-top">回到顶部</a>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E7%B3%BB%E7%BB%9F%E5%AE%8F%E8%A7%82%E6%9E%B6%E6%9E%84"><span class="post-toc-text">系统宏观架构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E5%9C%B0%E5%BD%A2%E5%88%86%E5%9D%97"><span class="post-toc-text">地形分块</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="post-toc-text">数据结构</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%EF%BC%88TerrainAsset-TerrainHelper%EF%BC%89"><span class="post-toc-text">资源管理（TerrainAsset &#x2F; TerrainHelper）</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#GPU-%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF"><span class="post-toc-text">GPU 渲染管线</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Pass-1-%E2%80%94-TraverseQuadTree%EF%BC%88%E5%9B%9B%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86%EF%BC%89"><span class="post-toc-text">Pass 1 — TraverseQuadTree（四叉树遍历）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Pass-2-%E2%80%94-BuildLodMap%EF%BC%88%E6%9E%84%E5%BB%BA-LOD-%E8%B4%B4%E5%9B%BE%EF%BC%89"><span class="post-toc-text">Pass 2 — BuildLodMap（构建 LOD 贴图）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Pass-3-%E2%80%94-CullPatches%EF%BC%88%E5%89%94%E9%99%A4%E4%B8%8E%E7%94%9F%E6%88%90-Patch%EF%BC%89"><span class="post-toc-text">Pass 3 — CullPatches（剔除与生成 Patch）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Pass-4-%E2%80%94-DrawMeshInstancedIndirect%EF%BC%88%E9%97%B4%E6%8E%A5%E7%BB%98%E5%88%B6%EF%BC%89"><span class="post-toc-text">Pass 4 — DrawMeshInstancedIndirect（间接绘制）</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%9B%9B%E5%8F%89%E6%A0%91-QuadTree-LOD"><span class="post-toc-text">四叉树 (QuadTree)   LOD</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-%E5%9B%9B%E5%8F%89%E6%A0%91%E7%9A%84%E7%A9%BA%E9%97%B4%E6%9E%B6%E6%9E%84%E5%AE%9A%E4%B9%89"><span class="post-toc-text">1. 四叉树的空间架构定义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-%E6%A0%B8%E5%BF%83%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6%EF%BC%9A%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E7%9A%84-Ping-Pong-%E8%BF%AD%E4%BB%A3"><span class="post-toc-text">2. 核心运行机制：自顶向下的 Ping-Pong 迭代</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-LOD-%E8%AF%84%E4%BB%B7%E5%87%BD%E6%95%B0-EvaluateNode"><span class="post-toc-text">3. LOD 评价函数 (EvaluateNode)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-%E6%98%BE%E5%AD%98%E7%AE%A1%E7%90%86%E4%BC%98%E5%8C%96%EF%BC%9A%E4%B8%80%E7%BB%B4%E7%B4%A2%E5%BC%95-GetNodeId"><span class="post-toc-text">4. 显存管理优化：一维索引 (GetNodeId)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-%E7%94%9F%E6%88%90-LOD-Map"><span class="post-toc-text">5. 生成 LOD Map</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#GPU%E5%89%94%E9%99%A4"><span class="post-toc-text">GPU剔除</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%9C%B0%E5%BD%A2%E6%9D%90%E8%B4%A8"><span class="post-toc-text">地形材质</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E9%AB%98%E5%BA%A6%E5%9C%BA%E9%87%87%E6%A0%B7"><span class="post-toc-text">高度场采样</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#LOD-%E6%8E%A5%E7%BC%9D%E5%A4%84%E7%90%86"><span class="post-toc-text">LOD 接缝处理</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="post-toc-text">结语</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%90%8E%E7%BB%AD%E8%BF%9B%E9%98%B6%E4%B8%8E%E6%8B%93%E5%B1%95%E6%96%B9%E5%90%91-Future-Work"><span class="post-toc-text">后续进阶与拓展方向 (Future Work)</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%8F%82%E8%80%83"><span class="post-toc-text">参考</span></a></li></ol>
         </aside>
+      
+
       
       <div class="post-content__body">
         
@@ -259,8 +298,7 @@ mjx-container[display="true"] + br {
 <p> 尽管图形渲染的脏活累活交给了 GPU，但游戏玩法层面的逻辑（比如角色移动时的高度查询、物理碰撞检测、地表材质判定等）依然是在 CPU 端运行的。因此，系统需要在 CPU 端保留一份独立的、专门用于游戏玩法查询的地形数据结构。</p>
 </blockquote>
 <p>本文主要参考<a target="_blank" rel="noopener" href="https://www.gdcvault.com/play/1025480/Terrain-Rendering-in-Far-Cry">孤岛惊魂5地形渲染</a>的设计思路，并结合项目实现，逐步介绍GPU Driven Terrain 的一些核心知识。</p>
-<h2 id="一、-系统宏观架构"><a href="#一、-系统宏观架构" class="headerlink" title="一、 系统宏观架构"></a>一、 系统宏观架构</h2><!-- 这是一张图片，ocr 内容为： -->
-<p><img src="https://bu.dusays.com/2026/04/23/69e9bac07f253.png"></p>
+<h2 id="系统宏观架构"><a href="#系统宏观架构" class="headerlink" title="系统宏观架构"></a>系统宏观架构</h2><p><img src="https://bu.dusays.com/2026/04/23/69e9bac07f253.png"></p>
 <p>系统基于 <strong>GPU Driven + 四叉树 (QuadTree) + 实例化渲染 (Instancing)</strong> 的思想构建。在整个渲染管线中， CPU 端 <code>TerrainManager</code> 仅负责分发 Dispatch 指令并维护 Compute Buffers，真正的视锥剔除、遮挡剔除、LOD 评估以及最终绘制数据的生成都在 GPU (Compute Shader) 中完成。</p>
 <h4 id="地形分块"><a href="#地形分块" class="headerlink" title="地形分块"></a>地形分块</h4><!-- 这是一张图片，ocr 内容为： -->
 <p><img src="https://bu.dusays.com/2026/04/23/69e9bac16b40f.png"></p>
@@ -288,7 +326,7 @@ mjx-container[display="true"] + br {
 </ul>
 <p>所有 <code>ComputeBuffer</code> 在 <code>Dispose</code> 中统一释放，<code>ShaderIDs</code> 内部类预缓存所有属性 ID，避免每帧字符串 Hash 开销。</p>
 <hr>
-<h2 id="二、-GPU-渲染管线"><a href="#二、-GPU-渲染管线" class="headerlink" title="二、 GPU 渲染管线"></a>二、 GPU 渲染管线</h2><p> 在 <code>TerrainManager.cs</code> 的 <code>Update</code> 中，每帧按顺序执行以下 4 个核心 Pass  ，如下图所示：</p>
+<h2 id="GPU-渲染管线"><a href="#GPU-渲染管线" class="headerlink" title="GPU 渲染管线"></a>GPU 渲染管线</h2><p> 在 <code>TerrainManager.cs</code> 的 <code>Update</code> 中，每帧按顺序执行以下 4 个核心 Pass  ，如下图所示：</p>
 <!-- 这是一张图片，ocr 内容为： -->
 <p><img src="https://bu.dusays.com/2026/04/23/69e9bac2538aa.png" alt="GPU 驱动地形系统 — 每帧渲染管线"></p>
 <h3 id="Pass-1-—-TraverseQuadTree（四叉树遍历）"><a href="#Pass-1-—-TraverseQuadTree（四叉树遍历）" class="headerlink" title="Pass 1 — TraverseQuadTree（四叉树遍历）"></a>Pass 1 — <code>TraverseQuadTree</code>（四叉树遍历）</h3><p>从顶层 LOD5  25 个节点自顶向下遍历，对每个节点调用 <code>EvaluateNode</code>：计算节点中心到相机的平方距离，与 <code>nodeSize × distanceEvaluation</code> 的平方比较。距离足够近且 LOD &gt; 0 则细分，将子节点（<code>nodeIndex * 2</code> 的四个方向）推入 ProduceBuffer；否则写入 <code>FinalNodeList</code>。</p>
@@ -319,7 +357,7 @@ mjx-container[display="true"] + br {
 <li>调用 <code>Graphics.DrawMeshInstancedIndirect</code> 一次性完成所有可见地形块的绘制</li>
 </ul>
 <hr>
-<h2 id="三、四叉树-QuadTree-LOD"><a href="#三、四叉树-QuadTree-LOD" class="headerlink" title="三、四叉树 (QuadTree)   LOD"></a>三、四叉树 (QuadTree)   LOD</h2><p>** **四叉树 (QuadTree) LOD 是整个 GPU 驱动地形中最核心、也最考验底层逻辑设计的部分  。<strong>孤岛惊魂5</strong>将传统在 CPU 端进行的“节点遍历与评估”完全搬到了 Compute Shader 中。以下是重点介绍：</p>
+<h2 id="四叉树-QuadTree-LOD"><a href="#四叉树-QuadTree-LOD" class="headerlink" title="四叉树 (QuadTree)   LOD"></a>四叉树 (QuadTree)   LOD</h2><p> **四叉树 (QuadTree) LOD 是整个 GPU 驱动地形中最核心、也最考验底层逻辑设计的部分。<strong>孤岛惊魂5</strong>将传统在 CPU 端进行的“节点遍历与评估”完全搬到了 Compute Shader 中。以下是重点介绍：</p>
 <hr>
 <h3 id="1-四叉树的空间架构定义"><a href="#1-四叉树的空间架构定义" class="headerlink" title="1. 四叉树的空间架构定义"></a>1. 四叉树的空间架构定义</h3><p>在进入计算之前，系统对世界进行了宏观的网格划分：</p>
 <ul>
@@ -369,11 +407,11 @@ mjx-container[display="true"] + br {
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs glsl">[numthreads(<span class="hljs-number">8</span>,<span class="hljs-number">8</span>,<span class="hljs-number">1</span>)]<br><span class="hljs-type">void</span> BuildLodMap (uint3 id : SV_DispatchThreadID)<br>{<br>    uint2 sectorIndex =id.xy;<br>    [unroll]<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">uint</span> lod = MAX_TERRAIN_LOD; lod &gt;= <span class="hljs-number">0</span>; lod --)<br>    {<br>        <span class="hljs-type">uint</span> sectorCount =GetSectorCountPerNode(lod);<br>        uint2 nodeIndex =sectorIndex /sectorCount;<br>        <span class="hljs-type">uint</span> nodeId =GetNodeId(nodeIndex,lod);<br>        NodeDescriptor desc =NodeDescriptors[nodeId];<br>        <span class="hljs-keyword">if</span>(!desc.b_divide)<br>        {<br>            _LodMap[sectorIndex] =lod *rcp(MAX_TERRAIN_LOD);<br>            <span class="hljs-keyword">return</span>;<br>        }<br>    }<br>    _LodMap[sectorIndex] = <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></table></figure>
 
 <p>这张 Map 脱离了树状结构，使得后续生成 Patch 时，任意地形块都可以通过简单的 UV 采样，以 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path></g><g data-mml-node="mo" transform="translate(763,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mn" transform="translate(1152,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mo" transform="translate(1652,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container> 的时间复杂度瞬间知道自己周围邻居的 LOD 级别，从而完美解决地形接缝问题。</p>
-<h2 id="四、-GPU剔除"><a href="#四、-GPU剔除" class="headerlink" title="四、 GPU剔除"></a>四、 GPU剔除</h2><p>项目中主要实现了视锥剔除与 HiZ 遮挡剔除，详细原理可以查看以下文章：</p>
+<h2 id="GPU剔除"><a href="#GPU剔除" class="headerlink" title="GPU剔除"></a>GPU剔除</h2><p>项目中主要实现了视锥剔除与 HiZ 遮挡剔除，详细原理可以查看以下文章：</p>
 <p><a target="_blank" rel="noopener" href="https://www.yuque.com/yuqueyonghunx6wfo/ruvi97/yvunoays0lg1cibt">GPU Culling</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.yuque.com/yuqueyonghunx6wfo/ruvi97/daeif9gy2dcyr4g9">GPU Frustum Culling 视锥剔除</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.yuque.com/yuqueyonghunx6wfo/ruvi97/qipr89grnht8u0re">Hierarchical Z</a></p>
-<h2 id="五、地形材质"><a href="#五、地形材质" class="headerlink" title="五、地形材质"></a>五、地形材质</h2><p> 地形的表面渲染在 <code>terrain.shader</code> 中完成，当前实现比较基础</p>
+<h2 id="地形材质"><a href="#地形材质" class="headerlink" title="地形材质"></a>地形材质</h2><p> 地形的表面渲染在 <code>terrain.shader</code> 中完成，当前实现比较基础</p>
 <h3 id="高度场采样"><a href="#高度场采样" class="headerlink" title="高度场采样"></a>高度场采样</h3><p>在顶点着色器中，根据基础顶点坐标和 <code>_HeightMap</code> 采样出对应的高度信息，并应用高度缩放和偏移量</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-comment">// uniform float3 _WorldSize; //地形尺寸大小</span><br><span class="hljs-comment">// Texture2D _HeightMap; </span><br><br><span class="hljs-comment">/// &lt;summary&gt;</span><br><span class="hljs-comment">/// 根据世界空间的 XZ 坐标，采样高度图并返回实际的世界高度 (Y轴)</span><br><span class="hljs-comment">/// &lt;/summary&gt;</span><br><span class="hljs-comment">/// &lt;param name="positionXZ"&gt;顶点的 XZ 平面坐标&lt;/param&gt;</span><br><span class="hljs-comment">/// &lt;returns&gt;计算后的实际世界高度 Y&lt;/returns&gt;</span><br><span class="hljs-type">float</span> SampleTerrainHeight(float2 positionXZ)<br>{<br>    <span class="hljs-comment">// 1. 将物理世界的 XZ 坐标映射到 0~1 的 UV 坐标</span><br>    <span class="hljs-comment">// (+0.5 和 +1 是为了处理半像素偏移，防止边缘采样越界)</span><br>    float2 heightUV = (positionXZ + (_WorldSize.xz * <span class="hljs-number">0.5</span>) + <span class="hljs-number">0.5</span>) / (_WorldSize.xz + <span class="hljs-number">1</span>);<br><br>    <span class="hljs-comment">// 2. 在顶点着色器中使用 tex2Dlod 显式采样第 0 级 Mipmap 的高度(范围 0~1)</span><br>    <span class="hljs-type">float</span> rawHeight = tex2Dlod(_HeightMap, float4(heightUV, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>)).r;<br><br>    <span class="hljs-comment">// 3. 乘以世界的最大高度，还原为真实的物理高度</span><br>    <span class="hljs-keyword">return</span> rawHeight * _WorldSize.y;<br>}<br></code></pre></td></tr></table></figure>
 
@@ -386,7 +424,7 @@ mjx-container[display="true"] + br {
 <li>对处于边缘的顶点计算偏移量并修正 XZ 坐标和 UV，一次赋值完成</li>
 </ol>
 <p>整个算法没有 <code>if-else</code> 分支，全用向量乘法和掩码实现，GPU 友好。</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-comment">// 修复 LOD 接缝 (消除网格裂缝)</span><br><span class="hljs-comment">//      w</span><br><span class="hljs-comment">//  ---------</span><br><span class="hljs-comment">//  |       |</span><br><span class="hljs-comment">//x |       | z</span><br><span class="hljs-comment">//  ---------</span><br><span class="hljs-comment">//      y</span><br><span class="hljs-comment">//=========== 修复 LOD 接缝====Optimization</span><br><span class="hljs-type">void</span> FixLODConnectSeam(<span class="hljs-keyword">inout</span> float4 vertex, <span class="hljs-keyword">inout</span> float2 uv, RenderPatch <span class="hljs-keyword">patch</span>)<br>{<br>  uint4 lodTrans = <span class="hljs-keyword">patch</span>.lodTrans;<br><br>  <span class="hljs-comment">// 保留全局早退：如果整个 Patch 都没有接缝处理需求，直接跳过</span><br>  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">all</span>(lodTrans == <span class="hljs-number">0</span>))	<span class="hljs-keyword">return</span>;<br><br>  uint2 vertexIndex = (uint2)<span class="hljs-built_in">floor</span>((vertex.xz + PATCH_MESH_SIZE * <span class="hljs-number">0.5</span> + <span class="hljs-number">0.01</span>) / PATCH_MESH_GRID_SIZE);<br>  <span class="hljs-type">float</span> uvGridStrip = <span class="hljs-number">1.0</span> / PATCH_MESH_GRID_COUNT;<br><br>  <span class="hljs-comment">// 1. 批量算出 4 个方向的取模掩码 (Mask)</span><br>  uint4 mask = (uint4(<span class="hljs-number">1</span>u, <span class="hljs-number">1</span>u, <span class="hljs-number">1</span>u, <span class="hljs-number">1</span>u) &lt;&lt; lodTrans) - <span class="hljs-number">1</span>u;<br><br>  <span class="hljs-comment">// 2. 批量计算 4 个方向的取模结果 (modIndex)</span><br>  <span class="hljs-comment">//左(x)依赖y, 下(y)依赖x, 右(z)依赖y, 上(w)依赖x</span><br>  uint4 modIndex = uint4(vertexIndex.y, vertexIndex.x, vertexIndex.y, vertexIndex.x) &amp; mask;<br><br>  <span class="hljs-comment">// 3. 构造边缘判断遮罩 (Edge Mask)：在边缘则为 1.0，不在边缘则为 0.0</span><br>  float4 onEdge = float4(<br>    vertexIndex.x == <span class="hljs-number">0</span> ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span>,<br>    vertexIndex.y == <span class="hljs-number">0</span> ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span>,<br>    vertexIndex.x == PATCH_MESH_GRID_COUNT ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span>,<br>    vertexIndex.y == PATCH_MESH_GRID_COUNT ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span><br>  );<br><br>  <span class="hljs-comment">// 4. 计算右边缘(z)和上边缘(w)特有的反向偏移量</span><br>  <span class="hljs-type">uint</span> offsetZ = ((<span class="hljs-number">1</span>u &lt;&lt; lodTrans.z) - modIndex.z) * (modIndex.z &gt; <span class="hljs-number">0</span> ? <span class="hljs-number">1</span>u : <span class="hljs-number">0</span>u);<br>  <span class="hljs-type">uint</span> offsetW = ((<span class="hljs-number">1</span>u &lt;&lt; lodTrans.w) - modIndex.w) * (modIndex.w &gt; <span class="hljs-number">0</span> ? <span class="hljs-number">1</span>u : <span class="hljs-number">0</span>u);<br><br>  <span class="hljs-comment">// 5. 合并最终的位移系数 (只有处在对应边缘上的顶点，位移才不为 0)</span><br>  <span class="hljs-comment">// X轴位移：受上边缘(w)正向影响，受下边缘(y)反向影响</span><br>  <span class="hljs-type">float</span> finalOffsetX = (<span class="hljs-type">float</span>)offsetW * onEdge.w - (<span class="hljs-type">float</span>)modIndex.y * onEdge.y;<br>  <span class="hljs-comment">// Z轴位移：受右边缘(z)正向影响，受左边缘(x)反向影响</span><br>  <span class="hljs-type">float</span> finalOffsetZ = (<span class="hljs-type">float</span>)offsetZ * onEdge.z - (<span class="hljs-type">float</span>)modIndex.x * onEdge.x;<br><br>  <span class="hljs-comment">// 6. 统一执行位移（从头到尾只有这一次赋值操作）</span><br>  vertex.x += finalOffsetX * PATCH_MESH_GRID_SIZE;<br>  vertex.z += finalOffsetZ * PATCH_MESH_GRID_SIZE;<br><br>  uv.x += finalOffsetX * uvGridStrip;<br>  uv.y += finalOffsetZ * uvGridStrip;<br>}<br></code></pre></td></tr></table></figure>
+<details class="md-code-fold"><summary>LixLODConnectSeam</summary><figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-comment">// 修复 LOD 接缝 (消除网格裂缝)</span><br><span class="hljs-comment">//      w</span><br><span class="hljs-comment">//  ---------</span><br><span class="hljs-comment">//  |       |</span><br><span class="hljs-comment">//x |       | z</span><br><span class="hljs-comment">//  ---------</span><br><span class="hljs-comment">//      y</span><br><span class="hljs-comment">//=========== 修复 LOD 接缝====Optimization</span><br><span class="hljs-type">void</span> FixLODConnectSeam(<span class="hljs-keyword">inout</span> float4 vertex, <span class="hljs-keyword">inout</span> float2 uv, RenderPatch <span class="hljs-keyword">patch</span>)<br>{<br>  uint4 lodTrans = <span class="hljs-keyword">patch</span>.lodTrans;<br><br>  <span class="hljs-comment">// 保留全局早退：如果整个 Patch 都没有接缝处理需求，直接跳过</span><br>  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">all</span>(lodTrans == <span class="hljs-number">0</span>))	<span class="hljs-keyword">return</span>;<br><br>  uint2 vertexIndex = (uint2)<span class="hljs-built_in">floor</span>((vertex.xz + PATCH_MESH_SIZE * <span class="hljs-number">0.5</span> + <span class="hljs-number">0.01</span>) / PATCH_MESH_GRID_SIZE);<br>  <span class="hljs-type">float</span> uvGridStrip = <span class="hljs-number">1.0</span> / PATCH_MESH_GRID_COUNT;<br><br>  <span class="hljs-comment">// 1. 批量算出 4 个方向的取模掩码 (Mask)</span><br>  uint4 mask = (uint4(<span class="hljs-number">1</span>u, <span class="hljs-number">1</span>u, <span class="hljs-number">1</span>u, <span class="hljs-number">1</span>u) &lt;&lt; lodTrans) - <span class="hljs-number">1</span>u;<br><br>  <span class="hljs-comment">// 2. 批量计算 4 个方向的取模结果 (modIndex)</span><br>  <span class="hljs-comment">//左(x)依赖y, 下(y)依赖x, 右(z)依赖y, 上(w)依赖x</span><br>  uint4 modIndex = uint4(vertexIndex.y, vertexIndex.x, vertexIndex.y, vertexIndex.x) &amp; mask;<br><br>  <span class="hljs-comment">// 3. 构造边缘判断遮罩 (Edge Mask)：在边缘则为 1.0，不在边缘则为 0.0</span><br>  float4 onEdge = float4(<br>    vertexIndex.x == <span class="hljs-number">0</span> ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span>,<br>    vertexIndex.y == <span class="hljs-number">0</span> ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span>,<br>    vertexIndex.x == PATCH_MESH_GRID_COUNT ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span>,<br>    vertexIndex.y == PATCH_MESH_GRID_COUNT ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span><br>  );<br><br>  <span class="hljs-comment">// 4. 计算右边缘(z)和上边缘(w)特有的反向偏移量</span><br>  <span class="hljs-type">uint</span> offsetZ = ((<span class="hljs-number">1</span>u &lt;&lt; lodTrans.z) - modIndex.z) * (modIndex.z &gt; <span class="hljs-number">0</span> ? <span class="hljs-number">1</span>u : <span class="hljs-number">0</span>u);<br>  <span class="hljs-type">uint</span> offsetW = ((<span class="hljs-number">1</span>u &lt;&lt; lodTrans.w) - modIndex.w) * (modIndex.w &gt; <span class="hljs-number">0</span> ? <span class="hljs-number">1</span>u : <span class="hljs-number">0</span>u);<br><br>  <span class="hljs-comment">// 5. 合并最终的位移系数 (只有处在对应边缘上的顶点，位移才不为 0)</span><br>  <span class="hljs-comment">// X轴位移：受上边缘(w)正向影响，受下边缘(y)反向影响</span><br>  <span class="hljs-type">float</span> finalOffsetX = (<span class="hljs-type">float</span>)offsetW * onEdge.w - (<span class="hljs-type">float</span>)modIndex.y * onEdge.y;<br>  <span class="hljs-comment">// Z轴位移：受右边缘(z)正向影响，受左边缘(x)反向影响</span><br>  <span class="hljs-type">float</span> finalOffsetZ = (<span class="hljs-type">float</span>)offsetZ * onEdge.z - (<span class="hljs-type">float</span>)modIndex.x * onEdge.x;<br><br>  <span class="hljs-comment">// 6. 统一执行位移（从头到尾只有这一次赋值操作）</span><br>  vertex.x += finalOffsetX * PATCH_MESH_GRID_SIZE;<br>  vertex.z += finalOffsetZ * PATCH_MESH_GRID_SIZE;<br><br>  uv.x += finalOffsetX * uvGridStrip;<br>  uv.y += finalOffsetZ * uvGridStrip;<br>}<br></code></pre></td></tr></table></figure></details>
 
 
 
@@ -442,17 +480,24 @@ mjx-container[display="true"] + br {
 <p>:::</p>
 
       </div>
+      
     </div>
+
     
-      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
           mermaid.initialize({"startOnload":true});
         }
       </script>
     
   </article>
+
+  
   <div class="post__foot">
+    
     
     <div class="post-nav">
   
@@ -490,6 +535,7 @@ mjx-container[display="true"] + br {
 </div>
 
     
+    
       <div class="related-post">
   <div class="related__head">
   <a href="/tags/%E5%9C%B0%E5%BD%A2/" class="post-tag">#地形</a><a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">#场景</a>
@@ -497,11 +543,12 @@ mjx-container[display="true"] + br {
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/2025/09/20/大规模草地渲染/" title="大规模草地渲染" rel="bookmark">大规模草地渲染</a></div></div><div class="null-item"><div class="null-title"><a href="/2025/10/19/风场/" title="风场" rel="bookmark">风场</a></div></div><div class="null-item"><div class="null-title"><a href="/2025/12/06/PRTGI/" title="PRTGI" rel="bookmark">PRTGI</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/15/体积云实时渲染解析/" title="体积云实时渲染解析" rel="bookmark">体积云实时渲染解析</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2025/10/19/风场/" title="风场" rel="bookmark">风场</a></div></div><div class="null-item"><div class="null-title"><a href="/2025/09/20/大规模草地渲染/" title="大规模草地渲染" rel="bookmark">大规模草地渲染</a></div></div><div class="null-item"><div class="null-title"><a href="/2025/12/06/PRTGI/" title="PRTGI" rel="bookmark">PRTGI</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/15/体积云实时渲染解析/" title="体积云实时渲染解析" rel="bookmark">体积云实时渲染解析</a></div></div></div>
     
   </div>
 </div>
 
+    
     
     
       <div id="gitalk-container"></div>
@@ -580,7 +627,8 @@ mjx-container[display="true"] + br {
     
     <script src="/js/copy-code.js"></script>
     
-  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 <script type="text/javascript">
   const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
   let title = location.pathname.substr(0, 50); 

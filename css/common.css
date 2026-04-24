@@ -233,11 +233,45 @@ figure.highlight .copy-button {
   color: #888;
   cursor: pointer;
 }
+@media screen and (max-width: 768px) {
+  code,
+  pre {
+    font-size: 12px !important; /* 移动端字号缩小 */
+  }
+  figure.highlight {
+    margin: 15px 0;
+    border-radius: 4px;
+  }
+  figure.highlight .gutter pre {
+    padding: 10px 5px; /* 缩小行号区域的宽度 */
+  }
+  .md-code-fold {
+    margin: 15px 0;
+  }
+  .md-code-fold summary {
+    font-size: 13px;
+    height: 38px; /* 降低顶部栏高度 */
+/* 缩小左右边距，给标题文字留出更多空间 */
+    padding: 0 60px 0 40px;
+  }
+  .md-code-fold summary::before {
+    display: none;
+  }
+  .md-code-fold figure.highlight .copy-button {
+    top: 4px !important;
+    right: 6px !important;
+    height: 28px !important;
+    padding: 0 6px !important;
+  }
+  .md-code-fold summary::after {
+    display: none !important;
+  }
+}
 /* layout */
 .wall {
   user-select: none;
   -webkit-user-select: none;
-  height: calc(100vh - 90px);
+  height: calc(100vh - 80px);
   display: flex;
   justify-content: center;
   align-items: center;
