@@ -293,14 +293,9 @@ mjx-container[display="true"] + br {
 <li><strong>焦散 (Caustics)</strong>（水下光斑折射） <strong>阳光照射下的焦散</strong></li>
 <li><strong>白沫系统 (Foam)</strong>（波峰碎浪、近岸冲刷、法线体积感） <strong>浪花</strong></li>
 </ol>
-<!-- 这是一张图片，ocr 内容为： -->
-<p><img src="https://bu.dusays.com/2026/04/23/69e9f5ae17d8e.jpeg"></p>
-<!-- 这是一张图片，ocr 内容为： -->
-<p><img src="https://bu.dusays.com/2026/04/23/69e9f5af1695e.png"></p>
-<!-- 这是一张图片，ocr 内容为： -->
-<p><img src="https://bu.dusays.com/2026/04/23/69e9f5b03e025.jpeg"></p>
-<!-- 这是一张图片，ocr 内容为： -->
-<p><img src="https://bu.dusays.com/2026/04/23/69e9f5b144657.png"></p>
+<div class="md-grid" style="grid-template-columns: repeat(2, 1fr)"><!-- 这是一张图片，ocr 内容为： --><p><img src="https://bu.dusays.com/2026/04/23/69e9f5ae17d8e.jpeg"></p><!-- 这是一张图片，ocr 内容为： --><p><img src="https://bu.dusays.com/2026/04/23/69e9f5af1695e.png"></p><!-- 这是一张图片，ocr 内容为： --><p><img src="https://bu.dusays.com/2026/04/23/69e9f5b03e025.jpeg"></p><!-- 这是一张图片，ocr 内容为： --><p><img src="https://bu.dusays.com/2026/04/23/69e9f5b144657.png"></p>
+</div>
+
 <details class="lake-collapse"><summary id="ue347962a"><span class="ne-text">水体渲染技术 思维导图</span></summary><p id="ua8165689" class="ne-p"><img src="https://raw.githubusercontent.com/QianMo/Game-Programmer-Study-Notes/master/Content/%E7%9C%9F%E5%AE%9E%E6%84%9F%E6%B0%B4%E4%BD%93%E6%B8%B2%E6%9F%93%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/media/Water-Rendering-Knowledge-Architecture.png" width="2181" title="" crop="0,0,1,1" id="k9NsT" class="ne-image"></p></details>
 
 <h2 id="几何与动力学：波形的模拟-Geometry-Dynamics"><a href="#几何与动力学：波形的模拟-Geometry-Dynamics" class="headerlink" title="几何与动力学：波形的模拟 (Geometry & Dynamics)"></a>几何与动力学：波形的模拟 (Geometry &amp; Dynamics)</h2><h3 id="法线扰动"><a href="#法线扰动" class="headerlink" title="法线扰动"></a>法线扰动</h3><h3 id="流动贴图-Flowmap"><a href="#流动贴图-Flowmap" class="headerlink" title="流动贴图 (Flowmap)"></a>流动贴图 (Flowmap)</h3><p>普通的 UV 动画在表现水流时会显得极其死板，Flowmap 则是表现<strong>水面微观流动感</strong>的核心技术。</p>
@@ -494,8 +489,9 @@ mjx-container[display="true"] + br {
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Unity_SceneColor_float</span>(<span class="hljs-params">float4 UV, <span class="hljs-keyword">out</span> float3 Out</span>)</span><br>{<br>    Out = SHADERGRAPH_SAMPLE_SCENE_COLOR(UV);<br>}<br></code></pre></td></tr></table></figure>
 
 <h4 id="修复折射伪影"><a href="#修复折射伪影" class="headerlink" title="修复折射伪影"></a>修复折射伪影</h4><p>基础的折射是存在缺陷的，当物体从水中伸出时，有时会看到折射效果出现在不应该出现的地方。</p>
-<!-- 这是一张图片，ocr 内容为： -->
-<p><img src="https://bu.dusays.com/2026/04/23/69e9f5b95731a.png" alt="折射伪影"><!-- 这是一张图片，ocr 内容为： --><br><img src="https://bu.dusays.com/2026/04/23/69e9f5ba501d0.png" alt="固定折射"></p>
+<div class="md-grid" style="grid-template-columns: repeat(2, 1fr)"><!-- 这是一张图片，ocr 内容为： --><p><img src="https://bu.dusays.com/2026/04/23/69e9f5b95731a.png" alt="折射伪影"><!-- 这是一张图片，ocr 内容为： --><img src="https://bu.dusays.com/2026/04/23/69e9f5ba501d0.png" alt="固定折射"></p>
+</div>
+
 <!-- 这是一张图片，ocr 内容为： -->
 <p><img src="https://bu.dusays.com/2026/04/23/69e9f5bb24965.webp" alt="修复伪影"></p>
 <p>解决此问题的一种方法是执行深度检查，判断我们应该使用扭曲的 UV 还是未扭曲的 UVS。<strong>Scene Position</strong> 子图包含用于计算世界空间场景位置的节点。</p>
