@@ -68,6 +68,7 @@ blockquote::before {
 }
 blockquote p {
   margin: 0;
+  margin-bottom: 1em !important;
 }
 iframe,
 img,

@@ -65,6 +65,7 @@ blockquote::before {
 }
 blockquote p {
   margin: 0;
+  margin-bottom: 1em !important;
 }
 iframe,
 img,
@@ -156,10 +157,12 @@ figure img {
   border: 0;
 }
 code {
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 0.875em;
   padding: 2px 4px;
   overflow-wrap: break-word;
+  background-color: #f0f2f5;
+  color: #e03636;
 }
 .hljs {
   display: block;
@@ -206,8 +209,6 @@ figure.highlight pre {
   margin: 0;
   padding: 10px 0;
 }
-code,
-pre,
 figure.highlight {
   background-color: #f7f7f7;
 }

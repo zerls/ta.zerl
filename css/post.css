@@ -257,7 +257,7 @@
 }
 .md-grid {
   display: grid;
-  gap: 2px;
+  gap: 0px;
   margin: 24px 0;
 }
 .md-grid > p {
@@ -866,7 +866,7 @@
 /* 标题装饰：左侧靛青色重线 */
 }
 .post-content__head {
-  margin: 40px 0;
+  margin-bottom: 40px 0;
 }
 /* =========================================
    响应式布局保护 (防止侧边栏挤占正文)
