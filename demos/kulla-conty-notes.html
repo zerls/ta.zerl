@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kulla-Conty 近似 — PBR 能量补偿学习笔记</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Serif+SC:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="./claude-hero-styl.css" rel="stylesheet">
+
+  <style>
+    /* 修改 MathJax 独立公式的默认居中行为，使其左对齐并匹配内边距
+    mjx-container[jax="CHTML"][display="true"] {
+      text-align: left !important;
+      margin: 0 !important;
+    } */
+  </style>
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      chtml: {
+        matchFontHeight: false
+      }
+    };
+  </script>
+
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+
+</head>
+<body>
+
+<div class="hero">
+  <div class="content">
+    <div class="hero-label">PBR · 微面元理论 · 能量守恒</div>
+    <h1>Kulla-Conty <em>近似</em><br>能量补偿学习笔记</h1>
+    <div class="hero-sub">SIGGRAPH 2017 · Sony Imageworks · Kulla & Conty</div>
+    <div class="hero-tags">
+      <span class="tag">多重散射</span>
+      <span class="tag">GGX BRDF</span>
+      <span class="tag">白炉测试</span>
+      <span class="tag">DFG LUT</span>
+      <span class="tag">HLSL</span>
+      <span class="tag">URP / UE5</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <p style="margin-top: 32px; font-size: 16px; color: var(--muted);">
+    <strong>Kulla-Conty 近似（Kulla-Conty Approximation）</strong>是基于物理的渲染（PBR）中用于解决高粗糙度材质能量丢失问题的标准方案。它由 Sony Imageworks 的 Kulla 和 Conty 在 2017 年的 SIGGRAPH 上提出。本文将从它的物理直觉、数学推导，以及在实际渲染管线（如 Unity / UE5 的 HLSL 着色器）中的工程实现来进行拆解。
+  </p>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">痛点：为什么我们需要能量补偿？</span>
+    </div>
+
+    <p>标准的微面元 BRDF 模型（如 Cook-Torrance GGX）基于<strong>单次散射（Single Scattering）</strong>假设。这意味着光线击中微面元后，只反弹一次就必须进入摄像机。</p>
+    <p>但在物理现实中，随着材质粗糙度（Roughness）增加，微面元的起伏变得剧烈。光线击中微面元后，很容易弹射到相邻的微面元上，发生<strong>多重散射（Multiple Scattering）</strong>。</p>
+    <p>由于标准 GGX 没有计算这些在微面元之间多次反弹后最终逃逸出来的光线，这部分能量在数学上就被当作“被吸收”而直接丢弃了，违背了能量守恒定律。</p>
+
+    <div class="insight-grid">
+      <div class="insight-card">
+        <span class="insight-card-icon">⚡</span>
+        <div class="insight-card-title">直接后果</div>
+        <p>粗糙度越高的金属或电介质，渲染结果看起来<strong>越发暗淡</strong>。</p>
+      </div>
+      <div class="insight-card blue">
+        <span class="insight-card-icon">🔁</span>
+        <div class="insight-card-title">根本原因</div>
+        <p>GGX 模型将多次弹射的光线统一视为“被遮挡”，不再追踪这些能量的去向。</p>
+      </div>
+      <div class="insight-card purple">
+        <span class="insight-card-icon">📐</span>
+        <div class="insight-card-title">数学含义</div>
+        <p>BRDF 的半球余弦积分（方向反照率）在高粗糙度时显著小于 1。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">核心原理：白炉测试（White Furnace Test）</span>
+    </div>
+
+    <p>验证能量守恒的黄金标准是<strong>白炉测试</strong>。</p>
+
+    <div class="callout">
+      <div class="callout-label">思想实验</div>
+      <p>假设我们将一个纯反射体（不吸收任何光线，$F_0 = 1$）放进一个四面八方辐射度为 1 的纯白环境光炉子中。根据能量守恒定律，这个物体无论粗糙度多高，它反射出的总光量也应该恒为 1，在纯白背景中应该完全“隐形”。</p>
+    </div>
+
+    <p>然而，单次散射 BRDF $f_{ss}$ 会在粗糙度较高时无法通过测试（反射积分小于 1，出现暗斑）。Kulla-Conty 的核心思想就是：<strong>算出单次散射丢失的这部分能量，并构造一个新的多次散射 BRDF 波瓣 $f_{ms}$，把这部分能量精准地补回去。</strong></p>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">Kulla-Conty 补偿的数学推导</span>
+    </div>
+
+    <p>推导过程分为两步：先推导理想纯反射体（无菲涅尔吸收），再引入菲涅尔项。</p>
+
+    <br>
+    <p><strong>3.1 理想反射体的多重散射波瓣（$F=1$）</strong></p>
+    <p>首先，我们定义单次散射的方向反照率（Directional Albedo） $E(v)$，即从观察方向 $v$ 看去，单次散射能反射出的总能量比例：</p>
+    <div class="math-block">
+      <div class="math-label">单次散射方向反照率</div>
+      <div class="math-eq">
+        $$E(v) = \int_{\Omega} f_{ss}(v, l) (n \cdot l) dl$$
+      </div>
+    </div>
+
+    <p>由于理想反射体应该反射所有能量，那么丢失的能量就是 $1 - E(v)$。我们需要构造一个多重散射波瓣 $f_{ms}(v, l)$，使其积分恰好等于丢失的能量：</p>
+    <div class="math-block">
+      <div class="math-eq">
+        $$\int_{\Omega} f_{ms}(v, l) (n \cdot l) dl = 1 - E(v)$$
+      </div>
+    </div>
+
+    <p>为了满足微面元理论的<strong>亥姆霍兹互易性</strong>（即 $f(v, l) = f(l, v)$），Kulla 和 Conty 将 $f_{ms}$ 假设为分离变量的形式（$c$ 为归一化常数）：</p>
+    <div class="math-block">
+      <div class="math-eq">
+        $$f_{ms}(v, l) = c \cdot (1 - E(v))(1 - E(l))$$
+      </div>
+    </div>
+
+    <p>将上式代入积分来求解 $c$，并提取出常数项 $c(1 - E(v))$：</p>
+    <div class="math-block">
+      <div class="math-eq">
+        $$c \cdot \int_{\Omega} (1 - E(l)) (n \cdot l) dl = 1$$
+      </div>
+    </div>
+
+    <p>将积分拆开，考虑到半球余弦积分 $\int_{\Omega} (n \cdot l) dl = \pi$，且定义 $E$ 在半球上的余弦加权平均为 $E_{avg}$（即 $\int_{\Omega} E(l)(n \cdot l)dl = \pi E_{avg}$），我们可以得到解：</p>
+    <div class="math-block">
+      <div class="math-label">归一化常数求解</div>
+      <div class="math-eq">
+        $$c \cdot (\pi - \pi E_{avg}) = 1 \implies c = \frac{1}{\pi (1 - E_{avg})}$$
+      </div>
+    </div>
+
+    <p>因此，理想反射体的多重散射项为：</p>
+    <div class="math-block">
+      <div class="math-label">最终理想反射体多重散射项</div>
+      <div class="math-eq">
+        $$f_{ms, F=1}(v, l) = \frac{(1 - E(v))(1 - E(l))}{\pi (1 - E_{avg})}$$
+      </div>
+    </div>
+
+    <hr>
+
+    <p><strong>3.2 引入菲涅尔吸收（$F < 1$）</strong></p>
+    <p>实际材质有菲涅尔效应，光线每次碰撞都会被材质吸收一部分。假设单次碰撞的平均菲涅尔反射率为 $F_{avg}$。</p>
+    <p>光线在微面元“峡谷”中每次弹射，都会有 $E_{avg}$ 比例的能量逃逸，剩下的 $(1 - E_{avg})$ 比例的光线继续在内部弹射，并在下一次碰撞时被 $F_{avg}$ 再次衰减。这是一个无限等比数列（Geometric Series）求和的过程。把所有由于多重弹射逃逸出来的能量累加起来，得到多重散射的颜色乘子 $F_{ms}$：</p>
+
+    <div class="math-block">
+      <div class="math-label">多重散射颜色乘子</div>
+      <div class="math-eq">
+        $$F_{ms} = \frac{F_{avg} E_{avg}}{1 - F_{avg}(1 - E_{avg})}$$
+      </div>
+    </div>
+
+    <div class="math-block">
+      <div class="math-label">完整能量守恒 BRDF</div>
+      <div class="math-eq">
+        $$f_{total}(v, l) = f_{ss}(v, l) + \frac{F_{ms} (1 - E(v))(1 - E(l))}{\pi (1 - E_{avg})}$$
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">在引擎中的工程实现 (HLSL)</span>
+    </div>
+
+    <p>在工业界实战中（如 Unity URP/HDRP 或 UE5 的管线），不可能实时去计算上述复杂的半球积分。主流做法是依靠<strong>预计算（Precomputation）</strong>和<strong>低阶多项式拟合</strong>。</p>
+
+    <div class="callout blue">
+      <div class="callout-label">核心优化策略</div>
+      <p>不引入额外贴图，完美复用现有的基于图像的照明（IBL）<strong>环境光 DFG LUT</strong>，以极低开销完成补偿。</p>
+    </div>
+
+    <ul class="step-list">
+      <li>
+        <span class="step-num">S1</span>
+        <span>
+          <strong>复用 IBL 的 DFG LUT 读取 $E(v)$ 与 $E(l)$</strong><br>
+          DFG LUT 的 R 通道（Scale）和 G 通道（Bias）本质上就是单次散射积分的近似参数：$E(v) = F_0 \cdot \text{Scale} + \text{Bias}$。<br>
+          因为当前计算的是理想无吸收状态的能量（强制 $F_0 = 1$），所以代码中可以直接读取：$E(v) = \text{Scale} + \text{Bias}$。
+        </span>
+      </li>
+      <li>
+        <span class="step-num">S2</span>
+        <span>
+          <strong>多项式拟合 $E_{avg}$</strong><br>
+          $E_{avg}$ 是 $E(v)$ 在整个半球上的积分，仅依赖粗糙度。它在坐标系中是一条平滑的 1D 曲线，直接用廉价多项式拟合即可。
+        </span>
+      </li>
+      <li>
+        <span class="step-num">S3</span>
+        <span>
+          <strong>Schlick 近似 $F_{avg}$</strong><br>
+          利用 Schlick 近似法对半球积分求解，得到极度优化的解析解：$F_{avg} = F_0 + \frac{1}{21}(1 - F_0)$。
+        </span>
+      </li>
+      <li>
+        <span class="step-num">S4</span>
+        <span><strong>组装多重散射项并叠加到最终 BRDF</strong></span>
+      </li>
+    </ul>
+
+<pre data-lang="HLSL"><code><span class="cm">// ── Step 1: E(v) / E(l) from DFG LUT ────────────────────────</span>
+<span class="cm">// uv.x = NdotV, uv.y = Roughness</span>
+<span class="ty">float2</span> dfg  <span class="op">=</span> DFG_LUT.<span class="nm">SampleLevel</span>(sampler_DFG_LUT, uv, <span class="nm">0</span>).rg;
+<span class="ty">float</span>  E_v  <span class="op">=</span> dfg.r <span class="op">+</span> dfg.g;   <span class="cm">// F0=1 假设</span>
+
+<span class="ty">float2</span> dfgL <span class="op">=</span> DFG_LUT.<span class="nm">SampleLevel</span>(sampler_DFG_LUT, uvL, <span class="nm">0</span>).rg;
+<span class="ty">float</span>  E_l  <span class="op">=</span> dfgL.r <span class="op">+</span> dfgL.g;
+
+<span class="cm">// ── Step 2: E_avg 多项式拟合 ────────────────────────────────</span>
+<span class="ty">float</span> <span class="nm">GetEavg</span>(<span class="ty">float</span> <span class="var">r</span>) {
+    <span class="cm">// 具体系数由离线曲线拟合得出，各引擎略有不同</span>
+    <span class="kw">return</span> <span class="nm">1.0</span> <span class="op">-</span> (<span class="var">r</span> <span class="op">*</span> <span class="nm">0.05</span> <span class="op">+</span> <span class="var">r</span> <span class="op">*</span> <span class="var">r</span> <span class="op">*</span> <span class="nm">0.45</span>);
+}
+<span class="ty">float</span> E_avg <span class="op">=</span> <span class="nm">GetEavg</span>(roughness);
+
+<span class="cm">// ── Step 3: F_avg（Schlick 解析近似）───────────────────────</span>
+<span class="ty">float3</span> F_avg <span class="op">=</span> F0 <span class="op">+</span> (<span class="nm">1.0</span> <span class="op">-</span> F0) <span class="op">/</span> <span class="nm">21.0</span>;
+
+<span class="cm">// ── Step 4: 组装最终多重散射项 ──────────────────────────────</span>
+<span class="ty">float3</span> f_ms_color  <span class="op">=</span> (F_avg <span class="op">*</span> E_avg) <span class="op">/</span> (<span class="nm">1.0</span> <span class="op">-</span> F_avg <span class="op">*</span> (<span class="nm">1.0</span> <span class="op">-</span> E_avg));
+<span class="ty">float</span>  f_ms_factor <span class="op">=</span> (<span class="nm">1.0</span> <span class="op">-</span> E_v) <span class="op">*</span> (<span class="nm">1.0</span> <span class="op">-</span> E_l) <span class="op">/</span> (PI <span class="op">*</span> (<span class="nm">1.0</span> <span class="op">-</span> E_avg));
+
+<span class="ty">float3</span> multiple_scattering <span class="op">=</span> f_ms_color <span class="op">*</span> f_ms_factor;
+
+<span class="cm">// ── Final BRDF ──────────────────────────────────────────────</span>
+<span class="ty">float3</span> final_brdf <span class="op">=</span> single_scattering_brdf <span class="op">+</span> multiple_scattering;
+</code></pre>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <span class="section-title">符号速查表</span>
+    </div>
+
+    <table class="formula-table">
+      <thead>
+        <tr>
+          <th>符号</th>
+          <th>含义</th>
+          <th>取值 / 说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>$E(v)$</td>
+          <td>单次散射方向反照率</td>
+          <td>从 DFG LUT 读取（R + G），取值 [0, 1]</td>
+        </tr>
+        <tr>
+          <td>$E_{avg}$</td>
+          <td>$E(v)$ 的余弦加权半球均值</td>
+          <td>仅依赖粗糙度，用多项式拟合</td>
+        </tr>
+        <tr>
+          <td>$F_{avg}$</td>
+          <td>菲涅尔反射率的半球平均</td>
+          <td>$F_0 + (1 - F_0) / 21$</td>
+        </tr>
+        <tr>
+          <td>$f_{ss}$</td>
+          <td>标准单次散射 BRDF</td>
+          <td>Cook-Torrance GGX</td>
+        </tr>
+        <tr>
+          <td>$f_{ms}$</td>
+          <td>多重散射补偿波瓣</td>
+          <td>Kulla-Conty 构造，满足互易性</td>
+        </tr>
+        <tr>
+          <td>$F_{ms}$</td>
+          <td>多重散射颜色乘子</td>
+          <td>无限等比数列求和，包含菲涅尔衰减</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="summary-box">
+    <h2>核心思想总结</h2>
+    <p>Kulla-Conty 近似的本质，是通过宏观的能量守恒要求（<strong>白炉测试</strong>），逆向反推出微观上多重散射应该补偿的能量分布。它以极其优雅的方式解决了高粗糙度材质发暗的视觉缺陷，而且在工程落地时能够完美复用引擎中现存的 DFG LUT，开销极低。目前它已成为现代实时渲染（如 Unity/UE5）和离线路径追踪器处理微面元多次散射的底层标配逻辑。</p>
+  </div>
+
+</div>
+
+<div class="floating-controls">
+  <a href="/" class="float-btn home-btn" title="回到首页">⌂</a>
+  <button id="backToTopBtn" class="float-btn top-btn" title="回到顶部">↑</button>
+</div>
+
+<script>
+  const backToTopBtn = document.getElementById('backToTopBtn');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.add('show');
+    } else {
+      backToTopBtn.classList.remove('show');
+    }
+  });
+
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+</script>
+
+</body>
+</html>
