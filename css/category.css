@@ -4,7 +4,7 @@
   display: block;
   max-width: 900px;
   padding: 0 20px;
-  margin: 20px auto;
+  margin-top: 40px;
 }
 .wall-category--plain .wall-category-title {
   align-items: center;
@@ -13,8 +13,8 @@
   font-weight: bold;
 }
 .wall-category--plain .wall-category-title .title-icon {
-  height: 1.733333333333333em;
-  width: 1.733333333333333em;
+  height: 1.04em;
+  width: 1.04em;
   margin-right: 10px;
 }
 .wall-category--plain .wall-category-description {
@@ -40,7 +40,7 @@
 .post-card--sticky {
   display: block;
   margin: 4px 0;
-  padding: 20px;
+  padding: 4px 20px;
 }
 .post-card--sticky,
 .post-card--sticky--sticky {
@@ -169,7 +169,7 @@
 .wall-category-description {
   font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
   text-align: center;
-  margin: 16px 0 32px 0;
+  margin: 16px 0 4px 0;
   color: #6b6863;
   font-style: italic;
 }
