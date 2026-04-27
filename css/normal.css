@@ -1,6 +1,6 @@
 html {
   font-family: -apple-system, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 17px;
+  font-size: clamp(15px, 1.4375rem, 18px);
   color: #393633;
   text-align: justify;
   scroll-behavior: smooth;
@@ -16,7 +16,7 @@ body {
   background-color: #f8f8f6; /* 应用 #f8f8f6 */
   color: #393633;
   text-align: justify;
-  line-height: 1.8; /* 优化行高 */
+  line-height: 1.75; /* 优化行高 */
   letter-spacing: 0.02em; /* 增加微小的字间距 */
   -webkit-font-smoothing: antialiased; /* 让字体渲染更清爽 */
 }
@@ -81,6 +81,7 @@ table {
   font-size: 0.9em;
   width: 100%;
   margin: 0 0 20px;
+  overflow-x: auto;
 }
 caption,
 td,
@@ -114,13 +115,6 @@ img,
 video {
   max-width: 100%;
 }
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-  font-size: 0.9em;
-  width: 100%;
-  margin: 0 0 20px;
-}
 caption,
 td,
 th {
@@ -141,10 +135,4 @@ figure figcaption {
   text-align: center;
   font-size: 0.85em;
   color: $blak-lighter;
-}
-p img,
-figure img {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
 }

@@ -835,21 +835,14 @@
     transform: translateY(-50%) scale(1);
   }
 }
-/* 禁止 iOS 擅自放大字体 === */
-html,
-body {
-  -webkit-text-size-adjust: 100% !important;
-  text-size-adjust: 100% !important;
-}
 .body {
   line-height: 2em;
-  padding-left: 50px;
-  padding-right: 50px;
+  padding-left: clamp(16px, 4vw, 80px);
+  padding-right: clamp(16px, 4vw, 80px);
 }
 .post-inner {
   margin: 0 auto;
-  max-width: 920px;
-/* 当屏幕宽度大于等于 768px（平板和 PC 端）时，采用更大的高度或比例 */
+  max-width: 90ch;
 }
 .post-inner .post-banner {
   width: 100%;
@@ -857,14 +850,8 @@ body {
   background-color: #f4f4f5;
   position: relative;
 /* 默认：移动端和小屏幕的高度 */
-  height: 160px;
+  height: clamp(140px, 20vw, 240px);
   margin-bottom: 8px;
-}
-@media (min-width: 768px) {
-  .post-inner .post-banner {
-    height: 220px;
-/* 或者在这里写 aspect-ratio: 21 / 9; */
-  }
 }
 .post-inner .post-banner img {
   width: 100%;
@@ -894,19 +881,14 @@ body {
   margin: 0 auto;
 }
 /* 文章正文段落 */
-.post-content p,
-.post-content li {
-  font-size: 17px;
+.post-content p {
+  font-size: clamp(15px, 1.4375rem, 18px);
   color: #393633;
-  text-align: justify !important; /* 强制两端对齐，解决右侧狗牙边 */
-  text-justify: inter-ideograph !important; /* 开启中英混排底层优化算法 */
-  word-break: normal !important; /* 恢复自然断句，不强行切断单词 */
 }
 .post-gallery {
   align-items: center;
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: 1fr 1fr 1fr;
   margin-bottom: 20px;
 }
 .post-title {
@@ -978,82 +960,4 @@ body {
   .post-inner--toc .post-content__body {
     max-width: 100%;
   }
-}
-@media screen and (max-width: 1023px) {
-  .body {
-    padding-left: 30px;
-    padding-right: 30px;
-  }
-  .post-gallery {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-/* =========================================
-   移动端排版：高信息密度阅读模式 (语雀参考版)
-   ========================================= */
-@media screen and (max-width: 768px) {
-  .post-content__body,
-  .now-content,
-  .page-content {
-    font-size: 15px !important; /* 缩小基础字号，提升单行信息量 */
-    line-height: 1.7 !important; /* 压缩行高，使段落更具物理凝聚力 */
-    letter-spacing: 0.2px !important; /* 减小字间距，消除松散感 */
-    color: #333 !important; /* 稍微加深正文颜色，提升对比度 */
-  }
-  .post-content__body p,
-  .now-content p {
-    margin-top: 0 !important;
-    margin-bottom: 14px !important; /* 压缩段落间距 */
-  }
-  .post-content__body ul,
-  .post-content__body ol {
-    padding-left: 20px !important; /* 缩小列表缩进，节省左侧横向空间 */
-    margin-bottom: 14px !important;
-  }
-  .post-content__body li,
-  .now-content li {
-    margin-bottom: 6px !important;
-    line-height: 1.65 !important;
-  }
-  .post-content__body h2 {
-    font-size: 19px !important;
-    margin: 28px 0 12px 0 !important;
-    padding-bottom: 4px !important;
-  }
-  .post-content__body h3 {
-    font-size: 17px !important;
-    margin: 24px 0 10px 0 !important;
-  }
-  .post-content__body h4 {
-    font-size: 15px !important;
-    margin: 18px 0 8px 0 !important;
-    font-weight: bold !important;
-  }
-  .post-content__body blockquote,
-  .md-note,
-  .md-glk {
-    padding: 12px 16px !important;
-    margin: 16px 0 !important;
-    font-size: 14.5px !important; /* 辅助内容字号进一步微调 */
-    line-height: 1.6 !important;
-  }
-  .post-title {
-    font-size: 22px !important;
-    line-height: 1.4 !important;
-    margin-bottom: 12px !important;
-    letter-spacing: 1px !important;
-  }
-  strong,
-  b {
-    font-weight: 600 !important; /* 避免在小字号下字重过高糊成一团 */
-  }
-}
-/* 2. 优化中英混排：对行内代码 <code> 进行视觉物理分割 */
-.post-content__body p code,
-.post-content__body li code {
-  margin: 0 4px !important;
-  padding: 2px 6px !important;
-  font-family: consolas, Menlo, "Fira Code", monospace !important;
-  font-size: 0.85em !important;
-  word-break: break-word !important; /* 允许超长变量名自然换行 */
 }
