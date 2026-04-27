@@ -322,6 +322,7 @@ mjx-container {
 }
 .post-date {
   margin: 0 10px;
+  font-size: 0.85rem;
 }
 .post-tag {
   text-decoration: none;

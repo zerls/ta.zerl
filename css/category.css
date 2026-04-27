@@ -9,7 +9,7 @@
 .wall-category--plain .wall-category-title {
   align-items: center;
   justify-content: flex-start;
-  font-size: clamp(1.5rem, 3.5rem, 2.5rem);
+  font-size: clamp(1.5rem, 3.5rem, 2rem);
   font-weight: bold;
 }
 .wall-category--plain .wall-category-title .title-icon {
