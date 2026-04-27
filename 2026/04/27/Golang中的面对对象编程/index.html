@@ -64,119 +64,10 @@
     <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
   
 
-  <meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
-  direction: ltr;
-}
 
-mjx-container[jax="SVG"] > svg {
-  overflow: visible;
-}
 
-mjx-container[jax="SVG"][display="true"] {
-  display: block;
-  text-align: center;
-  margin: 1em 0;
-}
-
-mjx-container[jax="SVG"][justify="left"] {
-  text-align: left;
-}
-
-mjx-container[jax="SVG"][justify="right"] {
-  text-align: right;
-}
-
-g[data-mml-node="merror"] > g {
-  fill: red;
-  stroke: red;
-}
-
-g[data-mml-node="merror"] > rect[data-background] {
-  fill: yellow;
-  stroke: none;
-}
-
-g[data-mml-node="mtable"] > line[data-line] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > rect[data-frame] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > .mjx-dashed {
-  stroke-dasharray: 140;
-}
-
-g[data-mml-node="mtable"] > .mjx-dotted {
-  stroke-linecap: round;
-  stroke-dasharray: 0,140;
-}
-
-g[data-mml-node="mtable"] > svg {
-  overflow: visible;
-}
-
-[jax="SVG"] mjx-tool {
-  display: inline-block;
-  position: relative;
-  width: 0;
-  height: 0;
-}
-
-[jax="SVG"] mjx-tool > mjx-tip {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-mjx-tool > mjx-tip {
-  display: inline-block;
-  padding: .2em;
-  border: 1px solid #888;
-  font-size: 70%;
-  background-color: #F8F8F8;
-  color: black;
-  box-shadow: 2px 2px 5px #AAAAAA;
-}
-
-g[data-mml-node="maction"][data-toggle] {
-  cursor: pointer;
-}
-
-mjx-status {
-  display: block;
-  position: fixed;
-  left: 1em;
-  bottom: 1em;
-  min-width: 25%;
-  padding: .2em .4em;
-  border: 1px solid #888;
-  font-size: 90%;
-  background-color: #F8F8F8;
-  color: black;
-}
-
-foreignObject[data-mjx-xml] {
-  font-family: initial;
-  line-height: normal;
-  overflow: visible;
-}
-
-.MathJax path {
-  stroke-width: 3;
-}
-
-mjx-container[display="true"] {
-  overflow: auto hidden;
-}
-
-mjx-container[display="true"] + br {
-  display: none;
-}
-</style></head>
+    
+  <meta name="generator" content="Hexo 7.3.0"></head>
   <body>
     
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
@@ -280,26 +171,26 @@ mjx-container[display="true"] + br {
         <p>在 Go 语言中，传统面向对象编程（OOP）的核心概念——类、继承——被重新诠释，以更简洁、更符合 Go 哲学的方式实现。本文详细介绍如何在 Go 中实现<strong>封装、继承、多态与抽象</strong>四大特性。</p>
 <span id="more"></span>
 <hr>
-<h2 id="1-封装（Encapsulation）"><a href="#1-封装（Encapsulation）" class="headerlink" title="1. 封装（Encapsulation）"></a>1. 封装（Encapsulation）</h2><p>Go 通过<strong>命名规则</strong>与<strong>方法绑定</strong>实现封装，而非依赖 <code>public</code>/<code>private</code> 关键字：</p>
+<h2 id="1-封装（Encapsulation）"><a href="#1-封装（Encapsulation）" class="headerlink" title="1. 封装（Encapsulation）"></a>1. 封装（Encapsulation）</h2><p>Go 通过<strong>命名规则</strong>与<strong>方法绑定</strong>实现封装，而非依赖 <code>public</code>&#x2F;<code>private</code> 关键字：</p>
 <ul>
 <li><strong>访问控制</strong>：标识符首字母大写（<code>PublicField</code>）表示包外可见，小写（<code>privateField</code>）则仅包内可用。</li>
 <li><strong>方法绑定</strong>：通过为结构体定义方法，将数据与行为统一封装。</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> BankAccount <span class="hljs-keyword">struct</span> {<br>    owner   <span class="hljs-type">string</span>  <span class="hljs-comment">// 私有字段</span><br>    balance <span class="hljs-type">float64</span> <span class="hljs-comment">// 私有字段</span><br>}<br><br><span class="hljs-comment">// 公开方法</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(b *BankAccount)</span></span> Deposit(amount <span class="hljs-type">float64</span>) {<br>    <span class="hljs-keyword">if</span> b.validateAmount(amount) {<br>        b.balance += amount<br>    }<br>}<br><br><span class="hljs-comment">// 私有方法（仅包内可用）</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(b *BankAccount)</span></span> validateAmount(amount <span class="hljs-type">float64</span>) <span class="hljs-type">bool</span> {<br>    <span class="hljs-keyword">return</span> amount &gt; <span class="hljs-number">0</span><br>}<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> BankAccount <span class="hljs-keyword">struct</span> &#123;<br>    owner   <span class="hljs-type">string</span>  <span class="hljs-comment">// 私有字段</span><br>    balance <span class="hljs-type">float64</span> <span class="hljs-comment">// 私有字段</span><br>&#125;<br><br><span class="hljs-comment">// 公开方法</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(b *BankAccount)</span></span> Deposit(amount <span class="hljs-type">float64</span>) &#123;<br>    <span class="hljs-keyword">if</span> b.validateAmount(amount) &#123;<br>        b.balance += amount<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 私有方法（仅包内可用）</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(b *BankAccount)</span></span> validateAmount(amount <span class="hljs-type">float64</span>) <span class="hljs-type">bool</span> &#123;<br>    <span class="hljs-keyword">return</span> amount &gt; <span class="hljs-number">0</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h2 id="2-继承（Inheritance）"><a href="#2-继承（Inheritance）" class="headerlink" title="2. 继承（Inheritance）"></a>2. 继承（Inheritance）</h2><p>  Go 不支持传统的类继承，而是以**结构体组合（Composition）**替代，体现了”组合优于继承”的设计哲学。</p>
 <h3 id="2-1-结构体嵌入"><a href="#2-1-结构体嵌入" class="headerlink" title="2.1 结构体嵌入"></a>2.1 结构体嵌入</h3><p>  通过匿名嵌入，子结构体可以直接复用父结构体的字段与方法：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Animal <span class="hljs-keyword">struct</span> {<br>    Name <span class="hljs-type">string</span><br>}<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(a *Animal)</span></span> Speak() {<br>    fmt.Println(<span class="hljs-string">"Animal sound"</span>)<br>}<br><br><span class="hljs-keyword">type</span> Dog <span class="hljs-keyword">struct</span> {<br>    Animal <span class="hljs-comment">// 匿名嵌入，复用 Animal 的字段和方法</span><br>    Breed  <span class="hljs-type">string</span><br>}<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {<br>    d := Dog{Animal: Animal{Name: <span class="hljs-string">"Buddy"</span>}, Breed: <span class="hljs-string">"Labrador"</span>}<br>    d.Speak() <span class="hljs-comment">// 输出: Animal sound</span><br>}<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Animal <span class="hljs-keyword">struct</span> &#123;<br>    Name <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(a *Animal)</span></span> Speak() &#123;<br>    fmt.Println(<span class="hljs-string">&quot;Animal sound&quot;</span>)<br>&#125;<br><br><span class="hljs-keyword">type</span> Dog <span class="hljs-keyword">struct</span> &#123;<br>    Animal <span class="hljs-comment">// 匿名嵌入，复用 Animal 的字段和方法</span><br>    Breed  <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    d := Dog&#123;Animal: Animal&#123;Name: <span class="hljs-string">&quot;Buddy&quot;</span>&#125;, Breed: <span class="hljs-string">&quot;Labrador&quot;</span>&#125;<br>    d.Speak() <span class="hljs-comment">// 输出: Animal sound</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h3 id="2-2-方法重写（Override）"><a href="#2-2-方法重写（Override）" class="headerlink" title="2.2 方法重写（Override）"></a>2.2 方法重写（Override）</h3><p>为子结构体定义同名方法即可覆盖嵌入类型的实现，原方法仍可通过显式路径调用：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(d *Dog)</span></span> Speak() {<br>    fmt.Println(<span class="hljs-string">"Woof!"</span>)<br>}<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {<br>    d := Dog{Animal: Animal{Name: <span class="hljs-string">"Buddy"</span>}, Breed: <span class="hljs-string">"Labrador"</span>}<br>    d.Speak()        <span class="hljs-comment">// 输出: Woof!（重写方法）</span><br>    d.Animal.Speak() <span class="hljs-comment">// 输出: Animal sound（调用嵌入结构体的原方法）</span><br>}<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(d *Dog)</span></span> Speak() &#123;<br>    fmt.Println(<span class="hljs-string">&quot;Woof!&quot;</span>)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    d := Dog&#123;Animal: Animal&#123;Name: <span class="hljs-string">&quot;Buddy&quot;</span>&#125;, Breed: <span class="hljs-string">&quot;Labrador&quot;</span>&#125;<br>    d.Speak()        <span class="hljs-comment">// 输出: Woof!（重写方法）</span><br>    d.Animal.Speak() <span class="hljs-comment">// 输出: Animal sound（调用嵌入结构体的原方法）</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h2 id="3-多态（Polymorphism）"><a href="#3-多态（Polymorphism）" class="headerlink" title="3. 多态（Polymorphism）"></a>3. 多态（Polymorphism）</h2><p>  Go 通过接口（Interface）实现多态，其最大特点是隐式实现——任何类型只要实现了接口定义的所有方法，便自动满足该接口，无需显式声明。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Shape <span class="hljs-keyword">interface</span> {<br>    Area() <span class="hljs-type">float64</span><br>}<br><br><span class="hljs-keyword">type</span> Circle <span class="hljs-keyword">struct</span> {<br>    Radius <span class="hljs-type">float64</span><br>}<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c Circle)</span></span> Area() <span class="hljs-type">float64</span> {<br>    <span class="hljs-keyword">return</span> math.Pi * c.Radius * c.Radius<br>}<br><br><span class="hljs-keyword">type</span> Rectangle <span class="hljs-keyword">struct</span> {<br>    Width, Height <span class="hljs-type">float64</span><br>}<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Rectangle)</span></span> Area() <span class="hljs-type">float64</span> {<br>    <span class="hljs-keyword">return</span> r.Width * r.Height<br>}<br><br><span class="hljs-comment">// 统一处理不同类型</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">PrintArea</span><span class="hljs-params">(s Shape)</span></span> {<br>    fmt.Printf(<span class="hljs-string">"Area: %.2f\n"</span>, s.Area())<br>}<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {<br>    shapes := []Shape{<br>        Circle{Radius: <span class="hljs-number">5</span>},<br>        Rectangle{Width: <span class="hljs-number">3</span>, Height: <span class="hljs-number">4</span>},<br>    }<br>    <span class="hljs-keyword">for</span> _, s := <span class="hljs-keyword">range</span> shapes {<br>        PrintArea(s)<br>    }<br>}<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Shape <span class="hljs-keyword">interface</span> &#123;<br>    Area() <span class="hljs-type">float64</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Circle <span class="hljs-keyword">struct</span> &#123;<br>    Radius <span class="hljs-type">float64</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c Circle)</span></span> Area() <span class="hljs-type">float64</span> &#123;<br>    <span class="hljs-keyword">return</span> math.Pi * c.Radius * c.Radius<br>&#125;<br><br><span class="hljs-keyword">type</span> Rectangle <span class="hljs-keyword">struct</span> &#123;<br>    Width, Height <span class="hljs-type">float64</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Rectangle)</span></span> Area() <span class="hljs-type">float64</span> &#123;<br>    <span class="hljs-keyword">return</span> r.Width * r.Height<br>&#125;<br><br><span class="hljs-comment">// 统一处理不同类型</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">PrintArea</span><span class="hljs-params">(s Shape)</span></span> &#123;<br>    fmt.Printf(<span class="hljs-string">&quot;Area: %.2f\n&quot;</span>, s.Area())<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    shapes := []Shape&#123;<br>        Circle&#123;Radius: <span class="hljs-number">5</span>&#125;,<br>        Rectangle&#123;Width: <span class="hljs-number">3</span>, Height: <span class="hljs-number">4</span>&#125;,<br>    &#125;<br>    <span class="hljs-keyword">for</span> _, s := <span class="hljs-keyword">range</span> shapes &#123;<br>        PrintArea(s)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>相较于 Java/C# 需要显式声明 implements，Go 的隐式接口实现大幅降低了类型之间的耦合度。</p>
+<p>相较于 Java&#x2F;C# 需要显式声明 implements，Go 的隐式接口实现大幅降低了类型之间的耦合度。</p>
 <h2 id="4-抽象（Abstraction）"><a href="#4-抽象（Abstraction）" class="headerlink" title="4. 抽象（Abstraction）"></a>4. 抽象（Abstraction）</h2><p>  Go 通过接口与未导出类型的组合实现抽象：接口暴露行为契约，具体实现细节则对外隐藏。配合工厂函数模式，调用方只需依赖接口，无需关心底层实现。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 定义抽象行为</span><br><span class="hljs-keyword">type</span> Database <span class="hljs-keyword">interface</span> {<br>    Connect() <span class="hljs-type">error</span><br>    Query(sql <span class="hljs-type">string</span>) ([]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>)<br>}<br><br><span class="hljs-comment">// 隐藏具体实现（未导出类型）</span><br><span class="hljs-keyword">type</span> mysqlDatabase <span class="hljs-keyword">struct</span> {<br>    connStr <span class="hljs-type">string</span><br>}<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *mysqlDatabase)</span></span> Connect() <span class="hljs-type">error</span> {<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>}<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *mysqlDatabase)</span></span> Query(sql <span class="hljs-type">string</span>) ([]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) {<br>    <span class="hljs-keyword">return</span> []<span class="hljs-type">string</span>{<span class="hljs-string">"result1"</span>, <span class="hljs-string">"result2"</span>}, <span class="hljs-literal">nil</span><br>}<br><br><span class="hljs-comment">// 工厂函数：返回接口类型，隐藏实现细节</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewMySQLDatabase</span><span class="hljs-params">(connStr <span class="hljs-type">string</span>)</span></span> Database {<br>    <span class="hljs-keyword">return</span> &amp;mysqlDatabase{connStr: connStr}<br>}<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {<br>    db := NewMySQLDatabase(<span class="hljs-string">"user:password@tcp(localhost:3306)/db"</span>)<br>    db.Connect()<br>    results, _ := db.Query(<span class="hljs-string">"SELECT * FROM users"</span>)<br>    fmt.Println(results)<br>}<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 定义抽象行为</span><br><span class="hljs-keyword">type</span> Database <span class="hljs-keyword">interface</span> &#123;<br>    Connect() <span class="hljs-type">error</span><br>    Query(sql <span class="hljs-type">string</span>) ([]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>)<br>&#125;<br><br><span class="hljs-comment">// 隐藏具体实现（未导出类型）</span><br><span class="hljs-keyword">type</span> mysqlDatabase <span class="hljs-keyword">struct</span> &#123;<br>    connStr <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *mysqlDatabase)</span></span> Connect() <span class="hljs-type">error</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *mysqlDatabase)</span></span> Query(sql <span class="hljs-type">string</span>) ([]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) &#123;<br>    <span class="hljs-keyword">return</span> []<span class="hljs-type">string</span>&#123;<span class="hljs-string">&quot;result1&quot;</span>, <span class="hljs-string">&quot;result2&quot;</span>&#125;, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-comment">// 工厂函数：返回接口类型，隐藏实现细节</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewMySQLDatabase</span><span class="hljs-params">(connStr <span class="hljs-type">string</span>)</span></span> Database &#123;<br>    <span class="hljs-keyword">return</span> &amp;mysqlDatabase&#123;connStr: connStr&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    db := NewMySQLDatabase(<span class="hljs-string">&quot;user:password@tcp(localhost:3306)/db&quot;</span>)<br>    db.Connect()<br>    results, _ := db.Query(<span class="hljs-string">&quot;SELECT * FROM users&quot;</span>)<br>    fmt.Println(results)<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <hr>
 <h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>Go 与传统 OOP 语言的关键区别如下：</p>
@@ -308,13 +199,13 @@ mjx-container[display="true"] + br {
 <tr>
 <th>特性</th>
 <th>Go</th>
-<th>Java / C#</th>
+<th>Java &#x2F; C#</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>封装</td>
 <td>首字母大小写命名规则</td>
-<td><code>public</code> / <code>private</code> 关键字</td>
+<td><code>public</code> &#x2F; <code>private</code> 关键字</td>
 </tr>
 <tr>
 <td>继承</td>
@@ -329,7 +220,7 @@ mjx-container[display="true"] + br {
 <tr>
 <td>抽象</td>
 <td>接口 + 工厂函数</td>
-<td>抽象类 / 接口</td>
+<td>抽象类 &#x2F; 接口</td>
 </tr>
 </tbody></table>
 <p>最佳实践<br>	1.	优先组合而非继承：Go 的结构体嵌入天然鼓励组合，避免深层继承链带来的耦合问题。<br>	2.	保持接口小而专一：遵循单一职责原则，一个接口只描述一类行为（参考标准库中的 io.Reader、io.Writer）。<br>	3.	面向接口编程：函数参数和返回值尽量使用接口类型，而非具体类型，以提升代码的灵活性与可测试性。</p>
