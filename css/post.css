@@ -642,8 +642,9 @@
 }
 .floating-tools {
   position: fixed;
-  right: 30px;
-  bottom: 40px;
+/* 【流式优化】根据屏幕自适应边缘距离，小屏幕自动贴边 */
+  right: clamp(15px, 3vw, 30px);
+  bottom: clamp(20px, 4vw, 40px);
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -652,7 +653,8 @@
 .tool-btn {
   width: 44px;
   height: 44px;
-  border-radius: 8px; /* 方正印章感 */
+  border-radius: 8px;
+/* 方正印章感 */
   background: rgba(248,248,246,0.9);
   border: 1px solid #e3e3e0;
   backdrop-filter: blur(8px);
@@ -691,8 +693,10 @@
   position: sticky;
   top: 100px;
   float: right;
-  width: 250px;
-  margin-right: -360px;
+/* 【流式优化】让 TOC 宽度动态伸缩，保底 180px，最大 260px */
+  width: clamp(180px, 16vw, 260px);
+/* 【流式优化】负边距根据 TOC 的实际宽度 + 一个动态 Gap(2vw) 计算，彻底避免挤压正文或溢出屏幕 */
+  margin-right: calc(-1 * clamp(180px, 16vw, 260px) - clamp(80px, 2vw, 100px));
   max-height: calc(100vh - 140px);
   padding: 15px 15px 15px 20px;
   border-radius: 0 4px 4px 0;
@@ -741,6 +745,10 @@
   line-height: 1.5;
   display: block;
   transition: all 0.2s ease;
+/* 【流式优化】防止长英文或代码标题撑破 TOC 侧边栏 */
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 .toc-outer .post-toc-link:hover {
   color: #e03636;
@@ -779,7 +787,8 @@
     right: 0;
     height: 100vh;
     max-height: 100vh;
-    width: 280px;
+/* 【流式优化】防止极窄屏幕（如 320px）被 280px 的 TOC 完全铺满，保留 15% 可点击关闭的空白区 */
+    width: 85vw;
     margin: 0;
     border-radius: 0;
     border-left: 1px solid rgba(227,227,224,0.5);
