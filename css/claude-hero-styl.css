@@ -26,6 +26,18 @@ line-height: 1.85;
 padding: 0 0 80px;
 }
 
+
+/* ── Footer ── */
+footer {
+  text-align: center;
+  padding: 48px 32px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+footer a { color: var(--accent); text-decoration: none; }
+
 /* ── HERO ── */
 .hero {
 position: relative;

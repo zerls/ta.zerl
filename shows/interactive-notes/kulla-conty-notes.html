@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kulla-Conty 近似 — PBR 能量补偿学习笔记</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Serif+SC:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link href="./claude-hero-styl.css" rel="stylesheet">
+  <link href="/css/claude-hero-styl.css" rel="stylesheet">
 
   <style>
     /* 修改 MathJax 独立公式的默认居中行为，使其左对齐并匹配内边距
@@ -302,10 +302,14 @@
     <p>Kulla-Conty 近似的本质，是通过宏观的能量守恒要求（<strong>白炉测试</strong>），逆向反推出微观上多重散射应该补偿的能量分布。它以极其优雅的方式解决了高粗糙度材质发暗的视觉缺陷，而且在工程落地时能够完美复用引擎中现存的 DFG LUT，开销极低。目前它已成为现代实时渲染（如 Unity/UE5）和离线路径追踪器处理微面元多次散射的底层标配逻辑。</p>
   </div>
 
+  <footer>
+  <!-- <a href="/" class="float-btn home-btn">⌂</a> -->
+  <div style="margin-top:6px; color:rgba(90,100,120,0.5);">Interactive Notes · kulla-conty</div>
+</footer>
 </div>
 
 <div class="floating-controls">
-  <a href="/" class="float-btn home-btn" title="回到首页">⌂</a>
+  <a href="/shows/" class="float-btn home-btn" title="回到上级">⌂</a>
   <button id="backToTopBtn" class="float-btn top-btn" title="回到顶部">↑</button>
 </div>
 

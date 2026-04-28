@@ -6,7 +6,7 @@
 <title>GTAO — Ground-Truth Ambient Occlusion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Syne:wght@400;600;800&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
-<link href="./claude-hero-styl.css" rel="stylesheet">
+<link href="/css/claude-hero-styl.css" rel="stylesheet">
 <script>
   MathJax = {
     tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
@@ -441,17 +441,6 @@ mark {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9em;
 }
-
-/* ── Footer ── */
-footer {
-  text-align: center;
-  padding: 48px 32px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-}
-footer a { color: var(--accent); text-decoration: none; }
 
 /* ── Util ── */
 .flex { display: flex; gap: 16px; align-items: flex-start; }
@@ -947,13 +936,14 @@ tr:hover td { background: rgba(255,255,255,0.015); }
 
 
 <div class="floating-controls">
-  <a href="/" class="float-btn home-btn" title="回到首页">⌂</a>
+  <a href="/shows/" class="float-btn home-btn" title="回到上级">⌂</a>
   <button id="backToTopBtn" class="float-btn top-btn" title="回到顶部">↑</button>
 </div>
 
 </main>
 
 <footer>
+  <!-- <a href="/" class="float-btn home-btn">⌂</a> -->
   <div>整理自 Jimenez et al. SIGGRAPH 2016 · <em>Practical Realtime Strategies for Accurate Indirect Occlusion</em></div>
   <div style="margin-top:6px; color:rgba(90,100,120,0.5);">Interactive Notes · GTAO / GTSO</div>
 </footer>

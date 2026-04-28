@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CG Math Notes — 计算机图形学数学交互笔记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Syne:wght@400;600;800&family=Noto+Serif+SC:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="/css/claude-hero-styl.css" rel="stylesheet">
+
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+    chtml: { matchFontHeight: false },
+    startup: { typeset: false } // 为了配合 Tab 动态渲染
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<style>
+/* 补充的交互组件与定制样式 (基于 GTAO 的 UI 库扩展) */
+:root {
+  --bg: #0b0e14; --surface: #111620; --surface2: #1a2030; --border: #1e2738;
+  --accent: #e8c87a; --accent2: #6fc3d4; --accent3: #c97af5;
+  --text: #cdd6e8; --text-muted: #5a6a85; --code-bg: #0d1117;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Noto Serif SC', serif; line-height: 1.8; overflow-x: hidden; padding-bottom: 80px; }
+
+/* ── TOC ── */
+nav.toc { position: sticky; top: 0; z-index: 100; background: rgba(11,14,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 32px; }
+.toc-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 12px 0; }
+.toc-inner::-webkit-scrollbar { display: none; }
+.toc-btn { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-muted); background: none; border: 1px solid transparent; padding: 6px 14px; border-radius: 4px; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.toc-btn:hover, .toc-btn.active { color: var(--accent); border-color: rgba(232,200,122,0.3); background: rgba(232,200,122,0.08); }
+
+/* ── Tabs ── */
+.tabs { display: flex; gap: 4px; margin-bottom: 0; }
+.tab-btn { font-family: 'Space Mono', monospace; font-size: 11px; padding: 8px 18px; background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; cursor: pointer; transition: all 0.2s; }
+.tab-btn.active { background: var(--code-bg); color: var(--accent2); border-color: var(--border); }
+.tab-content { display: none; background: var(--code-bg); border: 1px solid var(--border); border-radius: 0 6px 6px 6px; padding: 24px; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+/* ── Interactive Demo Cards ── */
+.demo-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 28px; margin: 28px 0; }
+.demo-card h4 { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+canvas { display: block; border-radius: 6px; border: 1px solid var(--border); background: var(--code-bg); width: 100%; max-width: 600px; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; max-width: 600px; }
+.ctrl-row { display: flex; flex-direction: column; gap: 6px; }
+.ctrl-row label { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; }
+.ctrl-row label span { color: var(--accent2); }
+input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: var(--surface2); border-radius: 2px; outline: none; cursor: pointer; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent2); cursor: pointer; box-shadow: 0 0 8px rgba(111,195,212,0.3); }
+
+mark { background: rgba(232,200,122,0.15); color: var(--accent); padding: 2px 6px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="content">
+    <div class="hero-label">Mathematics for Computer Graphics</div>
+    <h1>计算机图形学<br><em>数学与交互笔记</em></h1>
+    <div class="hero-sub">线性代数 · 球面积分 · 概率统计 · 函数逼近</div>
+    <div class="hero-tags">
+      <span class="tag">Spherical Integral</span>
+      <span class="tag">Monte Carlo</span>
+      <span class="tag">Spherical Gaussians</span>
+      <span class="tag">Jacobian</span>
+    </div>
+  </div>
+</div>
+
+<nav class="toc">
+  <div class="toc-inner">
+    <button class="toc-btn active" onclick="scrollToSec('sec-overview')">01 全局概览</button>
+    <button class="toc-btn" onclick="scrollToSec('sec-spherical')">02 球面积分与立体角</button>
+    <button class="toc-btn" onclick="scrollToSec('sec-mc')">03 辐射度量与蒙特卡洛</button>
+    <button class="toc-btn" onclick="scrollToSec('sec-sg')">04 球面高斯 (SG)</button>
+  </div>
+</nav>
+
+<div class="content">
+
+  <div class="section" id="sec-overview">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">图形学数学体系全局概览</span>
+    </div>
+    <p>现代计算机图形学（尤其是实时渲染与离线路径追踪）建立在坚实的数学基础之上。我们将整个体系提炼为以下四大支柱：</p>
+
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="insight-card-title">📐 线性与几何代数</div>
+        <p><strong>向量与矩阵</strong>：点积(光照余弦项)、叉积(法线/面积元)。<br><strong>变换</strong>：齐次坐标、正交/透视投影、Rodrigues 旋转公式。<br><strong>四元数</strong>：万向节死锁解决、Slerp 插值。</p>
+      </div>
+      <div class="insight-card blue">
+        <div class="insight-card-title">📈 微积分与分析</div>
+        <p><strong>坐标系</strong>：球面坐标参数化、立体角面积元。<br><strong>微积分</strong>：Jacobian 换元积分、弧长公式。<br><strong>向量分析</strong>：梯度/散度、Gauss/Stokes 定理（可见性与光照积分）。</p>
+      </div>
+      <div class="insight-card purple">
+        <div class="insight-card-title">🎲 概率与统计</div>
+        <p><strong>分布</strong>：均匀、余弦加权、GGX 法线分布。<br><strong>蒙特卡洛</strong>：重要性采样 (IS)、多重重要性采样 (MIS)。<br><strong>方差</strong>：估计器收敛速度 $O(1/\sqrt{N})$。</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-card-title">✨ 函数逼近与数值计算</div>
+        <p><strong>展开</strong>：泰勒展开 (Shader 优化)、球谐函数 (SH, 低频环境光)。<br><strong>球面高斯 (SG)</strong>：高频光照与 SSS 拟合。<br><strong>求交</strong>：Möller–Trumbore (射线-三角)、分离轴定理 (SAT)。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="sec-spherical">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">微积分：球面坐标系与立体角积分</span>
+    </div>
+    
+    <p>在 BRDF 归一化、IBL 预计算以及渲染方程中，我们几乎无时无刻不在球面上做积分。理解**立体角微元（Solid Angle Differential）**的来源是图形学数学的必修课。</p>
+
+    <div class="math-block">
+      <div class="math-label">单位向量参数化</div>
+      <div class="math-eq">
+        $$ \omega(\theta,\phi) =  \begin{bmatrix} \sin\theta \cos\phi \\ \sin\theta \sin\phi \\ \cos\theta \end{bmatrix} $$
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">其中极角 $\theta \in [0,\pi]$，方位角 $\phi \in [0,2\pi)$。</p>
+    </div>
+
+    <h3>微元面积 $d\omega$ 的推导</h3>
+    <p>为什么立体角微元是 <mark>$d\omega = \sin\theta \, d\theta \, d\phi$</mark>？这里提供几何直观与代数严谨两种推导视角：</p>
+
+    <div class="tabs" style="margin-top:20px;">
+      <button class="tab-btn active" onclick="switchTab('tab-geo', this)">视角 A：几何弧长推导</button>
+      <button class="tab-btn" onclick="switchTab('tab-jac', this)">视角 B：Jacobian 行列式推导</button>
+    </div>
+
+    <div id="tab-geo" class="tab-content active">
+      <p>在球面上，考虑一个极小“矩形补丁”。</p>
+      <ul class="step-list">
+        <li>
+          <span class="step-num">1</span>
+          <span><strong>$\theta$ 方向弧长</strong>：固定 $\phi$，沿子午线移动 $d\theta$，弧长为 $ds_\theta = r \, d\theta$。</span>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <span><strong>$\phi$ 方向弧长</strong>：固定 $\theta$，绕 Z 轴旋转。由于此时旋转的真实半径（投影到 XY 平面）是 $r \sin\theta$，因此弧长为 $ds_\phi = r \sin\theta \, d\phi$。</span>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <span><strong>面积元</strong>：相乘得到 $dA = ds_\theta \cdot ds_\phi = r^2 \sin\theta \, d\theta \, d\phi$。在单位球 ($r=1$) 上，即为立体角微元 $d\omega = \sin\theta \, d\theta \, d\phi$。</span>
+        </li>
+      </ul>
+    </div>
+
+    <div id="tab-jac" class="tab-content">
+      <p>将 $(\theta,\phi) \mapsto (x,y,z)$，我们可以通过度量矩阵（第一基本形式）或偏导叉积计算换元缩放因子（Jacobian）。</p>
+      <div class="math-block">
+        <div class="math-eq">
+          $$ dA = \Big\|\frac{\partial \mathbf p}{\partial \theta} \times \frac{\partial \mathbf p}{\partial \phi}\Big\| \, d\theta \, d\phi $$
+        </div>
+      </div>
+      <p>分别对 $\theta$ 和 $\phi$ 偏导：</p>
+      <div class="math-block">
+        <div class="math-eq">
+          $$ \partial_\theta \mathbf{p} = \begin{bmatrix} r\cos\theta\cos\phi \\ r\cos\theta\sin\phi \\ -r\sin\theta \end{bmatrix}, \quad \partial_\phi \mathbf{p} = \begin{bmatrix} -r\sin\theta\sin\phi \\ r\sin\theta\cos\phi \\ 0 \end{bmatrix} $$
+        </div>
+      </div>
+      <p>计算叉积并取二范数（或计算度量矩阵 $G=J^\top J$ 的行列式 $\sqrt{\det(G)}$），最终结果均为 $r^2 \sin\theta$。当 $r=1$ 时得 $d\omega = \sin\theta \, d\theta \, d\phi$。</p>
+    </div>
+
+    <div class="demo-card">
+      <h4>▸ 交互：极角 $\theta$ 与微元面积的关系可视化</h4>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">在北极点($\theta=0$)附近，$\sin\theta$ 趋于 0，微小角度 $d\phi$ 张开的面积极小；而在赤道($\theta=90^\circ$)附近，$\sin\theta$ 最大，微元面积最大。这就是高纬度地图投影变形的原因。</p>
+      
+      <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:center;">
+        <canvas id="solidAngleCanvas" width="300" height="300" style="max-width:300px; flex-shrink:0;"></canvas>
+        <div class="controls" style="flex:1; min-width: 200px; margin-top:0;">
+          <div class="ctrl-row">
+            <label>极角 $\theta$ <span id="thetaVal">45°</span></label>
+            <input type="range" id="thetaSlider" min="0" max="180" value="45" oninput="drawSolidAngle()">
+          </div>
+          <div class="ctrl-row" style="margin-top:16px;">
+            <div style="font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted); background:var(--code-bg); padding:12px; border-radius:4px; border:1px solid var(--border);">
+              旋转半径 $r_{\text{rot}} = \sin(\theta)$<br>
+              <span style="color:var(--accent2); font-size:14px; display:inline-block; margin-top:8px;">$d\omega \propto$ <span id="sinVal">0.707</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>图形学高频积分结论速查</h3>
+    <table class="formula-table">
+      <thead>
+        <tr><th>公式</th><th>几何/物理意义</th><th>应用场景</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>$\int_{\Omega} 1 \, d\omega = 4\pi$</td>
+          <td>单位球的总立体角</td>
+          <td>环境光积分解 / 点光源能量</td>
+        </tr>
+        <tr>
+          <td>$\int_{\Omega^+} \cos\theta \, d\omega = \pi$</td>
+          <td>半球余弦积分</td>
+          <td>Lambertian BRDF 归一化 ($f_r = \rho/\pi$)</td>
+        </tr>
+        <tr>
+          <td>$\int_{\Omega^+} \cos^n\theta \, d\omega = \frac{2\pi}{n+1}$</td>
+          <td>高次余弦积分</td>
+          <td>Phong / Blinn-Phong 波瓣能量归一化</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section" id="sec-mc">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">辐射度量学与蒙特卡洛积分</span>
+    </div>
+    
+    <p>真实感渲染的核心在于求解**渲染方程 (Rendering Equation)**，它描述了表面某点 $x$ 沿方向 $\omega_o$ 的出射辐射率 $L_o$。</p>
+
+    <div class="math-block">
+      <div class="math-label">渲染方程 (Kajiya 1986)</div>
+      <div class="math-eq">
+        $$ L_o(x,\omega_o) = L_e(x,\omega_o) + \int_{\Omega^+} f_r(x,\omega_i,\omega_o) L_i(x,\omega_i) (\mathbf{n}\cdot\omega_i) \,d\omega_i $$
+      </div>
+    </div>
+
+    <div class="callout blue">
+      <div class="callout-label">BRDF 的核心约束</div>
+      <p>1. <strong>非负性</strong>：$f_r \ge 0$ <br>
+         2. <strong>赫米特对称性 (Helmholtz Reciprocity)</strong>：$f_r(\omega_i,\omega_o) = f_r(\omega_o,\omega_i)$ <br>
+         3. <strong>能量守恒</strong>：$\int_{\Omega^+} f_r(\omega_i,\omega_o)(\mathbf{n}\cdot\omega_i)\,d\omega_i \le 1$</p>
+    </div>
+
+    <p>由于存在环境贴图(IBL)或复杂材质，该积分极难求解析解，只能依靠**蒙特卡洛积分 (Monte Carlo Integration)**：通过按照某种概率密度函数 (PDF) $p(x)$ 随机采样方向，来估计积分期望。</p>
+    
+    <div class="math-block">
+      <div class="math-label">蒙特卡洛估计量</div>
+      <div class="math-eq">
+        $$ \int_\Omega f(x)\,dx \approx \frac{1}{N}\sum_{k=1}^N \frac{f(X_k)}{p(X_k)} $$
+      </div>
+    </div>
+    
+    <p>为了降低方差（即渲染画面中的噪点），我们通常采用**重要性采样 (Importance Sampling)**。例如，对于漫反射表面，根据余弦项进行采样，其 PDF 为 $p(\omega) = \frac{\cos\theta}{\pi}$。对于高光材质，我们利用反演法 (Inverse Transform) 针对 GGX 法线分布进行采样。</p>
+  </div>
+
+  <div class="section" id="sec-sg">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">函数近似与球面高斯 (SG)</span>
+    </div>
+
+    <p>在实时渲染中，我们无法负担逐像素的蒙特卡洛积分。除了使用低频的球谐函数（SH，通常到 3 阶即可近似漫反射）外，对于 <b>高频镜面反射</b> 或 <b>次表面散射 (SSS)</b> 的烘焙与拟合，我们常引入<b>球面高斯 (Spherical Gaussians, SG)</b>。</p>
+
+    <div class="math-block">
+      <div class="math-label">标准 1D 高斯 vs 球面高斯 SG</div>
+      <div class="math-eq">
+        $$ f(x) = a e^{\frac{-(x-b)^2}{2c^2}} \quad \xrightarrow{\text{推广到球面上}} \quad G(v;\mu ,\lambda,\alpha) = \alpha e^{\lambda(\mu \cdot v -1)} $$
+      </div>
+      <div style="font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted); margin-top:12px;">
+        $v$：求值方向 (单位向量) <br>
+        $\mu$：波瓣轴向 (Lobe Axis) <br>
+        $\lambda$：锐度/带宽 (Sharpness，正数，越大越锐利) <br>
+        $\alpha$：振幅 (Amplitude)
+      </div>
+    </div>
+
+    <p>SG 的强大之处在于其代数性质极其优良：<b>两个 SG 的乘积仍然是一个 SG</b>，且 SG 的内积积分存在闭合解析解（Closed-form solution）。这使得它非常适合用来近似 BRDF 波瓣和入射光分布（如 ASG, Anisotropic SG）。</p>
+
+    <div class="demo-card">
+      <h4>▸ 交互：球面高斯 (SG) 波瓣形态剖面</h4>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">在二维截面上观测 SG 的形态。固定求值向量 $v$ 为角度 $x \in [-\pi, \pi]$，轴向 $\mu$ 取决于偏移角。注意观察 $\lambda$ 是如何影响“粗糙度”（波瓣宽度）的。</p>
+      
+      <canvas id="sgCanvas" width="600" height="240"></canvas>
+      <div class="controls">
+        <div class="ctrl-row">
+          <label>振幅 $\alpha$ <span id="sgAlphaVal">1.0</span></label>
+          <input type="range" id="sgAlpha" min="0.1" max="2.0" step="0.1" value="1.0" oninput="drawSG()">
+        </div>
+        <div class="ctrl-row">
+          <label>锐度 $\lambda$ <span id="sgLambdaVal">4.0</span></label>
+          <input type="range" id="sgLambda" min="0.5" max="30" step="0.5" value="4.0" oninput="drawSG()">
+        </div>
+        <div class="ctrl-row">
+          <label>轴向角度 $\mu$ <span id="sgMuVal">0°</span></label>
+          <input type="range" id="sgMu" min="-90" max="90" step="1" value="0" oninput="drawSG()">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="floating-controls">
+  <a href="/shows/" class="float-btn home-btn" title="回到上级">⌂</a>
+  <button id="backToTopBtn" class="float-btn top-btn" title="回到顶部">↑</button>
+</div>
+
+<footer>
+  <div>Reference: 《3D游戏与计算机图形学中的数学方法》 / The Realm JP: SG Series</div>
+  <div style="margin-top:6px; color:rgba(90,100,120,0.5);">Interactive Notes · CG Math</div>
+</footer>
+
+<script>
+
+  const backToTopBtn = document.getElementById('backToTopBtn');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.add('show');
+    } else {
+      backToTopBtn.classList.remove('show');
+    }
+  });
+
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+
+  // MathJax 重渲染触发器
+  window.addEventListener('load', () => {
+    if (window.MathJax?.startup?.promise) {
+      MathJax.startup.promise.then(() => MathJax.typesetPromise());
+    }
+    drawSolidAngle();
+    drawSG();
+  });
+
+  // 滚动与 TOC
+  function scrollToSec(id) {
+    const el = document.getElementById(id);
+    if(el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({top, behavior: 'smooth'});
+    }
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting) {
+        document.querySelectorAll('.toc-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('onclick').includes(e.target.id));
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+  document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+  // Tab 切换逻辑
+  function switchTab(id, btn) {
+    const parent = btn.parentElement.parentElement;
+    parent.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    if (window.MathJax?.typesetPromise) MathJax.typesetPromise([document.getElementById(id)]);
+  }
+
+  // ── Canvas 1: 立体角/极角可视化 ──
+  function drawSolidAngle() {
+    const thetaDeg = parseFloat(document.getElementById('thetaSlider').value);
+    document.getElementById('thetaVal').textContent = thetaDeg + '°';
+    
+    const thetaRad = thetaDeg * Math.PI / 180;
+    const sinVal = Math.sin(thetaRad);
+    document.getElementById('sinVal').textContent = sinVal.toFixed(3);
+
+    const canvas = document.getElementById('solidAngleCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    
+    ctx.clearRect(0,0,w,h);
+    
+    const cx = w/2, cy = h/2;
+    const r = w * 0.35; // 球体半径
+
+    // 背景网格与轴
+    ctx.strokeStyle = '#1e2738'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
+    ctx.fillStyle = '#5a6a85'; ctx.font = '10px Space Mono';
+    ctx.fillText('Z', cx + 6, 12);
+    ctx.fillText('X', w - 12, cy - 6);
+
+    // 绘制半圆截面
+    ctx.strokeStyle = '#5a6a85'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI/2, Math.PI/2, false); ctx.stroke();
+    
+    // 绘制 \theta 向量
+    // 注意：绘图中以 +Y 向上，但在 Canvas 中 Y向下的。我们需要映射: Z轴=上, X轴=右
+    // 所以向量端点：px = cx + r*sin(theta), py = cy - r*cos(theta)
+    const px = cx + r * Math.sin(thetaRad);
+    const py = cy - r * Math.cos(thetaRad);
+    
+    ctx.strokeStyle = '#e8c87a'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+    
+    // 绘制 \theta 弧度标注
+    if(thetaDeg > 2) {
+      ctx.strokeStyle = '#c97af5'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(cx, cy, r*0.3, -Math.PI/2, -Math.PI/2 + thetaRad, false); ctx.stroke();
+      ctx.fillStyle = '#c97af5'; ctx.fillText('θ', cx + r*0.35 * Math.sin(thetaRad/2) - 4, cy - r*0.35 * Math.cos(thetaRad/2) - 4);
+    }
+
+    // 绘制旋转半径横线 (r*sin\theta)
+    ctx.strokeStyle = '#6fc3d4'; ctx.lineWidth = 1.5; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(cx, py); ctx.lineTo(px, py); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#6fc3d4'; 
+    if(thetaDeg > 15) ctx.fillText('r·sinθ', cx + (px-cx)/2 - 15, py + 12);
+    
+    // 模拟表面微元大小指示器
+    ctx.fillStyle = 'rgba(111,195,212,0.3)';
+    ctx.beginPath(); ctx.arc(px, py, 4 + 8*sinVal, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#6fc3d4'; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  // ── Canvas 2: SG 波瓣可视化 ──
+  function drawSG() {
+    const alpha = parseFloat(document.getElementById('sgAlpha').value);
+    const lambda = parseFloat(document.getElementById('sgLambda').value);
+    const muDeg = parseFloat(document.getElementById('sgMu').value);
+    
+    document.getElementById('sgAlphaVal').textContent = alpha.toFixed(1);
+    document.getElementById('sgLambdaVal').textContent = lambda.toFixed(1);
+    document.getElementById('sgMuVal').textContent = muDeg + '°';
+
+    const canvas = document.getElementById('sgCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    
+    ctx.clearRect(0,0,w,h);
+
+    const pad = 30;
+    const graphW = w - pad*2;
+    const graphH = h - pad*2;
+    const yOrigin = h - pad;
+
+    // 绘制坐标轴 (X轴表示角度 -180 到 180，Y轴表示SG值)
+    ctx.strokeStyle = '#1e2738'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(pad, yOrigin); ctx.lineTo(w-pad, yOrigin); ctx.stroke();
+    
+    ctx.fillStyle = '#5a6a85'; ctx.font = '10px Space Mono'; ctx.textAlign = 'center';
+    ctx.fillText('-180°', pad, yOrigin + 16);
+    ctx.fillText('0°', pad + graphW/2, yOrigin + 16);
+    ctx.fillText('180°', w-pad, yOrigin + 16);
+    
+    // 中轴线
+    ctx.strokeStyle = '#1e2738'; ctx.setLineDash([2,4]);
+    ctx.beginPath(); ctx.moveTo(pad + graphW/2, pad); ctx.lineTo(pad + graphW/2, yOrigin); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 绘制 SG 曲线: y = alpha * exp(lambda * (cos(x - mu) - 1))
+    const muRad = muDeg * Math.PI / 180;
+    ctx.strokeStyle = '#e8c87a'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    
+    // 假设最高画到 Y=2.2 作为满屏
+    const maxY = 2.2; 
+    
+    for(let i=0; i<=graphW; i++) {
+      // 映射到 -pi 到 pi
+      const xRad = -Math.PI + (i / graphW) * (2 * Math.PI);
+      const dotProduct = Math.cos(xRad - muRad);
+      const sgVal = alpha * Math.exp(lambda * (dotProduct - 1));
+      
+      const px = pad + i;
+      const py = yOrigin - (sgVal / maxY) * graphH;
+      
+      if(i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // 填充下方区域
+    ctx.lineTo(w-pad, yOrigin);
+    ctx.lineTo(pad, yOrigin);
+    ctx.fillStyle = 'rgba(232, 200, 122, 0.1)';
+    ctx.fill();
+    
+    // 图例标注
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#e8c87a';
+    ctx.fillText(`SG(v; μ=${muDeg}°, λ=${lambda.toFixed(1)}, α=${alpha.toFixed(1)})`, pad, pad);
+  }
+</script>
+
+</body>
+</html>
