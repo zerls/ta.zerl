@@ -1,0 +1,446 @@
+   /* ─── Variables ─────────────────────────────────────── */
+    :root {
+      --bg:       #0d1117;
+      --surface:  #161b22;
+      --border:   #21262d;
+      --accent:   #58a6ff;
+      --accent2:  #79c0ff;
+      --green:    #3fb950;
+      --orange:   #d29922;
+      --red:      #f85149;
+      --purple:   #bc8cff;
+      --text:     #c9d1d9;
+      --muted:    #8b949e;
+      --heading:  #e6edf3;
+      --code-bg:  #1c2128;
+      --toc-w:    260px;
+      --radius:   8px;
+    }
+
+    /* ─── Reset ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 15px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', 'Noto Serif SC', sans-serif;
+      line-height: 1.75;
+      display: flex;
+    }
+
+    /* ─── TOC Sidebar ────────────────────────────────────── */
+    #toc-sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--toc-w);
+      height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 28px 0 40px;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+
+    #toc-sidebar::-webkit-scrollbar { width: 4px; }
+    #toc-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .toc-header {
+      padding: 0 20px 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .toc-header h2 {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+    .toc-header .proj-title {
+      font-size: 0.95rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    #toc-list { list-style: none; padding: 0 8px; }
+    #toc-list li { margin: 2px 0; }
+    #toc-list a {
+      display: block;
+      padding: 5px 12px;
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #toc-list a:hover,
+    #toc-list a.active {
+      background: rgba(88, 166, 255, 0.1);
+      color: var(--accent2);
+    }
+    #toc-list li.toc-h3 a { padding-left: 24px; font-size: 0.78rem; }
+
+    /* section badges in TOC */
+    #toc-list a::before {
+      content: attr(data-icon);
+      margin-right: 6px;
+      opacity: 0.7;
+    }
+
+    /* ─── Main Content ───────────────────────────────────── */
+    #main {
+      margin-left: calc(var(--toc-w) + 80px);
+      flex: 1;
+      min-width: 0;
+      padding: 48px 56px 100px;
+      max-width: min(1200px,120ch);
+    }
+
+    /* ─── Page Header ────────────────────────────────────── */
+    .page-header {
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tag {
+      background: rgba(88, 166, 255, 0.1);
+      border: 1px solid rgba(88, 166, 255, 0.25);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 2px 9px;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+    .tag.green { background: rgba(63,185,80,0.08); border-color: rgba(63,185,80,0.25); color: var(--green); }
+    .tag.orange { background: rgba(210,153,34,0.08); border-color: rgba(210,153,34,0.25); color: var(--orange); }
+    .tag.purple { background: rgba(188,140,255,0.08); border-color: rgba(188,140,255,0.25); color: var(--purple); }
+
+    .page-header h1 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 2.2rem;
+      color: var(--heading);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .page-header .subtitle {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .page-header .subtitle a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .page-header .subtitle a:hover { text-decoration: underline; }
+
+    /* ─── Sections ───────────────────────────────────────── */
+    section { margin-bottom: 64px; scroll-margin-top: 20px; }
+
+    h2.section-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.45rem;
+      color: var(--heading);
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2.section-title .icon {
+      font-size: 1.1rem;
+      opacity: 0.85;
+    }
+    h2.section-title .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: var(--border);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      color: var(--accent2);
+      font-weight: 600;
+      margin: 28px 0 10px;
+    }
+    h4 {
+      font-size: 0.95rem;
+      color: var(--orange);
+      font-weight: 600;
+      margin: 20px 0 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    strong { color: var(--heading); font-weight: 600; }
+    em { color: var(--purple); font-style: italic; }
+
+    /* ─── Code Blocks ────────────────────────────────────── */
+    pre {
+      background: var(--code-bg) !important;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+    pre code { background: transparent !important; padding: 0 !important; font-family: 'JetBrains Mono', monospace; }
+    code {
+      background: rgba(110,118,129,0.15);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.83em;
+      color: var(--accent2);
+    }
+    pre code { border: none; }
+
+    /* ─── Tables ─────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    thead { background: rgba(88,166,255,0.06); }
+    th {
+      padding: 10px 14px;
+      text-align: left;
+      color: var(--accent);
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid rgba(33,38,45,0.6);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,0.03); }
+
+    td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+
+    /* ─── Callout Boxes ──────────────────────────────────── */
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: rgba(88,166,255,0.05);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .callout.tip  { border-color: var(--green); background: rgba(63,185,80,0.05); }
+    .callout.warn { border-color: var(--orange); background: rgba(210,153,34,0.05); }
+    .callout.key  { border-color: var(--purple); background: rgba(188,140,255,0.06); }
+    .callout .callout-title {
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 6px;
+      opacity: 0.85;
+    }
+    .callout.tip  .callout-title { color: var(--green); }
+    .callout.warn .callout-title { color: var(--orange); }
+    .callout.key  .callout-title { color: var(--purple); }
+
+    /* ─── Pipeline Flow ──────────────────────────────────── */
+    .pipeline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      align-items: center;
+      margin: 20px 0;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .pipe-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 13px;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .pipe-step .ps-num {
+      display: inline-block;
+      background: rgba(88,166,255,0.15);
+      color: var(--accent);
+      border-radius: 3px;
+      padding: 0 5px;
+      font-size: 0.72rem;
+      margin-right: 5px;
+    }
+    .pipe-step.core { border-color: rgba(88,166,255,0.4); color: var(--accent2); }
+    .pipe-step.temporal { border-color: rgba(188,140,255,0.4); color: var(--purple); }
+    .pipe-step.spatial { border-color: rgba(63,185,80,0.4); color: var(--green); }
+    .pipe-step.util { border-color: rgba(210,153,34,0.3); color: var(--orange); }
+    .pipe-arrow {
+      color: var(--muted);
+      font-size: 1rem;
+      padding: 0 6px;
+    }
+
+    /* ─── Pass Grid ──────────────────────────────────────── */
+    .pass-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .pass-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      transition: border-color 0.2s, transform 0.15s;
+      cursor: default;
+    }
+    .pass-card:hover { border-color: rgba(88,166,255,0.35); transform: translateY(-2px); }
+    .pass-card .pass-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .pass-card .pass-name {
+      font-weight: 600;
+      color: var(--heading);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+    .pass-card .pass-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+    .pass-card.c-core { border-left: 3px solid var(--accent); }
+    .pass-card.c-temporal { border-left: 3px solid var(--purple); }
+    .pass-card.c-spatial  { border-left: 3px solid var(--green); }
+    .pass-card.c-util  { border-left: 3px solid var(--orange); }
+
+    /* ─── Comparison Card ────────────────────────────────── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .compare-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .compare-card h4 { margin-top: 0; font-family: 'Space Grotesk', sans-serif; }
+    .compare-card ul { list-style: none; padding: 0; }
+    .compare-card li {
+      padding: 4px 0;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(33,38,45,0.5);
+      display: flex;
+      gap: 8px;
+    }
+    .compare-card li:last-child { border-bottom: none; }
+    .compare-card li .icon { opacity: 0.7; flex-shrink: 0; }
+
+    /* ─── Floating Controls ──────────────────────────────── */
+    .floating-controls {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 999;
+    }
+    .float-btn {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .float-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .top-btn { opacity: 0; pointer-events: none; transition: opacity 0.3s, background 0.2s, color 0.2s; }
+    .top-btn.show { opacity: 1; pointer-events: auto; }
+
+    /* ─── TOC Toggle (mobile) ────────────────────────────── */
+    #toc-toggle {
+      display: none;
+      position: fixed;
+      top: 14px; left: 14px;
+      width: 38px; height: 38px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      z-index: 200;
+      color: var(--text);
+    }
+
+    /* ─── Lists ──────────────────────────────────────────── */
+    ul, ol {
+      padding-left: 22px;
+      margin: 10px 0;
+    }
+    li { margin-bottom: 5px; font-size: 0.9rem; }
+    li strong { color: var(--accent2); }
+
+    /* ─── Math Display ───────────────────────────────────── */
+    .math-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin: 16px 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+
+    /* ─── Responsive ─────────────────────────────────────── */
+    @media (max-width: 900px) {
+      :root { --toc-w: 0px; }
+      #toc-sidebar { transform: translateX(-260px); width: 260px; }
+      #toc-sidebar.open { transform: translateX(0); }
+      #main { margin-left: 0; padding: 64px 24px 80px; }
+      #toc-toggle { display: flex; }
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.6rem; }
+      .pass-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Divider ────────────────────────────────────────── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+    /* ─── Link ───────────────────────────────────────────── */
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }

@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSGI 学习笔记 · Unity URP</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Serif+SC:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      chtml: { matchFontHeight: false }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/glsl.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+  <link href=" ./SSGI_Notes.css" rel="stylesheet"/>
+
+</head>
+<body>
+
+<!-- TOC Sidebar -->
+<nav id="toc-sidebar" aria-label="目录">
+  <div class="toc-header">
+    <h2>导航目录</h2>
+    <div class="proj-title">SSGI · Unity URP</div>
+  </div>
+  <ul id="toc-list">
+    <li><a href="#sec-overview"  data-icon="🌐">项目总览</a></li>
+    <li><a href="#sec-cs"        data-icon="⚙️">Renderer Feature 架构</a></li>
+    <li class="toc-h3"><a href="#sec-cs-passes">四大内部 Pass</a></li>
+    <li class="toc-h3"><a href="#sec-cs-history">历史数据管理</a></li>
+    <li><a href="#sec-passes"    data-icon="🎞️">Shader Pass 0–9</a></li>
+    <li><a href="#sec-raymarching" data-icon="🔭">光线步进算法</a></li>
+    <li class="toc-h3"><a href="#sec-rm-adaptive">自适应步长</a></li>
+    <li class="toc-h3"><a href="#sec-rm-binary">二分搜索细化</a></li>
+    <li class="toc-h3"><a href="#sec-rm-backface">背面深度厚度判定</a></li>
+    <li class="toc-h3"><a href="#sec-rm-hiz">Hi-Z 对比分析</a></li>
+    <li><a href="#sec-denoise"   data-icon="🔬">降噪管线 (T-S-T)</a></li>
+    <li class="toc-h3"><a href="#sec-dn-temporal">时域重投影 Pass 2</a></li>
+    <li class="toc-h3"><a href="#sec-dn-spatial">空域降噪 Pass 3/8</a></li>
+    <li class="toc-h3"><a href="#sec-dn-stable">时域稳定 Pass 4</a></li>
+    <li><a href="#sec-files"     data-icon="📁">HLSL 文件职责</a></li>
+    <li class="toc-h3"><a href="#sec-files-ssgi">SSGI.hlsl</a></li>
+    <li class="toc-h3"><a href="#sec-files-utils">SSGIUtilities.hlsl</a></li>
+    <li class="toc-h3"><a href="#sec-files-config">SSGIConfig.hlsl</a></li>
+    <li class="toc-h3"><a href="#sec-files-fallback">SSGIFallback.hlsl</a></li>
+    <li><a href="#sec-apv"       data-icon="💡">APV 系统</a></li>
+    <li><a href="#sec-cs-opt"    data-icon="🚀">Compute Shader 优化方向</a></li>
+    <li><a href="#sec-learn"     data-icon="📚">值得借鉴的工程实践</a></li>
+  </ul>
+</nav>
+
+<!-- Mobile TOC toggle -->
+<button id="toc-toggle" title="目录" aria-label="打开目录">☰</button>
+
+<!-- Main Content -->
+<main id="main">
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="tag-row">
+      <span class="tag">Unity URP</span>
+      <span class="tag green">SSGI</span>
+      <span class="tag orange">降噪 · Denoising</span>
+      <span class="tag purple">GPU 渲染</span>
+    </div>
+    <h1>屏幕空间全局光照<br>Screen Space Global Illumination</h1>
+    <p class="subtitle">
+      基于开源项目
+      <a href="https://github.com/jiaozi158/UnitySSGIURP" target="_blank">jiaozi158 / UnitySSGIURP</a>
+      的完整技术笔记 · 涵盖光线步进、T-S-T 降噪管线与 URP Render Feature 架构
+    </p>
+  </header>
+
+  <!-- ①  Project Overview -->
+  <section id="sec-overview">
+    <h2 class="section-title"><span class="icon">🌐</span>项目总览<span class="num">§ 01</span></h2>
+
+    <p>
+      该项目为 Unity URP 实现了一套完整的 <strong>屏幕空间全局光照（SSGI）</strong> 系统，
+      展示了生产级的 Renderer Feature 编写规范，同时涵盖以下技术点：
+    </p>
+
+    <ul>
+      <li><strong>光线步进算法</strong>：自适应步长 + 二分搜索 + 背面深度厚度判定</li>
+      <li><strong>T-S-T 降噪管线</strong>：时域重投影 → 空域双边滤波 → 时域稳定</li>
+      <li><strong>SVGF 原理应用</strong>：Spatiotemporal Variance-Guided Filtering</li>
+      <li><strong>Unity 6 Render Graph API</strong>：RenderGraph / RTHandle / RecordRenderGraph 编写模式</li>
+      <li><strong>MRT GBuffer 流程</strong>：Forward 下手动生成 GBuffer 的 MRT 方法</li>
+    </ul>
+
+    <div class="callout key">
+      <div class="callout-title">🔑 项目架构核心</div>
+      整套 SSGI 管线由 1 个 <code>ScriptableRendererFeature</code>（C#）和 10 个 Shader Pass（HLSL）构成，
+      C# 负责调度与资源管理，HLSL 负责具体 GPU 计算。
+    </div>
+  </section>
+
+  <!-- ②  Renderer Feature -->
+  <section id="sec-cs">
+    <h2 class="section-title"><span class="icon">⚙️</span>Renderer Feature 架构<span class="num">§ 02</span></h2>
+
+    <p>
+      <code>ScreenSpaceGlobalIlluminationURP.cs</code> 是整个系统的调度中枢，负责判断渲染路径、
+      注入 Pass、管理历史纹理、传递 Uniform 参数。
+    </p>
+
+    <h3 id="sec-cs-passes">四大内部 Pass</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Pass 类名</th>
+            <th>RenderPassEvent</th>
+            <th>核心职责</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PreRenderSSGIPass</td>
+            <td>BeforeRenderingPrePasses</td>
+            <td>修复 Scene View 中运动向量每帧未更新的编辑器 Bug，修正视图投影矩阵</td>
+          </tr>
+          <tr>
+            <td><strong>SSGIPass（核心）</strong></td>
+            <td>BeforeRenderingTransparents</td>
+            <td>调度全部 Pass 0-9：光线步进、时域累积、空域降噪、最终混合</td>
+          </tr>
+          <tr>
+            <td>BackfaceDataPass</td>
+            <td>AfterRenderingOpaques</td>
+            <td>以 CullMode.Front 渲染背面深度（可选颜色），为厚度判定提供数据</td>
+          </tr>
+          <tr>
+            <td>ForwardGBufferPass <em>（值得借鉴 MRT 写法）</em></td>
+            <td>AfterRenderingOpaques</td>
+            <td>Forward 渲染路径下，利用 MRT 手动生成 _GBuffer0/1/2；Deferred 路径跳过</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 Forward 适配思路</div>
+      SSGI 本质依赖 GBuffer。<strong>Deferred</strong> 模式直接复用现有 GBuffer；
+      <strong>Forward</strong> 模式则通过 <code>ForwardGBufferPass</code> 按需注入，
+      避免了 Deferred 下的重复渲染，做到了"按需生成"的渲染路径适配。
+    </div>
+
+    <h3 id="sec-cs-history">历史数据管理 CameraHistoryData</h3>
+    <p>
+      多相机场景下（Game View + Scene View + 反射相机），每个相机需独立维护自己的历史纹理，
+      否则会相互污染导致时域效果闪烁。项目使用数组 + <code>GetHashCode</code> 追踪相机身份：
+    </p>
+
+    <pre><code class="language-csharp">// 历史纹理结构体 (每相机独立)
+struct CameraHistoryData {
+    RTHandle historyDepthHandle;         // 上一帧深度，用于遮挡剔除
+    RTHandle historyIndirectDiffuseHandle; // 上一帧 GI 结果
+    RTHandle accumulateHistorySampleHandle; // 累积采样帧数
+    Matrix4x4 prevCamInvVPMatrix;        // 上一帧 VP 逆矩阵，用于反推世界坐标
+}
+
+// 相机哈希查找
+int camID = camera.GetHashCode();
+var histData = cameraHistoryData.FirstOrDefault(d => d.cameraId == camID);</code></pre>
+
+    <p>
+      分辨率与时域强度也会动态联动：分辨率越低，越依赖时域累积补充细节；分辨率高时适当降低权重，减少拖影。
+    </p>
+
+    <pre><code class="language-csharp">float temporalIntensity = Mathf.Lerp(
+    denoiseIntensity + 0.02f,  // 低分辨率：增强时域
+    denoiseIntensity - 0.04f,  // 高分辨率：减弱拖影
+    resolutionScale
+);</code></pre>
+  </section>
+
+  <!-- ③  Shader Passes -->
+  <section id="sec-passes">
+    <h2 class="section-title"><span class="icon">🎞️</span>Shader Pass 0–9<span class="num">§ 03</span></h2>
+
+    <p>所有 Pass 均运行于 <em>BeforeRenderingTransparents</em>（不透明物体后、透明物体前）：</p>
+
+    <div class="pass-grid">
+      <div class="pass-card c-util">
+        <div class="pass-id">Pass 0</div>
+        <div class="pass-name">Copy Direct Lighting</div>
+        <div class="pass-desc">复制主颜色 Buffer 或环境光作为 SSGI 底色，确保间接光单独叠加</div>
+      </div>
+      <div class="pass-card c-core">
+        <div class="pass-id">Pass 1</div>
+        <div class="pass-name">SSGI Ray Marching</div>
+        <div class="pass-desc">核心光线步进，利用 Depth + GBuffer 计算带噪声的原始间接漫射光</div>
+      </div>
+      <div class="pass-card c-temporal">
+        <div class="pass-id">Pass 2</div>
+        <div class="pass-name">Temporal Reprojection</div>
+        <div class="pass-desc">时域重投影：运动向量重映射 + 遮挡剔除 + AABB 钳制的首次混合</div>
+      </div>
+      <div class="pass-card c-spatial">
+        <div class="pass-id">Pass 3</div>
+        <div class="pass-name">Edge-Avoiding Spatial Denoise</div>
+        <div class="pass-desc">A-Trous 小波保边模糊，以法线/深度差异权重保护几何体边缘</div>
+      </div>
+      <div class="pass-card c-temporal">
+        <div class="pass-id">Pass 4</div>
+        <div class="pass-name">Temporal Stabilization</div>
+        <div class="pass-desc">空域降噪后的二次时域稳定：再次 AABB 钳制 + 速度敏感混合权重</div>
+      </div>
+      <div class="pass-card c-util">
+        <div class="pass-id">Pass 5</div>
+        <div class="pass-name">Copy History Depth</div>
+        <div class="pass-desc">将当前帧深度写入历史深度纹理，供下帧 Pass 2 重投影使用</div>
+      </div>
+      <div class="pass-card c-core">
+        <div class="pass-id">Pass 6</div>
+        <div class="pass-name">Combine &amp; Upscale GI</div>
+        <div class="pass-desc">将降噪后的间接光叠加到主颜色 Buffer，降采样时同步做上采样</div>
+      </div>
+      <div class="pass-card c-util">
+        <div class="pass-id">Pass 7</div>
+        <div class="pass-name">Camera Motion Vectors（Editor）</div>
+        <div class="pass-desc">仅 Scene View 使用，修正运动向量以保证时域效果调试正确</div>
+      </div>
+      <div class="pass-card c-spatial">
+        <div class="pass-id">Pass 8</div>
+        <div class="pass-name">Poisson Disk Recurrent Denoise</div>
+        <div class="pass-desc">泊松盘采样 + 切线空间权重（ReBLUR 启发），高质量表面贴合模糊</div>
+      </div>
+      <div class="pass-card c-util">
+        <div class="pass-id">Pass 9</div>
+        <div class="pass-name">Blit Color Texture</div>
+        <div class="pass-desc">管线末端的标准拷贝 Pass，将结果写入最终渲染目标</div>
+      </div>
+    </div>
+
+    <h3>完整渲染流程</h3>
+    <div class="pipeline">
+      <div class="pipe-step c-util"><span class="ps-num">P0</span>Copy Lighting</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step core"><span class="ps-num">P1</span>Ray March</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step temporal"><span class="ps-num">P2</span>Temporal Reproj.</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step spatial"><span class="ps-num">P3/8</span>Spatial Denoise</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step temporal"><span class="ps-num">P4</span>Temporal Stable</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step c-util"><span class="ps-num">P5</span>Save History</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step core"><span class="ps-num">P6</span>Combine</div>
+    </div>
+  </section>
+
+  <!-- ④  Ray Marching -->
+  <section id="sec-raymarching">
+    <h2 class="section-title"><span class="icon">🔭</span>光线步进算法<span class="num">§ 04</span></h2>
+
+    <p>
+      <code>SSGI.hlsl</code> 中的 <code>RayMarching()</code> 实现了一种
+      <strong>不依赖 Hi-Z 加速结构</strong>的纯线性步进算法，通过以下手段保证性能与质量的平衡：
+    </p>
+
+    <h3 id="sec-rm-adaptive">① 自适应分段步长</h3>
+    <p>步进次数 <code>i</code> 被划分为三段，近密远疏：</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>阶段</th><th>条件</th><th>步长</th><th>厚度容差</th></tr></thead>
+        <tbody>
+          <tr><td>近距离 Small</td><td>i ≤ MAX_SMALL_STEP</td><td>SMALL_STEP_SIZE</td><td>MARCHING_THICKNESS_SMALL_STEP</td></tr>
+          <tr><td>中距离 Medium</td><td>MAX_SMALL_STEP &lt; i ≤ MAX_MEDIUM_STEP</td><td>MEDIUM_STEP_SIZE</td><td>MARCHING_THICKNESS_MEDIUM_STEP</td></tr>
+          <tr><td>远距离 Large</td><td>i &gt; MAX_MEDIUM_STEP</td><td>STEP_SIZE（+指数增长）</td><td>MARCHING_THICKNESS</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      在未命中状态下，步长还会 <strong>指数级增长</strong>（每步乘 1.1），加速跨越空旷区域：
+    </p>
+    <pre><code class="language-glsl">// 未命中时：指数加速（来自 voxagon SSPT 博客）
+else if (!startBinarySearch)
+{
+    currStepSize += currStepSize * 0.1;
+    marchingThickness += _Thickness_Increment;
+}</code></pre>
+
+    <p>
+      每步还会叠加 <code>dither</code> 抖动偏移，将固定步长的条纹伪影（Banding）转化为高频噪声，
+      便于后续降噪消除：
+    </p>
+    <pre><code class="language-glsl">rayPositionWS += (currStepSize + currStepSize * dither) * ray.direction;</code></pre>
+
+    <h3 id="sec-rm-binary">② 二分搜索交点细化</h3>
+    <p>
+      当光线符号 <code>Sign</code> 发生翻转（由"物体前"进入"物体后"）时，进入二分搜索模式：
+    </p>
+    <pre><code class="language-glsl">if (startBinarySearch)
+{
+    // 步长减半；方向取决于当前是在物体前还是后
+    currStepSize *= (FastSign(currStepSize) == Sign) ? 0.5 : -0.5;
+}</code></pre>
+    <p>
+      光线在表面附近来回振荡并收敛，极大提升了交点精度，弥补了大步长带来的精度损失。
+    </p>
+
+    <h3 id="sec-rm-backface">③ 背面深度精确厚度判定</h3>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>无背面纹理（默认）</h4>
+        <ul>
+          <li><span class="icon">⚠️</span>假设固定物体厚度 <code>marchingThickness</code></li>
+          <li><span class="icon">⚠️</span>薄物体（告示牌、树叶）易漏光</li>
+          <li><span class="icon">✅</span>无额外渲染开销</li>
+        </ul>
+        <pre><code class="language-glsl">// 判定击中：在表面后方且未超厚度
+hitSuccessful = (depthDiff &lt;= 0.0)
+    &amp;&amp; (depthDiff &gt;= -marchingThickness)
+    &amp;&amp; !isSky;</code></pre>
+      </div>
+      <div class="compare-card">
+        <h4>启用 _BACKFACE_TEXTURES</h4>
+        <ul>
+          <li><span class="icon">✅</span>采样 <code>_CameraBackDepthTexture</code></li>
+          <li><span class="icon">✅</span>精确计算物体真实厚度区间</li>
+          <li><span class="icon">⚠️</span>需额外 BackfaceDataPass 渲染开销</li>
+        </ul>
+        <pre><code class="language-glsl">// 判定击中：光线处于正面与背面深度之间
+sceneBackDepth = max(sceneBackDepth, sceneDepth + thickness);
+hitSuccessful = (depthDiff &lt;= 0.0)
+    &amp;&amp; (hitDepth &lt;= sceneBackDepth)
+    &amp;&amp; !isSky;</code></pre>
+      </div>
+    </div>
+
+    <h3 id="sec-rm-hiz">④ Hi-Z vs 线性步进 对比</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>维度</th><th>Hi-Z 层级步进</th><th>本项目：自适应线性步进</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>算法复杂度</td><td>$O(\log N)$，可跳过大片空白</td><td>$O(N)$，逐步探测</td></tr>
+          <tr><td>空域跳跃</td><td>极佳，天空/空旷区域近乎瞬过</td><td>依赖指数加速，仍需多次采样</td></tr>
+          <tr><td>物体厚度精度</td><td>困难（需额外 Hi-Z 背面金字塔，显存×2）</td><td>✅ 背面深度 + 二分搜索，高精度</td></tr>
+          <tr><td>实现复杂度</td><td>需额外 Compute Pass 生成 Min-Depth Pyramid</td><td>直读 _CameraDepthTexture，无预处理</td></tr>
+          <tr><td>适用场景</td><td>长距离反射、大型开阔场景</td><td>中近距离 GI、强调厚度精度的场景</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ 混合方案建议</div>
+      可采用 <strong>粗糙阶段用 Hi-Z 快速跳跃定位区域，精细阶段切换为线性步进 + 背面深度判定</strong>，
+      兼顾远距离加速与近距离厚度精度。
+    </div>
+  </section>
+
+  <!-- ⑤  Denoising -->
+  <section id="sec-denoise">
+    <h2 class="section-title"><span class="icon">🔬</span>降噪管线 (T-S-T)<span class="num">§ 05</span></h2>
+
+    <p>
+      SSGI 的光线步进结果本身噪声极高，系统采用经典的
+      <strong>T-S-T（Temporal → Spatial → Temporal）</strong>三阶降噪管线：
+    </p>
+
+    <div class="math-block">
+      $$\text{Noisy GI} \xrightarrow[\text{Disocclusion, AABB}]{\text{Temporal Reprojection (P2)}} \text{Stable GI} \xrightarrow[\text{Normal/Depth Aware}]{\text{Spatial Denoise (P3/8)}} \text{Smooth GI} \xrightarrow[\text{Velocity Blend}]{\text{Temporal Stabilization (P4)}} \text{Final GI}$$
+    </div>
+
+    <h3 id="sec-dn-temporal">Pass 2：时域重投影（核心混合）</h3>
+    <p>
+      这是将上一帧 GI 引入当前帧的关键步骤，输入：原始噪声 GI + 运动向量 + 历史深度/GI。
+    </p>
+
+    <h4>核心逻辑</h4>
+    <ol>
+      <li><strong>运动补偿</strong>：通过 <code>_MotionVectorTexture</code> 将当前像素重投影回上一帧 UV</li>
+      <li><strong>遮挡剔除（Disocclusion）</strong>：对比当前与历史深度/法线，差异超阈值则丢弃历史权重</li>
+      <li><strong>加权累积</strong>：根据 <code>_TemporalIntensity</code> 和累积帧数做加权平均</li>
+      <li><strong>AABB 钳制（可选）</strong>：激进降噪模式下，钳制历史颜色在邻域色彩包围盒内</li>
+    </ol>
+
+    <pre><code class="language-glsl">// AABB 邻域钳制核心（AdjustColorBox）
+// 采样 3x3 邻域，计算颜色包围盒
+half3 boxMin, boxMax;
+AdjustColorBox(currentUV, out boxMin, out boxMax);
+// 将历史颜色钳制在包围盒范围内，防止鬼影
+prevColor = clamp(prevColor, boxMin, boxMax);</code></pre>
+
+    <h3 id="sec-dn-spatial">Pass 3/8：空域降噪</h3>
+
+    <h4>Pass 3 · A-Trous Wavelet 保边模糊</h4>
+    <p>
+      基于小波变换的保边滤波，使用 <strong>动态扩张步长（Dilation）</strong>，
+      以较低采样数模拟大半径模糊：
+    </p>
+    <ul>
+      <li><strong>法线权重</strong>：中心法线 vs 邻域法线夹角越大，权重越低</li>
+      <li><strong>深度权重</strong>：线性深度差异越大，权重越低（保护几何边缘）</li>
+      <li>若命中距离 <code>hitDistance &lt; 1.0</code>，自动降低模糊强度以保留近处细节</li>
+    </ul>
+
+    <div class="math-block">
+      $$w = w_{gaussian} \cdot \exp\!\left(-\frac{1 - \mathbf{n}_c \cdot \mathbf{n}_s}{\sigma_n}\right) \cdot \exp\!\left(-\frac{|d_c - d_s|}{\sigma_d}\right)$$
+    </div>
+
+    <h4>Pass 8 · Poisson Disk Recurrent Denoise</h4>
+    <p>
+      使用泊松盘采样点 + 切线空间加权（ReBLUR 启发），采样沿法线曲面分布，
+      适合处理具有复杂法线变化的表面，提供更高质量的平滑效果。
+    </p>
+    <pre><code class="language-csharp">// C# 侧：每帧旋转泊松盘，消除固定图案 Artifacts
+m_SSGIMaterial.SetVector(_ReBlurBlurRotator,
+    EvaluateRotator(k_BlurRands[frameCount % 32]));</code></pre>
+
+    <h4>多级降噪的 Ping-Pong 执行</h4>
+    <pre><code class="language-csharp">// Aggressive Denoise：Pass 8 执行两次 Ping-Pong
+if (denoiserAlgorithm == Aggressive) {
+    Blitter.BlitCameraTexture(cmd, diffuse, intermediateDiffuse, mat, pass: 8);
+    Blitter.BlitCameraTexture(cmd, intermediateDiffuse, diffuse, mat, pass: 8);
+}
+// Second Denoiser Pass：Pass 3 → Pass 4
+if (secondDenoiserPass) {
+    Blitter.BlitCameraTexture(cmd, diffuse, intermediateDiffuse, mat, pass: 3);
+    Blitter.BlitCameraTexture(cmd, intermediateDiffuse, diffuse, mat, pass: 4);
+}</code></pre>
+
+    <h3 id="sec-dn-stable">Pass 4：时域稳定（精细后处理）</h3>
+    <p>
+      在空域降噪之后执行，作为最后一道防线：
+    </p>
+    <ul>
+      <li><strong>再次 AABB/Variance 钳制</strong>：消除萤火虫（Fireflies）和颜色溢出</li>
+      <li>
+        <strong>速度敏感混合</strong>：运动越快的像素历史权重越低（减拖影），静止像素权重高（最大化稳定）
+        <div class="math-block" style="margin-top:10px;">$$\alpha = \text{lerp}(\alpha_{base}, \alpha_{low}, \text{velocity} \cdot k)$$</div>
+      </li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 Pass 2 vs Pass 4 区别</div>
+      <strong>Pass 2</strong> 是<em>首次、主要、有遮挡检测</em>的混合，决定时域效果核心质量；
+      <strong>Pass 4</strong> 是<em>精细、后续、钳制为主</em>的稳定，弥补空域降噪可能引入的缺陷。
+    </div>
+  </section>
+
+  <!-- ⑥  HLSL Files -->
+  <section id="sec-files">
+    <h2 class="section-title"><span class="icon">📁</span>HLSL 文件职责<span class="num">§ 06</span></h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>文件</th><th>职责定位</th><th>核心内容</th></tr></thead>
+        <tbody>
+          <tr>
+            <td id="sec-files-ssgi">SSGI.hlsl</td>
+            <td><strong>执行者</strong>：光线步进逻辑</td>
+            <td>RayMarching() 函数；自适应步长；二分搜索；背面深度碰撞；命中颜色采样</td>
+          </tr>
+          <tr>
+            <td id="sec-files-utils">SSGIUtilities.hlsl</td>
+            <td><strong>工具箱</strong>：基础设施</td>
+            <td>Ray/RayHit 结构体；ConvertLinearEyeDepth；HitSurfaceDataFromGBuffer；SSGISampleProbeVolumePixel；GenerateRandomValue</td>
+          </tr>
+          <tr>
+            <td id="sec-files-config">SSGIConfig.hlsl</td>
+            <td><strong>配置层</strong>：常量映射</td>
+            <td>#define 映射 C# Uniform 变量；MAX_STEP / STEP_SIZE / MARCHING_THICKNESS；MAX_ACCUM_FRAME_NUM = 8；MAX_REPROJECTION_DISTANCE</td>
+          </tr>
+          <tr>
+            <td>SSGIDenoise.hlsl</td>
+            <td><strong>降噪层</strong>：时域+空域</td>
+            <td>Temporal Reprojection；AdjustColorBox (AABB Clamp)；A-Trous Spatial；Temporal Stabilization；Poisson Disk</td>
+          </tr>
+          <tr>
+            <td id="sec-files-fallback">SSGIFallback.hlsl</td>
+            <td><strong>回退层</strong>：光线未命中</td>
+            <td>BoxProjectedDirection（盒体投影校正）；SampleReflectionProbes；APV 采样回退；SH 球谐回退</td>
+          </tr>
+          <tr>
+            <td>SSGIInput.hlsl</td>
+            <td><strong>接口层</strong>：数据声明</td>
+            <td>所有纹理声明（GBuffer / 历史帧 / 运动向量）；Uniform 变量；SH 探针；兼容旧版 Unity</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ⑦  APV -->
+  <section id="sec-apv">
+    <h2 class="section-title"><span class="icon">💡</span>APV 自适应探针体积<span class="num">§ 07</span></h2>
+
+    <p>
+      <strong>Adaptive Probe Volumes (APV)</strong> 是 Unity URP/HDRP 中的高级实时间接光照系统，
+      解决传统 Light Probe 在精度与内存效率上的不足。
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>特性</th><th>传统 Light Probes</th><th>APV</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>数据存储</td><td>稀疏离散点（3D 网格）</td><td>3D 纹理（Texture3D）体积</td></tr>
+          <tr><td>数据密度</td><td>固定，手动放置</td><td>自适应，可依场景复杂度调整</td></tr>
+          <tr><td>内存效率</td><td>空旷区域仍占固定内存</td><td>基于稀疏体素八叉树，按需存储</td></tr>
+          <tr><td>运行时采样</td><td>CPU/GPU 插值计算</td><td>GPU 3D 纹理直接采样，延迟低</td></tr>
+          <tr><td>球谐阶数</td><td>主要 L0/L1</td><td>支持 L2 高阶 SH，方向精度更高</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>APV 在 SSGI 中的作用：Ray Miss Fallback</h3>
+    <p>
+      当光线步进未能找到屏幕上的几何体交点（射向天空或远处空旷区域）时，
+      <code>SSGIFallback.hlsl</code> 的分级回退策略：
+    </p>
+    <ol>
+      <li>若启用 APV → 调用 <code>SSGISampleProbeVolumePixel</code> 获取高质量烘焙间接光</li>
+      <li>若无 APV → 回退到传统 SH 球谐函数 <code>SSGIEvaluateAmbientProbeSRGB</code></li>
+    </ol>
+    <pre><code class="language-glsl">#if defined(PROBE_VOLUMES_L1) || defined(PROBE_VOLUMES_L2)
+    half3 ambientLighting = SSGISampleProbeVolumePixel(
+        positionWS, reflectVector, viewDirectionWS,
+        normalizedScreenSpaceUV, probeOcclusion);
+#else
+    half3 ambientLighting = SSGIEvaluateAmbientProbeSRGB(normalWS);
+#endif</code></pre>
+
+    <div class="callout key">
+      <div class="callout-title">🔑 APV 的工程价值</div>
+      APV 为 SSGI 提供了高质量、内存高效的烘焙 GI 数据，
+      作为屏幕空间计算结果的"背景"与"补充"，消除了光线穿帮时常见的突兀黑色区域。
+    </div>
+  </section>
+
+  <!-- ⑧  Compute Shader Optimization -->
+  <section id="sec-cs-opt">
+    <h2 class="section-title"><span class="icon">🚀</span>Compute Shader 优化方向<span class="num">§ 08</span></h2>
+
+    <p>
+      将计算密集型 Pass 迁移到 Compute Shader 可更好地利用 GPU 并行性与 Shared Memory（LDS），
+      以下是各 Pass 的优化潜力排序：
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Pass</th><th>优化潜力</th><th>CS 优化优势</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P1 Ray Marching</strong></td>
+            <td>🔥🔥🔥 最高</td>
+            <td>每像素独立计算，完美并行；LDS 缓存 GBuffer/深度，减少纹理读取延迟</td>
+          </tr>
+          <tr>
+            <td><strong>P3/P8 Spatial Denoise</strong></td>
+            <td>🔥🔥🔥 最高</td>
+            <td>Tile-based 双边滤波：将 Tile 边界像素载入 Shared Memory，避免重复采样，高效处理边界重叠</td>
+          </tr>
+          <tr>
+            <td><strong>P2 Temporal Reproj.</strong></td>
+            <td>🔥🔥 高</td>
+            <td>邻域 AABB 计算可以 Tile 化，将小块区域整体载入 LDS 后并行钳制</td>
+          </tr>
+          <tr>
+            <td><strong>P4 Temporal Stable</strong></td>
+            <td>🔥 中</td>
+            <td>与 P2/P3 同管线，减少 Render State 切换开销，统一 Compute 调度链</td>
+          </tr>
+          <tr>
+            <td><strong>P5 Copy History</strong></td>
+            <td>⚡ 辅助</td>
+            <td>整管线 CS 化后纳入统一数据复制流，保持管线连贯性；可同步做格式转换</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>推荐 CS 管线拆分方案</h3>
+    <pre><code class="language-csharp">// CS 1：核心 GI 生成
+DispatchCS(RayMarchingCS, screenW/8, screenH/8, 1);
+
+// CS 2：完整降噪链（同一 CS 多次 Dispatch）
+DispatchCS(DenoiseCS, ..., kernel: "TemporalReprojection");   // Pass 2
+DispatchCS(DenoiseCS, ..., kernel: "SpatialDenoise_H");        // Pass 3 水平
+DispatchCS(DenoiseCS, ..., kernel: "SpatialDenoise_V");        // Pass 3 垂直
+DispatchCS(DenoiseCS, ..., kernel: "TemporalStabilization");   // Pass 4
+
+// 最终混合（Pass 6）仍可用传统 Blit + Blend 或 CS UAV 写入</code></pre>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ 迁移挑战</div>
+      CS 迁移需要手动管理 <code>RWTexture2D</code> 绑定与 <code>Dispatch</code> 同步。
+      Unity 6+ 推荐通过 <strong>Render Graph</strong> 调度 CS 任务，
+      用 <code>builder.UseTexture / builder.UseRWTexture</code> 声明资源依赖。
+    </div>
+  </section>
+
+  <!-- ⑨  Learning Points -->
+  <section id="sec-learn">
+    <h2 class="section-title"><span class="icon">📚</span>值得借鉴的工程实践<span class="num">§ 09</span></h2>
+
+    <h3>1. 双 API 兼容性（旧版 URP + Render Graph）</h3>
+    <p>
+      大量 <code>#if UNITY_6000_0_OR_NEWER</code> 宏区分代码路径，
+      旧版用 <code>ScriptableRenderPass + Execute</code>，
+      新版用 <code>RecordRenderGraph + builder.SetRenderFunc</code>，
+      是学习 URP 迁移至 Render Graph 的标准范例。
+    </p>
+
+    <h3>2. 精确时域数据管理（解决多相机污染）</h3>
+    <p>
+      <code>CameraHistoryData</code> 数组 + <code>GetHashCode</code> 追踪相机身份，
+      完美解决 Game View / Scene View / 反射相机历史帧相互污染的问题。
+    </p>
+
+    <h3>3. 灵活渲染路径适配（Forward GBuffer 按需生成）</h3>
+    <p>
+      SSGI 依赖 GBuffer，延迟模式直接复用，前向模式注入 <code>ForwardGBufferPass</code> 按需生成，
+      避免了 Deferred 下的重复渲染浪费。
+    </p>
+
+    <h3>4. 强大 T-S-T 降噪管线</h3>
+    <p>
+      Temporal Reprojection (P2) → Spatial Denoise (P3/8) → Temporal Stabilization (P4)，
+      配合 <strong>AABB 钳制</strong>、<strong>遮挡剔除</strong>、<strong>速度敏感混合</strong>，
+      实现了生产级的屏幕空间 GI 噪声抑制。
+    </p>
+
+    <h3>5. 优雅的环境光分级回退策略</h3>
+    <p>
+      <code>SSGIFallback.hlsl</code> 的分级设计：
+      反射探针 Box Projection 校正 → APV 高阶烘焙 GI → 传统 SH 球谐，
+      保证了 SSGI 在任何配置下都能与 Unity 全局光照系统无缝衔接。
+    </p>
+
+    <hr>
+
+    <div class="callout key">
+      <div class="callout-title">📌 参考资源</div>
+      <ul style="margin: 0; padding-left: 16px;">
+        <li><a href="https://github.com/jiaozi158/UnitySSGIURP" target="_blank">GitHub: jiaozi158 / UnitySSGIURP</a></li>
+        <li><a href="https://www.shadertoy.com/view/ldKBzG" target="_blank">ShaderToy: Edge-Avoiding À-Trous Wavelet Transform</a></li>
+        <li><a href="https://blog.voxagon.se/2018/01/03/screen-space-path-tracing-diffuse.html" target="_blank">Voxagon: Screen Space Path Tracing – Diffuse</a></li>
+        <li>GPU Pro 7 · Horizon Zero Dawn 体积云（相关降噪思路来源）</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<!-- Floating Controls -->
+<div class="floating-controls">
+  <a href="/shows" class="float-btn home-btn" title="回到上级">⌂</a>
+  <button id="backToTopBtn" class="float-btn top-btn" title="回到顶部">↑</button>
+</div>
+
+<script>
+  // ── Highlight.js ──────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    hljs.highlightAll();
+  });
+
+  // ── Back To Top ───────────────────────────────────
+  const backToTopBtn = document.getElementById('backToTopBtn');
+  window.addEventListener('scroll', () => {
+    backToTopBtn.classList.toggle('show', window.scrollY > 300);
+  });
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ── TOC Active Link ───────────────────────────────
+  const sections = document.querySelectorAll('section[id], h3[id]');
+  const tocLinks = document.querySelectorAll('#toc-list a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`#toc-list a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20px 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  // ── Mobile TOC Toggle ─────────────────────────────
+  const tocSidebar = document.getElementById('toc-sidebar');
+  const tocToggle = document.getElementById('toc-toggle');
+  tocToggle.addEventListener('click', () => {
+    tocSidebar.classList.toggle('open');
+  });
+  // Close when clicking a link (mobile)
+  document.querySelectorAll('#toc-list a').forEach(a => {
+    a.addEventListener('click', () => tocSidebar.classList.remove('open'));
+  });
+</script>
+
+</body>
+</html>
