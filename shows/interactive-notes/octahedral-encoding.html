@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CG Math Notes — 计算机图形学数学交互笔记 | Zerl'TA Blog</title>
+  <title>八面体法线编码 | Zerl'TA Blog</title>
 
   
   
@@ -25,7 +25,7 @@
   
   
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Syne:wght@400;600;800&family=Noto+Serif+SC:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet"/>
   
 
   
@@ -171,14 +171,6 @@ mjx-container[display="true"] + br {
 
   
   
----
-title: "八面体法线编码 — 计算机图形学学习笔记"
-layout: interactive-note
-head: true
-mathjax: true
-fonts: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp;family=Syne:wght@700;800&amp;family=Noto+Serif+SC:wght@400;600;700&amp;display=swap"
----
-
 <div class="hero">
   <div class="content">
     <div class="hero-label">计算机图形学 · 延迟渲染 · 内存优化</div>
@@ -200,14 +192,6 @@ fonts: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp
     在现代图形学和高阶渲染管线中，<strong>八面体法线编码（Octahedral Normal Encoding）</strong>是一种将三维单位向量（如表面法线）编码为二维坐标的极其高效的方法。它是对八面体环境贴图技术的扩展应用。本文我们将拆解其几何投射原理，并提供可直接用于实际渲染管线的 HLSL 实现。
   </p>
 
-  <div class="callout info">
-    <div class="callout-label">前置参考与文献索引</div>
-    <p style="margin-bottom: 0; font-size: 13px;">
-      <a href="https://brashandplucky.com/2022/07/07/octahedron-unitvector-encoding.html" target="_blank">Octahedron unit-vector encoding</a><br>
-      <a href="https://www.jeremyong.com/graphics/2023/01/09/tangent-spaces-and-diamond-encoding/" target="_blank">Tangent Spaces and Diamond Encoding (Jeremy's Blog)</a><br>
-      <a href="https://jcgt.org/published/0003/02/01/paper.pdf" target="_blank">A Survey of Efficient Representations for Independent Unit Vectors (JCGT)</a>
-    </p>
-  </div>
 
   <div class="section">
     <div class="section-header">
@@ -253,7 +237,7 @@ fonts: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp
       <span class="section-title">交互式理解：空间折叠推演</span>
     </div>
     
-    <p>如果您觉得纯数学公式过于抽象，我们可以通过交互面板与流水线推演来建立物理直觉：</p>
+    <p>我们可以通过交互面板与流水线推演来建立物理直觉：</p>
 
     <div class="demo-card">
       <h4>🕹️ 交互式可视化：向量在 2D UV 空间的折叠映射</h4>
@@ -274,7 +258,7 @@ fonts: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp
         </div>
       </div>
       <p style="margin-top: 20px; font-size: 13px; color: var(--text-dim); line-height: 1.6;">
-        * <strong>操作提示：</strong>尝试将 Z 分量滑至负数，您会直观地感受到映射点从菱形中心“跃迁”并向外四角对折的现象，这正是 <code>1.0 - abs(result.yx)</code> 逻辑在起作用。
+        * <strong>操作提示：</strong>尝试将 Z 分量滑至负数，会直观地感受到映射点从菱形中心“跃迁”并向外四角对折的现象，这正是 <code>1.0 - abs(result.yx)</code> 逻辑在起作用。
       </p>
     </div>
 
@@ -318,11 +302,11 @@ fonts: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp
       <span class="section-title">工程实践：HLSL 源码实现</span>
     </div>
 
-    <p>我们为您整理了可以直接集成到着色器库中的 HLSL 代码，并在下方添加了针对 <strong>G-Buffer 读写</strong>的映射处理示例。</p>
+    <p>HLSL 源码，以及针对 <strong>G-Buffer 读写</strong>的映射处理示例。</p>
 
     <div class="tabs" style="margin-top: 24px;">
-      <button class="tab-btn active" onclick="switchTab('tab-encode', this)">1. 核心编码 (Encode)</button>
-      <button class="tab-btn" onclick="switchTab('tab-decode', this)">2. 核心解码 (Decode)</button>
+      <button class="tab-btn active" onclick="switchTab('tab-encode', this)">1. 编码 (Encode)</button>
+      <button class="tab-btn" onclick="switchTab('tab-decode', this)">2. 解码 (Decode)</button>
       <button class="tab-btn" onclick="switchTab('tab-gbuffer', this)">3. G-Buffer 读写示例</button>
     </div>
 
@@ -393,14 +377,25 @@ fonts: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp
     </div>
   </div>
 
+
+
   <div class="summary-box">
     <h2>机制总结</h2>
     <p>八面体法线映射用极低开销的代数计算，置换了昂贵的三角函数解算。它通过在 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.09ex;" xmlns="http://www.w3.org/2000/svg" width="5.2ex" height="1.597ex" role="img" focusable="false" viewBox="0 -666 2298.6 706"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D467" d="M347 338Q337 338 294 349T231 360Q211 360 197 356T174 346T162 335T155 324L153 320Q150 317 138 317Q117 317 117 325Q117 330 120 339Q133 378 163 406T229 440Q241 442 246 442Q271 442 291 425T329 392T367 375Q389 375 411 408T434 441Q435 442 449 442H462Q468 436 468 434Q468 430 463 420T449 399T432 377T418 358L411 349Q368 298 275 214T160 106L148 94L163 93Q185 93 227 82T290 71Q328 71 360 90T402 140Q406 149 409 151T424 153Q443 153 443 143Q443 138 442 134Q425 72 376 31T278 -11Q252 -11 232 6T193 40T155 57Q111 57 76 -3Q70 -11 59 -11H54H41Q35 -5 35 -2Q35 13 93 84Q132 129 225 214T340 322Q352 338 347 338Z"></path></g><g data-mml-node="mo" transform="translate(742.8,0)"><path data-c="3C" d="M694 -11T694 -19T688 -33T678 -40Q671 -40 524 29T234 166L90 235Q83 240 83 250Q83 261 91 266Q664 540 678 540Q681 540 687 534T694 519T687 505Q686 504 417 376L151 250L417 124Q686 -4 687 -5Q694 -11 694 -19Z"></path></g><g data-mml-node="mn" transform="translate(1798.6,0)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></g></g></g></svg></mjx-container> 时引入巧妙的“对称折叠”，实现了表面法线向量的完美降维和数据重构，是我们在处理大规模场景渲染和高规格光照计算时不可或缺的底层基础设施。</p>
   </div>
 
+    <div class="callout info">
+    <div class="callout-label">参考与文献索引</div>
+    <p style="margin-bottom: 0; font-size: 13px;">
+      <a href="https://brashandplucky.com/2022/07/07/octahedron-unitvector-encoding.html" target="_blank">Octahedron unit-vector encoding</a><br>
+      <a href="https://www.jeremyong.com/graphics/2023/01/09/tangent-spaces-and-diamond-encoding/" target="_blank">Tangent Spaces and Diamond Encoding (Jeremy's Blog)</a><br>
+      <a href="https://jcgt.org/published/0003/02/01/paper.pdf" target="_blank">A Survey of Efficient Representations for Independent Unit Vectors (JCGT)</a><br>
+      <a href="https://www.readkong.com/page/octahedron-environment-maps-6054207" target="_blank">Octahedron Environment Maps</a>
+    </p>
+  </div>
+
   <footer>
-    <div>计算机图形学笔记 · Octahedral Encoding</div>
-    <div style="margin-top:6px; color:rgba(90,100,120,0.5);">Interactive Notes System</div>
+    <div style="margin-top:6px; color:rgba(90,100,120,0.5);">Interactive Notes · Octahedral Encoding</div>
   </footer>
 </div>
 
@@ -410,22 +405,221 @@ fonts: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp
 </div>
 
 
-<script>
-  function noteInit() {
-    // 监听滑块事件（示意逻辑，配合实际 Three.js 或自写 Canvas WebGL 逻辑食用）
+<script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js';
+
+  window.noteInit = function() {
+    const canvas = document.getElementById('octahedronCanvas');
+    if (!canvas) return;
+
+    // --- 1. 场景与渲染器 ---
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    const containerWidth = canvas.parentElement.clientWidth || 800; // 稍微加宽一点以容纳三个模型
+    renderer.setSize(containerWidth, 360); // 增加高度
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const scene = new THREE.Scene();
+    // 拉远相机，确保能并排放下三个模型 (-2.4, 0, 2.4)
+    const camera = new THREE.PerspectiveCamera(40, containerWidth / 320, 0.1, 100);
+    camera.position.set(0, 0, 8.5); 
+
+    // =======================================================
+    // --- 2. 核心着色器：法线到颜色的映射 (Color = N*0.5+0.5)
+    // =======================================================
+    
+    // 3D 对象的着色器 (球体与八面体共用：它们表面任意点的归一化位置，即代表法线方向)
+    const vertexShader3D = `
+      varying vec3 vPosition;
+      void main() {
+        vPosition = position;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `;
+    const fragmentShader3D = `
+      varying vec3 vPosition;
+      void main() {
+        vec3 n = normalize(vPosition);
+        gl_FragColor = vec4(n * 0.5 + 0.5, 1.0);
+      }
+    `;
+
+    // 2D UV 平面的着色器 (需要先利用八面体解码函数将 2D UV 还原为 3D 法线，再着色)
+    const vertexShader2D = `
+      varying vec2 vUv;
+      void main() {
+        vUv = position.xy; // PlaneGeometry的 xy 范围是 -1 到 1
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `;
+    const fragmentShader2D = `
+      varying vec2 vUv;
+      void main() {
+        vec3 n;
+        n.xy = vUv;
+        n.z = 1.0 - abs(n.x) - abs(n.y);
+        
+        // 核心折叠还原逻辑 (下半球)
+        if (n.z < 0.0) {
+            float signX = n.x >= 0.0 ? 1.0 : -1.0;
+            float signY = n.y >= 0.0 ? 1.0 : -1.0;
+            vec2 temp = n.xy;
+            n.x = (1.0 - abs(temp.y)) * signX;
+            n.y = (1.0 - abs(temp.x)) * signY;
+        }
+        n = normalize(n);
+        gl_FragColor = vec4(n * 0.5 + 0.5, 1.0);
+      }
+    `;
+
+    const mat3D = new THREE.ShaderMaterial({ vertexShader: vertexShader3D, fragmentShader: fragmentShader3D });
+    const mat2D = new THREE.ShaderMaterial({ vertexShader: vertexShader2D, fragmentShader: fragmentShader2D });
+
+    // =======================================================
+    // --- 3. 构建视图元素 ---
+    // =======================================================
+    
+    // 我们将整体稍微向下倾斜，便于观察 Z 轴的正负极
+    const globalRotX = Math.PI / 6;
+    const globalRotY = Math.PI / 4;
+
+    // --- 左侧：单位球体 ---
+    const groupSphere = new THREE.Group();
+    groupSphere.position.x = -2.4;
+    groupSphere.rotation.set(globalRotX, globalRotY, 0);
+    scene.add(groupSphere);
+    
+    groupSphere.add(new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), mat3D));
+    // 添加球体经纬线框增强立体感
+    groupSphere.add(new THREE.LineSegments(new THREE.WireframeGeometry(new THREE.SphereGeometry(1.01, 16, 16)), new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.15, transparent: true })));
+
+    // --- 中间：正八面体 ---
+    const groupOct = new THREE.Group();
+    groupOct.position.x = 0;
+    groupOct.rotation.set(globalRotX, globalRotY, 0);
+    scene.add(groupOct);
+
+    const octGeo = new THREE.OctahedronGeometry(1, 0);
+    groupOct.add(new THREE.Mesh(octGeo, mat3D));
+    // 添加八面体黑色线框，明确区分 8 个面
+    groupOct.add(new THREE.LineSegments(new THREE.EdgesGeometry(octGeo), new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 })));
+
+    // --- 右侧：2D UV 映射平面 ---
+    const groupUV = new THREE.Group();
+    groupUV.position.x = 2.4;
+    scene.add(groupUV); // 2D 面板不需要旋转，直面摄像机
+
+    groupUV.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat2D));
+    // 添加 UV 外边框
+    groupUV.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(2, 2)), new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.8, transparent: true })));
+    // 添加中间的“菱形”折叠线框 (Z=0 的赤道)
+    const diamondPoints = [new THREE.Vector3(1,0,0), new THREE.Vector3(0,1,0), new THREE.Vector3(-1,0,0), new THREE.Vector3(0,-1,0), new THREE.Vector3(1,0,0)];
+    groupUV.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(diamondPoints), new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 })));
+
+    // =======================================================
+    // --- 4. 交互标记点 (Dot) 组 ---
+    // =======================================================
+    const createDot = () => {
+        const mesh = new THREE.Mesh(new THREE.CircleGeometry(0.08, 16), new THREE.MeshBasicMaterial({ color: 0xffffff, depthTest: false }));
+        mesh.add(new THREE.LineLoop(new THREE.CircleGeometry(0.1, 16), new THREE.LineBasicMaterial({ color: 0x000000, depthTest: false })));
+        mesh.renderOrder = 10; // 确保在最上层
+        return mesh;
+    };
+
+    const dotSphere = createDot(); groupSphere.add(dotSphere);
+    const dotOct = createDot(); groupOct.add(dotOct);
+    const dotUV = createDot(); groupUV.add(dotUV);
+
+    // =======================================================
+    // --- 5. 核心计算与同步 ---
+    // =======================================================
+    function encodeOctahedral(nx, ny, nz) {
+        const sum = Math.abs(nx) + Math.abs(ny) + Math.abs(nz);
+        let u = nx / sum;
+        let v = ny / sum;
+        if (nz < 0) {
+            const tempU = u;
+            u = (1.0 - Math.abs(v)) * (u >= 0 ? 1 : -1);
+            v = (1.0 - Math.abs(tempU)) * (v >= 0 ? 1 : -1);
+        }
+        return { u, v, sum };
+    }
+
     const inputs = ['X', 'Y', 'Z'].map(axis => document.getElementById(`slider${axis}`));
     const vals = ['X', 'Y', 'Z'].map(axis => document.getElementById(`val${axis}`));
-    
-    inputs.forEach((input, index) => {
-      if(input) {
-        input.addEventListener('input', (e) => {
-          vals[index].innerText = parseFloat(e.target.value).toFixed(2);
-          // 在此处可派发事件以重绘 Canvas 渲染八面体折叠动画
+
+    function updateVisualization() {
+        if (!inputs[0]) return;
+        let x = parseFloat(inputs[0].value);
+        let y = parseFloat(inputs[1].value);
+        let z = parseFloat(inputs[2].value);
+        if (x === 0 && y === 0 && z === 0) z = 1;
+
+        const len = Math.sqrt(x*x + y*y + z*z);
+        const nx = x/len, ny = y/len, nz = z/len;
+
+        // 1. 球体上的点 (即归一化的法线位置)
+        dotSphere.position.set(nx, ny, nz);
+        dotSphere.lookAt(nx * 2, ny * 2, nz * 2);
+
+        // 2. 八面体上的点 (相当于法线除以 L1 范数，即射线与八面体表面的交点)
+        const encoded = encodeOctahedral(nx, ny, nz);
+        dotOct.position.set(nx / encoded.sum, ny / encoded.sum, nz / encoded.sum);
+        dotOct.lookAt(dotOct.position.clone().multiplyScalar(2));
+
+        // 3. 2D UV 空间上的点
+        dotUV.position.set(encoded.u, encoded.v, 0);
+
+        renderer.render(scene, camera);
+    }
+
+    inputs.forEach(input => {
+        if(input) input.addEventListener('input', () => {
+            vals[0].innerText = parseFloat(inputs[0].value).toFixed(2);
+            vals[1].innerText = parseFloat(inputs[1].value).toFixed(2);
+            vals[2].innerText = parseFloat(inputs[2].value).toFixed(2);
+            updateVisualization();
         });
-      }
     });
+
+    updateVisualization();
+
+    // 添加鼠标拖拽来统一旋转球体和八面体的简单交互
+    let isDragging = false;
+    let prevMouse = { x: 0, y: 0 };
+    canvas.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.offsetX, y: e.offsetY }; });
+    canvas.addEventListener('mouseup', () => isDragging = false);
+    canvas.addEventListener('mouseleave', () => isDragging = false);
+    canvas.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const deltaX = e.offsetX - prevMouse.x;
+        const deltaY = e.offsetY - prevMouse.y;
+        groupSphere.rotation.y += deltaX * 0.01;
+        groupSphere.rotation.x += deltaY * 0.01;
+        groupOct.rotation.y += deltaX * 0.01;
+        groupOct.rotation.x += deltaY * 0.01;
+        prevMouse = { x: e.offsetX, y: e.offsetY };
+        renderer.render(scene, camera);
+    });
+
+    // 监听视口调整
+    window.addEventListener('resize', () => {
+        const width = canvas.parentElement.clientWidth;
+        renderer.setSize(width, 320);
+        camera.aspect = width / 320;
+        camera.updateProjectionMatrix();
+        renderer.render(scene, camera);
+    });
+  };
+  
+  if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', window.noteInit);
+  } else {
+      window.noteInit();
   }
 </script>
+
+
+
 
 
   
