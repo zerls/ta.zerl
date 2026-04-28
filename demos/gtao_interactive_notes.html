@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTAO — Ground-Truth Ambient Occlusion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Syne:wght@400;600;800&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+<link href="./claude-hero-styl.css" rel="stylesheet">
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+    chtml: { matchFontHeight: false },
+    startup: { typeset: false }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+:root {
+  --bg: #0a0c0f;
+  --surface: #111417;
+  --surface2: #191d22;
+  --border: #1e2530;
+  --accent: #00e5c3;
+  --accent2: #ff6b35;
+  --accent3: #7b61ff;
+  --text: #d8dde6;
+  --text-muted: #5a6478;
+  --text-dim: #8891a4;
+  --heading: #eef0f4;
+  --code-bg: #0d1117;
+  --glow: rgba(0,229,195,0.15);
+}
+
+
+body {
+  font-size: 15px;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Header ── */
+header {
+  position: relative;
+  padding: 80px 0 60px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.header-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,229,195,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 40% at 80% 100%, rgba(123,97,255,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,195,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,195,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 100% at 50% 0%, black 30%, transparent 80%);
+}
+.badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  border: 1px solid rgba(0,229,195,0.3);
+  padding: 3px 12px;
+  border-radius: 2px;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  background: rgba(0,229,195,0.05);
+}
+h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800;
+  color: var(--heading);
+  letter-spacing: -1px;
+  line-height: 1.1;
+  position: relative;
+}
+h1 span { color: var(--accent); }
+.subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 16px;
+  letter-spacing: 1px;
+}
+
+/* ── Layout ── */
+.container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+
+/* ── TOC ── */
+nav.toc {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,12,15,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+}
+.toc-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 12px 0;
+}
+.toc-inner::-webkit-scrollbar { display: none; }
+.toc-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid transparent;
+  padding: 5px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+}
+.toc-btn:hover, .toc-btn.active {
+  color: var(--accent);
+  border-color: rgba(0,229,195,0.3);
+  background: rgba(0,229,195,0.05);
+}
+
+/* ── Sections ── */
+section {
+  padding: 72px 0 48px;
+  border-bottom: 1px solid var(--border);
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--heading);
+  margin-bottom: 28px;
+  letter-spacing: -0.5px;
+}
+h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--heading);
+  margin: 32px 0 12px;
+}
+
+p { margin-bottom: 16px; color: var(--text); }
+
+/* ── Callout ── */
+.callout {
+  border-left: 2px solid var(--accent);
+  background: linear-gradient(90deg, rgba(0,229,195,0.05) 0%, transparent 100%);
+  padding: 16px 20px;
+  margin: 24px 0;
+  border-radius: 0 4px 4px 0;
+}
+.callout.warn { border-color: var(--accent2); background: linear-gradient(90deg, rgba(255,107,53,0.05) 0%, transparent 100%); }
+.callout.info { border-color: var(--accent3); background: linear-gradient(90deg, rgba(123,97,255,0.05) 0%, transparent 100%); }
+.callout-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  color: var(--accent);
+}
+.callout.warn .callout-title { color: var(--accent2); }
+.callout.info .callout-title { color: var(--accent3); }
+
+/* ── Math block ── */
+.math-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px 28px 16px;
+  margin: 20px 0;
+  position: relative;
+  overflow-x: auto;
+}
+.math-block .label {
+  position: absolute;
+  top: 10px; right: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+/* MathJax color overrides */
+.math-block mjx-container { color: #a8d8c8 !important; }
+.math-block .MJX-TEX { color: #a8d8c8; }
+.math-comment {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 6px;
+  line-height: 1.6;
+}
+
+/* ── Interactive AO demo ── */
+.demo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px;
+  margin: 24px 0;
+}
+.demo-card h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+canvas {
+  display: block;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: #060810;
+}
+
+/* ── Sliders ── */
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.ctrl-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ctrl-row label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+.ctrl-row label span { color: var(--accent); }
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--glow);
+}
+
+/* ── Tabs (for formula phases) ── */
+.tabs { display: flex; gap: 4px; margin-bottom: 0; }
+.tab-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 7px 16px;
+  background: var(--surface2);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.15s;
+}
+.tab-btn.active { background: var(--surface); color: var(--accent); border-color: var(--border); }
+.tab-content {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 4px 4px 4px;
+  padding: 24px;
+}
+.tab-content.active { display: block; }
+
+/* ── Step pipeline ── */
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 24px 0;
+  position: relative;
+}
+.pipeline::before {
+  content: '';
+  position: absolute;
+  left: 19px; top: 24px; bottom: 24px;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent3), var(--accent2));
+  opacity: 0.3;
+}
+.pipe-step {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 16px 0;
+  cursor: pointer;
+  position: relative;
+}
+.pipe-num {
+  width: 38px; height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  transition: all 0.2s;
+  z-index: 1;
+}
+.pipe-step:hover .pipe-num, .pipe-step.active .pipe-num {
+  background: rgba(0,229,195,0.1);
+  border-color: rgba(0,229,195,0.4);
+  box-shadow: 0 0 16px rgba(0,229,195,0.2);
+}
+.pipe-body { flex: 1; }
+.pipe-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--heading);
+  margin-bottom: 4px;
+}
+.pipe-desc { color: var(--text-dim); font-size: 14px; }
+.pipe-detail {
+  display: none;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.pipe-detail.open { display: block; animation: fadeIn 0.25s ease; }
+
+/* ── Comparison toggle ── */
+.compare-wrap {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 20px 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.compare-canvas-wrap { position: relative; width: 100%; }
+.compare-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.compare-label {
+  background: rgba(10,12,15,0.85);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  border-radius: 2px;
+  color: var(--accent);
+}
+.compare-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+}
+.toggle-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 6px 16px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.toggle-btn.active { color: var(--accent); border-color: rgba(0,229,195,0.4); background: rgba(0,229,195,0.07); }
+
+/* ── GI polynomial demo ── */
+.poly-demo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+@media (max-width: 600px) { .poly-demo { grid-template-columns: 1fr; } }
+
+/* ── Spec occlusion viz ── */
+.so-diagram { margin: 20px 0; }
+
+/* ── Highlight ── */
+mark {
+  background: rgba(0,229,195,0.12);
+  color: var(--accent);
+  padding: 1px 4px;
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+}
+
+/* ── Footer ── */
+footer {
+  text-align: center;
+  padding: 48px 32px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+footer a { color: var(--accent); text-decoration: none; }
+
+/* ── Util ── */
+.flex { display: flex; gap: 16px; align-items: flex-start; }
+.chip {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  border: 1px solid;
+  margin: 2px;
+  letter-spacing: 0.5px;
+}
+.chip-green { color: var(--accent); border-color: rgba(0,229,195,0.3); background: rgba(0,229,195,0.06); }
+.chip-orange { color: var(--accent2); border-color: rgba(255,107,53,0.3); background: rgba(255,107,53,0.06); }
+.chip-purple { color: var(--accent3); border-color: rgba(123,97,255,0.3); background: rgba(123,97,255,0.06); }
+
+table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+th { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); letter-spacing: 1px; }
+td { padding: 10px 12px; border-bottom: 1px solid rgba(30,37,48,0.5); color: var(--text); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.015); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-bg"></div>
+  <div class="header-grid"></div>
+  <div class="container" style="position:relative">
+    <div class="badge">SIGGRAPH 2016 · ATVI-TR-16-01</div>
+    <h1>Ground-Truth<br><span>Ambient Occlusion</span></h1>
+    <div class="subtitle">Jimenez · Wu · Pesce · Jarabo — Activision Blizzard / U. Zaragoza</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-inner">
+    <button class="toc-btn active" onclick="scrollTo('intro')">00 背景</button>
+    <button class="toc-btn" onclick="scrollTo('formulation')">01 公式推导</button>
+    <button class="toc-btn" onclick="scrollTo('pipeline')">02 实现管线</button>
+    <button class="toc-btn" onclick="scrollTo('gi')">03 近场间接光</button>
+    <button class="toc-btn" onclick="scrollTo('gtso')">04 镜面遮蔽 GTSO</button>
+    <button class="toc-btn" onclick="scrollTo('demo')">05 交互演示</button>
+    <button class="toc-btn" onclick="scrollTo('summary')">06 总结对比</button>
+  </div>
+</nav>
+
+<main class="container">
+
+<!-- ══ 00 背景 ══ -->
+<section id="intro">
+  <div class="section-label">00 — BACKGROUND</div>
+  <h2>环境光遮蔽的核心问题</h2>
+
+  <p>环境光遮蔽（Ambient Occlusion，AO）是实时渲染中近似全局光照最常用的手段之一。它描述了一个着色点 <mark>x</mark> 从均匀环境光中接收到的可见性积分：当周围几何体遮挡了来自某些方向的光线时，该点会变暗。</p>
+
+  <div class="callout">
+    <div class="callout-title">▸ 核心积分</div>
+    AO 本质上是在半球面上对可见性函数 V(x, ωᵢ) 加权 cos(θ) 的积分。无解析解，只能数值近似。
+  </div>
+
+  <p>现有方法（SSAO、HBAO 等）普遍存在以下问题：</p>
+  <ul style="list-style:none; padding:0;">
+    <li style="padding:6px 0; border-bottom:1px solid var(--border); display:flex; gap:12px; align-items:center;">
+      <span style="color:var(--accent2); font-family:monospace; font-size:12px;">BIAS</span>
+      <span>使用衰减函数（obscurance）而非二值可见性，结果偏离物理正确</span>
+    </li>
+    <li style="padding:6px 0; border-bottom:1px solid var(--border); display:flex; gap:12px; align-items:center;">
+      <span style="color:var(--accent2); font-family:monospace; font-size:12px;">COST</span>
+      <span>每像素采样数量多，60fps 时 budget 极度紧张</span>
+    </li>
+    <li style="padding:6px 0; border-bottom:1px solid var(--border); display:flex; gap:12px; align-items:center;">
+      <span style="color:var(--accent2); font-family:monospace; font-size:12px;">GI</span>
+      <span>完全忽略近场多次弹射的间接光，导致过度变暗</span>
+    </li>
+    <li style="padding:6px 0; display:flex; gap:12px; align-items:center;">
+      <span style="color:var(--accent2); font-family:monospace; font-size:12px;">SPEC</span>
+      <span>AO 只处理漫反射，无法用于镜面（Specular）遮蔽</span>
+    </li>
+  </ul>
+
+  <h3>GTAO 的三大贡献</h3>
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:12px; margin:16px 0;">
+    <div style="background:var(--surface2); border:1px solid var(--border); border-top:2px solid var(--accent); border-radius:0 0 6px 6px; padding:16px;">
+      <div style="font-family:'Syne',sans-serif; font-weight:700; margin-bottom:8px; color:var(--heading)">① GTAO</div>
+      <div style="font-size:13px; color:var(--text-dim)">用视角方向重新参数化水平线积分，内积可解析求解，精确匹配光线追踪 Ground Truth</div>
+    </div>
+    <div style="background:var(--surface2); border:1px solid var(--border); border-top:2px solid var(--accent3); border-radius:0 0 6px 6px; padding:16px;">
+      <div style="font-family:'Syne',sans-serif; font-weight:700; margin-bottom:8px; color:var(--heading)">② 近场 GI 补偿</div>
+      <div style="font-size:13px; color:var(--text-dim)">基于 AO 值和反照率拟合三次多项式，恢复多次弹射损失的能量</div>
+    </div>
+    <div style="background:var(--surface2); border:1px solid var(--border); border-top:2px solid var(--accent2); border-radius:0 0 6px 6px; padding:16px;">
+      <div style="font-family:'Syne',sans-serif; font-weight:700; margin-bottom:8px; color:var(--heading)">③ GTSO</div>
+      <div style="font-size:13px; color:var(--text-dim)">将 AO 推广至镜面材质，用可见锥与 BRDF 叶瓣的交集预计算镜面遮蔽 LUT</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 01 公式推导 ══ -->
+<section id="formulation">
+  <div class="section-label">01 — FORMULATION</div>
+  <h2>GTAO 公式推导</h2>
+
+  <p>GTAO 基于 Bavoil 等人的 <strong>HBAO</strong> 框架，但做了关键改造。理解推导需要掌握三个层次：</p>
+
+  <div class="tabs" style="margin-top:24px;">
+    <button class="tab-btn active" onclick="switchTab('tab-base', this)">基础 AO 积分</button>
+    <button class="tab-btn" onclick="switchTab('tab-hbao', this)">HBAO 改写</button>
+    <button class="tab-btn" onclick="switchTab('tab-gtao', this)">GTAO 关键步骤</button>
+    <button class="tab-btn" onclick="switchTab('tab-analytic', this)">解析内积</button>
+  </div>
+
+  <div id="tab-base" class="tab-content active">
+    <p>标准 AO 将反射辐射近似为均匀环境光 <mark>Lᵢ</mark> 乘以遮蔽积分：</p>
+    <div class="math-block">
+      <div class="label">EQ.2</div>
+      $$L_r(x,\omega_o) = L_i \cdot \frac{\rho(x)}{\pi} \cdot \underbrace{\int_{H^2} V(x,\omega_i)\langle n_x,\omega_i\rangle^+ \,d\omega_i}_{A(x)}$$
+      <div class="math-comment">// V = 二值可见性函数：1=可见，0=被遮挡（半径 r 内）<br>// 旧方法用连续衰减函数替代 V → "Obscurance"（有偏）</div>
+    </div>
+    <div class="callout warn">
+      <div class="callout-title">▸ 旧方法的问题</div>
+      使用衰减函数（如 $1 - d/r$）是为了减少 overdarkening 的 ad-hoc 处理，没有物理依据，且破坏了积分的解析性。GTAO 坚持使用<strong>二值可见性</strong>，通过独立的 GI 补偿项（§5）来处理 overdarkening。
+    </div>
+  </div>
+
+  <div id="tab-hbao" class="tab-content">
+    <p>Bavoil (HBAO) 把积分域从半球面转化为一组切线方向 $\varphi$ 参数化的水平线（Horizon）：</p>
+    <div class="math-block">
+      <div class="label">EQ.3</div>
+      $$A(x) \approx \frac{1}{\pi}\int_0^{\pi}\int_{\theta_1(\varphi)}^{\theta_2(\varphi)} V(\varphi,\theta)\,|\sin\theta|\,d\theta\,d\varphi$$
+      <div class="math-comment">// 对每个切线方向 φ，搜索两侧最大地平线角 θ₁, θ₂<br>// 外积对 φ 做 Monte Carlo，内积对 θ 积分，仍需 LUT</div>
+    </div>
+    <p>HBAO 的内积仍使用数值积分或 LUT（Timonen），且参考系以<strong>法线</strong>为轴。</p>
+  </div>
+
+  <div id="tab-gtao" class="tab-content">
+    <p>GTAO 的关键改变：将积分参考系从法线轴改为<strong>视角方向 $\omega_o$</strong> 为轴，并引入 $\gamma$（法线投影与视线夹角）：</p>
+    <div class="math-block">
+      <div class="label">EQ.5 — GTAO 核心积分</div>
+      $$\hat{A}(x) = \frac{1}{\pi}\int_0^{\pi}\underbrace{\int_{\theta_1(\varphi)}^{\theta_2(\varphi)}\cos(\theta-\gamma)^+\,|\sin\theta|\,d\theta}_{\hat{a}\text{（可解析！）}}\,d\varphi$$
+      <div class="math-comment">// γ = arccos(⟨n̄ₓ, ωₒ⟩)，n̄ₓ 为法线在切平面上的投影<br>// 内积 â 现在有闭合解析式；外积对 φ 做 Monte Carlo</div>
+    </div>
+    <div class="callout">
+      <div class="callout-title">▸ 为什么换参考系就能解析？</div>
+      以 $\omega_o$ 为轴时，被积函数 $\cos(\theta-\gamma)|\sin\theta|$ 是纯三角形式，其不定积分存在闭合形式。以法线 $n$ 为轴时则需要额外的空间变换，破坏了三角函数的简洁结构。
+    </div>
+  </div>
+
+  <div id="tab-analytic" class="tab-content">
+    <p>对每个方向 $\varphi$，内积 $\hat{a}$ 的解析结果（这是 GTAO 效率的核心来源）：</p>
+    <div class="math-block">
+      <div class="label">EQ.7 — 解析内积</div>
+      $$\hat{a} = \frac{1}{4}\bigl(-\cos(2\theta_1-\gamma)+\cos\gamma+2\theta_1\sin\gamma\bigr) + \frac{1}{4}\bigl(-\cos(2\theta_2-\gamma)+\cos\gamma+2\theta_2\sin\gamma\bigr)$$
+      <div class="math-comment">// 仅需 2×cos、1×sin 加 3×acos；Shader 完全 memory-bound，ALU 几乎零开销</div>
+    </div>
+    <div class="math-block">
+      <div class="label">EQ.8 — 最终形式（含法线投影修正）</div>
+      $$\hat{A}(x) = \frac{1}{\pi}\int_0^{\pi}\|\bar{n}_x\|\,\hat{a}(\varphi)\,d\varphi$$
+      <div class="math-comment">// ‖n̄ₓ‖ = 法线投影到切平面后的模长，修正因参考系旋转引入的 dot-product 缩放</div>
+    </div>
+
+    <!-- Interactive analytic inner integral visualizer -->
+    <div class="demo-card" style="margin-top:20px;">
+      <h4>▸ 交互：解析内积 â 与 θ₁/θ₂ 的关系</h4>
+      <canvas id="analyticCanvas" width="540" height="200" style="width:100%; max-width:540px;"></canvas>
+      <div class="controls" style="max-width:480px;">
+        <div class="ctrl-row">
+          <label>θ₁（左侧水平角）<span id="t1val">−45°</span></label>
+          <input type="range" id="theta1" min="-90" max="0" value="-45" oninput="drawAnalytic()">
+        </div>
+        <div class="ctrl-row">
+          <label>θ₂（右侧水平角）<span id="t2val">60°</span></label>
+          <input type="range" id="theta2" min="0" max="90" value="60" oninput="drawAnalytic()">
+        </div>
+        <div class="ctrl-row">
+          <label>γ（法线—视线夹角）<span id="gamval">30°</span></label>
+          <input type="range" id="gamma" min="-80" max="80" value="30" oninput="drawAnalytic()">
+        </div>
+      </div>
+      <div style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim);">
+        解析值 â = <span id="analytResult" style="color:var(--accent); font-size:14px;">—</span>
+        &nbsp;&nbsp;|&nbsp;&nbsp; 对应 AO = <span id="aoResult" style="color:var(--accent3);">—</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 实现管线 ══ -->
+<section id="pipeline">
+  <div class="section-label">02 — IMPLEMENTATION PIPELINE</div>
+  <h2>实现细节：如何达到 0.5ms</h2>
+
+  <p>GTAO 的目标是 PS4 1080p 60fps 的 <mark>0.5ms</mark> 预算。以下是各个优化层级，点击展开详情：</p>
+
+  <div class="pipeline">
+    <div class="pipe-step" onclick="togglePipe(this)">
+      <div class="pipe-num">01</div>
+      <div class="pipe-body">
+        <div class="pipe-title">半分辨率计算 + 双边上采样</div>
+        <div class="pipe-desc">在 540p 计算 AO，双边滤波上采样至 1080p</div>
+        <div class="pipe-detail">
+          半分辨率直接将 ALU 和带宽开销减半。上采样使用双边（bilateral）滤波，以深度/法线为 edge-stopping 权重，有效避免了边缘处的泄漏（bleeding）。由于 GTAO 本身是 memory-bound，半分辨率大幅减少了 cache miss。
+        </div>
+      </div>
+    </div>
+    <div class="pipe-step" onclick="togglePipe(this)">
+      <div class="pipe-num">02</div>
+      <div class="pipe-body">
+        <div class="pipe-title">空间积分：4×4 邻域双边重建</div>
+        <div class="pipe-desc">单像素仅采样 1 个方向，通过 4×4 邻域重建 16 个方向</div>
+        <div class="pipe-detail">
+          对每个像素，只随机采样 <strong>1 个方向</strong> φ 的水平线。然后使用 4×4 像素邻域的结果（用双边权重加权），等效于每像素拥有 16 个方向的样本。双边权重使用深度/法线差异来避免跨几何边界的错误混合。
+        </div>
+      </div>
+    </div>
+    <div class="pipe-step" onclick="togglePipe(this)">
+      <div class="pipe-num">03</div>
+      <div class="pipe-body">
+        <div class="pipe-title">时间积分：6-帧旋转 + 指数累积 Buffer</div>
+        <div class="pipe-desc">跨 6 帧交替使用不同旋转角，配合运动矢量重投影</div>
+        <div class="pipe-detail">
+          将采样方向的旋转分布在 6 帧上（每帧用不同的旋转偏移）。历史帧结果通过运动矢量重投影（reprojection）对齐，使用<strong>指数累积 Buffer</strong>（EMA，Exponential Moving Average）混合。最终等效样本数：4 × 4 × 6 = <strong>96 有效方向/像素</strong>。
+          <div style="margin-top:8px; padding:8px; background:var(--code-bg); border-radius:4px; font-family:monospace; font-size:12px; color:var(--accent);">
+            result = lerp(history_reprojected, current, α)<br>
+            // α ≈ 0.1–0.2，静止时平滑收敛
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pipe-step" onclick="togglePipe(this)">
+      <div class="pipe-num">04</div>
+      <div class="pipe-body">
+        <div class="pipe-title">厚度启发式（Thickness Heuristic）</div>
+        <div class="pipe-desc">纠正薄遮挡体（树叶、栅栏）在屏幕空间的过度遮蔽</div>
+        <div class="pipe-detail">
+          <p>深度缓冲无法表达几何体的厚度。薄物体（叶片、树枝）在 SSAO 中会产生不真实的大量遮蔽。</p>
+          <p><strong>核心假设：</strong> 一个物体的厚度约等于它在屏幕空间的尺寸。在搜索水平角时，如果下一个深度样本比当前更近（cos 减小），说明可能是薄遮挡体的背面，此时用 EMA 混合而非直接取 max：</p>
+          <div style="padding:8px; background:var(--code-bg); border-radius:4px; font-family:monospace; font-size:12px; color:var(--text-dim); margin-top:8px;">
+            if cos(θₛ) ≥ cos(θₛ₋₁): θ = max(θₛ, θ)  // 正常遮挡<br>
+            else: θ = blend(θₛ₋₁, θₛ)              // 可能是薄体背面
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pipe-step" onclick="togglePipe(this)">
+      <div class="pipe-num">05</div>
+      <div class="pipe-body">
+        <div class="pipe-title">远场衰减（Far-Field Attenuation）</div>
+        <div class="pipe-desc">平滑截断以避免采样半径边缘的突变跳变</div>
+        <div class="pipe-detail">
+          由于搜索半径有限，远处遮挡体的水平线突然"消失"会产生硬边。GTAO 在一个较大距离到最大搜索半径之间线性混合 AO 至 0。在实际使用中，远场遮蔽通常已经 bake 进 irradiance map，因此这个衰减也保证了运行时 AO 与 baked GI 的无缝融合。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">▸ 性能数据</div>
+    <span class="chip chip-green">0.5ms / PS4 / 1080p</span>
+    <span class="chip chip-green">96 有效样本/像素</span>
+    <span class="chip chip-orange">1 方向/像素/帧</span>
+    <span class="chip chip-purple">Memory-Bound Shader</span><br><br>
+    ALU 消耗极低（整个 AO 的热点在 texture fetch），GCN rsqrt 指令处理水平线搜索的 sqrt 运算。
+  </div>
+</section>
+
+<!-- ══ 03 近场 GI ══ -->
+<section id="gi">
+  <div class="section-label">03 — NEAR-FIELD GI APPROXIMATION</div>
+  <h2>近场间接光补偿</h2>
+
+  <p>标准 AO 假设所有遮挡体都是<strong>吸收体</strong>（不反射任何光）。但真实世界中，相邻表面会将光线弹射回来。这导致 AO 在墙角、裂缝处<strong>过度变暗</strong>。</p>
+
+  <div class="callout">
+    <div class="callout-title">▸ 关键观察</div>
+    在反照率均匀的区域，某点的近场多次弹射间接光与其 AO 值之间存在<strong>强烈的数值对应关系</strong>。可以用 AO 和反照率拟合出这个映射，无需真正计算光线传输。
+  </div>
+
+  <h3>数据驱动拟合</h3>
+  <p>作者在 7 种场景（包含各类遮蔽类型）中，用 7 个反照率值（0.1–0.9）渲染了 AO 值与 3-bounce 路径追踪 GI 的映射关系（见 Fig.6），发现<strong>三次多项式拟合效果极好</strong>，且系数与反照率呈线性关系：</p>
+
+  <div class="math-block">
+    <div class="label">EQ.10 — GI 补偿函数</div>
+    $$\mathcal{G}(A,\rho) = a(\rho)\,A^3 - b(\rho)\,A^2 + c(\rho)\,A$$
+    $$a(\rho)=2.0404\rho-0.3324,\quad b(\rho)=4.7951\rho-0.6417,\quad c(\rho)=2.7552\rho+0.6903$$
+    <div class="math-comment">// ρ ∈ [0,1] 表面反照率；A ∈ [0,1] AO 值<br>// 最终着色：Lᵣ = Lᵢ · (ρ/π) · G(A, ρ)</div>
+  </div>
+
+  <!-- Interactive GI polynomial demo -->
+  <div class="demo-card">
+    <h4>▸ 交互：GI 补偿函数 G(A, ρ) 可视化</h4>
+    <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:16px; margin-bottom:4px;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-bottom:6px;letter-spacing:1px;">曲线图  G(A) 随反照率变化</div>
+        <canvas id="giCurveCanvas" height="200" style="width:100%; display:block;"></canvas>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-bottom:6px;letter-spacing:1px;">颜色感知对比（墙角截面）</div>
+        <canvas id="giColorCanvas" height="200" style="width:100%; display:block;"></canvas>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctrl-row">
+        <label>反照率 ρ <span id="albedoVal">0.5</span></label>
+        <input type="range" id="albedo" min="0.05" max="0.95" step="0.01" value="0.5" oninput="drawGI()">
+      </div>
+      <div class="ctrl-row">
+        <label>AO 值 A <span id="aoVal">0.5</span></label>
+        <input type="range" id="aoInput" min="0" max="1" step="0.01" value="0.5" oninput="drawGI()">
+      </div>
+    </div>
+    <div style="display:flex;gap:24px;margin-top:12px;flex-wrap:wrap;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);">
+        纯 AO：<span id="giAOraw" style="color:var(--text-muted);">—</span>
+        &nbsp;→&nbsp; G(A,ρ) = <span id="giResult" style="color:var(--accent);font-size:14px;">—</span>
+        &nbsp;&nbsp;<span id="giBright" style="color:var(--accent3);font-size:11px;">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="math-block">
+    <div class="label">EQ.4 — 完整着色</div>
+    $$L_r(x,\omega_o)=(1-F(\omega_o))\,L_i\,\frac{\rho(x)}{\pi}\,\mathcal{G}(A(x)) + F(\omega_o)\,\mathcal{L}(x,\omega_o)\,S(x)$$
+    <div class="math-comment">// F = Fresnel 项 &nbsp; G = GI 补偿漫反射 &nbsp; S = 镜面遮蔽（§6）</div>
+  </div>
+</section>
+
+<!-- ══ 04 GTSO ══ -->
+<section id="gtso">
+  <div class="section-label">04 — SPECULAR OCCLUSION</div>
+  <h2>GTSO：镜面遮蔽</h2>
+
+  <p>传统 Split-Integral 方案（UE4 等使用）假设可见性 $V=1$，完全忽略了镜面反射的遮蔽。GTSO 将可见性引入 BRDF 积分：</p>
+
+  <div class="math-block">
+    <div class="label">EQ.13–14 — 镜面遮蔽分解</div>
+    $$L_r(x,\omega_o)\approx \underbrace{S(x,\omega_o)}_{\text{镜面遮蔽}}\cdot\underbrace{\mathcal{L}(x)}_{\text{预卷积探针}}\cdot\underbrace{\mathcal{F}(x,\omega_o)}_{\text{BRDF LUT}}$$
+    $$S(x,\omega_o)=\frac{1}{C_V}\int_{H^2}V(x,\omega_i)\,f_r(x,\omega_i,\omega_o)\,\langle n_x,\omega_i\rangle^+\,d\omega_i$$
+    <div class="math-comment">// S 以 BRDF 为权重，方向相关（不同于 AO 的余弦加权）<br>// 归一化因子 Cᵥ = ∫ fᵣ⟨n,ωᵢ⟩dωᵢ = 恰好与 F 项约掉</div>
+  </div>
+
+  <h3>计算方式：锥—锥相交</h3>
+  <p>将两个难以精确积分的量都近似为<strong>锥体</strong>（Cone）：</p>
+
+  <!-- Spec occlusion diagram -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
+    <div style="background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:16px; text-align:center;">
+      <div style="font-family:'Syne',sans-serif; font-weight:600; color:var(--accent); margin-bottom:12px; font-size:13px;">可见性锥 ΔV</div>
+      <canvas id="visConeCanvas" width="200" height="160" style="width:100%; max-width:200px;"></canvas>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-muted); margin-top:8px;">
+        方向 = bent normal b<br>
+        锥角 αᵥ: cos(αᵥ) = √(1−Â)
+      </div>
+    </div>
+    <div style="background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:16px; text-align:center;">
+      <div style="font-family:'Syne',sans-serif; font-weight:600; color:var(--accent2); margin-bottom:12px; font-size:13px;">镜面 BRDF 叶瓣锥 Ωₛ</div>
+      <canvas id="specConeCanvas" width="200" height="160" style="width:100%; max-width:200px;"></canvas>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-muted); margin-top:8px;">
+        方向 = 反射向量 ωᵣ<br>
+        锥角 αₛ: cos(αₛ) = exp(−2.3 r²)
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">▸ 预计算 LUT</div>
+    S(αᵥ, β, r, θₒ) 是一个四维函数，可以预计算为 32⁴ BC4 LUT（约 1MB）。若令 θₒ ≈ β（normal ≈ bent normal），可降为 32³ 的三维 LUT，误差很小。
+  </div>
+
+  <div class="demo-card">
+    <h4>▸ 交互：GTSO 参数可视化</h4>
+    <canvas id="gtsoCanvas" width="540" height="220" style="width:100%; max-width:540px;"></canvas>
+    <div class="controls">
+      <div class="ctrl-row">
+        <label>AO 值（影响 αᵥ）<span id="gtsoAO">0.4</span></label>
+        <input type="range" id="gtsoAOSlider" min="0" max="0.99" step="0.01" value="0.4" oninput="drawGTSO()">
+      </div>
+      <div class="ctrl-row">
+        <label>粗糙度 r（影响 αₛ）<span id="gtsoRough">0.3</span></label>
+        <input type="range" id="gtsoRoughSlider" min="0.05" max="0.99" step="0.01" value="0.3" oninput="drawGTSO()">
+      </div>
+      <div class="ctrl-row">
+        <label>β（bent normal 与反射角）<span id="gtsoBeta">40°</span></label>
+        <input type="range" id="gtsoBetaSlider" min="0" max="89" step="1" value="40" oninput="drawGTSO()">
+      </div>
+    </div>
+    <div style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim);">
+      αᵥ = <span id="gtsoAlphaV" style="color:var(--accent);">—</span>°
+      &nbsp;&nbsp;αₛ = <span id="gtsoAlphaS" style="color:var(--accent2);">—</span>°
+      &nbsp;&nbsp;S ≈ <span id="gtsoS" style="color:var(--accent3);">—</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 Demo ══ -->
+<section id="demo">
+  <div class="section-label">05 — INTERACTIVE DEMO</div>
+  <h2>实时 AO 积分演示</h2>
+  <p>下面模拟 GTAO 在单像素上的水平线搜索过程。调整参数观察地平角、内积 â、以及最终 AO 值的变化：</p>
+
+  <div class="demo-card">
+    <h4>▸ 单像素水平线搜索（截面视图）</h4>
+    <canvas id="horizonCanvas" width="540" height="280" style="width:100%; max-width:540px;"></canvas>
+    <div class="controls">
+      <div class="ctrl-row">
+        <label>遮挡体高度<span id="occH">0.6</span></label>
+        <input type="range" id="occHeight" min="0.05" max="1" step="0.01" value="0.6" oninput="drawHorizon()">
+      </div>
+      <div class="ctrl-row">
+        <label>遮挡体距离<span id="occD">0.4</span></label>
+        <input type="range" id="occDist" min="0.1" max="0.9" step="0.01" value="0.4" oninput="drawHorizon()">
+      </div>
+      <div class="ctrl-row">
+        <label>法线倾斜角 γ<span id="nrmAng">20°</span></label>
+        <input type="range" id="normalAngle" min="-60" max="60" value="20" oninput="drawHorizon()">
+      </div>
+    </div>
+    <div style="display:flex; gap:24px; margin-top:14px; flex-wrap:wrap;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-muted);">θ₁ = <span id="h_t1" style="color:var(--accent);">—</span></div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-muted);">θ₂ = <span id="h_t2" style="color:var(--accent);">—</span></div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-muted);">â = <span id="h_ahat" style="color:var(--accent2);">—</span></div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-muted);">AO ≈ <span id="h_ao" style="color:var(--accent3);">—</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 Summary ══ -->
+<section id="summary">
+  <div class="section-label">06 — SUMMARY & COMPARISON</div>
+  <h2>方法横向对比</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>方法</th>
+        <th>内积</th>
+        <th>可见性</th>
+        <th>GI 补偿</th>
+        <th>镜面</th>
+        <th>性能</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="chip chip-orange">SSAO</span></td>
+        <td>球面采样</td>
+        <td>深度比较</td>
+        <td>✗</td>
+        <td>✗</td>
+        <td>快</td>
+      </tr>
+      <tr>
+        <td><span class="chip chip-orange">HBAO</span></td>
+        <td>数值水平线</td>
+        <td>衰减函数</td>
+        <td>✗</td>
+        <td>✗</td>
+        <td>中</td>
+      </tr>
+      <tr>
+        <td><span class="chip chip-orange">HBAO+</span></td>
+        <td>LUT 水平线</td>
+        <td>衰减函数</td>
+        <td>✗</td>
+        <td>✗</td>
+        <td>中</td>
+      </tr>
+      <tr>
+        <td><span class="chip chip-green">GTAO</span></td>
+        <td><strong>解析水平线</strong></td>
+        <td><strong>二值（物理正确）</strong></td>
+        <td>✓ 多项式</td>
+        <td>✓ GTSO LUT</td>
+        <td><strong>0.5ms/1080p</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Unity URP 实现要点</h3>
+  <div class="callout info">
+    <div class="callout-title">▸ 移植到 Unity URP 的关键点</div>
+    <p style="margin-bottom:8px;">Unity 从 URP 14（Unity 2022 LTS）起在 SSAO 中引入了 GTAO 模式。若自行实现需注意：</p>
+    <ul style="list-style:none; padding:0;">
+      <li style="padding:4px 0; border-bottom:1px solid rgba(123,97,255,0.1);">① 水平线搜索步长需在视空间（View Space）执行，使用 Linear Eye Depth</li>
+      <li style="padding:4px 0; border-bottom:1px solid rgba(123,97,255,0.1);">② bent normal 需要在采样后存入 G-Buffer（RG10B10A2 足够）供 GTSO 使用</li>
+      <li style="padding:4px 0; border-bottom:1px solid rgba(123,97,255,0.1);">③ 时间 AA 的历史重投影可复用 TAA 的 velocity buffer</li>
+      <li style="padding:4px 0; border-bottom:1px solid rgba(123,97,255,0.1);">④ GI 补偿系数（Eq.10）只有 6 个浮点数，直接硬编码进 shader 即可</li>
+      <li style="padding:4px 0;">⑤ DrawMeshInstancedIndirect 场景中 per-instance 无法轻易获取 bent normal，建议先存入深度/法线 prepass</li>
+    </ul>
+  </div>
+</section>
+
+
+<div class="floating-controls">
+  <a href="/" class="float-btn home-btn" title="回到首页">⌂</a>
+  <button id="backToTopBtn" class="float-btn top-btn" title="回到顶部">↑</button>
+</div>
+
+</main>
+
+<footer>
+  <div>整理自 Jimenez et al. SIGGRAPH 2016 · <em>Practical Realtime Strategies for Accurate Indirect Occlusion</em></div>
+  <div style="margin-top:6px; color:rgba(90,100,120,0.5);">Interactive Notes · GTAO / GTSO</div>
+</footer>
+
+
+
+
+
+<script>
+    const backToTopBtn = document.getElementById('backToTopBtn');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.add('show');
+    } else {
+      backToTopBtn.classList.remove('show');
+    }
+  });
+
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+// ════════════════════════════════════════════════
+//  Constants & utilities
+// ════════════════════════════════════════════════
+const DEG = Math.PI / 180;
+const RAD = 180 / Math.PI;
+const C = {
+  bg: '#060810', grid: '#1a2030', accent: '#00e5c3',
+  orange: '#ff6b35', purple: '#7b61ff', text: '#5a6478',
+  dim: '#8891a4', bright: '#d8dde6', surface: '#111417',
+  border: '#1e2530'
+};
+
+// Resize canvas to its CSS width while keeping explicit height
+function fitCanvas(id) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const w = el.parentElement.clientWidth || 400;
+  el.width  = w;
+  // height stays as set by HTML attribute
+  return el;
+}
+
+// ════════════════════════════════════════════════
+//  TOC + section navigation
+// ════════════════════════════════════════════════
+function tocScroll(id, btn) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  // Offset for sticky TOC (~45px) + some breathing room
+  const navH = document.querySelector('nav.toc')?.offsetHeight || 45;
+  const top = target.getBoundingClientRect().top + window.scrollY - navH - 16;
+  window.scrollTo({ top, behavior: 'smooth' });
+  document.querySelectorAll('.toc-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// Highlight TOC on scroll
+const tocObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      document.querySelectorAll('.toc-btn').forEach(b => {
+        const matches = b.getAttribute('onclick')?.includes("'"+id+"'");
+        b.classList.toggle('active', !!matches);
+      });
+    }
+  });
+}, { rootMargin: '-10% 0px -70% 0px' });
+document.querySelectorAll('section[id]').forEach(s => tocObserver.observe(s));
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  // Retypeset MathJax in the newly visible tab
+  if (window.MathJax?.typesetPromise) MathJax.typesetPromise([document.getElementById(id)]);
+}
+
+function togglePipe(el) {
+  const detail = el.querySelector('.pipe-detail');
+  const wasOpen = detail.classList.contains('open');
+  document.querySelectorAll('.pipe-detail').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.pipe-step').forEach(s => s.classList.remove('active'));
+  if (!wasOpen) { detail.classList.add('open'); el.classList.add('active'); }
+}
+
+// ════════════════════════════════════════════════
+//  GTAO analytic inner-integral formula (EQ.7)
+// ════════════════════════════════════════════════
+function gtaoAnalytic(t1_deg, t2_deg, gamma_deg) {
+  const t1 = t1_deg * DEG, t2 = t2_deg * DEG, g = gamma_deg * DEG;
+  const a1 = 0.25 * (-Math.cos(2*t1 - g) + Math.cos(g) + 2*t1*Math.sin(g));
+  const a2 = 0.25 * (-Math.cos(2*t2 - g) + Math.cos(g) + 2*t2*Math.sin(g));
+  return Math.max(0, a1 + a2);
+}
+
+// ════════════════════════════════════════════════
+//  01  Analytic inner-integral visualiser
+// ════════════════════════════════════════════════
+function drawAnalytic() {
+  const t1  = +document.getElementById('theta1').value;
+  const t2  = +document.getElementById('theta2').value;
+  const gam = +document.getElementById('gamma').value;
+  document.getElementById('t1val').textContent  = t1  + '°';
+  document.getElementById('t2val').textContent  = t2  + '°';
+  document.getElementById('gamval').textContent = gam + '°';
+
+  const ahat = gtaoAnalytic(t1, t2, gam);
+  const ao   = Math.max(0, Math.min(1, 1 - ahat / (Math.PI * 0.5)));
+  document.getElementById('analytResult').textContent = ahat.toFixed(4);
+  document.getElementById('aoResult').textContent     = ao.toFixed(3);
+
+  const canvas = fitCanvas('analyticCanvas');
+  if (!canvas) return;
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, w, h);
+
+  const cx = w / 2, cy = h - 28;
+  const r  = Math.min(cx - 20, h - 40);
+
+  // Hemisphere arc
+  ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 0, false); ctx.stroke();
+  // Ground dashes
+  ctx.setLineDash([3,5]); ctx.beginPath();
+  ctx.moveTo(cx - r*1.1, cy); ctx.lineTo(cx + r*1.1, cy);
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Canvas angle convention:  θ=0 (view dir up) → canvas angle = -π/2
+  // θ positive → rightward → canvas adds positive angle
+  const ca1 = -Math.PI/2 + t1*DEG;  // left horizon (t1 negative → more left)
+  const ca2 = -Math.PI/2 + t2*DEG;  // right horizon
+
+  // Unoccluded arc fill
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, r*0.93, ca1, ca2, false);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(0,229,195,0.13)'; ctx.fill();
+  ctx.strokeStyle = C.accent; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // Horizon boundary lines
+  ctx.strokeStyle = C.orange+'aa'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+r*0.88*Math.cos(ca1), cy+r*0.88*Math.sin(ca1)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+r*0.88*Math.cos(ca2), cy+r*0.88*Math.sin(ca2)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Normal vector
+  const nc = -Math.PI/2 + gam*DEG;
+  const nex = cx + r*0.8*Math.cos(nc), ney = cy + r*0.8*Math.sin(nc);
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(nex,ney); ctx.stroke();
+  drawArrowHead(ctx, cx, cy, nex, ney, '#fff', 7);
+  ctx.fillStyle='#fff'; ctx.font='bold 11px JetBrains Mono';
+  ctx.fillText('n', nex+5, ney-3);
+
+  // View dir (straight up, dashed)
+  ctx.strokeStyle=C.purple+'80'; ctx.lineWidth=1; ctx.setLineDash([2,3]);
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx,cy-r*0.82); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle=C.purple; ctx.font='10px JetBrains Mono'; ctx.fillText('ωₒ',cx+3,cy-r*0.82-3);
+
+  // θ labels
+  const lb1x = cx+r*0.62*Math.cos(ca1), lb1y = cy+r*0.62*Math.sin(ca1);
+  const lb2x = cx+r*0.62*Math.cos(ca2), lb2y = cy+r*0.62*Math.sin(ca2);
+  ctx.fillStyle=C.orange; ctx.font='11px JetBrains Mono';
+  ctx.fillText('θ₁='+t1+'°', lb1x-36, lb1y+4);
+  ctx.fillText('θ₂='+t2+'°', lb2x+4,  lb2y+4);
+
+  // â readout
+  ctx.fillStyle=C.bright; ctx.font='11px JetBrains Mono';
+  ctx.fillText('â = '+ahat.toFixed(3)+'   AO ≈ '+ao.toFixed(3), 10, 16);
+}
+
+function drawArrowHead(ctx, x1,y1,x2,y2,color,size) {
+  const a = Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle=color; ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-size*Math.cos(a-0.4), y2-size*Math.sin(a-0.4));
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-size*Math.cos(a+0.4), y2-size*Math.sin(a+0.4));
+  ctx.stroke();
+}
+
+// ════════════════════════════════════════════════
+//  03  GI compensation demo  (curve + color swatch)
+// ════════════════════════════════════════════════
+function giPoly(A, rho) {
+  const a = 2.0404*rho - 0.3324;
+  const b = 4.7951*rho - 0.6417;
+  const c = 2.7552*rho + 0.6903;
+  return Math.max(0, Math.min(1, a*A*A*A - b*A*A + c*A));
+}
+
+// Convert a linear-space luminance L ∈ [0,1] to an sRGB hex color.
+// base_hue: 0-360 for tinted surfaces (0 = grey)
+function lumToColor(L, rr,gg,bb) {
+  const v = Math.round(Math.pow(Math.max(0,Math.min(1,L)),1/2.2)*255);
+  const r = Math.min(255,Math.round(v*rr)),
+        g = Math.min(255,Math.round(v*gg)),
+        b2= Math.min(255,Math.round(v*bb));
+  return `rgb(${r},${g},${b2})`;
+}
+
+function drawGI() {
+  const rho = +document.getElementById('albedo').value;
+  const A   = +document.getElementById('aoInput').value;
+  document.getElementById('albedoVal').textContent = rho.toFixed(2);
+  document.getElementById('aoVal').textContent     = A.toFixed(2);
+
+  const G    = giPoly(A, rho);
+  const diff = G - A;
+  document.getElementById('giAOraw').textContent  = A.toFixed(3);
+  document.getElementById('giResult').textContent = G.toFixed(3);
+  const sign = diff >= 0 ? '+' : '';
+  document.getElementById('giBright').textContent = '('+sign+(diff*100).toFixed(1)+'% 能量恢复)';
+
+  // ── Curve canvas ──────────────────────────────
+  const cc = fitCanvas('giCurveCanvas');
+  if (cc) {
+    const w=cc.width, h=cc.height, ctx=cc.getContext('2d');
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,w,h);
+    const pad=28, iw=w-pad*2, ih=h-pad*2;
+
+    // Axes
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,h-pad); ctx.lineTo(w-pad,h-pad); ctx.stroke();
+    ctx.fillStyle=C.text; ctx.font='9px JetBrains Mono';
+    ctx.fillText('A→',w-pad+2,h-pad+4);
+    ctx.save(); ctx.translate(pad-16,pad+ih/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('G(A,ρ)',0,0); ctx.restore();
+
+    // Identity line A=G
+    ctx.setLineDash([2,4]); ctx.strokeStyle=C.text+'55'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad,h-pad); ctx.lineTo(w-pad,pad); ctx.stroke(); ctx.setLineDash([]);
+
+    // All albedo curves (muted)
+    [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9].forEach(r => {
+      ctx.beginPath();
+      for (let i=0;i<=100;i++) {
+        const a=i/100, g=giPoly(a,r);
+        const x=pad+a*iw, y=h-pad-g*ih;
+        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      const isActive = Math.abs(r-rho)<0.01;
+      ctx.strokeStyle = isActive ? C.accent : 'rgba(0,229,195,0.1)';
+      ctx.lineWidth   = isActive ? 2 : 0.8;
+      ctx.stroke();
+    });
+
+    // AO-only line for current ρ (dashed orange)
+    ctx.setLineDash([3,4]); ctx.strokeStyle=C.orange+'60'; ctx.lineWidth=1.2;
+    ctx.beginPath();
+    for (let i=0;i<=100;i++) {
+      const a=i/100;
+      const x=pad+a*iw, y=h-pad-a*ih;  // identity = AO unchanged
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // Current point
+    const px=pad+A*iw, py=h-pad-G*ih;
+    // Vertical drop to show G vs A difference
+    ctx.strokeStyle=C.purple+'60'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px,h-pad-A*ih); ctx.lineTo(px,py); ctx.stroke();
+    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle=C.accent; ctx.fill();
+    // A point
+    ctx.beginPath(); ctx.arc(px,h-pad-A*ih,4,0,Math.PI*2);
+    ctx.fillStyle=C.orange; ctx.fill();
+
+    // Legend
+    ctx.font='9px JetBrains Mono';
+    ctx.fillStyle=C.accent;  ctx.fillText('G(A,ρ) ρ='+rho.toFixed(2), pad+4, pad+12);
+    ctx.fillStyle=C.orange;  ctx.fillText('A (no GI)', pad+4, pad+24);
+  }
+
+  // ── Color swatch canvas: corner cross-section ─
+  const gc = fitCanvas('giColorCanvas');
+  if (gc) {
+    const w=gc.width, h=gc.height, ctx=gc.getContext('2d');
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,w,h);
+
+    // Show a 2D cross-section of a convex corner.
+    // Left half = AO-only render; Right half = with GI compensation.
+    // The corner is at the center. AO darkens near the corner.
+
+    const halfW=Math.floor(w/2);
+
+    // Sample a simple "corner distance" → AO approximation
+    // For each pixel, compute distance-to-corner → mapped to AO
+    const cx0=halfW*0.9, cy0=h*0.55; // corner origin within left panel
+    const cx1=halfW*0.9, cy1=h*0.55; // same on right
+
+    // Draw left panel (AO only)
+    for (let py2=0;py2<h;py2++) {
+      for (let px2=0;px2<halfW;px2++) {
+        // Simulated AO: decreases from corner
+        const dx=px2-cx0, dy=py2-cy0;
+        const ang = Math.atan2(-dy, dx); // 0=right, π/2=up
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        // only draw "inside" the walls (upper-left quadrant)
+        if (dx>2 || dy>2) { ctx.fillStyle='#060810'; ctx.fillRect(px2,py2,1,1); continue; }
+        const cornerDist = Math.max(-dx,-dy)/Math.max(1,Math.min(h,w)*0.4);
+        const aoVal2 = Math.min(1, 0.1 + cornerDist*1.2);
+        const L = aoVal2 * rho * 0.85;
+        ctx.fillStyle=lumToColor(L,1,1,1); ctx.fillRect(px2,py2,1,1);
+      }
+    }
+
+    // Better approach: draw actual shaded wall panels
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,w,h);
+
+    // Parameters
+    const wallColor = [rho*0.9+0.05, rho*0.85+0.05, rho*0.7+0.05]; // warm grey tint
+    const cornerPx = Math.floor(halfW*0.45), cornerPy = Math.floor(h*0.55);
+
+    const drawWalls = (xOffset, useGI, label) => {
+      const floor_h = h - cornerPy;
+      const wall_w  = halfW - cornerPx;
+
+      // Sample pixels
+      for (let py2=0;py2<h;py2++) {
+        for (let px2=0;px2<halfW;px2++) {
+          const lx = px2 + xOffset;
+          // Determine which surface and AO
+          let surfaceAO = 1.0;
+          let lit = false;
+          const dx = (px2 - cornerPx), dy = (py2 - cornerPy);
+
+          if (dx >= 0 && dy >= 0) {
+            // Floor surface
+            lit = true;
+            const distCorner = Math.sqrt(dx*dx + dy*dy);
+            const maxDist = Math.sqrt(wall_w*wall_w + floor_h*floor_h);
+            surfaceAO = 0.15 + 0.85*(distCorner/maxDist);
+          } else if (dx < 0 && dy >= 0) {
+            // Left wall surface
+            lit = true;
+            const distCorner = Math.sqrt(dx*dx + dy*dy);
+            const maxDist = Math.sqrt(cornerPx*cornerPx + floor_h*floor_h);
+            surfaceAO = 0.15 + 0.85*(distCorner/maxDist);
+          }
+
+          if (lit) {
+            const effectiveAO = useGI ? giPoly(1-surfaceAO, rho) : (surfaceAO);
+            const L = effectiveAO * 0.82;
+            const [r,g,b2] = wallColor;
+            ctx.fillStyle = lumToColor(L, r/rho, g/rho, b2/rho);
+          } else {
+            ctx.fillStyle = '#09090f';
+          }
+          ctx.fillRect(lx, py2, 1, 1);
+        }
+      }
+
+      // Divider line for corner
+      ctx.strokeStyle=C.border; ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(xOffset+cornerPx, cornerPy);
+      ctx.lineTo(xOffset+cornerPx, h);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(xOffset, cornerPy);
+      ctx.lineTo(xOffset+cornerPx, cornerPy);
+      ctx.stroke();
+
+      // Label
+      ctx.fillStyle='rgba(0,0,0,0.7)';
+      ctx.fillRect(xOffset+2, 2, halfW-4, 16);
+      ctx.fillStyle = useGI ? C.accent : C.orange;
+      ctx.font='bold 9px JetBrains Mono';
+      ctx.fillText(label, xOffset+5, 13);
+    };
+
+    drawWalls(0,       false, 'AO ONLY');
+    drawWalls(halfW+1, true,  'WITH GI G(A,ρ)');
+
+    // Divider
+    ctx.strokeStyle=C.border; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(halfW,0); ctx.lineTo(halfW,h); ctx.stroke();
+  }
+}
+
+// ════════════════════════════════════════════════
+//  04  GTSO  — cone-cone intersection
+// ════════════════════════════════════════════════
+// Canvas angle convention (same as analytic demo):
+//   world angle 0 = "up" = canvas -π/2
+//   positive world angle → clockwise (rightward)
+function w2c(worldAngle_rad) { return -Math.PI/2 + worldAngle_rad; }
+
+function drawConeSector(ctx, cx,cy,r, dir_rad, half_rad, fill, stroke) {
+  const a1 = w2c(dir_rad - half_rad);
+  const a2 = w2c(dir_rad + half_rad);
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  ctx.arc(cx,cy,r,a1,a2,false);
+  ctx.closePath();
+  ctx.fillStyle=fill; ctx.fill();
+  ctx.strokeStyle=stroke; ctx.lineWidth=1.5; ctx.stroke();
+}
+
+function drawAxis(ctx,cx,cy,r,dir_rad,color,label) {
+  const ca=w2c(dir_rad);
+  const ex=cx+r*Math.cos(ca), ey=cy+r*Math.sin(ca);
+  ctx.strokeStyle=color; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(ex,ey); ctx.stroke();
+  drawArrowHead(ctx,cx,cy,ex,ey,color,8);
+  ctx.fillStyle=color; ctx.font='bold 11px JetBrains Mono';
+  // offset label away from cone edges
+  const lx=ex+Math.cos(ca)*12, ly=ey+Math.sin(ca)*12;
+  ctx.fillText(label, lx-6, ly+4);
+}
+
+// 2-D arc-overlap fraction (Specular cone arc that lies inside Visibility cone arc)
+function coneS(alphaV, alphaS, beta) {
+  // Vis cone covers [-αV, +αV] centred at 0
+  // Spec cone covers [β-αS, β+αS]
+  const oMin = Math.max(-alphaV, beta-alphaS);
+  const oMax = Math.min( alphaV, beta+alphaS);
+  const overlap = Math.max(0, oMax-oMin);
+  return alphaS > 0 ? Math.min(1, overlap/(2*alphaS)) : 0;
+}
+
+function drawGTSO() {
+  const aoV  = +document.getElementById('gtsoAOSlider').value;
+  const rough= +document.getElementById('gtsoRoughSlider').value;
+  const beta = +document.getElementById('gtsoBetaSlider').value;
+  document.getElementById('gtsoAO').textContent    = aoV.toFixed(2);
+  document.getElementById('gtsoRough').textContent = rough.toFixed(2);
+  document.getElementById('gtsoBeta').textContent  = beta+'°';
+
+  const alphaV = Math.acos(Math.sqrt(Math.max(0,1-aoV)));
+  const alphaS = Math.acos(Math.exp(-2.30259*rough*rough));
+  const betaR  = beta*DEG;
+  document.getElementById('gtsoAlphaV').textContent = (alphaV*RAD).toFixed(1);
+  document.getElementById('gtsoAlphaS').textContent = (alphaS*RAD).toFixed(1);
+  const S = coneS(alphaV, alphaS, betaR);
+  document.getElementById('gtsoS').textContent = S.toFixed(3);
+
+  const canvas = fitCanvas('gtsoCanvas');
+  if (!canvas) return;
+  const w=canvas.width, h=canvas.height;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle=C.bg; ctx.fillRect(0,0,w,h);
+
+  const cx=w/2, cy=h-24;
+  const r =Math.min(cx-28, h-36);
+
+  // Hemisphere
+  ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI,0,false); ctx.stroke();
+  ctx.setLineDash([3,4]);
+  ctx.beginPath(); ctx.moveTo(cx-r*1.05,cy); ctx.lineTo(cx+r*1.05,cy); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Bent normal left of zenith by β/2, reflection right by β/2
+  const bentW = -betaR/2;
+  const reflW =  betaR/2;
+
+  // ── Visibility cone (teal) ──
+  drawConeSector(ctx,cx,cy,r*0.92, bentW, alphaV, 'rgba(0,229,195,0.14)', C.accent);
+
+  // ── Specular cone (orange) ──
+  drawConeSector(ctx,cx,cy,r*0.84, reflW, alphaS, 'rgba(255,107,53,0.14)', C.orange);
+
+  // ── Intersection (purple) ──
+  const intMin_w = Math.max(bentW-alphaV, reflW-alphaS);
+  const intMax_w = Math.min(bentW+alphaV, reflW+alphaS);
+  if (intMax_w > intMin_w) {
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r*0.88, w2c(intMin_w), w2c(intMax_w), false);
+    ctx.closePath();
+    ctx.fillStyle='rgba(123,97,255,0.45)'; ctx.fill();
+    ctx.strokeStyle=C.purple; ctx.lineWidth=2; ctx.stroke();
+  }
+
+  // ── Axes ──
+  drawAxis(ctx,cx,cy,r*0.76, bentW, C.accent,  'b̂');
+  drawAxis(ctx,cx,cy,r*0.70, reflW, C.orange, 'ωᵣ');
+
+  // β angle annotation arc
+  if (beta > 2) {
+    ctx.strokeStyle=C.purple+'90'; ctx.lineWidth=1; ctx.setLineDash([2,3]);
+    ctx.beginPath(); ctx.arc(cx,cy,r*0.32, w2c(bentW), w2c(reflW), false); ctx.stroke();
+    ctx.setLineDash([]);
+    const midW=(bentW+reflW)/2;
+    const mx=cx+(r*0.38)*Math.cos(w2c(midW)), my=cy+(r*0.38)*Math.sin(w2c(midW));
+    ctx.fillStyle=C.purple; ctx.font='10px JetBrains Mono';
+    ctx.fillText('β', mx-4, my+4);
+  }
+
+  // ── Legend ──
+  ctx.font='11px JetBrains Mono';
+  ctx.fillStyle=C.accent;  ctx.fillText('ΔV  αᵥ='+(alphaV*RAD).toFixed(0)+'°', 10, 18);
+  ctx.fillStyle=C.orange;  ctx.fillText('Ωₛ  αₛ='+(alphaS*RAD).toFixed(0)+'°', 10, 33);
+  ctx.fillStyle=C.purple;  ctx.fillText('∩   S ='+S.toFixed(3),                10, 48);
+
+  // ── Right panel: S value dial ──
+  const dialX=w-56, dialY=h/2-10, dialR=32;
+  ctx.strokeStyle=C.border; ctx.lineWidth=8;
+  ctx.beginPath(); ctx.arc(dialX,dialY,dialR,-Math.PI*0.9,Math.PI*0.9,false); ctx.stroke();
+  ctx.strokeStyle = S>0.5?C.accent:S>0.2?C.orange:C.purple;
+  ctx.lineWidth=8;
+  const arcEnd = -Math.PI*0.9 + S*Math.PI*1.8;
+  ctx.beginPath(); ctx.arc(dialX,dialY,dialR,-Math.PI*0.9,arcEnd,false); ctx.stroke();
+  ctx.fillStyle=C.bright; ctx.font='bold 11px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText('S', dialX, dialY+4);
+  ctx.font='9px JetBrains Mono'; ctx.fillStyle=C.dim;
+  ctx.fillText(S.toFixed(2), dialX, dialY+16);
+  ctx.textAlign='left';
+}
+
+// ════════════════════════════════════════════════
+//  05  Horizon search demo
+// ════════════════════════════════════════════════
+function drawHorizon() {
+  const occH  = +document.getElementById('occHeight').value;
+  const occD  = +document.getElementById('occDist').value;
+  const nAng  = +document.getElementById('normalAngle').value;
+  document.getElementById('occH').textContent   = occH.toFixed(2);
+  document.getElementById('occD').textContent   = occD.toFixed(2);
+  document.getElementById('nrmAng').textContent = nAng+'°';
+
+  const canvas = fitCanvas('horizonCanvas');
+  if (!canvas) return;
+  const w=canvas.width, h=canvas.height;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle=C.bg; ctx.fillRect(0,0,w,h);
+
+  const pad=40, groundY=h-52;
+  const sceneW=w-pad*2;
+  const ox=w/2, oy=groundY;
+
+  // Ground
+  ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,groundY); ctx.lineTo(w-pad,groundY); ctx.stroke();
+
+  // Right occluder (slider-controlled)
+  const rX=ox + occD*(sceneW/2);
+  const rTopY=groundY - occH*(groundY-18);
+  ctx.fillStyle='#182838'; ctx.strokeStyle='#2a4a6a'; ctx.lineWidth=1;
+  ctx.fillRect(rX-7,rTopY,14,groundY-rTopY);
+  ctx.strokeRect(rX-7,rTopY,14,groundY-rTopY);
+
+  // Left occluder (fixed, half height)
+  const lX=ox - 0.3*(sceneW/2);
+  const lTopY=groundY - occH*0.5*(groundY-18);
+  ctx.fillStyle='#182838'; ctx.strokeStyle='#2a4a6a';
+  ctx.fillRect(lX-5,lTopY,10,groundY-lTopY);
+  ctx.strokeRect(lX-5,lTopY,10,groundY-lTopY);
+
+  // ── Compute horizon angles ──
+  // θ = angle from "up" (view dir), measured in world space.
+  // tan(θ) = horizontal_dist / vertical_dist
+  // → θ = atan2(|horizontal|, vertical)   with sign from left/right
+  const rDy = groundY - rTopY;   // vertical rise (upward positive)
+  const rDx = rX - ox;            // horizontal offset (positive = right)
+  const theta2 = Math.atan2(rDx, rDy) * RAD;   // positive (right side)
+
+  const lDy = groundY - lTopY;
+  const lDx = lX - ox;            // negative (left side)
+  const theta1 = Math.atan2(lDx, lDy) * RAD;   // negative (left side)
+
+  const gam  = nAng;
+  const ahat = gtaoAnalytic(theta1, theta2, gam);
+  // Fully unoccluded hemisphere → ahat_max ≈ π/2 (for γ=0)
+  // AO = 1 - unoccluded_fraction  (higher ahat → less AO)
+  const aoApprox = Math.max(0, Math.min(1, 1 - ahat/(Math.PI*0.5)));
+
+  document.getElementById('h_t1').textContent   = theta1.toFixed(1)+'°';
+  document.getElementById('h_t2').textContent   = theta2.toFixed(1)+'°';
+  document.getElementById('h_ahat').textContent = ahat.toFixed(4);
+  document.getElementById('h_ao').textContent   = aoApprox.toFixed(3);
+
+  // ── Horizon rays (from shading point to occluder tops) ──
+  ctx.strokeStyle=C.accent+'70'; ctx.lineWidth=1.5; ctx.setLineDash([4,5]);
+  ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(rX,rTopY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(lX,lTopY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── Unoccluded arc ──
+  const arcR = Math.min(62, (groundY-20)*0.4);
+  const ca1  = w2c(theta1*DEG);   // left horizon
+  const ca2  = w2c(theta2*DEG);   // right horizon
+  ctx.beginPath();
+  ctx.moveTo(ox,oy);
+  ctx.arc(ox,oy,arcR, ca1, ca2, false);
+  ctx.closePath();
+  ctx.fillStyle='rgba(0,229,195,0.18)'; ctx.fill();
+  ctx.strokeStyle=C.accent; ctx.lineWidth=1.5; ctx.stroke();
+
+  // ── Normal vector ──
+  const nca=w2c(gam*DEG);
+  const nLen=64;
+  const nex=ox+nLen*Math.cos(nca), ney=oy+nLen*Math.sin(nca);
+  ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(nex,ney); ctx.stroke();
+  drawArrowHead(ctx,ox,oy,nex,ney,'#fff',7);
+  ctx.fillStyle='#fff'; ctx.font='bold 11px JetBrains Mono';
+  ctx.fillText('n', nex+5, ney-3);
+
+  // ── View direction label ──
+  ctx.strokeStyle=C.purple+'70'; ctx.lineWidth=1; ctx.setLineDash([2,3]);
+  ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ox,oy-arcR*1.25); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle=C.purple; ctx.font='10px JetBrains Mono';
+  ctx.fillText('ωₒ',ox+3,oy-arcR*1.25-4);
+
+  // ── Shading point dot ──
+  ctx.beginPath(); ctx.arc(ox,oy,5,0,Math.PI*2);
+  ctx.fillStyle=C.accent; ctx.fill();
+
+  // ── Angle labels ──
+  ctx.fillStyle=C.orange; ctx.font='11px JetBrains Mono';
+  const r2MidX=ox+(rX-ox)*0.52+8, r2MidY=oy+(rTopY-oy)*0.52-6;
+  ctx.fillText('θ₂='+theta2.toFixed(0)+'°', r2MidX, r2MidY);
+  const l1MidX=ox+(lX-ox)*0.52-54, l1MidY=oy+(lTopY-oy)*0.52-6;
+  ctx.fillText('θ₁='+theta1.toFixed(0)+'°', l1MidX, l1MidY);
+
+  // ── AO meter bar ──
+  const bx=w-42, by=16, bh=groundY-30;
+  ctx.fillStyle='#0d1117'; ctx.fillRect(bx,by,18,bh);
+  const fillH=(1-aoApprox)*bh;
+  ctx.fillStyle='rgba(0,229,195,0.22)'; ctx.fillRect(bx,by,18,fillH);
+  ctx.fillStyle=C.accent; ctx.fillRect(bx,by+fillH-1,18,2);
+  ctx.strokeStyle=C.border; ctx.lineWidth=1; ctx.strokeRect(bx,by,18,bh);
+  ctx.fillStyle=C.dim; ctx.font='9px JetBrains Mono';
+  ctx.fillText('AO',bx,by-5);
+  ctx.fillStyle=C.accent; ctx.font='10px JetBrains Mono';
+  ctx.fillText(aoApprox.toFixed(2),bx-2,by+bh+13);
+}
+
+// ════════════════════════════════════════════════
+//  Init & resize
+// ════════════════════════════════════════════════
+function redrawAll() {
+  drawAnalytic();
+  drawGI();
+  drawGTSO();
+  drawHorizon();
+}
+
+window.addEventListener('load', () => {
+  redrawAll();
+  // After MathJax finishes initial typeset, trigger again for hidden tabs
+  if (window.MathJax?.startup?.promise) {
+    MathJax.startup.promise.then(() => MathJax.typesetPromise());
+  }
+});
+window.addEventListener('resize', redrawAll);
+</script>
+</body>
+</html>

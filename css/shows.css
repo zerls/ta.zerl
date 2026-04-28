@@ -1,0 +1,225 @@
+/* =========================================
+   Shows 页面 — CSS columns 真瀑布流
+   ========================================= */
+.shows-container {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 50px clamp(16px, 4vw, 80px) 100px;
+}
+/* ─── 头部（与 now 风格一致） ─── */
+.shows-header {
+  text-align: center;
+  margin-bottom: 48px;
+  padding-bottom: 28px;
+  border-bottom: 1px dashed #e3e3e0;
+}
+.shows-title {
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-size: 32px;
+  font-weight: bold;
+  color: #1e1b18;
+  letter-spacing: 4px;
+  margin: 0 0 14px;
+}
+.shows-subtitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #1a4b75;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+}
+.shows-subtitle svg {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+.shows-meta {
+  font-size: 12px;
+  color: #8e8a84;
+  letter-spacing: 1px;
+}
+/* ─── 瀑布流容器 ─── */
+/* CSS columns：自动将 block 子元素分配到各列，高度不等的卡片自然填充 */
+.shows-flow {
+  columns: 3;
+  column-gap: 18px;
+/* 分组标题横跨所有列 */
+/* 穿插说明段落同样横跨 */
+}
+.shows-flow h2 {
+  column-span: all;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-size: 17px;
+  font-weight: bold;
+  color: #1e1b18;
+  padding-left: 12px;
+  border-left: 3px solid #e03636;
+  margin: 44px 0 16px;
+  letter-spacing: 1px;
+}
+.shows-flow h2:first-child {
+  margin-top: 0;
+}
+.shows-flow h2 a.headerlink {
+  display: none;
+}
+.shows-flow > p {
+  column-span: all;
+  color: #6b6863;
+  font-size: 13px;
+  line-height: 1.8;
+  margin: -8px 0 16px;
+}
+/* ─── 卡片：必须 display:block 才会进入 columns 流 ─── */
+.show-card {
+  display: block; /* columns 的关键 */
+  break-inside: avoid; /* 禁止卡片在列中断裂 */
+  margin-bottom: 18px; /* 卡片间的纵向间距 */
+  border: 1px solid #e3e3e0;
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  color: #393633;
+  background: #fff;
+  position: relative;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+/* 顶部靛青→朱砂渐变线 */
+}
+.show-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1a4b75, #e03636);
+  z-index: 1;
+}
+.show-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(26,75,117,0.1);
+  border-color: #1a4b75;
+/* 悬浮时文字完全展开，高度由内容决定（瀑布流天然容纳变化） */
+}
+.show-card:hover .show-card__title {
+  color: #1a4b75;
+}
+.show-card:hover .show-card__body {
+  max-height: 600px;
+  overflow: visible;
+}
+/* 封面图 */
+.show-card__cover {
+  display: block;
+  width: 100%;
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  background-color: #f1f1ee;
+}
+.show-card__inner {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+/* 头部：icon + 标题 + 语言标签 */
+.show-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+.show-card__icon {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #f1f1ee;
+  color: #1a4b75;
+}
+.show-card__icon svg {
+  width: 15px;
+  height: 15px;
+}
+.show-card--github .show-card__icon {
+  background: #f0f0ef;
+  color: #2b2825;
+}
+.show-card--video .show-card__icon {
+  background: rgba(224,54,54,0.08);
+  color: #e03636;
+}
+.show-card__title {
+  flex: 1;
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #393633;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  transition: color 0.2s ease;
+  word-break: break-word;
+}
+.show-card__ext {
+  flex-shrink: 0;
+  opacity: 0.35;
+  width: 11px;
+  height: 11px;
+  align-self: center;
+}
+.show-card__lang {
+  flex-shrink: 0;
+  font-family: consolas, Menlo, "Fira Code", monospace;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 20px;
+  border: 1px solid #e3e3e0;
+  color: #6b6863;
+  white-space: nowrap;
+  align-self: center;
+}
+/* 描述文字：默认截 3 行，hover 时完全展开 */
+.show-card__body {
+  font-size: 13px;
+  color: #6b6863;
+  line-height: 1.75;
+  overflow: hidden;
+  max-height: calc(1.75em * 3);
+  transition: max-height 0.35s ease;
+}
+.show-card__body p {
+  margin: 0;
+}
+.show-card__body code {
+  font-family: consolas, Menlo, "Fira Code", monospace;
+  font-size: 11px;
+  background: #f1f1ee;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+/* ─── 响应式 ─── */
+@media screen and (max-width: 900px) {
+  .shows-flow {
+    columns: 2;
+  }
+}
+@media screen and (max-width: 540px) {
+  .shows-container {
+    padding-top: 28px;
+    padding-bottom: 60px;
+  }
+  .shows-title {
+    font-size: 26px;
+  }
+  .shows-flow {
+    columns: 1;
+  }
+}

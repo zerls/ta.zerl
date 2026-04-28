@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        Shows | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+    
+  <link rel="stylesheet" href="/css/shows.css" />
+
+  <meta name="generator" content="Hexo 7.3.0"></head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <div class="shows-container">
+    <header class="shows-header">
+      <h1 class="shows-title">Shows</h1>
+      <p class="shows-subtitle">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        交互笔记、开源项目、各类创作展示以及友情推荐
+      </p>
+      <div class="shows-meta">更新于 2026-04-28</div>
+    </header>
+
+    <div class="shows-flow">
+      <h2 id="交互笔记"><a href="#交互笔记" class="headerlink" title="交互笔记"></a>交互笔记</h2><a class="show-card show-card--page" href="/demos/kulla-conty-notes.html" >
+  <div class="show-card__cover" style="background-image:url('/img/kulla_conty_colored.png')"></div>
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+      <span class="show-card__title">Kulla-Conty Approximation</span>
+      
+    </div>
+    <div class="show-card__body"><p>PBR 多重散射能量补偿的完整推导。从 BRDF 积分出发，构建能量补偿项 $E_{ms}$，并给出完整的 HLSL 实现与查找表预计算方案。包含 Furnace Test 对比验证。</p>
+</div>
+  </div>
+</a>
+
+<a class="show-card show-card--page" href="/demos/gtao_interactive_notes.html" >
+  <div class="show-card__cover" style="background-image:url('/img/exterior-assao-medium-vs-gtao-high.png')"></div>
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+      <span class="show-card__title">GTAO</span>
+      
+    </div>
+    <div class="show-card__body"><p>Ground Truth Ambient Occlusion 的实现解析。从可见性积分定义出发，推导球谐近似的 AO 弯曲法线，并讨论时域累积与降噪策略。</p>
+</div>
+  </div>
+</a>
+
+<!-- <a class="show-card show-card--page" href="/cg" >
+  
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+      <span class="show-card__title">大气散射渲染</span>
+      
+    </div>
+    <div class="show-card__body"><p>Rayleigh &amp; Mie 散射的物理推导与实时近似。基于 Bruneton 模型，实现预计算大气 LUT，支持动态太阳角度与多重散射近似。着色器约 200 行 HLSL。</p>
+</div>
+  </div>
+</a>
+
+<a class="show-card show-card--page" href="/cg" >
+  
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+      <span class="show-card__title">体积云实时渲染</span>
+      
+    </div>
+    <div class="show-card__body"><p>基于 Raymarching 的体积云实现。使用 Worley + Perlin 多层噪声构建云密度场，引入 Beer-Lambert 透射与 Henyey-Greenstein 相位函数，配合时域抖动降低采样数。</p>
+</div>
+  </div>
+</a> -->
+
+
+
+
+<h2 id="开源项目"><a href="#开源项目" class="headerlink" title="开源项目"></a>开源项目</h2><a class="show-card show-card--github" href="https://github.com/zerls/TerrainDemo" target="_blank" rel="noopener">
+  
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.579.688.481C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg></span>
+      <span class="show-card__title">zerls/TerrainDemo<svg class="show-card__ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+      <span class="show-card__lang">C# HLSL</span>
+    </div>
+    <div class="show-card__body"><p>Unity 大世界渲染 Demo。包含 GPU 驱动地形、LOD 草地系统、大气散射、体积云与动态水体交互，所有渲染特性均基于 URP 自定义 RenderFeature 实现。</p>
+</div>
+  </div>
+</a>
+
+<a class="show-card show-card--github" href="https://github.com/zerls/simple-renderer" target="_blank" rel="noopener">
+  
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.579.688.481C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg></span>
+      <span class="show-card__title">zerls/simple-renderer<svg class="show-card__ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+      <span class="show-card__lang">C++</span>
+    </div>
+    <div class="show-card__body"><p>Simple Renderer是一个使用C++开发的轻量级软件光栅化渲染引擎，主要用于学习和演示计算机图形学中的基本渲染原理。该项目不依赖于OpenGL或DirectX等现有图形API，而是从零实现渲染管线的各个阶段。</p>
+</div>
+  </div>
+</a>
+
+<!-- ## 视频
+
+<a class="show-card show-card--video" href="https://www.bilibili.com" target="_blank" rel="noopener">
+  <div class="show-card__cover" style="background-image:url('/images/bg2.jpg')"></div>
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+      <span class="show-card__title">体积云渲染效果展示<svg class="show-card__ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+      
+    </div>
+    <div class="show-card__body"><p>演示体积云在不同时段（日出、正午、黄昏）的光照变化，以及与地形阴影的交互效果。帧率锁定 60fps，分辨率 1440p。</p>
+</div>
+  </div>
+</a>
+
+<a class="show-card show-card--video" href="https://www.bilibili.com" target="_blank" rel="noopener">
+  
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+      <span class="show-card__title">GPU 驱动草地 — 10 万草叶实测<svg class="show-card__ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+      
+    </div>
+    <div class="show-card__body"><p>在移动摄像机场景下，GPU Culling 草地系统的实际运行效果，包含风场驱动的动态弯曲与 LOD 切换。</p>
+</div>
+  </div>
+</a> -->
+
+<h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><a class="show-card show-card--link" href="https://pbr-book.org" target="_blank" rel="noopener">
+  
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+      <span class="show-card__title">Physically Based Rendering (pbr-book.org)<svg class="show-card__ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+      
+    </div>
+    <div class="show-card__body"><p>PBRT 第四版在线版本，Matt Pharr 等著。渲染方程、Monte Carlo 积分、BSDF 建模的权威参考。</p>
+</div>
+  </div>
+</a>
+
+<a class="show-card show-card--link" href="https://www.shadertoy.com/user/iq" target="_blank" rel="noopener">
+  
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+      <span class="show-card__title">Shadertoy — iq 着色器<svg class="show-card__ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+      
+    </div>
+    <div class="show-card__body"><p>Inigo Quilez 的 Shadertoy 主页，收录大量 SDF 建模、程序纹理与光照技巧，是学习实时渲染数学的绝佳资源。</p>
+</div>
+  </div>
+</a>
+
+<a class="show-card show-card--link" href="https://advances.realtimerendering.com" target="_blank" rel="noopener">
+  
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+      <span class="show-card__title">Advances in Real-Time Rendering<svg class="show-card__ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+      
+    </div>
+    <div class="show-card__body"><p>SIGGRAPH 实时渲染前沿技术课程存档，涵盖 Horizon: Zero Dawn、Cyberpunk 2077 等 AAA 游戏的渲染技术分享。</p>
+</div>
+  </div>
+</a>
+
+    </div>
+  </div>
+
+    </div>
+    <div class="foot">
+  
+    
+      
+        
+          
+        
+      
+    
+    <div class="foot__body">
+      
+      
+      <div class="foot-item">
+        
+        <div class="foot-item__body">
+          
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-email.svg" />
+            <a class="foot-link" href="mailto:starsss747@gmail.com">starsss747@gmail.com</a>
+          </div>
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+  
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+
+  </body>
+</html>

@@ -1,0 +1,251 @@
+@import '_variables'
+@import '_md-plus'
+/* =========================================
+   Pages 导航页排版 - 新中式
+   ========================================= */
+.pages-container {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+
+.pages-paper {
+  background-color: #ffffff;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 50px 60px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $color-dianqing, $color-qiushi, $color-zhusha);
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+/* =========================================
+   头部排版
+   ========================================= */
+.pages-header {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 1px dashed $gainsboro;
+  padding-bottom: 25px;
+}
+
+.pages-title {
+  font-family: $font-family-serif;
+  font-size: 32px;
+  color: $black-deep;
+  letter-spacing: 4px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.pages-description {
+  color: $color-dianqing;
+  font-family: $font-family-serif;
+  font-size: 15px;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    margin-right: 6px;
+    opacity: 0.8;
+  }
+}
+
+.pages-updated {
+  font-size: 13px;
+  color: $grey;
+  letter-spacing: 1px;
+}
+
+/* =========================================
+   分组区块
+   ========================================= */
+.pages-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.pages-group {
+  &:not(:last-child) {
+    padding-bottom: 36px;
+    border-bottom: 1px dashed $gainsboro;
+  }
+}
+
+.pages-group-title {
+  font-family: $font-family-serif;
+  font-size: 20px;
+  color: $black-deep;
+  margin-bottom: 6px;
+  margin-top: 0;
+  padding-left: 12px;
+  border-left: 4px solid $color-zhusha;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pages-group-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.pages-group-desc {
+  color: $grey-dark;
+  font-size: 14px;
+  margin: 0 0 18px 16px;
+  font-family: $font-family-serif;
+  font-style: italic;
+}
+
+/* =========================================
+   卡片网格
+   ========================================= */
+.pages-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.pages-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid $gainsboro;
+  border-radius: 6px;
+  text-decoration: none;
+  color: $black-light;
+  background-color: $white-blue-lightest;
+  transition: all 0.25s ease;
+  position: relative;
+
+  &:hover {
+    border-color: $color-dianqing;
+    box-shadow: 0 4px 16px rgba($color-dianqing, 0.10);
+    transform: translateY(-2px);
+    color: $black-deep;
+
+    .pages-card-title {
+      color: $color-dianqing;
+    }
+  }
+}
+
+.pages-card-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background-color: $whitesmoke;
+
+  img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+}
+
+.pages-card-emoji {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.pages-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.pages-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: $black-light;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.2s ease;
+}
+
+.pages-card-external {
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.pages-card-desc {
+  font-size: 13px;
+  color: $grey;
+  line-height: 1.5;
+}
+
+/* =========================================
+   正文内容区（可选 Markdown 补充说明）
+   ========================================= */
+.pages-content {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px dashed $gainsboro;
+
+  h2 {
+    font-family: $font-family-serif;
+    margin-top: 35px;
+    padding-left: 12px;
+    border-left: 4px solid $color-zhusha;
+    font-size: 20px;
+    color: $black-deep;
+    margin-bottom: 15px;
+  }
+
+  blockquote {
+    background-color: rgba($color-qiushi, 0.08);
+    border-left: 4px solid $color-dianqing;
+    padding: 15px 20px;
+    border-radius: 0 4px 4px 0;
+    margin: 20px 0;
+    color: $black-lighter;
+    font-family: $font-family-serif;
+  }
+}
+
+/* =========================================
+   移动端适配
+   ========================================= */
+@media screen and (max-width: 768px) {
+  .pages-container {
+    padding-top: 20px;
+  }
+
+  .pages-paper {
+    padding: 30px 20px;
+    margin: 0 15px;
+  }
+
+  .pages-title {
+    font-size: 26px;
+  }
+
+  .pages-cards {
+    grid-template-columns: 1fr;
+  }
+}
