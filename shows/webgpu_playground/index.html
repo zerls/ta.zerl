@@ -1,0 +1,2417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ComputeToy — WebGPU Compute Playground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ============================================================
+   ComputeToy — WebGPU Playground
+   Theme: CRT terminal × GPU circuit board
+   ============================================================ */
+:root {
+  --bg0: #060810;
+  --bg1: #0b0e18;
+  --bg2: #111520;
+  --bg3: #161b28;
+  --bg4: #1c2235;
+  --border: #1e2538;
+  --border2: #252e44;
+  --cyan:   #00f5d4;
+  --cyan2:  #00c9ae;
+  --green:  #39ff8e;
+  --orange: #ff7c2a;
+  --red:    #ff3a5c;
+  --yellow: #ffe066;
+  --purple: #a78bfa;
+  --blue:   #4fc3f7;
+  --text:   #b8c4d8;
+  --text2:  #6e7d9a;
+  --text3:  #3d4a62;
+  --head:   #dce8f8;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --ui:   'Rajdhani', sans-serif;
+  --r: 6px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg0);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Scanline overlay ─── */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,245,212,0.008) 3px, rgba(0,245,212,0.008) 4px
+  );
+  pointer-events:none; z-index:9999;
+}
+
+/* ─── TOP BAR ─── */
+#topbar {
+  height: 42px;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
+}
+
+.logo {
+  font-family: var(--ui);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+  margin-right: 20px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-icon {
+  width: 22px; height: 22px;
+  background: conic-gradient(from 0deg, var(--cyan), var(--purple), var(--cyan));
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #000; font-weight: 800;
+  animation: logospin 8s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes logospin {
+  to { filter: hue-rotate(360deg); }
+}
+
+/* Preset tabs */
+.preset-tabs {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 1;
+}
+.preset-tabs::-webkit-scrollbar { display: none; }
+
+.preset-tab {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  padding: 5px 13px;
+  border-radius: 4px 4px 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .2s, background .2s;
+  letter-spacing: 0.03em;
+}
+.preset-tab:hover { color: var(--text); background: var(--bg3); }
+.preset-tab.active {
+  background: var(--bg2);
+  color: var(--cyan);
+  border-color: var(--border);
+  position: relative;
+}
+.preset-tab.active::after {
+  content:'';
+  position:absolute; bottom:-1px; left:0; right:0; height:1px;
+  background: var(--bg2);
+}
+
+/* Right controls */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.stat-chip {
+  font-size: 0.68rem;
+  color: var(--text2);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+.stat-chip span { color: var(--cyan); }
+
+.btn {
+  font-family: var(--ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: var(--r);
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all .18s;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+.btn-run {
+  background: var(--cyan);
+  color: #040810;
+}
+.btn-run:hover { background: #00ddc0; transform: translateY(-1px); }
+.btn-run:active { transform: translateY(0); }
+.btn-run.running {
+  background: var(--orange);
+  color: #fff;
+  animation: pulse-run 1s ease-in-out infinite;
+}
+@keyframes pulse-run {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,124,42,0); }
+  50% { box-shadow: 0 0 12px 3px rgba(255,124,42,0.4); }
+}
+.btn-stop {
+  background: var(--bg3);
+  color: var(--red);
+  border: 1px solid rgba(255,58,92,0.3);
+}
+.btn-stop:hover { background: rgba(255,58,92,0.12); }
+
+/* ─── MAIN LAYOUT ─── */
+#main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ─── EDITOR PANEL ─── */
+#editor-panel {
+  width: 50%;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--bg1);
+  position: relative;
+}
+
+/* Resize handle */
+#resize-handle {
+  position: absolute;
+  top: 0; right: -4px; bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  z-index: 50;
+  background: transparent;
+}
+#resize-handle:hover, #resize-handle.dragging {
+  background: rgba(0,245,212,0.15);
+}
+
+/* Editor tabs */
+#editor-tabs {
+  display: flex;
+  align-items: center;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 8px;
+  height: 34px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.editor-tab {
+  font-size: 0.7rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  cursor: pointer;
+  transition: color .2s, background .2s;
+  font-family: var(--mono);
+  letter-spacing: 0.03em;
+}
+.editor-tab.active { background: var(--bg3); color: var(--cyan); }
+.editor-tab:hover:not(.active) { color: var(--text); }
+
+/* CodeMirror-like editor */
+#editor-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+#code-editor {
+  width: 100%;
+  height: 100%;
+  background: var(--bg1);
+  color: #abb2bf;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 14px 16px 14px 52px;
+  tab-size: 4;
+  caret-color: var(--cyan);
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+  overflow-y: auto;
+  spellcheck: false;
+}
+
+/* Line numbers */
+#line-numbers {
+  position: absolute;
+  top: 0; left: 0;
+  width: 42px;
+  padding: 14px 0;
+  background: var(--bg1);
+  border-right: 1px solid var(--border);
+  text-align: right;
+  color: var(--text3);
+  font-size: 12px;
+  line-height: 1.7;
+  pointer-events: none;
+  overflow: hidden;
+  user-select: none;
+}
+.ln { padding-right: 8px; display: block; }
+.ln.active-line { color: var(--cyan); opacity: 0.7; }
+
+/* ─── CONSOLE ─── */
+#console-panel {
+  height: 140px;
+  min-height: 80px;
+  max-height: 300px;
+  border-top: 1px solid var(--border);
+  background: var(--bg0);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+#console-header {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  height: 26px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+  flex-shrink: 0;
+}
+.console-title {
+  font-size: 0.65rem;
+  color: var(--text3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: var(--ui);
+  font-weight: 600;
+}
+#console-clear {
+  margin-left: auto;
+  font-size: 0.65rem;
+  color: var(--text3);
+  background: none; border: none; cursor: pointer;
+  font-family: var(--ui);
+  transition: color .2s;
+  letter-spacing: 0.05em;
+}
+#console-clear:hover { color: var(--red); }
+
+#console-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  font-size: 11.5px;
+  line-height: 1.7;
+}
+#console-output::-webkit-scrollbar { width: 4px; }
+#console-output::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.log-line { display: flex; gap: 8px; }
+.log-time { color: var(--text3); flex-shrink: 0; }
+.log-info  { color: var(--text2); }
+.log-ok    { color: var(--green); }
+.log-warn  { color: var(--yellow); }
+.log-error { color: var(--red); }
+.log-perf  { color: var(--purple); }
+.log-data  { color: var(--blue); }
+
+/* ─── RIGHT PANEL ─── */
+#right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg0);
+}
+
+/* Canvas header */
+#canvas-header {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  height: 34px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+  flex-shrink: 0;
+}
+.canvas-title {
+  font-family: var(--ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.canvas-badge {
+  font-size: 0.62rem;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+}
+.badge-webgpu { background: rgba(0,245,212,0.12); color: var(--cyan); border: 1px solid rgba(0,245,212,0.2); }
+.badge-fallback { background: rgba(255,124,42,0.1); color: var(--orange); border: 1px solid rgba(255,124,42,0.2); }
+.badge-error { background: rgba(255,58,92,0.1); color: var(--red); border: 1px solid rgba(255,58,92,0.2); }
+
+.canvas-info { margin-left: auto; font-size: 0.65rem; color: var(--text3); font-family: var(--mono); }
+
+/* Canvas wrapper */
+#canvas-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+#gpu-canvas {
+  display: block;
+  image-rendering: pixelated;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* No-WebGPU overlay */
+#no-webgpu {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(6,8,16,0.97);
+  color: var(--text2);
+  display: none;
+  padding: 30px;
+  text-align: center;
+}
+.no-webgpu-icon { font-size: 2.4rem; }
+.no-webgpu-title { font-family: var(--ui); font-size: 1rem; font-weight: 700; color: var(--orange); letter-spacing: 0.05em; }
+.no-webgpu-msg { font-size: 0.8rem; line-height: 1.7; max-width: 360px; }
+.no-webgpu-msg code { color: var(--cyan); background: rgba(0,245,212,0.08); padding: 1px 5px; border-radius: 3px; }
+
+/* ─── RIGHT SIDEBAR: Uniforms ─── */
+#uniforms-panel {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--bg1);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+#uniforms-panel::-webkit-scrollbar { width: 4px; }
+#uniforms-panel::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.up-section {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px 14px;
+}
+.up-title {
+  font-family: var(--ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.uniform-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+}
+.uniform-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.uniform-name {
+  font-size: 0.72rem;
+  color: var(--purple);
+}
+.uniform-value {
+  font-size: 0.68rem;
+  color: var(--cyan);
+  min-width: 36px;
+  text-align: right;
+}
+.uniform-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--bg3);
+  outline: none;
+  cursor: pointer;
+}
+.uniform-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--cyan);
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0,245,212,0.5);
+}
+.uniform-slider::-moz-range-thumb {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--cyan);
+  border: none;
+  cursor: pointer;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.custom-checkbox {
+  width: 14px; height: 14px;
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all .2s;
+}
+.checkbox-row input[type=checkbox] { display: none; }
+.checkbox-row input[type=checkbox]:checked + .custom-checkbox {
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+.checkbox-row input[type=checkbox]:checked + .custom-checkbox::after {
+  content: '✓';
+  font-size: 9px;
+  color: #040810;
+  font-weight: 800;
+}
+.checkbox-label { font-size: 0.72rem; color: var(--text2); }
+
+/* Buffer preview */
+.buf-preview {
+  background: var(--bg0);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 8px;
+  font-size: 0.68rem;
+  color: var(--text2);
+  line-height: 1.8;
+  max-height: 120px;
+  overflow-y: auto;
+  font-family: var(--mono);
+}
+.buf-preview span { color: var(--green); }
+
+/* FPS graph */
+#fps-graph-wrap {
+  height: 40px;
+  position: relative;
+  margin-top: 4px;
+}
+#fps-canvas {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
+.fps-overlay {
+  position: absolute;
+  top: 3px; right: 5px;
+  font-size: 0.7rem;
+  color: var(--green);
+  font-family: var(--mono);
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(57,255,142,0.6);
+}
+
+/* ─── Canvas controls ─── */
+#canvas-controls {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  height: 30px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  gap: 8px;
+  flex-shrink: 0;
+}
+.ctrl-btn {
+  font-size: 0.68rem;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  cursor: pointer;
+  font-family: var(--mono);
+  transition: all .18s;
+}
+.ctrl-btn:hover { color: var(--cyan); border-color: rgba(0,245,212,0.3); }
+.ctrl-btn.active { color: var(--cyan); background: rgba(0,245,212,0.07); border-color: rgba(0,245,212,0.3); }
+
+.res-select {
+  font-size: 0.68rem;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  cursor: pointer;
+  outline: none;
+}
+.res-select option { background: var(--bg2); }
+
+.ctrl-spacer { flex: 1; }
+.ctrl-label { font-size: 0.65rem; color: var(--text3); }
+
+/* ─── Error highlight in editor ─── */
+.error-line-bg {
+  background: rgba(255,58,92,0.1);
+  display: block;
+}
+
+/* ─── Tooltip ─── */
+.tooltip {
+  position: fixed;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  color: var(--text);
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0;
+  transition: opacity .15s;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.tooltip.show { opacity: 1; }
+
+/* ─── Loading spinner ─── */
+.spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(0,245,212,0.2);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+.spinner.show { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Resizer console ─── */
+#console-resize {
+  height: 5px;
+  cursor: ns-resize;
+  background: var(--border);
+  flex-shrink: 0;
+  position: relative;
+}
+#console-resize:hover { background: rgba(0,245,212,0.2); }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ─── WGSL keyword colors (textarea syntax hint via CSS — real highlighting done in overlay) ─── */
+#highlighted-code {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  padding: 14px 16px 14px 52px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre;
+  overflow-wrap: normal;
+  pointer-events: none;
+  z-index: 1;
+  color: transparent;
+  overflow: hidden;
+}
+
+#code-editor {
+  z-index: 2;
+  position: relative;
+  background: transparent;
+  color: var(--head);
+}
+
+#editor-wrap { background: var(--bg1); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ TOP BAR ═══════════════ -->
+<div id="topbar">
+  <div class="logo">
+    <div class="logo-icon">▶</div>
+    ComputeToy
+  </div>
+
+  <div class="preset-tabs" id="preset-tabs">
+    <button class="preset-tab active" data-preset="plasma">plasma</button>
+    <button class="preset-tab" data-preset="particles">particles</button>
+    <button class="preset-tab" data-preset="life">game of life</button>
+    <button class="preset-tab" data-preset="mandelbrot">mandelbrot</button>
+    <button class="preset-tab" data-preset="reaction">reaction-diff</button>
+    <button class="preset-tab" data-preset="raycast">raycast</button>
+    <button class="preset-tab" data-preset="reduce">prefix-sum</button>
+  </div>
+
+  <div class="topbar-right">
+    <div class="stat-chip">frame <span id="stat-frame">0</span></div>
+    <div class="stat-chip">time <span id="stat-time">0.00</span>s</div>
+    <div class="spinner" id="compile-spinner"></div>
+    <button class="btn btn-run" id="btn-run">▶ Run</button>
+    <button class="btn btn-stop" id="btn-stop">■ Stop</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div id="main">
+
+  <!-- ── EDITOR PANEL ── -->
+  <div id="editor-panel">
+    <div id="editor-tabs">
+      <button class="editor-tab active" data-etab="compute">compute.wgsl</button>
+      <button class="editor-tab" data-etab="vertex">vertex.wgsl</button>
+      <button class="editor-tab" data-etab="fragment">fragment.wgsl</button>
+    </div>
+
+    <div id="editor-wrap">
+      <div id="line-numbers"></div>
+      <textarea id="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+    </div>
+
+    <!-- Console resize handle -->
+    <div id="console-resize"></div>
+
+    <!-- Console -->
+    <div id="console-panel">
+      <div id="console-header">
+        <span class="console-title">Console</span>
+        <button id="console-clear">clear</button>
+      </div>
+      <div id="console-output"></div>
+    </div>
+
+    <div id="resize-handle"></div>
+  </div>
+
+  <!-- ── RIGHT PANEL ── -->
+  <div id="right-panel">
+    <!-- Canvas area -->
+    <div id="canvas-header">
+      <span class="canvas-title">Output</span>
+      <span class="canvas-badge badge-webgpu" id="api-badge">WebGPU</span>
+      <span class="canvas-info" id="canvas-res">512 × 512</span>
+    </div>
+
+    <div id="canvas-wrap">
+      <canvas id="gpu-canvas" width="512" height="512"></canvas>
+      <div id="no-webgpu">
+        <div class="no-webgpu-icon">⚠</div>
+        <div class="no-webgpu-title">WebGPU Not Available</div>
+        <div class="no-webgpu-msg">
+          Your browser does not support WebGPU.<br/><br/>
+          Please use <code>Chrome 113+</code> or <code>Edge 113+</code> with WebGPU enabled.<br/>
+          On Chrome: navigate to <code>chrome://flags/#enable-unsafe-webgpu</code><br/><br/>
+          <span style="color:var(--text2);font-size:0.75em;">The editor still works — you can write and study WGSL code.</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="canvas-controls">
+      <button class="ctrl-btn active" id="btn-pause-play">❚❚ Pause</button>
+      <button class="ctrl-btn" id="btn-snapshot">📷 Capture</button>
+      <button class="ctrl-btn" id="btn-reset-time">⟳ Reset Time</button>
+      <select class="res-select" id="res-select">
+        <option value="256">256²</option>
+        <option value="512" selected>512²</option>
+        <option value="768">768²</option>
+        <option value="1024">1024²</option>
+      </select>
+      <span class="ctrl-spacer"></span>
+      <span class="ctrl-label" id="mouse-pos">mouse: —</span>
+    </div>
+  </div>
+
+  <!-- ── UNIFORMS SIDEBAR ── -->
+  <div id="uniforms-panel">
+
+    <!-- Live Uniforms -->
+    <div class="up-section">
+      <div class="up-title">Uniforms</div>
+
+      <div class="uniform-row">
+        <div class="uniform-label">
+          <span class="uniform-name">iTime</span>
+          <span class="uniform-value" id="uv-time">0.00</span>
+        </div>
+        <div style="font-size:0.62rem;color:var(--text3)">auto • float</div>
+      </div>
+
+      <div class="uniform-row">
+        <div class="uniform-label">
+          <span class="uniform-name">iFrame</span>
+          <span class="uniform-value" id="uv-frame">0</span>
+        </div>
+        <div style="font-size:0.62rem;color:var(--text3)">auto • u32</div>
+      </div>
+
+      <div class="uniform-row">
+        <div class="uniform-label">
+          <span class="uniform-name">iMouse</span>
+          <span class="uniform-value" id="uv-mouse">0,0</span>
+        </div>
+        <div style="font-size:0.62rem;color:var(--text3)">mouse • vec2f</div>
+      </div>
+
+      <div class="uniform-row">
+        <div class="uniform-label">
+          <span class="uniform-name">iResolution</span>
+          <span class="uniform-value" id="uv-res">512</span>
+        </div>
+        <div style="font-size:0.62rem;color:var(--text3)">auto • vec2f</div>
+      </div>
+    </div>
+
+    <!-- Custom sliders -->
+    <div class="up-section">
+      <div class="up-title">Custom Params</div>
+
+      <div class="uniform-row">
+        <div class="uniform-label">
+          <span class="uniform-name">uSpeed</span>
+          <span class="uniform-value" id="uv-speed">1.00</span>
+        </div>
+        <input type="range" class="uniform-slider" id="sl-speed" min="0" max="3" step="0.01" value="1.0"/>
+      </div>
+
+      <div class="uniform-row">
+        <div class="uniform-label">
+          <span class="uniform-name">uScale</span>
+          <span class="uniform-value" id="uv-scale">1.00</span>
+        </div>
+        <input type="range" class="uniform-slider" id="sl-scale" min="0.1" max="5" step="0.01" value="1.0"/>
+      </div>
+
+      <div class="uniform-row">
+        <div class="uniform-label">
+          <span class="uniform-name">uParam</span>
+          <span class="uniform-value" id="uv-param">0.50</span>
+        </div>
+        <input type="range" class="uniform-slider" id="sl-param" min="0" max="1" step="0.001" value="0.5"/>
+      </div>
+    </div>
+
+    <!-- Options -->
+    <div class="up-section">
+      <div class="up-title">Options</div>
+      <label class="checkbox-row">
+        <input type="checkbox" id="opt-accumulate"/>
+        <div class="custom-checkbox"></div>
+        <span class="checkbox-label">Accumulate frames</span>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" id="opt-wireframe"/>
+        <div class="custom-checkbox"></div>
+        <span class="checkbox-label">Show dispatch grid</span>
+      </label>
+    </div>
+
+    <!-- FPS -->
+    <div class="up-section">
+      <div class="up-title">Performance</div>
+      <div id="fps-graph-wrap">
+        <canvas id="fps-canvas"></canvas>
+        <div class="fps-overlay" id="fps-display">-- fps</div>
+      </div>
+      <div style="margin-top:8px;font-size:0.68rem;color:var(--text3);">
+        GPU: <span id="gpu-name" style="color:var(--text2)">—</span>
+      </div>
+      <div style="margin-top:4px;font-size:0.68rem;color:var(--text3);">
+        Dispatch: <span id="dispatch-info" style="color:var(--text2)">—</span>
+      </div>
+    </div>
+
+    <!-- Buffer preview -->
+    <div class="up-section">
+      <div class="up-title">Buffer Peek</div>
+      <div class="buf-preview" id="buf-preview">
+        <span>—</span>
+      </div>
+    </div>
+
+  </div><!-- /uniforms-panel -->
+
+</div><!-- /main -->
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+/* ============================================================
+   ComputeToy — WebGPU Engine
+   ============================================================ */
+
+// ─── Preset Shaders ───────────────────────────────────────────
+const PRESETS = {
+
+plasma: {
+  label: 'plasma',
+  compute: `// Plasma field — classic demo effect via Compute Shader
+// Writes color into a storage texture each frame.
+
+struct Uniforms {
+  iTime       : f32,
+  iFrame      : u32,
+  iResolution : vec2f,
+  iMouse      : vec2f,
+  uSpeed      : f32,
+  uScale      : f32,
+  uParam      : f32,
+  _pad        : f32,
+}
+
+@group(0) @binding(0) var<uniform>           u     : Uniforms;
+@group(0) @binding(1) var<storage, read_write> buf  : array<vec4f>;
+
+fn plasma(p: vec2f, t: f32) -> vec4f {
+  let q = p * u.uScale * 0.012;
+  var v: f32 = 0.0;
+  v += sin(q.x + t);
+  v += sin(q.y + t * 0.7);
+  v += sin((q.x + q.y) + t * 0.5);
+  let cx = q.x + 0.5 * sin(t * 0.3);
+  let cy = q.y + 0.5 * cos(t * 0.4);
+  v += sin(sqrt(cx*cx + cy*cy + 1.0) + t);
+  v = v * 0.5 + 0.5; // remap [0,1]
+
+  // HSV-like colour
+  let r = sin(v * 3.14159 * 2.0              + t * u.uParam * 3.0);
+  let g = sin(v * 3.14159 * 2.0 + 2.094     + t * u.uParam * 2.0);
+  let b = sin(v * 3.14159 * 2.0 + 4.189);
+  return vec4f(r * 0.5 + 0.5, g * 0.5 + 0.5, b * 0.5 + 0.5, 1.0);
+}
+
+@compute @workgroup_size(8, 8, 1)
+fn CSMain(@builtin(global_invocation_id) gid: vec3u) {
+  let res = vec2u(u32(u.iResolution.x), u32(u.iResolution.y));
+  if (gid.x >= res.x || gid.y >= res.y) { return; }
+  let idx = gid.y * res.x + gid.x;
+
+  let fc = vec2f(f32(gid.x), f32(gid.y));
+  let t  = u.iTime * u.uSpeed;
+  buf[idx] = plasma(fc, t);
+}`,
+  vertex: `// Full-screen triangle vertex shader
+struct VSOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f }
+@vertex
+fn VSMain(@builtin(vertex_index) vi: u32) -> VSOut {
+  var pos = array<vec2f,3>(vec2f(-1,-1), vec2f(3,-1), vec2f(-1,3));
+  var out: VSOut;
+  out.pos = vec4f(pos[vi], 0.0, 1.0);
+  out.uv  = pos[vi] * 0.5 + 0.5;
+  return out;
+}`,
+  fragment: `// Blit compute buffer to screen
+struct Uniforms {
+  iTime       : f32,
+  iFrame      : u32,
+  iResolution : vec2f,
+  iMouse      : vec2f,
+  uSpeed      : f32,
+  uScale      : f32,
+  uParam      : f32,
+  _pad        : f32,
+}
+@group(0) @binding(0) var<uniform>         u   : Uniforms;
+@group(0) @binding(1) var<storage, read>   buf : array<vec4f>;
+
+@fragment
+fn FSMain(@location(0) uv: vec2f) -> @location(0) vec4f {
+  let res = vec2u(u32(u.iResolution.x), u32(u.iResolution.y));
+  let px  = vec2u(u32(uv.x * f32(res.x)), u32((uv.y) * f32(res.y)));
+  let px_clamped = vec2u(min(px.x, res.x - 1u), min(px.y, res.y - 1u));
+  let idx = px_clamped.y * res.x + px_clamped.x;
+  return buf[idx];
+}`
+},
+
+particles: {
+  label: 'particles',
+  compute: `// GPU particle simulation
+// Each particle: pos.xy, vel.xy packed as vec4f
+
+struct Uniforms {
+  iTime       : f32,
+  iFrame      : u32,
+  iResolution : vec2f,
+  iMouse      : vec2f,
+  uSpeed      : f32,
+  uScale      : f32,
+  uParam      : f32,
+  _pad        : f32,
+}
+
+struct Particle {
+  pos : vec2f,
+  vel : vec2f,
+}
+
+@group(0) @binding(0) var<uniform>           u       : Uniforms;
+@group(0) @binding(1) var<storage, read_write> buf   : array<vec4f>;
+@group(0) @binding(2) var<storage, read_write> parts : array<Particle>;
+
+fn hash(n: f32) -> f32 {
+  return fract(sin(n) * 43758.5453);
+}
+
+const N_PARTICLES = 2048u;
+
+@compute @workgroup_size(64, 1, 1)
+fn CSMain(@builtin(global_invocation_id) gid: vec3u) {
+  let res = vec2u(u32(u.iResolution.x), u32(u.iResolution.y));
+
+  // ----- Particle update pass -----
+  if (gid.x < N_PARTICLES) {
+    let i = gid.x;
+    var p = parts[i];
+    let dt = 0.016 * u.uSpeed;
+
+    // Attract to mouse (if mouse is pressed — uParam > 0.5)
+    if (u.uParam > 0.5) {
+      let toMouse = u.iMouse - p.pos;
+      let dist = max(length(toMouse), 10.0);
+      p.vel += normalize(toMouse) * (500.0 / (dist * dist)) * dt;
+    }
+
+    // Swirl force
+    let center = u.iResolution * 0.5;
+    let tc = p.pos - center;
+    let swirl = vec2f(-tc.y, tc.x) * 0.0003 * u.uScale;
+    p.vel += swirl * dt * 60.0;
+
+    // Damping
+    p.vel *= 0.985;
+
+    // Clamp velocity
+    let spd = length(p.vel);
+    if (spd > 300.0) { p.vel = normalize(p.vel) * 300.0; }
+
+    // Move
+    p.pos += p.vel * dt;
+
+    // Wrap
+    p.pos = ((p.pos % u.iResolution) + u.iResolution) % u.iResolution;
+
+    parts[i] = p;
+  }
+
+  // ----- Clear + draw pass -----
+  // Each thread also clears a pixel
+  if (gid.x < res.x * res.y) {
+    buf[gid.x] = vec4f(0.0, 0.0, 0.0, 1.0) * 0.88 + buf[gid.x] * 0.12;
+  }
+
+  storageBarrier(); // wait for clear
+
+  // Paint particles (1 thread = 1 particle)
+  if (gid.x < N_PARTICLES) {
+    let i = gid.x;
+    let px = vec2u(u32(parts[i].pos.x) % res.x, u32(parts[i].pos.y) % res.y);
+    let idx = px.y * res.x + px.x;
+    let age = f32(i) / f32(N_PARTICLES);
+    let col = vec4f(
+      sin(age * 6.28 + u.iTime) * 0.5 + 0.5,
+      cos(age * 6.28 + u.iTime * 0.7) * 0.5 + 0.5,
+      sin(age * 3.14 + u.iTime * 1.3 + 1.0) * 0.5 + 0.5,
+      1.0
+    );
+    buf[idx] = col;
+  }
+}`,
+  vertex: `struct VSOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f }
+@vertex fn VSMain(@builtin(vertex_index) vi: u32) -> VSOut {
+  var pos = array<vec2f,3>(vec2f(-1,-1), vec2f(3,-1), vec2f(-1,3));
+  var o: VSOut; o.pos = vec4f(pos[vi],0,1); o.uv = pos[vi]*.5+.5; return o;
+}`,
+  fragment: `struct Uniforms { iTime:f32, iFrame:u32, iResolution:vec2f, iMouse:vec2f, uSpeed:f32, uScale:f32, uParam:f32, _pad:f32 }
+@group(0) @binding(0) var<uniform> u: Uniforms;
+@group(0) @binding(1) var<storage, read> buf: array<vec4f>;
+@fragment fn FSMain(@location(0) uv: vec2f) -> @location(0) vec4f {
+  let res = vec2u(u32(u.iResolution.x), u32(u.iResolution.y));
+  let px = vec2u(u32(uv.x*f32(res.x)), u32((uv.y)*f32(res.y)));
+  let idx = min(px.y,res.y-1u)*res.x + min(px.x,res.x-1u);
+  return buf[idx];
+}`
+},
+
+life: {
+  label: 'game of life',
+  compute: `// Conway's Game of Life — Compute Shader
+// Uses double-buffering via frame parity.
+// Cells: 0=dead, 1=alive (stored as f32 in vec4.r)
+
+struct Uniforms {
+  iTime       : f32,
+  iFrame      : u32,
+  iResolution : vec2f,
+  iMouse      : vec2f,
+  uSpeed      : f32,
+  uScale      : f32,
+  uParam      : f32,
+  _pad        : f32,
+}
+
+@group(0) @binding(0) var<uniform>             u    : Uniforms;
+@group(0) @binding(1) var<storage, read_write> bufA : array<vec4f>; // ping
+@group(0) @binding(2) var<storage, read_write> bufB : array<vec4f>; // pong
+
+fn idx(x: i32, y: i32, W: i32, H: i32) -> u32 {
+  let wx = ((x % W) + W) % W;
+  let wy = ((y % H) + H) % H;
+  return u32(wy * W + wx);
+}
+
+fn cell(buf: ptr<storage, array<vec4f>, read_write>, x: i32, y: i32, W: i32, H: i32) -> f32 {
+  return (*buf)[idx(x, y, W, H)].r;
+}
+
+@compute @workgroup_size(8, 8)
+fn CSMain(@builtin(global_invocation_id) gid: vec3u) {
+  let W = i32(u.iResolution.x);
+  let H = i32(u.iResolution.y);
+  if (i32(gid.x) >= W || i32(gid.y) >= H) { return; }
+  let x = i32(gid.x);
+  let y = i32(gid.y);
+
+  // Seed on first frame
+  if (u.iFrame == 0u) {
+    let h = fract(sin(f32(x * 7 + y * 13)) * 43758.5);
+    let alive = select(0.0, 1.0, h > 0.55);
+    bufA[idx(x,y,W,H)] = vec4f(alive, alive, alive, 1.0);
+    bufB[idx(x,y,W,H)] = vec4f(0.0);
+    return;
+  }
+
+  // Update every few frames controlled by uSpeed
+  let updateFreq = max(1u, u32(8.0 / max(u.uSpeed, 0.1)));
+  let doUpdate   = (u.iFrame % updateFreq) == 0u;
+
+  // Decide read/write buffers from frame parity
+  let parity = (u.iFrame / updateFreq) % 2u;
+
+  var alive: f32;
+  var neighbors: f32 = 0.0;
+
+  if (parity == 0u) {
+    // Read A, write B
+    alive = cell(&bufA, x, y, W, H);
+    for (var dy = -1; dy <= 1; dy++) {
+      for (var dx = -1; dx <= 1; dx++) {
+        if (dx == 0 && dy == 0) { continue; }
+        neighbors += cell(&bufA, x+dx, y+dy, W, H);
+      }
+    }
+    if (doUpdate) {
+      let born    = (alive == 0.0) && (neighbors == 3.0);
+      let survive = (alive == 1.0) && (neighbors == 2.0 || neighbors == 3.0);
+      let newAlive = select(0.0, 1.0, born || survive);
+      // Trail effect: fade dead cells
+      let prev = bufA[idx(x,y,W,H)];
+      let trail = prev * 0.6;
+      bufB[idx(x,y,W,H)] = select(trail, vec4f(0.1,1.0,0.5,1.0), newAlive > 0.5);
+    } else {
+      bufB[idx(x,y,W,H)] = bufA[idx(x,y,W,H)];
+    }
+  } else {
+    // Read B, write A
+    alive = cell(&bufB, x, y, W, H);
+    for (var dy = -1; dy <= 1; dy++) {
+      for (var dx = -1; dx <= 1; dx++) {
+        if (dx == 0 && dy == 0) { continue; }
+        neighbors += cell(&bufB, x+dx, y+dy, W, H);
+      }
+    }
+    if (doUpdate) {
+      let born    = (alive == 0.0) && (neighbors == 3.0);
+      let survive = (alive == 1.0) && (neighbors == 2.0 || neighbors == 3.0);
+      let newAlive = select(0.0, 1.0, born || survive);
+      let prev = bufB[idx(x,y,W,H)];
+      let trail = prev * 0.6;
+      bufA[idx(x,y,W,H)] = select(trail, vec4f(0.1,1.0,0.5,1.0), newAlive > 0.5);
+    } else {
+      bufA[idx(x,y,W,H)] = bufB[idx(x,y,W,H)];
+    }
+  }
+}`,
+  vertex: `struct VSOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f }
+@vertex fn VSMain(@builtin(vertex_index) vi: u32) -> VSOut {
+  var p = array<vec2f,3>(vec2f(-1,-1),vec2f(3,-1),vec2f(-1,3));
+  return VSOut(vec4f(p[vi],0,1), p[vi]*.5+.5);
+}`,
+  fragment: `struct Uniforms { iTime:f32, iFrame:u32, iResolution:vec2f, iMouse:vec2f, uSpeed:f32, uScale:f32, uParam:f32, _pad:f32 }
+@group(0) @binding(0) var<uniform> u: Uniforms;
+@group(0) @binding(1) var<storage, read> bufA: array<vec4f>;
+@group(0) @binding(2) var<storage, read> bufB: array<vec4f>;
+@fragment fn FSMain(@location(0) uv: vec2f) -> @location(0) vec4f {
+  let W = u32(u.iResolution.x); let H = u32(u.iResolution.y);
+  let px = vec2u(u32(uv.x*f32(W)), u32((uv.y)*f32(H)));
+  let idx = min(px.y,H-1u)*W + min(px.x,W-1u);
+  let parity = (u.iFrame / max(1u, u32(8.0/max(u.uSpeed,0.1)))) % 2u;
+  return select(bufB[idx], bufA[idx], parity == 0u);
+}`
+},
+
+mandelbrot: {
+  label: 'mandelbrot',
+  compute: `// Mandelbrot set — Compute Shader with smooth colouring
+// Zoom with uScale, colour shift with uParam
+
+struct Uniforms {
+  iTime       : f32,
+  iFrame      : u32,
+  iResolution : vec2f,
+  iMouse      : vec2f,
+  uSpeed      : f32,
+  uScale      : f32,
+  uParam      : f32,
+  _pad        : f32,
+}
+
+@group(0) @binding(0) var<uniform>             u   : Uniforms;
+@group(0) @binding(1) var<storage, read_write> buf : array<vec4f>;
+
+fn mandelbrot(c: vec2f) -> f32 {
+  var z = vec2f(0.0);
+  var i: i32 = 0;
+  let MAX = 256;
+  loop {
+    if (i >= MAX || dot(z,z) > 4.0) { break; }
+    z = vec2f(z.x*z.x - z.y*z.y, 2.0*z.x*z.y) + c;
+    i++;
+  }
+  if (i == MAX) { return 0.0; }
+  // Smooth iteration count
+  let log2z = log2(dot(z,z)) * 0.5;
+  return f32(i) - log2(log2z) + 4.0;
+}
+
+fn palette(t: f32) -> vec3f {
+  let a = vec3f(0.5,0.5,0.5);
+  let b = vec3f(0.5,0.5,0.5);
+  let c = vec3f(1.0,1.0,1.0);
+  let d = vec3f(0.00,0.10,0.20);
+  return a + b * cos(6.28318 * (c * t + d));
+}
+
+@compute @workgroup_size(8, 8)
+fn CSMain(@builtin(global_invocation_id) gid: vec3u) {
+  let W = u32(u.iResolution.x);
+  let H = u32(u.iResolution.y);
+  if (gid.x >= W || gid.y >= H) { return; }
+
+  let uv  = (vec2f(f32(gid.x), f32(gid.y)) - u.iResolution * 0.5) / f32(H);
+  let zoom = pow(0.5, (u.uScale - 1.0) * 3.0 + u.iTime * u.uSpeed * 0.05);
+  let center = vec2f(-0.7269, 0.1889); // interesting point
+  let c = uv * zoom * 2.5 + center;
+
+  let n = mandelbrot(c);
+  var col: vec3f;
+  if (n == 0.0) {
+    col = vec3f(0.0);
+  } else {
+    let t = n / 256.0 + u.uParam + u.iTime * u.uSpeed * 0.01;
+    col = palette(fract(t));
+  }
+
+  buf[gid.y * W + gid.x] = vec4f(col, 1.0);
+}`,
+  vertex: `struct VSOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f }
+@vertex fn VSMain(@builtin(vertex_index) vi: u32) -> VSOut {
+  var p = array<vec2f,3>(vec2f(-1,-1),vec2f(3,-1),vec2f(-1,3));
+  return VSOut(vec4f(p[vi],0,1), p[vi]*.5+.5);
+}`,
+  fragment: `struct Uniforms { iTime:f32, iFrame:u32, iResolution:vec2f, iMouse:vec2f, uSpeed:f32, uScale:f32, uParam:f32, _pad:f32 }
+@group(0) @binding(0) var<uniform> u: Uniforms;
+@group(0) @binding(1) var<storage, read> buf: array<vec4f>;
+@fragment fn FSMain(@location(0) uv: vec2f) -> @location(0) vec4f {
+  let W = u32(u.iResolution.x); let H = u32(u.iResolution.y);
+  let px = vec2u(u32(uv.x*f32(W)), u32((uv.y)*f32(H)));
+  return buf[min(px.y,H-1u)*W + min(px.x,W-1u)];
+}`
+},
+
+reaction: {
+  label: 'reaction-diff',
+  compute: `// Gray-Scott Reaction-Diffusion system
+// u, v are chemical concentrations stored as buf.r, buf.g
+
+struct Uniforms {
+  iTime:f32, iFrame:u32, iResolution:vec2f, iMouse:vec2f,
+  uSpeed:f32, uScale:f32, uParam:f32, _pad:f32,
+}
+
+@group(0) @binding(0) var<uniform>             U    : Uniforms;
+@group(0) @binding(1) var<storage, read_write> bufA : array<vec4f>;
+@group(0) @binding(2) var<storage, read_write> bufB : array<vec4f>;
+
+fn getCell(buf: ptr<storage,array<vec4f>,read_write>, x:i32,y:i32,W:i32,H:i32)->vec2f{
+  let wx=((x%W)+W)%W; let wy=((y%H)+H)%H;
+  let v=(*buf)[u32(wy*W+wx)]; return v.rg;
+}
+
+@compute @workgroup_size(8, 8)
+fn CSMain(@builtin(global_invocation_id) gid: vec3u) {
+  let W=i32(U.iResolution.x); let H=i32(U.iResolution.y);
+  if(i32(gid.x)>=W||i32(gid.y)>=H){return;}
+  let x=i32(gid.x); let y=i32(gid.y);
+
+  // Seed
+  if(U.iFrame==0u){
+    let cx=W/2; let cy=H/2; let r=20;
+    let inside = abs(x-cx)<r && abs(y-cy)<r;
+    let c = select(vec2f(1.0,0.0), vec2f(0.5,0.25), inside);
+    bufA[u32(y*W+x)] = vec4f(c, 0.0, 1.0);
+    bufB[u32(y*W+x)] = vec4f(c, 0.0, 1.0);
+    return;
+  }
+
+  // Parameters — Gray-Scott
+  let dA = 1.0;
+  let dB = 0.5;
+  let f  = 0.055 + U.uParam * 0.01;   // feed rate
+  let k  = 0.062 + U.uScale * 0.006;  // kill rate
+
+  let parity = U.iFrame % 2u;
+  var uv_c: vec2f;
+  var lap: vec2f = vec2f(0.0);
+
+  if(parity==0u){
+    uv_c = getCell(&bufA,x,y,W,H);
+    lap += getCell(&bufA,x-1,y,W,H)*0.2;
+    lap += getCell(&bufA,x+1,y,W,H)*0.2;
+    lap += getCell(&bufA,x,y-1,W,H)*0.2;
+    lap += getCell(&bufA,x,y+1,W,H)*0.2;
+    lap += getCell(&bufA,x-1,y-1,W,H)*0.05;
+    lap += getCell(&bufA,x+1,y-1,W,H)*0.05;
+    lap += getCell(&bufA,x-1,y+1,W,H)*0.05;
+    lap += getCell(&bufA,x+1,y+1,W,H)*0.05;
+    lap -= uv_c;
+  } else {
+    uv_c = getCell(&bufB,x,y,W,H);
+    lap += getCell(&bufB,x-1,y,W,H)*0.2;
+    lap += getCell(&bufB,x+1,y,W,H)*0.2;
+    lap += getCell(&bufB,x,y-1,W,H)*0.2;
+    lap += getCell(&bufB,x,y+1,W,H)*0.2;
+    lap += getCell(&bufB,x-1,y-1,W,H)*0.05;
+    lap += getCell(&bufB,x+1,y-1,W,H)*0.05;
+    lap += getCell(&bufB,x-1,y+1,W,H)*0.05;
+    lap += getCell(&bufB,x+1,y+1,W,H)*0.05;
+    lap -= uv_c;
+  }
+
+  let a = uv_c.x; let b = uv_c.y;
+  let uvv = a * b * b;
+  let steps = u32(max(1.0, U.uSpeed * 4.0));
+  var na=a; var nb=b;
+  for(var s=0u;s<steps;s++){
+    na = clamp(na + dA*lap.x - uvv + f*(1.0-na), 0.0, 1.0);
+    nb = clamp(nb + dB*lap.y + uvv - (f+k)*nb,   0.0, 1.0);
+  }
+
+  let col = vec4f(na,nb,0.3-nb*0.3,1.0);
+  if(parity==0u){ bufB[u32(y*W+x)]=col; } else { bufA[u32(y*W+x)]=col; }
+}`,
+  vertex: `struct VSOut{@builtin(position)pos:vec4f,@location(0)uv:vec2f}
+@vertex fn VSMain(@builtin(vertex_index)vi:u32)->VSOut{
+  var p=array<vec2f,3>(vec2f(-1,-1),vec2f(3,-1),vec2f(-1,3));
+  return VSOut(vec4f(p[vi],0,1),p[vi]*.5+.5);}`,
+  fragment: `struct Uniforms{iTime:f32,iFrame:u32,iResolution:vec2f,iMouse:vec2f,uSpeed:f32,uScale:f32,uParam:f32,_pad:f32}
+@group(0)@binding(0)var<uniform>u:Uniforms;
+@group(0)@binding(1)var<storage,read>bufA:array<vec4f>;
+@group(0)@binding(2)var<storage,read>bufB:array<vec4f>;
+@fragment fn FSMain(@location(0)uv:vec2f)->@location(0)vec4f{
+  let W=u32(u.iResolution.x);let H=u32(u.iResolution.y);
+  let px=vec2u(u32(uv.x*f32(W)),u32((uv.y)*f32(H)));
+  let idx=min(px.y,H-1u)*W+min(px.x,W-1u);
+  let col=select(bufB[idx],bufA[idx],(u.iFrame%2u)==0u);
+  return vec4f(1.0-col.r, col.g*2.0, col.b+col.r*0.5, 1.0);
+}`
+},
+
+raycast: {
+  label: 'raycast',
+  compute: `// Simple 3D ray-marching SDF scene
+// Sphere + ground plane, soft shadows
+
+struct Uniforms {
+  iTime:f32, iFrame:u32, iResolution:vec2f, iMouse:vec2f,
+  uSpeed:f32, uScale:f32, uParam:f32, _pad:f32,
+}
+
+@group(0) @binding(0) var<uniform>             u   : Uniforms;
+@group(0) @binding(1) var<storage, read_write> buf : array<vec4f>;
+
+fn sdSphere(p:vec3f, r:f32)->f32 { return length(p)-r; }
+fn sdPlane(p:vec3f, h:f32)->f32  { return p.y - h; }
+
+fn smin(a:f32, b:f32, k:f32)->f32 {
+  let h = clamp(0.5 + 0.5*(b-a)/k, 0.0, 1.0);
+  return mix(b, a, h) - k*h*(1.0-h);
+}
+
+fn scene(p:vec3f)->f32 {
+  let t = u.iTime * u.uSpeed;
+  let s1 = sdSphere(p - vec3f(sin(t)*1.2, 0.2+sin(t*1.7)*0.3, cos(t)*1.2), 0.4);
+  let s2 = sdSphere(p - vec3f(cos(t*0.7)*0.8, 0.0, sin(t*0.5)*0.8), 0.25);
+  let s3 = sdSphere(p - vec3f(0.0, sin(t*2.1+1.0)*0.6, 0.0), 0.15 + u.uParam*0.3);
+  let plane = sdPlane(p, -0.6);
+  return smin(smin(smin(s1,s2,0.3),s3,0.2), plane, 0.1);
+}
+
+fn calcNormal(p:vec3f)->vec3f {
+  let e = vec2f(0.001, 0.0);
+  return normalize(vec3f(
+    scene(p+e.xyy) - scene(p-e.xyy),
+    scene(p+e.yxy) - scene(p-e.yxy),
+    scene(p+e.yyx) - scene(p-e.yyx)
+  ));
+}
+
+fn softShadow(ro:vec3f, rd:vec3f, tmin:f32, tmax:f32)->f32 {
+  var res = 1.0; var t = tmin;
+  for(var i=0;i<24;i++){
+    let h = scene(ro + rd*t);
+    if(h < 0.0001){ return 0.0; }
+    res = min(res, 8.0*h/t);
+    t += clamp(h, 0.01, 0.2);
+    if(t > tmax){ break; }
+  }
+  return clamp(res, 0.0, 1.0);
+}
+
+@compute @workgroup_size(8, 8)
+fn CSMain(@builtin(global_invocation_id) gid: vec3u) {
+  let W = u32(u.iResolution.x); let H = u32(u.iResolution.y);
+  if(gid.x>=W||gid.y>=H){return;}
+
+  let uv = (vec2f(f32(gid.x),f32(gid.y)) - u.iResolution*0.5) / f32(H);
+  let mx = (u.iMouse / u.iResolution - 0.5) * vec2f(6.28, 3.14);
+
+  // Camera
+  let camDist = 3.5 / u.uScale;
+  let ro = vec3f(sin(mx.x)*camDist, 1.2 + mx.y, cos(mx.x)*camDist);
+  let at = vec3f(0.0, 0.0, 0.0);
+  let fwd = normalize(at - ro);
+  let right = normalize(cross(vec3f(0,1,0), fwd));
+  let up2   = cross(fwd, right);
+  let rd    = normalize(fwd + uv.x*right + uv.y*up2);
+
+  // Ray march
+  var t = 0.0; var hit = false;
+  for(var i=0;i<128;i++){
+    let d = scene(ro + rd*t);
+    if(d < 0.0002){ hit=true; break; }
+    if(t > 20.0){ break; }
+    t += d;
+  }
+
+  var col: vec3f;
+  if(hit){
+    let p = ro + rd*t;
+    let n = calcNormal(p);
+    let lig = normalize(vec3f(0.8, 1.5, 0.6));
+    let dif = clamp(dot(n, lig), 0.0, 1.0);
+    let sha = softShadow(p + n*0.002, lig, 0.01, 5.0);
+    let amb = 0.05 + 0.1 * clamp(dot(n, vec3f(0,1,0)), 0.0, 1.0);
+    let ref2 = reflect(rd, n);
+    let spe = pow(clamp(dot(ref2, lig), 0.0, 1.0), 32.0) * sha;
+
+    // Material colour based on height
+    let matCol = mix(vec3f(0.2,0.5,0.9), vec3f(0.9,0.4,0.2), clamp(p.y+0.5,0.0,1.0));
+    col = matCol * (dif * sha + amb) + vec3f(0.8) * spe;
+    // Fog
+    col = mix(col, vec3f(0.05,0.05,0.1), 1.0 - exp(-t*0.05));
+  } else {
+    // Sky gradient
+    let sky = mix(vec3f(0.05,0.06,0.12), vec3f(0.3,0.5,0.8), clamp(rd.y+0.2, 0.0, 1.0));
+    let sun = pow(max(dot(rd, normalize(vec3f(0.8,1.5,0.6))), 0.0), 64.0);
+    col = sky + vec3f(1.0,0.8,0.5)*sun;
+  }
+
+  // Gamma
+  col = pow(col, vec3f(0.4545));
+  buf[gid.y*W+gid.x] = vec4f(col, 1.0);
+}`,
+  vertex: `struct VSOut{@builtin(position)pos:vec4f,@location(0)uv:vec2f}
+@vertex fn VSMain(@builtin(vertex_index)vi:u32)->VSOut{
+  var p=array<vec2f,3>(vec2f(-1,-1),vec2f(3,-1),vec2f(-1,3));
+  return VSOut(vec4f(p[vi],0,1),p[vi]*.5+.5);}`,
+  fragment: `struct Uniforms{iTime:f32,iFrame:u32,iResolution:vec2f,iMouse:vec2f,uSpeed:f32,uScale:f32,uParam:f32,_pad:f32}
+@group(0)@binding(0)var<uniform>u:Uniforms;
+@group(0)@binding(1)var<storage,read>buf:array<vec4f>;
+@fragment fn FSMain(@location(0)uv:vec2f)->@location(0)vec4f{
+  let W=u32(u.iResolution.x);let H=u32(u.iResolution.y);
+  let px=vec2u(u32(uv.x*f32(W)),u32((uv.y)*f32(H)));
+  return buf[min(px.y,H-1u)*W+min(px.x,W-1u)];
+}`
+},
+
+reduce: {
+  label: 'prefix-sum',
+  compute: `// Parallel Prefix Sum (Scan) — educational Compute Shader
+// Demonstrates groupshared memory + GroupMemoryBarrierWithGroupSync
+// Visualises the scan result as a colour gradient per row.
+
+struct Uniforms {
+  iTime:f32, iFrame:u32, iResolution:vec2f, iMouse:vec2f,
+  uSpeed:f32, uScale:f32, uParam:f32, _pad:f32,
+}
+
+@group(0) @binding(0) var<uniform>             u   : Uniforms;
+@group(0) @binding(1) var<storage, read_write> buf : array<vec4f>;
+
+const WG: u32 = 64u;
+var<workgroup> shared: array<f32, 64>;
+
+@compute @workgroup_size(64, 1, 1)
+fn CSMain(
+  @builtin(global_invocation_id) gid : vec3u,
+  @builtin(local_invocation_id)  lid : vec3u,
+  @builtin(workgroup_id)         wid : vec3u,
+) {
+  let W = u32(u.iResolution.x);
+  let H = u32(u.iResolution.y);
+  let row = wid.x % H;
+  let col = lid.x;
+
+  // Initial values: animated sine wave input
+  let t = u.iTime * u.uSpeed;
+  let x = f32(wid.x * WG + col) / f32(W);
+  let input = sin(x * 6.28318 * u.uScale + t) * 0.5 + 0.5;
+  shared[col] = input;
+
+  // ── Parallel prefix sum (Blelloch up-sweep) ──
+  // Up-sweep phase
+  var stride = 1u;
+  loop {
+    if (stride >= WG) { break; }
+    GroupMemoryBarrierWithGroupSync(); // barrier between rounds
+    if (col % (stride * 2u) == (stride * 2u - 1u)) {
+      shared[col] += shared[col - stride];
+    }
+    stride *= 2u;
+  }
+
+  // Clear last element
+  if (col == WG - 1u) { shared[col] = 0.0; }
+
+  // Down-sweep phase
+  stride = WG / 2u;
+  loop {
+    if (stride == 0u) { break; }
+    GroupMemoryBarrierWithGroupSync();
+    if (col % (stride * 2u) == (stride * 2u - 1u)) {
+      let tmp    = shared[col - stride];
+      shared[col - stride] = shared[col];
+      shared[col]         += tmp;
+    }
+    stride /= 2u;
+  }
+
+  GroupMemoryBarrierWithGroupSync();
+
+  // Normalise result for visualisation
+  let prefixMax = shared[WG - 1u] + input; // approx total
+  let norm = clamp(shared[col] / max(prefixMax, 0.001), 0.0, 1.0);
+
+  // Colour map: blue→cyan→green→yellow→red
+  let r = clamp(norm * 2.0 - 1.0, 0.0, 1.0);
+  let g = clamp(1.0 - abs(norm - 0.5) * 2.5, 0.0, 1.0);
+  let b = clamp(1.0 - norm * 2.0, 0.0, 1.0);
+
+  // Write a vertical stripe for this (workgroup, thread)
+  let px_x = wid.x * WG + col;
+  if (px_x < W) {
+    let colVec = vec4f(r, g, b, 1.0);
+    // Fill column with colour, brighter at the row matching workgroup row
+    for (var py = 0u; py < H; py++) {
+      let dist = abs(f32(py) / f32(H) - (1.0 - norm));
+      let bright = exp(-dist * f32(H) * 0.06) * 0.8 + 0.2;
+      buf[py * W + px_x] = colVec * bright;
+    }
+  }
+}`,
+  vertex: `struct VSOut{@builtin(position)pos:vec4f,@location(0)uv:vec2f}
+@vertex fn VSMain(@builtin(vertex_index)vi:u32)->VSOut{
+  var p=array<vec2f,3>(vec2f(-1,-1),vec2f(3,-1),vec2f(-1,3));
+  return VSOut(vec4f(p[vi],0,1),p[vi]*.5+.5);}`,
+  fragment: `struct Uniforms{iTime:f32,iFrame:u32,iResolution:vec2f,iMouse:vec2f,uSpeed:f32,uScale:f32,uParam:f32,_pad:f32}
+@group(0)@binding(0)var<uniform>u:Uniforms;
+@group(0)@binding(1)var<storage,read>buf:array<vec4f>;
+@fragment fn FSMain(@location(0)uv:vec2f)->@location(0)vec4f{
+  let W=u32(u.iResolution.x);let H=u32(u.iResolution.y);
+  let px=vec2u(u32(uv.x*f32(W)),u32((uv.y)*f32(H)));
+  return buf[min(px.y,H-1u)*W+min(px.x,W-1u)];
+}`
+}
+
+}; // end PRESETS
+
+/* ============================================================
+   State
+   ============================================================ */
+const state = {
+  device: null,
+  adapter: null,
+  context: null,
+  swapchainFormat: 'bgra8unorm',
+
+  running:  false,
+  paused:   false,
+  frame:    0,
+  startTime: 0,
+  lastTime: 0,
+  rafId:    null,
+
+  resolution: 512,
+  currentPreset: 'plasma',
+  currentTab: 'compute',
+
+  // buffers
+  uniformBuffer:  null,
+  storageBuffers: [],
+  pipeline: { compute: null, render: null },
+  bindGroups: { compute: null, render: null },
+
+  // uniforms
+  uTime: 0, uFrame: 0, uMouse: [0,0],
+  uSpeed: 1, uScale: 1, uParam: 0.5,
+
+  // fps tracking
+  fpsHistory: new Array(60).fill(0),
+  lastFpsUpdate: 0,
+
+  // particles init
+  particlesInitialized: false,
+};
+
+/* ============================================================
+   DOM refs
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const canvas     = $('gpu-canvas');
+const codeEditor = $('code-editor');
+const lineNums   = $('line-numbers');
+const consoleOut = $('console-output');
+const fpsCanvas  = $('fps-canvas');
+
+/* ============================================================
+   Logger
+   ============================================================ */
+function log(msg, type='info') {
+  const d = new Date();
+  const t = d.toLocaleTimeString('en',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const el = document.createElement('div');
+  el.className = 'log-line';
+  el.innerHTML = `<span class="log-time">[${t}]</span><span class="log-${type}">${msg}</span>`;
+  consoleOut.appendChild(el);
+  consoleOut.scrollTop = consoleOut.scrollHeight;
+}
+
+/* ============================================================
+   Editor & Line Numbers
+   ============================================================ */
+function updateLineNumbers() {
+  const lines = codeEditor.value.split('\n').length;
+  const activeLine = codeEditor.value.substr(0, codeEditor.selectionStart).split('\n').length;
+  let html = '';
+  for (let i = 1; i <= lines; i++) {
+    html += `<span class="ln${i===activeLine?' active-line':''}">${i}</span>`;
+  }
+  lineNums.innerHTML = html;
+  // Sync scroll
+  lineNums.scrollTop = codeEditor.scrollTop;
+}
+
+codeEditor.addEventListener('input', () => { updateLineNumbers(); });
+codeEditor.addEventListener('scroll', () => { lineNums.scrollTop = codeEditor.scrollTop; });
+codeEditor.addEventListener('click', updateLineNumbers);
+codeEditor.addEventListener('keyup', updateLineNumbers);
+
+// Tab key inserts spaces
+codeEditor.addEventListener('keydown', e => {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const s = codeEditor.selectionStart;
+    const v = codeEditor.value;
+    codeEditor.value = v.slice(0,s) + '    ' + v.slice(codeEditor.selectionEnd);
+    codeEditor.selectionStart = codeEditor.selectionEnd = s + 4;
+    updateLineNumbers();
+  }
+});
+
+/* ============================================================
+   Preset + Tab switching
+   ============================================================ */
+// Per-preset, per-tab code storage
+const codeStore = {};
+
+function initCodeStore() {
+  for (const key of Object.keys(PRESETS)) {
+    codeStore[key] = {
+      compute:  PRESETS[key].compute,
+      vertex:   PRESETS[key].vertex,
+      fragment: PRESETS[key].fragment,
+    };
+  }
+}
+initCodeStore();
+
+function loadPreset(name) {
+  state.currentPreset = name;
+  state.particlesInitialized = false;
+  loadTab(state.currentTab);
+  // update tab UI
+  document.querySelectorAll('.preset-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.preset === name);
+  });
+}
+
+function loadTab(tab) {
+  state.currentTab = tab;
+  const code = codeStore[state.currentPreset][tab];
+  codeEditor.value = code || '';
+  updateLineNumbers();
+  document.querySelectorAll('.editor-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.etab === tab);
+  });
+}
+
+function saveCurrentTab() {
+  codeStore[state.currentPreset][state.currentTab] = codeEditor.value;
+}
+
+document.querySelectorAll('.preset-tab').forEach(t => {
+  t.addEventListener('click', () => { saveCurrentTab(); loadPreset(t.dataset.preset); });
+});
+document.querySelectorAll('.editor-tab').forEach(t => {
+  t.addEventListener('click', () => { saveCurrentTab(); loadTab(t.dataset.etab); });
+});
+
+/* ============================================================
+   WebGPU Init
+   ============================================================ */
+async function initWebGPU() {
+  if (!navigator.gpu) {
+    $('no-webgpu').style.display = 'flex';
+    $('api-badge').className = 'canvas-badge badge-fallback';
+    $('api-badge').textContent = 'No WebGPU';
+    log('WebGPU not supported. Using editor-only mode.', 'warn');
+    return false;
+  }
+
+  try {
+    state.adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+    if (!state.adapter) throw new Error('No GPU adapter found');
+
+    state.device = await state.adapter.requestDevice();
+    state.device.lost.then(info => {
+      log(`GPU device lost: ${info.reason} — ${info.message}`, 'error');
+      state.running = false;
+    });
+
+    state.context = canvas.getContext('webgpu');
+    state.swapchainFormat = navigator.gpu.getPreferredCanvasFormat();
+    state.context.configure({
+      device: state.device,
+      format: state.swapchainFormat,
+      alphaMode: 'opaque',
+    });
+
+    const info = state.adapter.info || { description: 'unknown' };
+    const gpuName = info.description || info.device || 'GPU';
+    $('gpu-name').textContent = gpuName;
+    $('api-badge').className = 'canvas-badge badge-webgpu';
+    $('api-badge').textContent = 'WebGPU ✓';
+    log(`WebGPU ready — ${gpuName}`, 'ok');
+    return true;
+  } catch(e) {
+    $('no-webgpu').style.display = 'flex';
+    $('api-badge').className = 'canvas-badge badge-error';
+    $('api-badge').textContent = 'Error';
+    log(`WebGPU init error: ${e.message}`, 'error');
+    return false;
+  }
+}
+
+/* ============================================================
+   Pipeline Build
+   ============================================================ */
+function createUniformBuffer() {
+  // Layout: iTime(f32), iFrame(u32), iResolution(vec2f), iMouse(vec2f),
+  //         uSpeed(f32), uScale(f32), uParam(f32), _pad(f32)  = 10 f32 = 40 bytes
+  return state.device.createBuffer({
+    size: 48,
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+}
+
+function createStorageBuffer(sizePixels, extra=false) {
+  return state.device.createBuffer({
+    size: sizePixels * 4 * 4, // vec4f per pixel
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+  });
+}
+
+function createParticleBuffer(count) {
+  // Particle: pos(vec2f) + vel(vec2f) = 16 bytes each
+  return state.device.createBuffer({
+    size: count * 16,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+}
+
+async function buildPipeline() {
+  const dev = state.device;
+  const res = state.resolution;
+  const preset = state.currentPreset;
+  const codes  = codeStore[preset];
+
+  $('compile-spinner').classList.add('show');
+  log(`Compiling shaders for [${preset}] @ ${res}²...`, 'info');
+
+  const hasSecondBuffer = ['life','reaction'].includes(preset);
+  const hasParticleBuffer = preset === 'particles';
+
+  // Cleanup old buffers
+  state.storageBuffers.forEach(b => b?.destroy());
+  state.storageBuffers = [];
+  state.uniformBuffer?.destroy();
+
+  // Create buffers
+  state.uniformBuffer = createUniformBuffer();
+  state.storageBuffers.push(createStorageBuffer(res * res)); // binding 1: main pixel buf
+
+  if (hasSecondBuffer) {
+    state.storageBuffers.push(createStorageBuffer(res * res)); // binding 2: pingpong
+  }
+  if (hasParticleBuffer) {
+    state.storageBuffers.push(createParticleBuffer(2048));    // binding 2: particles
+  }
+
+  // Bind group layout (dynamic based on buffer count)
+// 1. 分离 Compute 和 Render 的 BindGroupLayout Entries
+  const computeEntries = [
+    { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
+    { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }, // 默认读写
+  ];
+  const renderEntries = [
+    { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+    { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } }, // 必须声明为只读
+  ];
+
+  // 处理多 Buffer 情况（如 Life 预设）
+  if (state.storageBuffers.length > 1) {
+    computeEntries.push({ binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } });
+    renderEntries.push({ binding: 2, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } });
+  }
+
+  // 2. 分别创建 Layout
+  const bgLayoutCompute = dev.createBindGroupLayout({ entries: computeEntries });
+  const bgLayoutRender  = dev.createBindGroupLayout({ entries: renderEntries });
+
+  // 3. 分别创建 Pipeline Layout
+  const pipelineLayoutCompute = dev.createPipelineLayout({ bindGroupLayouts: [bgLayoutCompute] });
+  const pipelineLayoutRender  = dev.createPipelineLayout({ bindGroupLayouts: [bgLayoutRender] });
+
+  // --- Compile shaders ---
+  let computeOk = true, renderOk = true;
+
+  const csModule = dev.createShaderModule({ code: codes.compute, label: 'compute' });
+  const vsModule = dev.createShaderModule({ code: codes.vertex,  label: 'vertex'  });
+  const fsModule = dev.createShaderModule({ code: codes.fragment,label: 'fragment' });
+
+  // Check compile errors
+  for (const [mod, name] of [[csModule,'compute'],[vsModule,'vertex'],[fsModule,'fragment']]) {
+    const info = await mod.getCompilationInfo();
+    for (const msg of info.messages) {
+      const type = msg.type === 'error' ? 'error' : msg.type === 'warning' ? 'warn' : 'info';
+      log(`[${name}] line ${msg.lineNum}: ${msg.message}`, type);
+      if (msg.type === 'error') {
+        if (name === 'compute') computeOk = false;
+        else renderOk = false;
+      }
+    }
+  }
+
+  if (!computeOk || !renderOk) {
+    log('Pipeline build failed. Fix errors above.', 'error');
+    $('api-badge').className = 'canvas-badge badge-error';
+    $('api-badge').textContent = 'Compile Error';
+    $('compile-spinner').classList.remove('show');
+    return false;
+  }
+
+  // Compute pipeline
+  try {
+    state.pipeline.compute = dev.createComputePipeline({
+      layout: pipelineLayoutCompute,
+      compute: { module: csModule, entryPoint: 'CSMain' },
+    });
+  } catch(e) {
+    log(`Compute pipeline error: ${e.message}`, 'error');
+    $('compile-spinner').classList.remove('show');
+    return false;
+  }
+
+  // Render pipeline
+  try {
+    state.pipeline.render = dev.createRenderPipeline({
+      layout: pipelineLayoutRender,
+      vertex:   { module: vsModule, entryPoint: 'VSMain' },
+      fragment: { module: fsModule, entryPoint: 'FSMain',
+                  targets: [{ format: state.swapchainFormat }] },
+      primitive: { topology: 'triangle-list' },
+    });
+  } catch(e) {
+    log(`Render pipeline error: ${e.message}`, 'error');
+    $('compile-spinner').classList.remove('show');
+    return false;
+  }
+
+  // Bind group entries
+ const bgDataEntries = [
+    { binding: 0, resource: { buffer: state.uniformBuffer } },
+    { binding: 1, resource: { buffer: state.storageBuffers[0] } },
+  ];
+  if (state.storageBuffers.length > 1) {
+    bgDataEntries.push({ binding: 2, resource: { buffer: state.storageBuffers[1] } });
+  }
+
+  // 为两个管线分别创建 BindGroup，数据是同一份，但权限映射不同
+  state.bindGroups.compute = dev.createBindGroup({ layout: bgLayoutCompute, entries: bgDataEntries });
+  state.bindGroups.render  = dev.createBindGroup({ layout: bgLayoutRender,  entries: bgDataEntries });
+
+
+  // Initialize particles
+  if (hasParticleBuffer && !state.particlesInitialized) {
+    initParticles(res);
+    state.particlesInitialized = true;
+  }
+
+  $('dispatch-info').textContent =
+    `${Math.ceil(res/8)}×${Math.ceil(res/8)}×1 groups`;
+
+  log('Pipeline compiled OK ✓', 'ok');
+  $('api-badge').className = 'canvas-badge badge-webgpu';
+  $('api-badge').textContent = 'WebGPU ✓';
+  $('compile-spinner').classList.remove('show');
+  return true;
+}
+
+function initParticles(res) {
+  const N = 2048;
+  const data = new Float32Array(N * 4); // pos.xy + vel.xy
+  for (let i = 0; i < N; i++) {
+    data[i*4+0] = Math.random() * res;
+    data[i*4+1] = Math.random() * res;
+    const angle = Math.random() * Math.PI * 2;
+    const spd   = 30 + Math.random() * 80;
+    data[i*4+2] = Math.cos(angle) * spd;
+    data[i*4+3] = Math.sin(angle) * spd;
+  }
+  state.device.queue.writeBuffer(state.storageBuffers[1], 0, data);
+}
+
+/* ============================================================
+   Uniform upload
+   ============================================================ */
+function uploadUniforms() {
+  const data = new ArrayBuffer(48);
+  const f32  = new Float32Array(data);
+  const u32  = new Uint32Array(data);
+  f32[0] = state.uTime;
+  u32[1] = state.uFrame;
+  f32[2] = state.resolution;
+  f32[3] = state.resolution;
+  f32[4] = state.uMouse[0];
+  f32[5] = state.uMouse[1];
+  f32[6] = state.uSpeed;
+  f32[7] = state.uScale;
+  f32[8] = state.uParam;
+  f32[9] = 0;
+  state.device.queue.writeBuffer(state.uniformBuffer, 0, data);
+}
+
+/* ============================================================
+   Render loop
+   ============================================================ */
+function renderFrame(ts) {
+  if (!state.running) return;
+
+  const now = ts / 1000;
+  const dt  = now - state.lastTime;
+  state.lastTime = now;
+
+  if (!state.paused) {
+    state.uTime  = now - state.startTime;
+    state.uFrame++;
+  }
+
+  uploadUniforms();
+
+  const dev = state.device;
+  const cmd = dev.createCommandEncoder();
+
+  // ── Compute pass ──
+  const res = state.resolution;
+  const wgX = Math.ceil(res / 8);
+  const wgY = Math.ceil(res / 8);
+
+  // Special dispatch for prefix-sum (1D workgroups across width)
+  let dispX = wgX, dispY = wgY;
+  if (state.currentPreset === 'reduce') {
+    dispX = Math.ceil(res / 64); dispY = 1;
+  }
+  // Particles: need enough threads for N_PARTICLES + pixels
+  if (state.currentPreset === 'particles') {
+    dispX = Math.ceil(Math.max(2048, res*res) / 64);
+    dispY = 1;
+  }
+
+  const cp = cmd.beginComputePass({ label: 'compute' });
+  cp.setPipeline(state.pipeline.compute);
+  cp.setBindGroup(0, state.bindGroups.compute);
+  cp.dispatchWorkgroups(dispX, dispY, 1);
+  cp.end();
+
+  // ── Render pass ──
+  const view = state.context.getCurrentTexture().createView();
+  const rp = cmd.beginRenderPass({
+    colorAttachments: [{
+      view,
+      loadOp:  'clear',
+      clearValue: { r:0, g:0, b:0, a:1 },
+      storeOp: 'store',
+    }]
+  });
+  rp.setPipeline(state.pipeline.render);
+  rp.setBindGroup(0, state.bindGroups.render);
+  rp.draw(3); // full-screen triangle
+  rp.end();
+
+  dev.queue.submit([cmd.finish()]);
+
+  // ── UI updates ──
+  $('stat-frame').textContent = state.uFrame;
+  $('stat-time').textContent  = state.uTime.toFixed(2);
+  $('uv-time').textContent    = state.uTime.toFixed(2);
+  $('uv-frame').textContent   = state.uFrame;
+
+  // FPS
+  updateFPS(dt);
+
+  state.rafId = requestAnimationFrame(renderFrame);
+}
+
+function updateFPS(dt) {
+  const fps = dt > 0 ? Math.round(1/dt) : 0;
+  state.fpsHistory.push(fps);
+  state.fpsHistory.shift();
+
+  const now = performance.now();
+  if (now - state.lastFpsUpdate > 250) {
+    state.lastFpsUpdate = now;
+    const avg = Math.round(state.fpsHistory.reduce((a,b)=>a+b,0)/state.fpsHistory.length);
+    $('fps-display').textContent = avg + ' fps';
+
+    // Draw FPS graph
+    const fc = fpsCanvas;
+    const ctx = fc.getContext('2d');
+    const W = fc.offsetWidth; const H = fc.offsetHeight;
+    fc.width = W; fc.height = H;
+    ctx.clearRect(0,0,W,H);
+
+    // BG
+    ctx.fillStyle = '#060810';
+    ctx.fillRect(0,0,W,H);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(30,37,56,0.8)';
+    ctx.lineWidth = 1;
+    for (let y=0; y<H; y+=H/4) {
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+    }
+
+    // Line
+    const max = 144;
+    ctx.beginPath();
+    ctx.strokeStyle = '#39ff8e';
+    ctx.lineWidth = 1.5;
+    state.fpsHistory.forEach((v,i) => {
+      const x = (i / state.fpsHistory.length) * W;
+      const y = H - (v/max)*H;
+      i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // Fill
+    ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+    ctx.fillStyle = 'rgba(57,255,142,0.07)';
+    ctx.fill();
+  }
+}
+
+/* ============================================================
+   Buffer peek (async readback sample)
+   ============================================================ */
+let peekInterval = null;
+function startBufferPeek() {
+  if (peekInterval) clearInterval(peekInterval);
+  peekInterval = setInterval(async () => {
+    if (!state.running || !state.storageBuffers[0]) return;
+    const readBuf = state.device.createBuffer({
+      size: 16 * 4, // first 4 pixels × vec4f
+      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+    });
+    const cmd = state.device.createCommandEncoder();
+    cmd.copyBufferToBuffer(state.storageBuffers[0], 0, readBuf, 0, 16*4);
+    state.device.queue.submit([cmd.finish()]);
+    await readBuf.mapAsync(GPUMapMode.READ);
+    const arr = new Float32Array(readBuf.getMappedRange());
+    let html = '';
+    for (let i = 0; i < 4; i++) {
+      const r=arr[i*4].toFixed(2), g=arr[i*4+1].toFixed(2),
+            b=arr[i*4+2].toFixed(2);
+      html += `px[${i}] = <span>(${r}, ${g}, ${b})</span>\n`;
+    }
+    $('buf-preview').innerHTML = html;
+    readBuf.unmap();
+    readBuf.destroy();
+  }, 1000);
+}
+
+/* ============================================================
+   Run / Stop
+   ============================================================ */
+async function runShader() {
+  if (state.running) stopShader();
+  saveCurrentTab();
+
+  if (!state.device) {
+    const ok = await initWebGPU();
+    if (!ok) return;
+  }
+
+  // Resize canvas
+  const res = state.resolution;
+  canvas.width = res; canvas.height = res;
+  $('canvas-res').textContent = `${res} × ${res}`;
+  state.context.configure({
+    device: state.device,
+    format: state.swapchainFormat,
+    alphaMode: 'opaque',
+  });
+
+  const ok = await buildPipeline();
+  if (!ok) return;
+
+  state.running = true;
+  state.frame   = 0;
+  state.uFrame  = 0;
+  state.startTime = performance.now() / 1000 - state.uTime;
+  state.lastTime  = performance.now() / 1000;
+
+  $('btn-run').classList.add('running');
+  $('btn-run').textContent = '↺ Running';
+
+  startBufferPeek();
+  state.rafId = requestAnimationFrame(renderFrame);
+  log(`Started [${state.currentPreset}]`, 'ok');
+}
+
+function stopShader() {
+  state.running = false;
+  if (state.rafId) cancelAnimationFrame(state.rafId);
+  $('btn-run').classList.remove('running');
+  $('btn-run').textContent = '▶ Run';
+  if (peekInterval) { clearInterval(peekInterval); peekInterval = null; }
+  log('Stopped.', 'warn');
+}
+
+/* ============================================================
+   Controls
+   ============================================================ */
+$('btn-run').addEventListener('click', runShader);
+$('btn-stop').addEventListener('click', stopShader);
+
+$('btn-pause-play').addEventListener('click', () => {
+  state.paused = !state.paused;
+  $('btn-pause-play').textContent = state.paused ? '▶ Play' : '❚❚ Pause';
+  $('btn-pause-play').classList.toggle('active', state.paused);
+});
+
+$('btn-reset-time').addEventListener('click', () => {
+  state.uTime = 0;
+  state.uFrame = 0;
+  state.startTime = performance.now() / 1000;
+  log('Time reset to 0', 'info');
+});
+
+$('btn-snapshot').addEventListener('click', () => {
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `computetoy_${state.currentPreset}_f${state.uFrame}.png`;
+  a.click();
+  log('Snapshot saved ✓', 'ok');
+});
+
+$('res-select').addEventListener('change', e => {
+  state.resolution = parseInt(e.target.value);
+  if (state.running) runShader();
+});
+
+// Sliders
+$('sl-speed').addEventListener('input', e => {
+  state.uSpeed = parseFloat(e.target.value);
+  $('uv-speed').textContent = state.uSpeed.toFixed(2);
+});
+$('sl-scale').addEventListener('input', e => {
+  state.uScale = parseFloat(e.target.value);
+  $('uv-scale').textContent = state.uScale.toFixed(2);
+});
+$('sl-param').addEventListener('input', e => {
+  state.uParam = parseFloat(e.target.value);
+  $('uv-param').textContent = state.uParam.toFixed(3);
+});
+
+// Mouse tracking on canvas
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width  * state.resolution;
+  const y = (e.clientY - rect.top)  / rect.height * state.resolution;
+  state.uMouse = [x, y];
+  $('uv-mouse').textContent = `${Math.round(x)},${Math.round(y)}`;
+  $('mouse-pos').textContent = `mouse: ${Math.round(x)}, ${Math.round(y)}`;
+});
+
+// Console clear
+$('console-clear').addEventListener('click', () => { consoleOut.innerHTML = ''; });
+
+/* ============================================================
+   Panel resize (horizontal)
+   ============================================================ */
+const resizeHandle = $('resize-handle');
+let resizing = false;
+resizeHandle.addEventListener('mousedown', e => {
+  resizing = true;
+  resizeHandle.classList.add('dragging');
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none';
+});
+document.addEventListener('mousemove', e => {
+  if (!resizing) return;
+  const panel = $('editor-panel');
+  const main  = $('main');
+  const rect  = main.getBoundingClientRect();
+  const newW  = Math.max(240, Math.min(e.clientX - rect.left, rect.width - 240));
+  panel.style.width = newW + 'px';
+});
+document.addEventListener('mouseup', () => {
+  if (!resizing) return;
+  resizing = false;
+  resizeHandle.classList.remove('dragging');
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+});
+
+/* ============================================================
+   Console resize (vertical)
+   ============================================================ */
+const consoleResize = $('console-resize');
+let consoleResizing = false, consoleStartY = 0, consoleStartH = 0;
+consoleResize.addEventListener('mousedown', e => {
+  consoleResizing = true;
+  consoleStartY = e.clientY;
+  consoleStartH = $('console-panel').offsetHeight;
+  document.body.style.cursor = 'ns-resize';
+  document.body.style.userSelect = 'none';
+});
+document.addEventListener('mousemove', e => {
+  if (!consoleResizing) return;
+  const delta = consoleStartY - e.clientY;
+  const newH  = Math.max(60, Math.min(consoleStartH + delta, 400));
+  $('console-panel').style.height = newH + 'px';
+});
+document.addEventListener('mouseup', () => {
+  if (!consoleResizing) return;
+  consoleResizing = false;
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+});
+
+/* ============================================================
+   Keyboard shortcuts
+   ============================================================ */
+document.addEventListener('keydown', e => {
+  // Ctrl+Enter / Cmd+Enter → Run
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    runShader();
+  }
+  // Ctrl+. → Stop
+  if ((e.ctrlKey || e.metaKey) && e.key === '.') {
+    e.preventDefault();
+    stopShader();
+  }
+  // Ctrl+S → Compile only (save code)
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    saveCurrentTab();
+    log('Code saved (Ctrl+S). Press Ctrl+Enter to run.', 'info');
+  }
+});
+
+/* ============================================================
+   Tooltips
+   ============================================================ */
+const tooltip = $('tooltip');
+function addTooltip(el, text) {
+  el.addEventListener('mouseenter', e => {
+    tooltip.textContent = text;
+    tooltip.classList.add('show');
+  });
+  el.addEventListener('mousemove', e => {
+    tooltip.style.left = (e.clientX + 14) + 'px';
+    tooltip.style.top  = (e.clientY - 8 ) + 'px';
+  });
+  el.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+}
+addTooltip($('btn-run'),       'Run shader  [Ctrl+Enter]');
+addTooltip($('btn-stop'),      'Stop  [Ctrl+.]');
+addTooltip($('btn-snapshot'),  'Save PNG screenshot');
+addTooltip($('btn-reset-time'),'Reset iTime to 0');
+
+/* ============================================================
+   postMessage receiver — accept code injection from parent notes page
+   ============================================================ */
+window.addEventListener('message', async (e) => {
+  const msg = e.data;
+  if (!msg || msg.type !== 'computetoy-inject') return;
+
+  // Switch preset context
+  if (msg.preset && PRESETS[msg.preset]) {
+    saveCurrentTab();
+    state.currentPreset = msg.preset;
+    state.particlesInitialized = false;
+    // Reset code store for this preset to built-in defaults
+    codeStore[msg.preset] = {
+      compute:  PRESETS[msg.preset].compute,
+      vertex:   PRESETS[msg.preset].vertex,
+      fragment: PRESETS[msg.preset].fragment,
+    };
+    document.querySelectorAll('.preset-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.preset === msg.preset);
+    });
+  }
+
+  // Inject the custom code into the target tab
+  const targetTab = msg.tab || 'compute';
+  if (msg.code) {
+    codeStore[state.currentPreset][targetTab] = msg.code;
+  }
+
+  // Load the tab with injected code
+  loadTab(targetTab);
+
+  log(`⬇ Injected from notes: "${msg.label || msg.preset}"`, 'ok');
+  log('Press Ctrl+Enter or click ▶ Run to execute.', 'info');
+
+  if (msg.autoRun) {
+    await runShader();
+  }
+
+  // Notify parent
+  try { e.source?.postMessage({ type: 'computetoy-ready' }, '*'); } catch(_){}
+});
+
+/* ============================================================
+   Init
+   ============================================================ */
+(async function init() {
+  loadPreset('plasma');
+  loadTab('compute');
+
+  log('ComputeToy ready. Select a preset and press ▶ Run.', 'ok');
+  log('Keyboard: Ctrl+Enter = Run | Ctrl+. = Stop | Ctrl+S = Save code', 'info');
+  log('Tip: Edit any WGSL shader and Ctrl+Enter to hot-reload.', 'info');
+
+  const ok = await initWebGPU();
+  if (ok) {
+    await runShader();
+  }
+
+  // Announce readiness to any parent frame
+  try { window.parent?.postMessage({ type: 'computetoy-ready' }, '*'); } catch(_){}
+})();
+</script>
+</body>
+</html>

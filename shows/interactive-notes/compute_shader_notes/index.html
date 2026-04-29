@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compute Shader 深度笔记</title>
+
+  <!-- highlight.js core -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- HLSL language support via CDN build -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/glsl.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+
+  <!-- MathJax -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      chtml: { matchFontHeight: false }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-badge">GPU / GPGPU</div>
+    <h1 class="site-title">Compute Shader</h1>
+    <p class="site-subtitle">深度技术笔记 · Unity URP / HLSL / DirectCompute</p>
+    <div class="header-tags">
+      <span class="tag">并行计算</span><span class="tag">GPU架构</span>
+      <span class="tag">线程模型</span><span class="tag">内存同步</span>
+      <span class="tag">跨平台</span>
+    </div>
+  </div>
+</header>
+
+<!-- ========== NAV SIDEBAR ========== -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-title">目录</div>
+  <ul class="nav-list">
+    <li><a href="#s1" class="nav-link">01 · 基础概念</a></li>
+    <li><a href="#s2" class="nav-link">02 · 线程模型</a></li>
+    <li><a href="#s3" class="nav-link">03 · 缓冲区类型</a></li>
+    <li><a href="#s4" class="nav-link">04 · 同步机制</a></li>
+    <li><a href="#s5" class="nav-link">05 · 应用范例</a></li>
+    <li><a href="#s6" class="nav-link">06 · 数据流模式</a></li>
+    <li><a href="#s7" class="nav-link">07 · 平台差异</a></li>
+    <li><a href="#s8" class="nav-link">08 · 性能优化</a></li>
+    <li><a href="#s9" class="nav-link">09 · Unity API</a></li>
+    <li><a href="#s10" class="nav-link nav-link-playground">10 · Live Playground ▶</a></li>
+  </ul>
+</nav>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="content">
+
+  <!-- ===== SECTION 1: 基础概念 ===== -->
+  <section class="chapter" id="s1">
+    <div class="chapter-header">
+      <span class="chapter-num">01</span>
+      <h2>基础概念</h2>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">什么是 Compute Shader？</h3>
+      <p>Compute Shader（计算着色器）是运行在 GPU 上、独立于传统渲染管线之外的通用计算程序。它可以充分利用 GPU 的大规模并行架构执行 <strong>GPGPU</strong>（通用 GPU 计算）算法，也可以加速渲染管线中的特定阶段。</p>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-icon">⚡</div>
+          <div class="info-text"><strong>大规模并行</strong><br/>单次 Dispatch 可以启动数十万个线程</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🔗</div>
+          <div class="info-text"><strong>管线外执行</strong><br/>不依赖顶点/片元着色器，直接读写资源</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🗄️</div>
+          <div class="info-text"><strong>UAV 读写</strong><br/>通过 RWTexture / RWStructuredBuffer 直接写入 GPU 资源</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🔄</div>
+          <div class="info-text"><strong>数据复用</strong><br/>计算结果可直接被渲染着色器消费，无需回读 CPU</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">API 生态概览</h3>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr><th>API</th><th>平台</th><th>着色语言</th><th>Unity 支持</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>DirectCompute</td><td>Windows / DX11+</td><td>HLSL</td><td>✅ 完整</td></tr>
+            <tr><td>OpenGL Compute</td><td>跨平台</td><td>GLSL</td><td>✅ 完整</td></tr>
+            <tr><td>Metal</td><td>iOS / macOS</td><td>Metal SL</td><td>✅ 完整</td></tr>
+            <tr><td>Vulkan</td><td>Android / PC</td><td>SPIR-V / GLSL</td><td>✅ 完整</td></tr>
+            <tr><td>OpenGL ES 3.1</td><td>Android</td><td>GLSL ES</td><td>⚠️ 受限</td></tr>
+            <tr><td>CUDA / OpenCL</td><td>NVIDIA / AMD</td><td>CUDA C / OpenCL C</td><td>❌ 不支持</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">典型应用场景</h3>
+      <div class="use-case-grid">
+        <div class="use-case"><span class="uc-icon">🌊</span>粒子系统 / 流体模拟</div>
+        <div class="use-case"><span class="uc-icon">🌄</span>GPU 地形 LOD / 剔除</div>
+        <div class="use-case"><span class="uc-icon">🌥️</span>体积云 / 大气散射</div>
+        <div class="use-case"><span class="uc-icon">🔬</span>后处理特效（模糊、SSAO）</div>
+        <div class="use-case"><span class="uc-icon">🗺️</span>Runtime Virtual Texturing</div>
+        <div class="use-case"><span class="uc-icon">🧠</span>神经网络推理加速</div>
+        <div class="use-case"><span class="uc-icon">💡</span>光照探针烘焙</div>
+        <div class="use-case"><span class="uc-icon">📐</span>物理碰撞预计算</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 2: 线程模型 ===== -->
+  <section class="chapter" id="s2">
+    <div class="chapter-header">
+      <span class="chapter-num">02</span>
+      <h2>线程模型 · Thread Hierarchy</h2>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">三层层级结构</h3>
+      <p>Compute Shader 的执行单元分为三层，从上到下依次为：<strong>Dispatch → Thread Group → Thread</strong>。</p>
+
+      <div class="hierarchy-viz">
+        <div class="hier-level dispatch-level">
+          <div class="hier-label">Dispatch(gX, gY, gZ)</div>
+          <div class="hier-sublabel">CPU 调用一次 Dispatch，启动 gX × gY × gZ 个线程组</div>
+        </div>
+        <div class="hier-arrow">▼</div>
+        <div class="hier-level group-level">
+          <div class="hier-label">Thread Group</div>
+          <div class="hier-sublabel">每个线程组包含 tX × tY × tZ 个线程<br/>由 <code>[numthreads(tX, tY, tZ)]</code> 声明</div>
+        </div>
+        <div class="hier-arrow">▼</div>
+        <div class="hier-level thread-level">
+          <div class="hier-label">Thread（线程）</div>
+          <div class="hier-sublabel">GPU 上实际执行的最小单元<br/>可访问 Group Shared Memory</div>
+        </div>
+      </div>
+
+      <div class="formula-box">
+        <p>总线程数：</p>
+        $$N_{total} = (g_X \times g_Y \times g_Z) \times (t_X \times t_Y \times t_Z)$$
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">系统值语义（System Value Semantics）</h3>
+      <div class="compare-table-wrap">
+        <table class="compare-table sv-table">
+          <thead>
+            <tr><th>语义</th><th>类型</th><th>含义</th><th>计算公式</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>SV_GroupID</code></td>
+              <td>uint3</td>
+              <td>当前线程所在线程组 ID，范围 <code>(0,0,0)</code> → <code>(gX-1, gY-1, gZ-1)</code></td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><code>SV_GroupThreadID</code></td>
+              <td>uint3</td>
+              <td>线程在组内的 ID，范围 <code>(0,0,0)</code> → <code>(tX-1, tY-1, tZ-1)</code></td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><code>SV_DispatchThreadID</code></td>
+              <td>uint3</td>
+              <td>线程在全局所有线程中的 ID</td>
+              <td>$SV\_GroupID \times (t_X,t_Y,t_Z) + SV\_GroupThreadID$</td>
+            </tr>
+            <tr>
+              <td><code>SV_GroupIndex</code></td>
+              <td>uint</td>
+              <td>线程在组内的扁平化索引，范围 <code>0</code> → <code>tX·tY·tZ-1</code></td>
+              <td>$k \cdot t_X \cdot t_Y + j \cdot t_X + i$</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block-wrap">
+        <div class="code-label">HLSL · 线程 ID 使用示例
+              <button class="open-in-playground" data-preset="plasma" data-tab="compute" title="在 Playground 中打开 plasma 演示线程ID">▶ Playground</button>
+            </div>
+        <pre><code class="language-glsl">#pragma kernel CSMain
+
+RWTexture2D&lt;float4&gt; Result;
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    // id.xy 直接映射到纹理像素坐标
+    float2 uv = id.xy / float2(1024.0, 1024.0);
+    Result[id.xy] = float4(uv, 0.0, 1.0);
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">numthreads 选择策略</h3>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-title">🖼️ 2D 图像处理</div>
+          <code>[numthreads(8, 8, 1)]</code>
+          <p>每组 64 线程，适合纹理像素映射，X/Y 对应 UV</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-title">📋 1D 数组处理</div>
+          <code>[numthreads(64, 1, 1)]</code>
+          <p>单维度处理，粒子、顶点数组的标准选择</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-title">📦 3D 体积数据</div>
+          <code>[numthreads(4, 4, 4)]</code>
+          <p>处理体积云、3D 噪声等三维数据结构</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-title">⚠️ Warp 对齐</div>
+          <code>总线程数 = 32 的倍数</code>
+          <p>NVIDIA GPU 每 Warp 32 线程，AMD 每 Wave 64 线程，保持对齐避免浪费</p>
+        </div>
+      </div>
+      <div class="formula-box">
+        <p>Dispatch 组数计算（覆盖整张纹理）：</p>
+        $$dispatchX = \lceil \frac{texWidth}{t_X} \rceil, \quad dispatchY = \lceil \frac{texHeight}{t_Y} \rceil$$
+        <p style="margin-top:8px;font-size:0.85em;color:var(--c-muted);">Unity C#: <code>Mathf.CeilToInt(width / 8f)</code></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3: 缓冲区类型 ===== -->
+  <section class="chapter" id="s3">
+    <div class="chapter-header">
+      <span class="chapter-num">03</span>
+      <h2>缓冲区与资源类型</h2>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">资源类型总览</h3>
+      <div class="resource-grid">
+        <div class="resource-card rw">
+          <div class="res-badge">UAV</div>
+          <div class="res-name">RWTexture2D&lt;T&gt;</div>
+          <div class="res-desc">可随机读写的 2D 纹理。需开启 <code>enableRandomWrite = true</code>，是 GPU 输出的核心载体。</div>
+        </div>
+        <div class="resource-card rw">
+          <div class="res-badge">UAV</div>
+          <div class="res-name">RWStructuredBuffer&lt;T&gt;</div>
+          <div class="res-desc">结构化 GPU Buffer，支持自定义结构体。用于粒子、顶点数据的 GPU-GPU 传递。</div>
+        </div>
+        <div class="resource-card ro">
+          <div class="res-badge">SRV</div>
+          <div class="res-name">StructuredBuffer&lt;T&gt;</div>
+          <div class="res-desc">只读结构化 Buffer，可在普通着色器中访问，CPU→GPU 单向传递。</div>
+        </div>
+        <div class="resource-card ro">
+          <div class="res-badge">SRV</div>
+          <div class="res-name">Texture2D&lt;T&gt;</div>
+          <div class="res-desc">只读纹理输入，在 Compute Shader 中读取已有纹理数据（如去色示例中的 _MainTex）。</div>
+        </div>
+        <div class="resource-card special">
+          <div class="res-badge">特殊</div>
+          <div class="res-name">AppendStructuredBuffer&lt;T&gt;</div>
+          <div class="res-desc">只写追加 Buffer，配合 <code>.Append()</code> 实现 GPU 端动态列表，用于 Indirect 过滤模式。</div>
+        </div>
+        <div class="resource-card special">
+          <div class="res-badge">特殊</div>
+          <div class="res-name">ConsumeStructuredBuffer&lt;T&gt;</div>
+          <div class="res-desc">只读消费 Buffer，配合 <code>.Consume()</code> 从 Append Buffer 中弹出元素。</div>
+        </div>
+        <div class="resource-card special">
+          <div class="res-badge">特殊</div>
+          <div class="res-name">ByteAddressBuffer</div>
+          <div class="res-desc">原始字节地址 Buffer，<code>RWByteAddressBuffer</code> 支持原子操作，用于计数器和间接参数。</div>
+        </div>
+        <div class="resource-card shared">
+          <div class="res-badge">LDS</div>
+          <div class="res-name">groupshared T[]</div>
+          <div class="res-desc">组内共享内存（LDS/TGSMEM），极快速访问，大小通常限制在 32KB 以内，需 <code>GroupMemoryBarrierWithGroupSync()</code> 同步。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">ComputeBuffer 创建与管理（Unity）</h3>
+      <div class="code-block-wrap">
+        <div class="code-label">C# · ComputeBuffer 生命周期</div>
+        <pre><code class="language-csharp">// 创建：指定元素数量和每个元素的字节大小
+// sizeof(float3) = 12 bytes
+ComputeBuffer buffer = new ComputeBuffer(count, 12);
+
+// 上传数据 CPU → GPU
+buffer.SetData(myArray);
+
+// 绑定到 Compute Shader
+computeShader.SetBuffer(kernelIndex, "particleBuffer", buffer);
+
+// 绑定到普通 Shader（只读，作为 StructuredBuffer）
+material.SetBuffer("particleBuffer", buffer);
+
+// 读回数据 GPU → CPU（同步，会造成 GPU stall！）
+buffer.GetData(myArray);
+
+// 释放（必须手动释放，否则内存泄漏）
+buffer.Release();</code></pre>
+      </div>
+
+      <div class="code-block-wrap">
+        <div class="code-label">C# · 特殊 Buffer 类型标志</div>
+        <pre><code class="language-csharp">// 默认结构化 Buffer
+new ComputeBuffer(count, stride, ComputeBufferType.Default);
+
+// Append/Consume 类型（动态列表）
+new ComputeBuffer(count, stride, ComputeBufferType.Append);
+
+// Indirect Dispatch 参数 Buffer（4个 uint）
+new ComputeBuffer(1, 16, ComputeBufferType.IndirectArguments);
+
+// 原子计数器
+new ComputeBuffer(1, sizeof(uint), ComputeBufferType.Counter);
+
+// 复制 Append Buffer 的计数值到另一个 Buffer（用于 Indirect）
+ComputeBuffer.CopyCount(appendBuffer, argsBuffer, dstOffsetBytes);</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">RWTexture2D 创建（Unity）</h3>
+      <div class="code-block-wrap">
+        <div class="code-label">C# · RenderTexture 随机写入配置</div>
+        <pre><code class="language-csharp">RenderTexture rt = new RenderTexture(width, height, 0, RenderTextureFormat.ARGBFloat);
+rt.enableRandomWrite = true;   // ← 关键：开启 UAV 绑定
+rt.Create();
+
+// 绑定到 Compute Shader
+computeShader.SetTexture(kernel, "Result", rt);
+
+// 绑定到 Material（直接用于渲染）
+material.SetTexture("_MainTex", rt);</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 4: 同步机制 ===== -->
+  <section class="chapter" id="s4">
+    <div class="chapter-header">
+      <span class="chapter-num">04</span>
+      <h2>同步机制 · Synchronization</h2>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">为什么需要同步？</h3>
+      <p>GPU 线程是高度并行的，同一个线程组内的线程执行顺序<strong>不保证</strong>。当多个线程读写同一内存位置（共享内存或 UAV）时，若没有屏障保护，会产生 <strong>Race Condition（数据竞争）</strong>。</p>
+      <div class="warning-box">
+        <span class="warn-icon">⚠️</span>
+        <div>
+          <strong>典型危险场景：</strong>线程 A 尚未写完 <code>groupshared</code> 数组，线程 B 已开始读取 → 未定义行为，结果不可预测。
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">HLSL 同步函数</h3>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr><th>函数</th><th>同步范围</th><th>内存屏障范围</th><th>典型用途</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>GroupMemoryBarrier()</code></td>
+              <td>— (仅屏障)</td>
+              <td>GroupShared Memory</td>
+              <td>保证组内共享内存写入对其他线程可见</td>
+            </tr>
+            <tr>
+              <td><code>GroupMemoryBarrierWithGroupSync()</code></td>
+              <td>组内所有线程</td>
+              <td>GroupShared Memory</td>
+              <td>组内规约（reduce）、前缀和等算法的核心</td>
+            </tr>
+            <tr>
+              <td><code>DeviceMemoryBarrier()</code></td>
+              <td>— (仅屏障)</td>
+              <td>UAV（全局内存）</td>
+              <td>保证 UAV 写入对其他线程可见</td>
+            </tr>
+            <tr>
+              <td><code>DeviceMemoryBarrierWithGroupSync()</code></td>
+              <td>组内所有线程</td>
+              <td>UAV（全局内存）</td>
+              <td>跨线程组数据依赖（较少见）</td>
+            </tr>
+            <tr>
+              <td><code>AllMemoryBarrier()</code></td>
+              <td>— (仅屏障)</td>
+              <td>全部内存（SM + UAV）</td>
+              <td>全内存可见性屏障</td>
+            </tr>
+            <tr>
+              <td><code>AllMemoryBarrierWithGroupSync()</code></td>
+              <td>组内所有线程</td>
+              <td>全部内存（SM + UAV）</td>
+              <td>最重量级屏障，确保所有内存操作完成</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-box">
+        <span class="info-icon">💡</span>
+        <div>带 <code>WithGroupSync</code> 的函数相当于：内存屏障 + <strong>线程栅栏（Barrier）</strong>。组内所有线程必须到达该语句后，才能继续向后执行。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">GroupShared 内存 · 正确用法</h3>
+      <div class="code-block-wrap">
+        <div class="code-label">HLSL · 使用 groupshared 进行组内规约
+              <button class="open-in-playground" data-preset="reduce" data-tab="compute" title="在 Playground 中运行 prefix-sum 示例">▶ Playground</button>
+            </div>
+        <pre><code class="language-glsl">#pragma kernel ReduceSum
+
+#define GROUP_SIZE 64
+
+RWStructuredBuffer&lt;float&gt; Input;
+RWStructuredBuffer&lt;float&gt; Output;
+
+groupshared float sharedData[GROUP_SIZE];
+
+[numthreads(GROUP_SIZE, 1, 1)]
+void ReduceSum(uint3 id    : SV_DispatchThreadID,
+               uint  lid   : SV_GroupIndex,
+               uint3 gid   : SV_GroupID)
+{
+    // 第一步：每个线程将数据载入共享内存
+    sharedData[lid] = Input[id.x];
+
+    // ★ 等待所有线程完成写入
+    GroupMemoryBarrierWithGroupSync();
+
+    // 第二步：二分规约
+    [unroll]
+    for (uint stride = GROUP_SIZE / 2; stride > 0; stride >>= 1)
+    {
+        if (lid < stride)
+            sharedData[lid] += sharedData[lid + stride];
+
+        // ★ 每轮规约后必须同步
+        GroupMemoryBarrierWithGroupSync();
+    }
+
+    // 仅 lid==0 的线程写出结果
+    if (lid == 0)
+        Output[gid.x] = sharedData[0];
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">原子操作（Interlocked）</h3>
+      <p>当多个线程需要修改<strong>同一个</strong>内存位置时，必须使用原子操作，而不是普通读-改-写。</p>
+      <div class="code-block-wrap">
+        <div class="code-label">HLSL · 原子操作函数</div>
+        <pre><code class="language-glsl">RWStructuredBuffer&lt;uint&gt; counter;
+RWStructuredBuffer&lt;uint&gt; histogram;
+
+[numthreads(64, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    // 原子加法（返回操作前的旧值）
+    uint oldVal;
+    InterlockedAdd(counter[0], 1, oldVal);
+
+    // 其他原子操作
+    InterlockedMin(histogram[0], id.x);        // 原子取最小
+    InterlockedMax(histogram[1], id.x);        // 原子取最大
+    InterlockedAnd(histogram[2], 0xFF);        // 原子与
+    InterlockedOr(histogram[3],  0x01);        // 原子或
+    InterlockedXor(histogram[4], 0x01);        // 原子异或
+    InterlockedExchange(counter[0], 0, oldVal); // 原子交换（置0并返回旧值）
+    
+    // 比较并交换（CAS）
+    uint compareVal = 0, newVal = 1;
+    InterlockedCompareExchange(counter[0], compareVal, newVal, oldVal);
+}</code></pre>
+      </div>
+      <div class="warning-box">
+        <span class="warn-icon">⚠️</span>
+        <div><strong>注意：</strong>原子操作仅支持 <code>int</code> / <code>uint</code>，不支持 <code>float</code>。浮点原子加法需要通过 CAS 循环或 <code>RWByteAddressBuffer</code> 变通实现。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">CPU ↔ GPU 同步（Unity）</h3>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr><th>方式</th><th>特性</th><th>性能影响</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>ComputeBuffer.GetData()</code></td>
+              <td>同步回读，阻塞 CPU 直到 GPU 完成</td>
+              <td>⛔ GPU Stall，性能开销大</td>
+            </tr>
+            <tr>
+              <td><code>AsyncGPUReadback.Request()</code></td>
+              <td>异步回读，非阻塞，下帧检查 <code>request.done</code></td>
+              <td>✅ 推荐，1-2 帧延迟</td>
+            </tr>
+            <tr>
+              <td>CommandBuffer.DispatchCompute</td>
+              <td>将 Dispatch 录入命令缓冲区，由渲染线程统一提交</td>
+              <td>✅ 配合 SRP 使用</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block-wrap">
+        <div class="code-label">C# · AsyncGPUReadback 异步回读模式</div>
+        <pre><code class="language-csharp">using UnityEngine;
+using UnityEngine.Rendering;
+using Unity.Collections;
+
+public class AsyncReadbackExample : MonoBehaviour
+{
+    public ComputeShader cs;
+    private ComputeBuffer buffer;
+    private AsyncGPUReadbackRequest request;
+    private bool requestPending = false;
+
+    void Start()
+    {
+        // 检查平台支持（OpenGL 不支持）
+        if (!SystemInfo.supportsAsyncGPUReadback) return;
+
+        buffer = new ComputeBuffer(1024, sizeof(float) * 3);
+        cs.SetBuffer(0, "particleBuffer", buffer);
+
+        // 发起第一次异步请求
+        RequestReadback();
+    }
+
+    void RequestReadback()
+    {
+        // 方式一：直接回调
+        AsyncGPUReadback.Request(buffer, OnReadbackComplete);
+
+        // 方式二：手动检查（见 Update）
+        request = AsyncGPUReadback.Request(buffer);
+        requestPending = true;
+    }
+
+    void OnReadbackComplete(AsyncGPUReadbackRequest req)
+    {
+        if (req.hasError) return;
+        NativeArray&lt;Vector3&gt; data = req.GetData&lt;Vector3&gt;();
+        // 使用 data...
+    }
+
+    void Update()
+    {
+        // Dispatch 计算
+        cs.Dispatch(0, 32, 1, 1);
+
+        // 检查异步请求是否完成
+        if (requestPending && request.done)
+        {
+            if (!request.hasError)
+            {
+                var data = request.GetData&lt;Vector3&gt;();
+                // 处理数据...
+            }
+            RequestReadback(); // 再次请求
+            requestPending = false;
+        }
+    }
+
+    void OnDestroy() => buffer?.Release();
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 5: 应用范例 ===== -->
+  <section class="chapter" id="s5">
+    <div class="chapter-header">
+      <span class="chapter-num">05</span>
+      <h2>应用范例</h2>
+    </div>
+
+    <!-- Tabs for examples -->
+    <div class="tab-container">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="tex">RWTexture2D · 纹理写入</button>
+        <button class="tab-btn" data-tab="buf">RWStructuredBuffer · 粒子</button>
+        <button class="tab-btn" data-tab="gray">图像去色处理</button>
+        <button class="tab-btn" data-tab="vertex">Compute Mesh · 顶点动画</button>
+      </div>
+
+      <!-- Tab: RWTexture2D -->
+      <div class="tab-panel active" id="tab-tex">
+        <div class="card">
+          <h3 class="card-title">RWTexture2D · 最简示例</h3>
+          <div class="flow-diagram">
+            <div class="flow-node cpu">CPU</div>
+            <div class="flow-arrow">→ Dispatch →</div>
+            <div class="flow-node gpu">GPU 写 Texture</div>
+            <div class="flow-arrow">→ 直接</div>
+            <div class="flow-node render">Shader 渲染</div>
+          </div>
+          <div class="code-block-wrap">
+            <div class="code-label">HLSL · 彩虹纹理
+              <button class="open-in-playground" data-preset="plasma" data-tab="compute" title="在 Playground 中打开">▶ Playground</button>
+            </div>
+            <pre><code class="language-glsl">#pragma kernel CSMain
+
+RWTexture2D&lt;float4&gt; Result;
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    float4 baseColor = float4(
+        id.x &amp; id.y,
+        (id.x &amp; 15) / 15.0,
+        (id.y &amp; 15) / 15.0,
+        1.0
+    );
+    float4 color = Result[id.xy];
+
+    // 每帧逐渐偏移颜色
+    color.r += 0.01f;
+    color.g += 0.005f;
+    color.b += 0.008f;
+    color = frac(color); // 环绕 [0,1]
+
+    Result[id.xy] = color + baseColor * 0.5f;
+}</code></pre>
+          </div>
+          <div class="code-block-wrap">
+            <div class="code-label">C# · Unity MonoBehaviour</div>
+            <pre><code class="language-csharp">public class ComputeUAVTexture : MonoBehaviour
+{
+    public ComputeShader shader;
+    public Material mat;
+    private int size = 128;
+    private int kernel;
+
+    void Start()
+    {
+        kernel = shader.FindKernel("CSMain");
+
+        RenderTexture tex = new RenderTexture(size, size, 0);
+        tex.enableRandomWrite = true;
+        tex.Create();
+
+        mat.SetTexture("_MainTex", tex);
+        shader.SetTexture(kernel, "Result", tex);
+    }
+
+    void Update()
+    {
+        int groups = Mathf.CeilToInt(size / 8f);
+        shader.Dispatch(kernel, groups, groups, 1);
+    }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: StructuredBuffer -->
+      <div class="tab-panel" id="tab-buf">
+        <div class="card">
+          <h3 class="card-title">RWStructuredBuffer · 粒子位置更新</h3>
+          <div class="flow-diagram">
+            <div class="flow-node cpu">CPU 初始化</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node gpu">GPU 每帧更新位置</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node render">Shader 读取渲染</div>
+          </div>
+          <div class="code-block-wrap">
+            <div class="code-label">HLSL · 粒子位置更新
+              <button class="open-in-playground" data-preset="particles" data-tab="compute" title="在 Playground 中打开">▶ Playground</button>
+            </div>
+            <pre><code class="language-glsl">#pragma kernel main
+
+struct Particle { float3 position; };
+
+RWStructuredBuffer&lt;Particle&gt; particleBuffer;
+
+[numthreads(32, 1, 1)]
+void main(uint3 id : SV_DispatchThreadID)
+{
+    float spacingFactor = 0.5f;
+    particleBuffer[id.x].position.x =
+        particleBuffer[0].position.x + id.x * spacingFactor;
+
+    float y = particleBuffer[id.x].position.y;
+    y += sin(particleBuffer[id.x].position.x + y) * 0.005f;
+    particleBuffer[id.x].position.y = y;
+}</code></pre>
+          </div>
+          <div class="code-block-wrap">
+            <div class="code-label">C# · 初始化与每帧 Dispatch</div>
+            <pre><code class="language-csharp">struct Particle { public Vector3 position; }
+
+const int warpSize = 32;
+int warpCount = 5;
+ComputeBuffer cBuffer;
+Particle[] particleArray;
+
+void Start()
+{
+    int count = warpCount * warpSize;
+    particleArray = new Particle[count];
+    for (int i = 0; i &lt; count; i++)
+        particleArray[i].position = transform.position;
+
+    // stride = 3 * 4 bytes = sizeof(Particle)
+    cBuffer = new ComputeBuffer(count, 12);
+    cBuffer.SetData(particleArray);
+    computeShader.SetBuffer(0, "particleBuffer", cBuffer);
+}
+
+void Update()
+{
+    computeShader.Dispatch(0, warpCount, 1, 1);
+
+    // ⚠️ 同步回读（性能开销大，建议改用 AsyncGPUReadback）
+    cBuffer.GetData(particleArray);
+    for (int i = 0; i &lt; particleArray.Length; i++)
+        objects[i].transform.position = particleArray[i].position;
+}
+
+void OnDestroy() => cBuffer.Release();</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Grayscale -->
+      <div class="tab-panel" id="tab-gray">
+        <div class="card">
+          <h3 class="card-title">图像去色处理</h3>
+          <p>演示 <code>Texture2D</code>（只读输入）+ <code>RWTexture2D</code>（可写输出）的经典搭配。</p>
+          <div class="code-block-wrap">
+            <div class="code-label">HLSL · 亮度加权灰度化
+              <button class="open-in-playground" data-preset="plasma" data-tab="compute" data-override="grayscale" title="在 Playground 中打开">▶ Playground</button>
+            </div>
+            <pre><code class="language-glsl">#pragma kernel CSMain
+
+Texture2D&lt;float4&gt;   _MainTex;     // 只读输入
+RWTexture2D&lt;float4&gt; _ResultTex;   // 可写输出
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    uint width, height;
+    _MainTex.GetDimensions(width, height);
+
+    if (id.x >= width || id.y >= height) return;
+
+    float4 color = _MainTex[id.xy];
+
+    // ITU-R BT.601 亮度权重
+    // $L = 0.299R + 0.587G + 0.114B$
+    float gray = dot(color.rgb, float3(0.299, 0.587, 0.114));
+
+    _ResultTex[id.xy] = float4(gray, gray, gray, color.a);
+}</code></pre>
+          </div>
+          <div class="formula-box">
+            $$L = 0.299 \cdot R + 0.587 \cdot G + 0.114 \cdot B$$
+            <p style="font-size:0.8em;color:var(--c-muted);margin-top:4px;">ITU-R BT.601 亮度感知加权公式</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Vertex Animation -->
+      <div class="tab-panel" id="tab-vertex">
+        <div class="card">
+          <h3 class="card-title">Compute Mesh · GPU 顶点动画</h3>
+          <p>Compute Shader 直接读写顶点 Buffer，结果由顶点着色器通过 <code>StructuredBuffer</code> 消费，绕过传统 MeshRenderer 的 CPU 瓶颈。</p>
+          <div class="flow-diagram" style="flex-wrap:wrap;gap:6px;">
+            <div class="flow-node cpu">CPU 初始化 VertexData</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node gpu">CS 更新 pos/col</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node render">Vertex Shader 读 Buffer</div>
+          </div>
+          <div class="code-block-wrap">
+            <div class="code-label">HLSL · 顶点动画 CS
+              <button class="open-in-playground" data-preset="particles" data-tab="compute" title="在 Playground 中打开 (粒子模式)">▶ Playground</button>
+            </div>
+            <pre><code class="language-glsl">struct VertexData
+{
+    uint  id;
+    float4 pos, opos, col;
+    float3 nor, velocity;
+    float2 uv;
+};
+
+RWStructuredBuffer&lt;VertexData&gt; vertexBuffer;
+float _Time;
+uint  _VertexCount;
+
+[numthreads(1, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    uint rid = vertexBuffer[id.x].id;
+
+    // 彩虹颜色：仅首顶点设置，其余继承
+    if (rid == 0)
+    {
+        float3 c;
+        c.r = frac(sin(_Time + vertexBuffer[rid].velocity.x));
+        c.g = frac(sin(_Time + vertexBuffer[rid].velocity.y));
+        c.b = frac(sin(_Time + vertexBuffer[rid].velocity.z));
+        vertexBuffer[rid].col = float4(c, 1);
+    }
+    else
+    {
+        vertexBuffer[rid].col = vertexBuffer[rid - 1].col;
+    }
+
+    // 顶点波浪动画
+    vertexBuffer[rid].pos.xz =
+        vertexBuffer[rid].opos.xz *
+        (1 + sin(_Time + vertexBuffer[rid].opos.y * 3.0f) * 0.3f);
+}</code></pre>
+          </div>
+          <div class="code-block-wrap">
+            <div class="code-label">HLSL · 顶点着色器消费 Buffer</div>
+            <pre><code class="language-glsl">StructuredBuffer&lt;VertexData&gt; vertexBuffer;
+
+v2f vert(uint id : SV_VertexID)
+{
+    v2f o;
+    uint realid = vertexBuffer[id].id;
+    o.vertex = UnityObjectToClipPos(vertexBuffer[realid].pos);
+    o.uv     = TRANSFORM_TEX(vertexBuffer[realid].uv, _MainTex);
+    o.color  = vertexBuffer[realid].col;
+    return o;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 6: 数据流模式 ===== -->
+  <section class="chapter" id="s6">
+    <div class="chapter-header">
+      <span class="chapter-num">06</span>
+      <h2>数据流模式 · Data Traffic Patterns</h2>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">五种核心流量模式</h3>
+      <div class="traffic-list">
+
+        <div class="traffic-item">
+          <div class="traffic-id">T1</div>
+          <div class="traffic-content">
+            <div class="traffic-title">CPU → GPU 纹理写入 → Shader 渲染</div>
+            <div class="traffic-flow">
+              <span class="tf-node">CPU Dispatch</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node gpu">GPU 写 RWTexture2D</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node render">Fragment Shader 读取</span>
+            </div>
+            <p>最基础模式。Compute 写入 RT，Material 直接引用该 RT 渲染。零回读开销。</p>
+          </div>
+        </div>
+
+        <div class="traffic-item">
+          <div class="traffic-id">T2</div>
+          <div class="traffic-content">
+            <div class="traffic-title">CPU → GPU Buffer → Shader 渲染</div>
+            <div class="traffic-flow">
+              <span class="tf-node">CPU SetData</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node gpu">RWStructuredBuffer</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node render">VS/FS 消费</span>
+            </div>
+            <p>CPU 每帧更新数据 → GPU 读取渲染（如实例化矩阵、颜色数组）。</p>
+          </div>
+        </div>
+
+        <div class="traffic-item">
+          <div class="traffic-id">T3</div>
+          <div class="traffic-content">
+            <div class="traffic-title">CPU 指令 → GPU 计算 → CPU 读回</div>
+            <div class="traffic-flow">
+              <span class="tf-node">CPU Dispatch</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node gpu">GPU 更新 Buffer</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node">AsyncGPUReadback</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node">CPU 处理结果</span>
+            </div>
+            <p>物理模拟结果回读 CPU、碰撞检测结果等。<strong>建议使用 Async 模式</strong>避免 GPU Stall。</p>
+          </div>
+        </div>
+
+        <div class="traffic-item">
+          <div class="traffic-id">T4</div>
+          <div class="traffic-content">
+            <div class="traffic-title">Indirect Dispatch · GPU 自驱动计算</div>
+            <div class="traffic-flow">
+              <span class="tf-node">CPU 设最大工作量</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node gpu">CS1 过滤 → AppendBuffer</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node gpu">CopyCount</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node gpu">DispatchIndirect</span>
+            </div>
+            <p>数据无需回读 CPU。GPU 先做过滤（写 Append Buffer），再通过 <code>DispatchIndirect</code> 只对过滤后的数据执行计算。<strong>最高效的 GPU-Driven 模式</strong>，适合 GPU Culling、粒子过滤等。</p>
+            <div class="code-block-wrap" style="margin-top:12px;">
+              <div class="code-label">C# · Indirect 关键流程</div>
+              <pre><code class="language-csharp">// 重置计数
+cbPoints.SetCounterValue(0);
+
+// Pass 1: 过滤（往 Append Buffer 写入通过的数据）
+shader.Dispatch(kernelDirect, maxCount, 1, 1);
+
+// 将 Append Buffer 的实际计数复制到 Args Buffer
+ComputeBuffer.CopyCount(cbPoints, cbDrawArgs, 0);
+
+// Pass 2: 只对过滤后的数量执行 Indirect Dispatch
+shader.DispatchIndirect(kernelIndirect, cbDrawArgs, 0);</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="traffic-item">
+          <div class="traffic-id">T5</div>
+          <div class="traffic-content">
+            <div class="traffic-title">普通 Shader → UAV 写入 → CPU 读取（Shader to CPU）</div>
+            <div class="traffic-flow">
+              <span class="tf-node">Fragment Shader</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node gpu">RWStructuredBuffer (register u6)</span>
+              <span class="tf-arrow">→</span>
+              <span class="tf-node">GetData → CPU</span>
+            </div>
+            <p>不仅 Compute Shader 可写 Buffer，普通片元着色器通过 <code>Graphics.SetRandomWriteTarget</code> 也可写入，用于 Shader Debug Print 等调试场景。</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 7: 平台差异 ===== -->
+  <section class="chapter" id="s7">
+    <div class="chapter-header">
+      <span class="chapter-num">07</span>
+      <h2>平台差异 · Platform Differences</h2>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">各平台支持矩阵</h3>
+      <div class="compare-table-wrap">
+        <table class="compare-table platform-table">
+          <thead>
+            <tr>
+              <th>平台 / API</th>
+              <th>CS 支持</th>
+              <th>RWStructuredBuffer</th>
+              <th>AsyncGPUReadback</th>
+              <th>Indirect Dispatch</th>
+              <th>Warp Size</th>
+              <th>备注</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Windows · DX11</strong></td>
+              <td class="good">✅ 完整</td>
+              <td class="good">✅</td>
+              <td class="good">✅</td>
+              <td class="good">✅</td>
+              <td>32 (NVIDIA)<br/>64 (AMD)</td>
+              <td>最完整参考平台</td>
+            </tr>
+            <tr>
+              <td><strong>Windows · DX12</strong></td>
+              <td class="good">✅ 完整</td>
+              <td class="good">✅</td>
+              <td class="good">✅</td>
+              <td class="good">✅</td>
+              <td>32 / 64</td>
+              <td>支持显式资源管理</td>
+            </tr>
+            <tr>
+              <td><strong>macOS / iOS · Metal</strong></td>
+              <td class="good">✅ 完整</td>
+              <td class="good">✅</td>
+              <td class="good">✅</td>
+              <td class="good">✅</td>
+              <td>32 (Apple Silicon)</td>
+              <td>AsyncReadback 颜色空间需注意</td>
+            </tr>
+            <tr>
+              <td><strong>Android · Vulkan</strong></td>
+              <td class="good">✅ 完整</td>
+              <td class="good">✅</td>
+              <td class="good">✅</td>
+              <td class="good">✅</td>
+              <td>32 / 64</td>
+              <td>推荐移动端首选 API</td>
+            </tr>
+            <tr>
+              <td><strong>Android · OpenGL ES 3.1</strong></td>
+              <td class="warn">⚠️ 受限</td>
+              <td class="warn">⚠️ 仅 Fragment 可访问<br/>(部分设备)</td>
+              <td class="bad">❌ 不支持</td>
+              <td class="warn">⚠️ 部分支持</td>
+              <td>—</td>
+              <td>兼容性差异大</td>
+            </tr>
+            <tr>
+              <td><strong>Android · OpenGL ES 3.0 及以下</strong></td>
+              <td class="bad">❌ 不支持</td>
+              <td class="bad">❌</td>
+              <td class="bad">❌</td>
+              <td class="bad">❌</td>
+              <td>—</td>
+              <td>需降级处理</td>
+            </tr>
+            <tr>
+              <td><strong>WebGL</strong></td>
+              <td class="bad">❌ 不支持</td>
+              <td class="bad">❌</td>
+              <td class="bad">❌</td>
+              <td class="bad">❌</td>
+              <td>—</td>
+              <td>WebGPU (实验性) 支持</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Unity 平台检测</h3>
+      <div class="code-block-wrap">
+        <div class="code-label">C# · 运行时能力检测</div>
+        <pre><code class="language-csharp">void Start()
+{
+    // 检测 Compute Shader 支持（OpenGL ES 3.1+ / Metal / Vulkan）
+    if (!SystemInfo.supportsComputeShaders)
+    {
+        Debug.LogWarning("当前平台不支持 Compute Shader，切换到降级路径");
+        FallbackToCPU();
+        return;
+    }
+
+    // 检测异步回读支持（OpenGL 系列不支持）
+    if (!SystemInfo.supportsAsyncGPUReadback)
+    {
+        Debug.LogWarning("不支持 AsyncGPUReadback，使用同步 GetData");
+        useSyncReadback = true;
+    }
+
+    // 检测 Compute Shader Model（普通 Shader 内使用 CS 资源需要 SM 4.5）
+    // #pragma target 4.5
+    
+    // 检测最大线程组尺寸
+    int maxThreadGroupSize = SystemInfo.maxComputeWorkGroupSize;
+    
+    // 获取各维度最大值
+    int maxX = SystemInfo.maxComputeWorkGroupSizeX; // 通常 1024
+    int maxY = SystemInfo.maxComputeWorkGroupSizeY; // 通常 1024
+    int maxZ = SystemInfo.maxComputeWorkGroupSizeZ; // 通常 64
+    
+    Debug.Log($"Max WorkGroup: ({maxX}, {maxY}, {maxZ})");
+}</code></pre>
+      </div>
+
+      <div class="warning-box" style="margin-top:16px;">
+        <span class="warn-icon">📱</span>
+        <div>
+          <strong>移动端已知问题：</strong>
+          <ul style="margin:8px 0 0 0;padding-left:18px;line-height:1.8;">
+            <li>部分 OpenGL ES 3.1 设备只允许在 <strong>Fragment Shader</strong> 内访问 <code>StructuredBuffer</code>，Vertex/Compute 阶段访问会崩溃</li>
+            <li>普通 Shader 中使用 CS 资源需声明 <code>#pragma target 4.5</code>（Shader Model 最低要求）</li>
+            <li>AsyncGPUReadback 在 OpenGL 系列（包括 OpenGL ES）上<strong>完全不支持</strong></li>
+            <li>某些 Mali GPU 的 Warp 执行策略与 NVIDIA/AMD 不同，<code>groupshared</code> 访问模式需特别注意 Bank Conflict</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Warp / Wavefront 尺寸差异</h3>
+      <p>GPU 内部的最小调度单位（Warp / Wave / Wavefront）在不同硬件上大小不同，这直接影响 <code>numthreads</code> 的最优选择：</p>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr><th>厂商 / API</th><th>最小调度单位</th><th>推荐 numthreads 策略</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>NVIDIA · CUDA / DX</td><td>Warp = 32</td><td>总线程数为 32 的倍数（32, 64, 128, 256）</td></tr>
+            <tr><td>AMD · GCN / RDNA</td><td>Wavefront = 64</td><td>总线程数为 64 的倍数（64, 128, 256）</td></tr>
+            <tr><td>Apple · Metal (M 系列)</td><td>SIMD Group = 32</td><td>32 或 32 的倍数</td></tr>
+            <tr><td>ARM · Mali</td><td>Quad = 4</td><td>线程数越多越好，但总量受限</td></tr>
+            <tr><td>Qualcomm · Adreno</td><td>Fiber = 64~128</td><td>64 倍数较优</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-box" style="margin-top:12px;">
+        <span class="info-icon">💡</span>
+        <div>DX12 / Vulkan / Metal 提供 API 查询实际 Warp 尺寸，Unity 可通过 <code>shader.GetKernelThreadGroupSizes(kernel, out x, out y, out z)</code> 获取 Kernel 声明的大小，但无法运行时查询硬件 Warp 尺寸。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 8: 性能优化 ===== -->
+  <section class="chapter" id="s8">
+    <div class="chapter-header">
+      <span class="chapter-num">08</span>
+      <h2>性能优化 · Performance</h2>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">内存访问优化</h3>
+      <div class="tips-grid">
+        <div class="tip-card perf">
+          <div class="tip-title">🚀 合并内存访问 (Coalescing)</div>
+          <p>同一 Warp 内的线程应访问<strong>连续内存地址</strong>。<code>buffer[id.x]</code> 是连续的（好），<code>buffer[id.x * stride]</code> 是跨步的（差，触发多次内存事务）。</p>
+        </div>
+        <div class="tip-card perf">
+          <div class="tip-title">💾 优先使用 GroupShared</div>
+          <p>L1 级 GroupShared 访问速度远快于全局 Buffer（~100倍）。将热数据先载入 <code>groupshared</code>，计算完后再写回，是性能优化的核心手段。</p>
+        </div>
+        <div class="tip-card perf">
+          <div class="tip-title">⚡ 避免 Bank Conflict</div>
+          <p>GroupShared 内存分为若干 Bank，同一 Warp 内多个线程访问同一 Bank 的不同地址会串行化（Bank Conflict）。确保访问 <code>sharedData[lid]</code> 而非 <code>sharedData[lid * 2]</code>。</p>
+        </div>
+        <div class="tip-card perf">
+          <div class="tip-title">📦 减少 UAV 写入</div>
+          <p>UAV 写入（非本地缓存）开销很大。尽量在 GroupShared 中完成计算，最终结果写一次 UAV。避免在分支中写 UAV（不同线程写不同位置是安全的，但性能取决于硬件）。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Dispatch 策略优化</h3>
+      <div class="code-block-wrap">
+        <div class="code-label">C# · 动态计算最优 Dispatch 尺寸</div>
+        <pre><code class="language-csharp">// 从 Kernel 获取声明的 numthreads
+uint threadX, threadY, threadZ;
+shader.GetKernelThreadGroupSizes(kernel, out threadX, out threadY, out threadZ);
+
+// 计算覆盖全部元素所需的线程组数（向上取整）
+int groupsX = Mathf.CeilToInt((float)dataCount / threadX);
+
+shader.Dispatch(kernel, groupsX, 1, 1);</code></pre>
+      </div>
+      <div class="code-block-wrap">
+        <div class="code-label">HLSL · 边界检测（防止越界写入）</div>
+        <pre><code class="language-glsl">RWStructuredBuffer&lt;float4&gt; Output;
+uint _DataCount;
+
+[numthreads(64, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    // 关键：线程数可能超过实际数据量
+    if (id.x &gt;= _DataCount) return;
+
+    Output[id.x] = float4(id.x, 0, 0, 1);
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">CommandBuffer 异步提交</h3>
+      <div class="code-block-wrap">
+        <div class="code-label">C# · 使用 CommandBuffer 调度 Compute</div>
+        <pre><code class="language-csharp">using UnityEngine;
+using UnityEngine.Rendering;
+
+public class ComputeViaCommandBuffer : MonoBehaviour
+{
+    public ComputeShader cs;
+    private CommandBuffer cmd;
+
+    void OnEnable()
+    {
+        cmd = new CommandBuffer { name = "My Compute Pass" };
+        Camera.main.AddCommandBuffer(CameraEvent.BeforeForwardOpaque, cmd);
+    }
+
+    void Update()
+    {
+        cmd.Clear();
+
+        // 设置参数
+        cmd.SetComputeIntParam(cs, "_FrameCount", Time.frameCount);
+
+        // 录入 Dispatch（不立即执行，等渲染线程调度）
+        int kernel = cs.FindKernel("CSMain");
+        cmd.DispatchCompute(cs, kernel, 128, 1, 1);
+    }
+
+    void OnDisable()
+    {
+        Camera.main.RemoveCommandBuffer(CameraEvent.BeforeForwardOpaque, cmd);
+        cmd.Dispose();
+    }
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 9: Unity API ===== -->
+  <section class="chapter" id="s9">
+    <div class="chapter-header">
+      <span class="chapter-num">09</span>
+      <h2>Unity Compute Shader API 速查</h2>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">ComputeShader 常用方法</h3>
+      <div class="compare-table-wrap">
+        <table class="compare-table api-table">
+          <thead>
+            <tr><th>方法</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>FindKernel(name)</code></td><td>查找 <code>#pragma kernel</code> 声明的 Kernel 索引</td></tr>
+            <tr><td><code>GetKernelThreadGroupSizes(k, x, y, z)</code></td><td>获取 Kernel 的 numthreads 声明</td></tr>
+            <tr><td><code>SetBuffer(k, name, buf)</code></td><td>绑定 ComputeBuffer 到 Kernel</td></tr>
+            <tr><td><code>SetTexture(k, name, tex)</code></td><td>绑定 Texture / RenderTexture 到 Kernel</td></tr>
+            <tr><td><code>SetFloat / SetInt / SetVector / SetMatrix</code></td><td>设置常量参数</td></tr>
+            <tr><td><code>SetFloatArray / SetVectorArray</code></td><td>设置数组常量</td></tr>
+            <tr><td><code>Dispatch(k, gX, gY, gZ)</code></td><td>同步执行 Compute（CPU 端阻塞直到提交）</td></tr>
+            <tr><td><code>DispatchIndirect(k, argsBuffer, offset)</code></td><td>从 Buffer 读取 Dispatch 参数，GPU-Driven</td></tr>
+            <tr><td><code>HasKernel(name)</code></td><td>检测 Kernel 是否存在（跨平台条件编译时有用）</td></tr>
+            <tr><td><code>IsSupported(k)</code></td><td>检测当前平台是否支持该 Kernel</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">参考资源</h3>
+      <div class="ref-grid">
+        <a class="ref-card" href="https://github.com/cinight/MinimalCompute" target="_blank">
+          <div class="ref-icon">⭐</div>
+          <div class="ref-text">
+            <div class="ref-title">MinimalCompute</div>
+            <div class="ref-sub">cinight / GitHub · Compute 全场景示例仓库</div>
+          </div>
+        </a>
+        <a class="ref-card" href="https://docs.unity.cn/cn/2022.3/Manual/class-ComputeShader.html" target="_blank">
+          <div class="ref-icon">📘</div>
+          <div class="ref-text">
+            <div class="ref-title">Unity Manual · ComputeShader</div>
+            <div class="ref-sub">Unity 2022.3 LTS 官方文档</div>
+          </div>
+        </a>
+        <a class="ref-card" href="https://catlikecoding.com/unity/tutorials/basics/compute-shaders/" target="_blank">
+          <div class="ref-icon">🎓</div>
+          <div class="ref-text">
+            <div class="ref-title">Catlike Coding · Compute Shaders</div>
+            <div class="ref-sub">从零开始的详细教程</div>
+          </div>
+        </a>
+        <a class="ref-card" href="https://zhuanlan.zhihu.com/p/368307575" target="_blank">
+          <div class="ref-icon">📝</div>
+          <div class="ref-text">
+            <div class="ref-title">Compute Shader 基础介绍</div>
+            <div class="ref-sub">知乎 · Unity 实战解析</div>
+          </div>
+        </a>
+        <a class="ref-card" href="https://learn.microsoft.com/zh-cn/windows/win32/direct3d11/direct3d-11-advanced-stages-compute-shader" target="_blank">
+          <div class="ref-icon">🪟</div>
+          <div class="ref-text">
+            <div class="ref-title">DirectCompute 概述</div>
+            <div class="ref-sub">Microsoft Learn · Win32 Direct3D 11</div>
+          </div>
+        </a>
+        <a class="ref-card" href="https://www.ronja-tutorials.com/2020/07/26/compute-shader.html" target="_blank">
+          <div class="ref-icon">🌐</div>
+          <div class="ref-text">
+            <div class="ref-title">Ronja's Compute Shader Tutorial</div>
+            <div class="ref-sub">ronja-tutorials.com · 附 Particle 示例</div>
+          </div>
+        </a>
+        <a class="ref-card" href="https://lexdev.net/tutorials/case_studies/frostpunk_heatmap.html" target="_blank">
+          <div class="ref-icon">🔥</div>
+          <div class="ref-text">
+            <div class="ref-title">Frostpunk Heatmap Case Study</div>
+            <div class="ref-sub">lexdev.net · CS 工业级应用案例</div>
+          </div>
+        </a>
+        <a class="ref-card" href="https://book.douban.com/subject/30426701/" target="_blank">
+          <div class="ref-icon">📗</div>
+          <div class="ref-text">
+            <div class="ref-title">DirectX 12 3D 游戏开发实战</div>
+            <div class="ref-sub">第13章 · 计算着色器</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 10: Live Playground ===== -->
+  <section class="chapter" id="s10">
+    <div class="chapter-header">
+      <span class="chapter-num">10</span>
+      <h2>Live Playground · WebGPU 在线调试</h2>
+    </div>
+
+    <div class="card playground-intro-card">
+      <h3 class="card-title">在浏览器中运行 WGSL Compute Shader</h3>
+      <p>下方嵌入了完整的 <strong>ComputeToy</strong> WebGPU 调试器。你可以直接编辑 WGSL 代码、调整 Uniform 参数、查看实时输出，也可以点击笔记中各章节代码块旁的 <span class="inline-badge">▶ Playground</span> 按钮，将对应示例一键注入到此处运行。</p>
+      <div class="playground-feature-row">
+        <div class="pf-item"><span class="pf-key">Ctrl+Enter</span> 编译运行</div>
+        <div class="pf-item"><span class="pf-key">Ctrl+.</span> 停止</div>
+        <div class="pf-item"><span class="pf-key">Ctrl+S</span> 保存代码</div>
+        <div class="pf-item">需要 <span class="pf-key">Chrome 113+</span></div>
+      </div>
+      <div class="playground-presets-hint">
+        <span class="hint-label">切换内置示例：</span>
+        <button class="preset-inject-btn" data-preset="plasma">plasma</button>
+        <button class="preset-inject-btn" data-preset="particles">particles</button>
+        <button class="preset-inject-btn" data-preset="life">game of life</button>
+        <button class="preset-inject-btn" data-preset="mandelbrot">mandelbrot</button>
+        <button class="preset-inject-btn" data-preset="reaction">reaction-diff</button>
+        <button class="preset-inject-btn" data-preset="raycast">raycast SDF</button>
+        <button class="preset-inject-btn" data-preset="reduce">prefix-sum</button>
+      </div>
+    </div>
+
+    <!-- Code inject preview bar -->
+    <div id="inject-preview" class="inject-preview" style="display:none;">
+      <div class="inject-header">
+        <span class="inject-label">即将注入到 Playground：</span>
+        <span class="inject-name" id="inject-name"></span>
+        <button class="inject-cancel" id="inject-cancel">✕ 取消</button>
+      </div>
+      <pre class="inject-code-preview"><code id="inject-code-text"></code></pre>
+      <button class="btn-inject-confirm" id="inject-confirm">▶ 确认注入并运行</button>
+    </div>
+
+    <!-- Embedded playground -->
+    <div class="playground-frame-wrap" id="playground-frame-wrap">
+      <div class="playground-frame-header">
+        <div class="pfh-dots"><span></span><span></span><span></span></div>
+        <span class="pfh-title">ComputeToy · WebGPU Playground</span>
+        <div class="pfh-actions">
+          <button class="pfh-btn" id="playground-fullscreen" title="切换全屏">⛶</button>
+          <button class="pfh-btn" id="playground-reload" title="重载 Playground">↺</button>
+          <a class="pfh-btn" href="../webgpu_playground/index.html" target="_blank" title="在新标签页中打开">⧉</a>
+        </div>
+      </div>
+      <iframe
+        id="playground-iframe"
+        src="../../webgpu_playground/index.html"
+        class="playground-iframe"
+        allow="cross-origin-isolated"
+        sandbox="allow-scripts allow-same-origin allow-downloads allow-modals"
+      ></iframe>
+      <div id="iframe-loading" class="iframe-loading">
+        <div class="iframe-spinner"></div>
+        <span>Loading WebGPU Playground…</span>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ========== FLOATING CONTROLS ========== -->
+<div class="floating-controls">
+  <a href="/shows/" class="float-btn home-btn" title="回到上级">⌂</a>
+  <button id="backToTopBtn" class="float-btn top-btn" title="回到顶部">↑</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
