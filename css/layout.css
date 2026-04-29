@@ -2,7 +2,7 @@ html {
   font-family: -apple-system, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: clamp(15px, 1.4375rem, 18px);
   color: #393633;
-  text-align: justify;
+  text-align: left;
   scroll-behavior: smooth;
 }
 html,
@@ -15,10 +15,13 @@ body {
   justify-content: space-between;
   background-color: #f8f8f6; /* 应用 #f8f8f6 */
   color: #393633;
-  text-align: justify;
+  text-align: left;
   line-height: 1.75; /* 优化行高 */
   letter-spacing: 0.02em; /* 增加微小的字间距 */
   -webkit-font-smoothing: antialiased; /* 让字体渲染更清爽 */
+  word-break: break-word; /* 整词优先，放不下再断词 */
+  overflow-wrap: break-word; /* 兼容性保障 */
+  hyphens: auto; /* 自动连字符（impor-\ntant） */
 }
 h1,
 h2,
@@ -72,13 +75,31 @@ img,
 video {
   max-width: 100%;
 }
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
+  margin: 20px 0;
+/* 移动端：添加边框和圆角提示可滚动 */
+}
+@media screen and (max-width: 768px) {
+  .table-wrapper {
+    border: 1px solid #d6d6d2;
+    border-radius: 4px;
+  }
+}
 table {
   border-collapse: collapse;
   border-spacing: 0;
   font-size: 0.9em;
   width: 100%;
-  margin: 0 0 20px;
-  overflow-x: auto;
+  margin: 0;
+/* 移动端：固定最小宽度，启用横向滚动 */
+}
+@media screen and (max-width: 768px) {
+  table {
+    min-width: 600px;
+  }
 }
 caption,
 td,
@@ -86,6 +107,15 @@ th {
   padding: 8px;
   vertical-align: middle;
   border: 1px solid #d6d6d2;
+/* 移动端：单元格内允许换行，设置最小宽度 */
+}
+@media screen and (max-width: 768px) {
+  caption,
+  td,
+  th {
+    white-space: normal;
+    min-width: 80px;
+  }
 }
 caption {
   border: none;
@@ -265,11 +295,22 @@ figure.highlight .copy-button {
   overflow: hidden;
 }
 mjx-container {
-  overflow: auto hidden;
-}
-.math.disply {
   display: block;
-  overflow: auto hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+mjx-container[display="true"] {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.5em 0;
+}
+mjx-container:not([display="true"]) {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 100%;
 }
 .wall-main {
   width: 100%;

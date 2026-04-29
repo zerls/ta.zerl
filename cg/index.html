@@ -106,7 +106,7 @@
       </div>
       <div class="wall-category-description">计算机图形学相关的记录</div>
       <div class="wall-category-tags">
-        <div id="tags-outer"><a href="/tags/Denoise/" style="font-size: 1em;">Denoise</a> <a href="/tags/Field/" style="font-size: 1em;">Field</a> <a href="/tags/GI/" style="font-size: 1em;">GI</a> <a href="/tags/Mesh/" style="font-size: 1em;">Mesh</a> <a href="/tags/RayMarching/" style="font-size: 1em;">RayMarching</a> <a href="/tags/RenderPipline/" style="font-size: 1em;">RenderPipline</a> <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" style="font-size: 1em;">体积渲染</a> <a href="/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E5%AF%B9%E8%B1%A1%E6%B8%B2%E6%9F%93/" style="font-size: 1em;">半透明对象渲染</a> <a href="/tags/%E5%9C%B0%E5%BD%A2/" style="font-size: 1em;">地形</a> <a href="/tags/%E5%9C%BA%E6%99%AF/" style="font-size: 1em;">场景</a> <a href="/tags/%E6%B0%B4%E4%BD%93/" style="font-size: 1em;">水体</a></div>
+        <div id="tags-outer"><a href="/tags/Denoise/" style="font-size: 1em;">Denoise</a> <a href="/tags/Field/" style="font-size: 1em;">Field</a> <a href="/tags/GI/" style="font-size: 1em;">GI</a> <a href="/tags/GPU/" style="font-size: 1em;">GPU</a> <a href="/tags/Mesh/" style="font-size: 1em;">Mesh</a> <a href="/tags/RayMarching/" style="font-size: 1em;">RayMarching</a> <a href="/tags/ReSTIR/" style="font-size: 1em;">ReSTIR</a> <a href="/tags/RenderPipline/" style="font-size: 1em;">RenderPipline</a> <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" style="font-size: 1em;">体积渲染</a> <a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" style="font-size: 1em;">全局光照</a> <a href="/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E5%AF%B9%E8%B1%A1%E6%B8%B2%E6%9F%93/" style="font-size: 1em;">半透明对象渲染</a> <a href="/tags/%E5%9C%B0%E5%BD%A2/" style="font-size: 1em;">地形</a> <a href="/tags/%E5%9C%BA%E6%99%AF/" style="font-size: 1em;">场景</a> <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" style="font-size: 1em;">实时光追</a> <a href="/tags/%E6%B0%B4%E4%BD%93/" style="font-size: 1em;">水体</a> <a href="/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/" style="font-size: 1em;">蒙特卡洛</a></div>
       </div>
     </div>
   </div>
@@ -174,6 +174,24 @@
     <div class="post__foot">
       <div class="post-tags">
   <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" class="post-tag">#体积渲染</a><a href="/tags/RayMarching/" class="post-tag">#RayMarching</a>
+
+</div>
+    </div>
+  </div>
+
+  
+  <div class="post-card">
+    <div class="post__head">
+      <a href="/2025/12/13/ReSTIR_Notes/" class="post-title hover-line">ReSTIR 全家桶学习笔记：从 RIS 到 ReSTIR GI / PT</a>
+      
+    </div>
+    <div class="post__body">
+      
+      <div class="post-excerpt">ReSTIR 是过去五年间实时光线追踪领域最重要的算法突破之一，它的关键贡献并不是发明了一个全新的采样方法，而是把一个 2005 年就被提出但**长期没有被实时社区注意到**的算法 —— RIS (Resampled Importance Sampling) [Talbot 2005] —— 与 GPU 友好的水库采样 (Weighted Reservoir Sampling) 结合，并加入**时空复用**机制，使其在 1 spp 下也能产出近似离线渲染品质的结果。</div>
+    </div>
+    <div class="post__foot">
+      <div class="post-tags">
+  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" class="post-tag">#全局光照</a><a href="/tags/GPU/" class="post-tag">#GPU</a><a href="/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/" class="post-tag">#蒙特卡洛</a><a href="/tags/ReSTIR/" class="post-tag">#ReSTIR</a>
 
 </div>
     </div>
@@ -298,28 +316,6 @@
     <div class="post__foot">
       <div class="post-tags">
   <a href="/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E5%AF%B9%E8%B1%A1%E6%B8%B2%E6%9F%93/" class="post-tag">#半透明对象渲染</a>
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2025/03/15/%E6%B0%B4%E4%BD%93%E6%B8%B2%E6%9F%93/" class="post-title hover-line">水体渲染</a>
-      
-    </div>
-    <div class="post__body">
-      
-        <a href="/2025/03/15/%E6%B0%B4%E4%BD%93%E6%B8%B2%E6%9F%93/"
-           class="post-cover"
-           style="background-image: url(https://bu.dusays.com/2026/04/23/69e9f5af1695e.png)"></a>
-      
-      <div class="post-excerpt">真实感水体的渲染是一个跨越几何学与光学的复合系统，而卡通化的水体则是在真实感水体基础进行简化与风格化处理</div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  <a href="/tags/%E6%B0%B4%E4%BD%93/" class="post-tag">#水体</a>
 
 </div>
     </div>

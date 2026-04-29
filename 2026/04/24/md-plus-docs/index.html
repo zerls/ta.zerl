@@ -172,7 +172,7 @@
 <p>以下是所有可用组件的视觉预览与语法说明。</p>
 <hr>
 <h2 id="1-高亮块-Highlight-Block"><a href="#1-高亮块-Highlight-Block" class="headerlink" title="1. 高亮块 (Highlight Block)"></a>1. 高亮块 (Highlight Block)</h2><p><strong>用途</strong>：用于段落、公式或列表的柔和背景强调，区别于正式的 Note 提示，提供 10 种 Notion 风格的色彩。</p>
-<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% glk 颜色英文名 %&#125;<br>支持内部嵌套 Markdown 语法<br>&#123;% endglk %&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% glk 颜色英文名 %&#125;<br>支持内部嵌套 Markdown 语法<br>&#123;% endglk %&#125;<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="效果预览"><a href="#效果预览" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-glk md-glk-default"><p>这是 <code>default</code> 默认色高亮块。适合做普通的背景承托。</p>
 </div>
@@ -197,7 +197,7 @@
 
 <hr>
 <h2 id="2-状态提示栏-Note"><a href="#2-状态提示栏-Note" class="headerlink" title="2. 状态提示栏 (Note)"></a>2. 状态提示栏 (Note)</h2><p><strong>用途</strong>：正式的说明、警告和危险提示组件。</p>
-<h3 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% note 类型 标题名称 %&#125;<br>详细的提示内容...<br>&#123;% endnote %&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% note 类型 标题名称 %&#125;<br>详细的提示内容...<br>&#123;% endnote %&#125;<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="效果预览-1"><a href="#效果预览-1" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-note md-note-info"><p class="md-note-title">架构说明</p><p>本文主要探讨 Unity URP 下的渲染管线拓展方法。</p>
 </div>
@@ -207,13 +207,13 @@
 
 <hr>
 <h2 id="3-代码折叠-Code-Fold"><a href="#3-代码折叠-Code-Fold" class="headerlink" title="3. 代码折叠 (Code Fold)"></a>3. 代码折叠 (Code Fold)</h2><p><strong>用途</strong>：收纳过长的源文件代码，保持文章主线阅读的整洁，带有拟真 Mac 风格。</p>
-<h3 id="语法-2"><a href="#语法-2" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% fold 📝 ComputeShader.hlsl %&#125;<br>\```hlsl<br>// 你的代码<br>\```<br>&#123;% endfold %&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="语法-2"><a href="#语法-2" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% fold 📝 ComputeShader.hlsl %&#125;<br>\```hlsl<br>// 你的代码<br>\```<br>&#123;% endfold %&#125;<br></code></pre></td></tr></table></div></figure>
 
-<h3 id="效果预览-2"><a href="#效果预览-2" class="headerlink" title="效果预览"></a>效果预览</h3><details class="md-code-fold"><summary>📝 ComputeShader.hlsl</summary><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">[numthreads(<span class="hljs-number">8</span>,<span class="hljs-number">8</span>,<span class="hljs-number">1</span>)]<br><span class="hljs-type">void</span> <span class="hljs-title function_">CSMain</span> <span class="hljs-params">(uint3 id : SV_DispatchThreadID)</span> &#123;<br>    <span class="hljs-comment">// 渲染逻辑</span><br>&#125;<br></code></pre></td></tr></table></figure></details>
+<h3 id="效果预览-2"><a href="#效果预览-2" class="headerlink" title="效果预览"></a>效果预览</h3><details class="md-code-fold"><summary>📝 ComputeShader.hlsl</summary><figure class="highlight c"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">[numthreads(<span class="hljs-number">8</span>,<span class="hljs-number">8</span>,<span class="hljs-number">1</span>)]<br><span class="hljs-type">void</span> <span class="hljs-title function_">CSMain</span> <span class="hljs-params">(uint3 id : SV_DispatchThreadID)</span> &#123;<br>    <span class="hljs-comment">// 渲染逻辑</span><br>&#125;<br></code></pre></td></tr></table></div></figure></details>
 
 <hr>
 <h2 id="4-分栏对比-Split-View"><a href="#4-分栏对比-Split-View" class="headerlink" title="4. 分栏对比 (Split View)"></a>4. 分栏对比 (Split View)</h2><p><strong>用途</strong>：左文右图，或者左代码右效果。支持自定义宽度比例（如 <code>4:6</code>, <code>1:1</code>）。在手机端会自动转为上下堆叠。</p>
-<h3 id="语法-3"><a href="#语法-3" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% split 4:6 %&#125;<br>左侧文本<br>|||<br>右侧图片<br>&#123;% endsplit %&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="语法-3"><a href="#语法-3" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% split 4:6 %&#125;<br>左侧文本<br>|||<br>右侧图片<br>&#123;% endsplit %&#125;<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="效果预览-3"><a href="#效果预览-3" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-split">
             <div class="md-split-left" style="flex: 4"><h4 id="噪声生成算法"><a href="#噪声生成算法" class="headerlink" title="噪声生成算法"></a>噪声生成算法</h4><p>这里我们可以详细解释右侧图中展现的各种噪声（Perlin, Voronoi）是如何通过公式混合到一起的。</p>
@@ -228,14 +228,14 @@
 
 <hr>
 <h2 id="5-无缝图片网格-Grid-Gallery"><a href="#5-无缝图片网格-Grid-Gallery" class="headerlink" title="5. 无缝图片网格 (Grid Gallery)"></a>5. 无缝图片网格 (Grid Gallery)</h2><p><strong>用途</strong>：用于展示材质贴图集（如 Albedo、Normal 等）或多图并排。</p>
-<h3 id="语法-4"><a href="#语法-4" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% grid 4 %&#125;<br>![图1](url)<br>![图2](url)<br>![图3](url)<br>![图4](url)<br>&#123;% endgrid %&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="语法-4"><a href="#语法-4" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% grid 4 %&#125;<br>![图1](url)<br>![图2](url)<br>![图3](url)<br>![图4](url)<br>&#123;% endgrid %&#125;<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="效果预览-4"><a href="#效果预览-4" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-grid" style="grid-template-columns: repeat(4, 1fr)"><p><img src="https://bu.dusays.com/2026/04/23/69e9c1ce146fa.png" alt="Albedo"><img src="https://bu.dusays.com/2026/04/23/69e9c1d009910.png" alt="Normal"><img src="https://bu.dusays.com/2026/04/23/69e9c1cf07ff4.png" alt="Roughness"><img src="https://bu.dusays.com/2026/04/23/69e9c1d2e7230.png" alt="Metallic"></p>
 </div>
 
 <hr>
 <h2 id="6-交互式图片对比-Compare-Slider"><a href="#6-交互式图片对比-Compare-Slider" class="headerlink" title="6. 交互式图片对比 (Compare Slider)"></a>6. 交互式图片对比 (Compare Slider)</h2><p><strong>用途</strong>：UE 官方文档风格的图像拉杆组件，用于直观地展示技术开启前&#x2F;后的画质差异。</p>
-<h3 id="语法-5"><a href="#语法-5" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% compare BEFORE | AFTER %&#125;<br>![优化前](url)<br>![优化后](url)<br>&#123;% endcompare %&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="语法-5"><a href="#语法-5" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% compare BEFORE | AFTER %&#125;<br>![优化前](url)<br>![优化后](url)<br>&#123;% endcompare %&#125;<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="效果预览-5"><a href="#效果预览-5" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-compare" onmousemove="this.style.setProperty('--pos', (event.offsetX / this.offsetWidth * 100) + '%')">
             <img src="/img/02-screen-space-enabled.png" class="md-compare-after" />
@@ -247,7 +247,7 @@
 
 <hr>
 <h2 id="7-资源链接卡片-Card"><a href="#7-资源链接卡片-Card" class="headerlink" title="7. 资源链接卡片 (Card)"></a>7. 资源链接卡片 (Card)</h2><p><strong>用途</strong>：提供明确且美观的外部资源、GitHub 仓库或项目工程下载链接。</p>
-<h3 id="语法-6"><a href="#语法-6" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext"><br>&#123;% card 标题 | 描述 | 链接URL | 🎈(Emoji图标) %&#125;<br><br></code></pre></td></tr></table></figure>
+<h3 id="语法-6"><a href="#语法-6" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext"><br>&#123;% card 标题 | 描述 | 链接URL | 🎈(Emoji图标) %&#125;<br><br></code></pre></td></tr></table></div></figure>
 
 <h3 id="效果预览-6"><a href="#效果预览-6" class="headerlink" title="效果预览"></a>效果预览</h3><h4 id="方式-A：使用-Emoji-图标"><a href="#方式-A：使用-Emoji-图标" class="headerlink" title="方式 A：使用 Emoji 图标"></a>方式 A：使用 Emoji 图标</h4><a href="https://github.com" class="md-card" target="_blank" rel="noopener noreferrer">
             <div class="md-card-icon">📦</div>
