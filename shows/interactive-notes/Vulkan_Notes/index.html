@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vulkan 深度笔记 — 显式 GPU 编程全景</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════ CIRCUIT BG ═══════════════════════ -->
+<canvas id="circuit-canvas"></canvas>
+
+<!-- ═══════════════════════ HEADER ═══════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo-block">
+      <span class="logo-badge">VK</span>
+      <div class="logo-text">
+        <span class="logo-title">Vulkan</span>
+        <span class="logo-sub">Explicit GPU Programming — Advanced Notes</span>
+      </div>
+    </div>
+    <nav class="top-nav">
+      <a href="#part1" class="nav-link" data-section="1">架构</a>
+      <a href="#part2" class="nav-link" data-section="2">管线</a>
+      <a href="#part3" class="nav-link" data-section="3">同步</a>
+      <a href="#part4" class="nav-link" data-section="4">引擎</a>
+      <a href="#compare" class="nav-link" data-section="5">对比</a>
+      <a href="#timeline" class="nav-link" data-section="6">脉络</a>
+    </nav>
+  </div>
+  <div class="header-scan-line"></div>
+</header>
+
+<!-- ═══════════════════════ HERO ══════════════════════════════ -->
+<section class="hero">
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-label">// GRAPHICS ENGINEERING — LEVEL ADVANCED</div>
+    <h1 class="hero-title">
+      <span class="title-vk">Vulkan</span>
+      <span class="title-sub">显式渲染 API 全景解析</span>
+    </h1>
+    <p class="hero-desc">从 Instance 到 Swapchain，从同步原语到引擎 RHI 封装——<br/>一份打通底层原理与顶层应用的图形知识地图。</p>
+    <div class="hero-pills">
+      <span class="pill pill-orange">Explicit Control</span>
+      <span class="pill pill-blue">Multi-thread Safe</span>
+      <span class="pill pill-green">Cross Platform</span>
+      <span class="pill pill-purple">Low Overhead</span>
+    </div>
+  </div>
+  <div class="hero-diagram">
+    <div class="obj-tree" id="hero-obj-tree">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ PHILOSOPHY ═══════════════════════ -->
+<section class="philosophy-section">
+  <div class="container">
+    <div class="philosophy-grid">
+      <div class="phil-card">
+        <div class="phil-icon">⚙</div>
+        <h3>显式内存管理</h3>
+        <p>手动调用 <code>vkAllocateMemory</code>，精确控制每个资源的堆类型、对齐与绑定。驱动不再替你"猜测"最佳策略。</p>
+      </div>
+      <div class="phil-card">
+        <div class="phil-icon">⚡</div>
+        <h3>预制管线状态</h3>
+        <p>所有渲染状态（深度/混合/光栅化）在 <code>VkPipeline</code> 创建时一次性固定，消除绘制时的驱动重编译开销。</p>
+      </div>
+      <div class="phil-card">
+        <div class="phil-icon">🔀</div>
+        <h3>显式同步原语</h3>
+        <p>Fence / Semaphore / Barrier 三层同步体系，开发者完全掌控 CPU↔GPU、队列间、资源状态转换的时序。</p>
+      </div>
+      <div class="phil-card">
+        <div class="phil-icon">🧵</div>
+        <h3>多线程命令录制</h3>
+        <p>Command Buffer 与线程解耦，多个工作线程可并行录制，最后统一提交——这是现代引擎并行渲染的基础。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ PART 1 ════════════════════════════ -->
+<section id="part1" class="content-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <div>
+        <h2 class="section-title">核心架构与对象层级</h2>
+        <p class="section-desc">Vulkan 的所有对象构成严格的依赖有向图，理解层级是一切的前提。</p>
+      </div>
+    </div>
+
+    <!-- Object Hierarchy -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 1.1 初始化链路</h3>
+      <div class="init-chain">
+        <div class="chain-node node-instance">
+          <div class="node-tag">VkInstance</div>
+          <div class="node-name">Instance</div>
+          <div class="node-desc">连接应用程序与 Vulkan 运行时；指定 Layers（验证层）和 Instance Extensions（如 VK_KHR_surface）。</div>
+          <div class="node-code">VkInstanceCreateInfo info{};
+info.pApplicationInfo = &appInfo;
+info.enabledLayerCount = layers.size();
+info.ppEnabledLayerNames = layers.data();</div>
+        </div>
+        <div class="chain-arrow">▼</div>
+        <div class="chain-node node-physical">
+          <div class="node-tag">VkPhysicalDevice</div>
+          <div class="node-name">Physical Device</div>
+          <div class="node-desc">枚举 GPU，查询 <code>VkPhysicalDeviceProperties</code>（设备名/类型/限制）和 <code>VkPhysicalDeviceFeatures</code>（几何着色器、各向异性过滤等）。</div>
+          <div class="node-highlight">关键：查询 Queue Family 索引——Graphics / Compute / Transfer 可能是同一个或不同家族。</div>
+        </div>
+        <div class="chain-arrow">▼</div>
+        <div class="chain-node node-logical">
+          <div class="node-tag">VkDevice</div>
+          <div class="node-name">Logical Device</div>
+          <div class="node-desc">真正与硬件交互的接口。创建时需指定所需的 Device Extensions（如 VK_KHR_swapchain）和要开启的 Features。</div>
+          <div class="node-code">VkDeviceCreateInfo dci{};
+dci.queueCreateInfoCount = queueInfos.size();
+dci.pQueueCreateInfos = queueInfos.data();
+dci.enabledExtensionCount = devExts.size();
+dci.ppEnabledExtensionNames = devExts.data();
+dci.pEnabledFeatures = &deviceFeatures;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memory Management -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 1.2 显式内存管理</h3>
+      <div class="two-col">
+        <div class="card-dark">
+          <h4>内存堆类型</h4>
+          <div class="mem-heap-grid">
+            <div class="heap-item heap-gpu">
+              <span class="heap-tag">DEVICE_LOCAL</span>
+              <span>GPU 显存，速度最快，CPU 不可直接访问。用于 Texture/Mesh 等静态资源。</span>
+            </div>
+            <div class="heap-item heap-cpu">
+              <span class="heap-tag">HOST_VISIBLE</span>
+              <span>CPU 可映射写入（vkMapMemory）。用于 Staging Buffer / Uniform Buffer。</span>
+            </div>
+            <div class="heap-item heap-both">
+              <span class="heap-tag">HOST_COHERENT</span>
+              <span>映射后无需手动 Flush，写入立即可见。通常与 HOST_VISIBLE 联合使用。</span>
+            </div>
+            <div class="heap-item heap-cached">
+              <span class="heap-tag">HOST_CACHED</span>
+              <span>CPU 端带缓存，读取速度快，适合 Readback 场景（GPU→CPU 回读）。</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-dark">
+          <h4>VMA — Vulkan Memory Allocator</h4>
+          <p class="card-text">直接调用 <code>vkAllocateMemory</code> 有严格上限（maxMemoryAllocationCount，通常 4096）。<strong>VMA</strong> 是 AMD 开源的内存管理库，内部实现了大块分配 + 子分配，自动选择最优堆类型。</p>
+          <div class="vma-code">// 创建 Buffer（VMA 风格）
+VmaAllocationCreateInfo allocInfo{};
+allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+vmaCreateBuffer(allocator, &bufferInfo,
+                &allocInfo, &buffer,
+                &allocation, nullptr);</div>
+          <div class="tip-box">💡 引擎实践：UE 的 VulkanRHI 和 Unity URP 底层均使用类似 VMA 的分配策略，并维护自己的内存池。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Queue Families -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 1.3 队列家族 (Queue Families)</h3>
+      <div class="queue-visual">
+        <div class="queue-family family-0">
+          <div class="family-header">Queue Family 0 — Graphics + Compute + Transfer</div>
+          <div class="family-queues">
+            <div class="q-box">Queue 0</div>
+            <div class="q-box">Queue 1</div>
+            <div class="q-box">Queue 2</div>
+            <div class="q-box q-dim">Queue 3</div>
+          </div>
+          <div class="family-note">主渲染队列，支持所有操作类型</div>
+        </div>
+        <div class="queue-family family-1">
+          <div class="family-header">Queue Family 1 — Compute + Transfer (Async)</div>
+          <div class="family-queues">
+            <div class="q-box">Queue 0</div>
+            <div class="q-box">Queue 1</div>
+          </div>
+          <div class="family-note">异步计算队列，与渲染管线并行执行 Compute Shader</div>
+        </div>
+        <div class="queue-family family-2">
+          <div class="family-header">Queue Family 2 — Transfer Only (DMA)</div>
+          <div class="family-queues">
+            <div class="q-box">Queue 0</div>
+          </div>
+          <div class="family-note">专用 DMA 传输队列，用于异步纹理流式加载</div>
+        </div>
+      </div>
+      <div class="queue-table-wrap">
+        <table class="vk-table">
+          <thead>
+            <tr><th>队列类型</th><th>用途</th><th>引擎对应</th><th>同步方式</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge-g">Graphics</span></td>
+              <td>DrawCall、RenderPass 执行</td>
+              <td>UE RHI Thread / Unity Render Thread</td>
+              <td>Semaphore + Fence</td>
+            </tr>
+            <tr>
+              <td><span class="badge-c">Compute</span></td>
+              <td>Compute Shader、GPGPU 计算</td>
+              <td>UE AsyncComputeQueue / Unity Compute</td>
+              <td>Semaphore（跨队列）</td>
+            </tr>
+            <tr>
+              <td><span class="badge-t">Transfer</span></td>
+              <td>Buffer/Image 上传下载</td>
+              <td>UE StreamingManager / Asset Loading</td>
+              <td>Semaphore（完成后通知渲染）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Command Buffer -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 1.4 命令录制与提交</h3>
+      <div class="cmd-flow">
+        <div class="cmd-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h5>Command Pool 创建</h5>
+            <p>与特定 Queue Family 绑定，线程独占（不可跨线程共享 Pool）</p>
+            <code>VkCommandPoolCreateInfo poolInfo{};
+poolInfo.queueFamilyIndex = graphicsFamily;</code>
+          </div>
+        </div>
+        <div class="cmd-arrow">→</div>
+        <div class="cmd-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h5>分配 Command Buffer</h5>
+            <p>Primary（可直接提交）或 Secondary（嵌入到 Primary 中执行）</p>
+            <code>allocInfo.commandBufferCount = 1;
+allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;</code>
+          </div>
+        </div>
+        <div class="cmd-arrow">→</div>
+        <div class="cmd-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h5>录制命令</h5>
+            <p>vkBeginCommandBuffer → 各类 vkCmd* → vkEndCommandBuffer</p>
+            <code>vkBeginCommandBuffer(cmdBuf, &beginInfo);
+vkCmdBeginRenderPass(...);
+vkCmdBindPipeline(...);
+vkCmdDraw(...);
+vkCmdEndRenderPass(...);
+vkEndCommandBuffer(cmdBuf);</code>
+          </div>
+        </div>
+        <div class="cmd-arrow">→</div>
+        <div class="cmd-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h5>提交到队列</h5>
+            <p>vkQueueSubmit 附带等待/信号 Semaphore 及完成 Fence</p>
+            <code>VkSubmitInfo submitInfo{};
+submitInfo.waitSemaphoreCount = 1;
+submitInfo.pWaitSemaphores = &imgAvailSem;
+submitInfo.signalSemaphoreCount = 1;
+submitInfo.pSignalSemaphores = &renderDoneSem;
+vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence);</code>
+          </div>
+        </div>
+      </div>
+      <div class="frame-diagram-label">↑ 对应 Figure 1.4：CPU 录制 CmdBuffer，submit 后 GPU 异步执行</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ PART 2 ════════════════════════════ -->
+<section id="part2" class="content-section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <div>
+        <h2 class="section-title">定制渲染管线 (Graphics Pipeline)</h2>
+        <p class="section-desc">Vulkan 的管线是不可变的（Immutable PSO）——这是其性能优势的核心来源。</p>
+      </div>
+    </div>
+
+    <!-- Pipeline Stages -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 2.1 管线阶段全览</h3>
+      <div class="pipeline-visual">
+        <div class="pipe-stage stage-ia">
+          <span class="stage-icon">📥</span>
+          <span class="stage-name">Input Assembly</span>
+          <span class="stage-detail">顶点拓扑<br/>VkPrimitiveTopology</span>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-stage stage-vs programmable">
+          <span class="stage-icon">⚡</span>
+          <span class="stage-name">Vertex Shader</span>
+          <span class="stage-detail">SPIR-V 模块<br/>可编程</span>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-stage stage-tess programmable">
+          <span class="stage-icon">△</span>
+          <span class="stage-name">Tessellation</span>
+          <span class="stage-detail">TCS + TES<br/>可选</span>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-stage stage-gs programmable">
+          <span class="stage-icon">🔺</span>
+          <span class="stage-name">Geometry Shader</span>
+          <span class="stage-detail">可选<br/>性能敏感</span>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-stage stage-rast">
+          <span class="stage-icon">▣</span>
+          <span class="stage-name">Rasterization</span>
+          <span class="stage-detail">多边形模式<br/>剔除面/深度偏移</span>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-stage stage-fs programmable">
+          <span class="stage-icon">🎨</span>
+          <span class="stage-name">Fragment Shader</span>
+          <span class="stage-detail">SPIR-V 模块<br/>可编程</span>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-stage stage-blend">
+          <span class="stage-icon">🔀</span>
+          <span class="stage-name">Color Blend</span>
+          <span class="stage-detail">混合模式<br/>Alpha Blend</span>
+        </div>
+      </div>
+      <div class="pipeline-note">所有固定管线状态在 <code>vkCreateGraphicsPipelines</code> 时一次性烘焙完成。驱动可在此时完成着色器特化（Specialization）和寄存器分配，后续 DrawCall 零开销切换。</div>
+    </div>
+
+    <!-- PSO Creation -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 2.2 VkGraphicsPipelineCreateInfo 结构体解析</h3>
+      <div class="struct-annotated">
+        <pre class="struct-code"><span class="sc-type">VkGraphicsPipelineCreateInfo</span> pipelineInfo{};
+
+<span class="sc-comment">// ① Shader Stages — SPIR-V 二进制着色器模块</span>
+pipelineInfo.<span class="sc-field">stageCount</span>          = shaderStages.size();
+pipelineInfo.<span class="sc-field">pStages</span>             = shaderStages.data();
+<span class="sc-engine">// → Unity: ComputeShader asset / HDRP ShaderGraph 编译后的 SPIR-V</span>
+<span class="sc-engine">// → UE:   FVulkanShader, 从 HLSL via DXC 编译得到</span>
+
+<span class="sc-comment">// ② Vertex Input — 顶点属性描述（stride / format / location）</span>
+pipelineInfo.<span class="sc-field">pVertexInputState</span>   = &vertexInput;
+<span class="sc-engine">// → UE: FVertexDeclaration, 对应 RHI 的 FVertexElement</span>
+
+<span class="sc-comment">// ③ Input Assembly — 拓扑类型</span>
+pipelineInfo.<span class="sc-field">pInputAssemblyState</span> = &inputAssembly;  <span class="sc-comment">// TRIANGLE_LIST 等</span>
+
+<span class="sc-comment">// ④ Viewport & Scissor</span>
+pipelineInfo.<span class="sc-field">pViewportState</span>      = &viewportState;
+
+<span class="sc-comment">// ⑤ Rasterization — 正面方向、剔除模式、填充模式、深度偏移</span>
+pipelineInfo.<span class="sc-field">pRasterizationState</span> = &rasterizer;
+<span class="sc-engine">// → Unity: RasterState in ShaderLab Pass 对应此处</span>
+
+<span class="sc-comment">// ⑥ Multisample — MSAA 采样数</span>
+pipelineInfo.<span class="sc-field">pMultisampleState</span>   = &multisampling;
+
+<span class="sc-comment">// ⑦ Depth & Stencil Test</span>
+pipelineInfo.<span class="sc-field">pDepthStencilState</span>  = &depthStencil;
+<span class="sc-engine">// → Unity: ZWrite / ZTest / Stencil { ... } 对应此处</span>
+
+<span class="sc-comment">// ⑧ Color Blend — 每个附件的混合方程</span>
+pipelineInfo.<span class="sc-field">pColorBlendState</span>    = &colorBlending;
+<span class="sc-engine">// → Unity: Blend SrcAlpha OneMinusSrcAlpha 对应此处</span>
+
+<span class="sc-comment">// ⑨ Pipeline Layout — Push Constants + Descriptor Set 布局</span>
+pipelineInfo.<span class="sc-field">layout</span>              = pipelineLayout;
+
+<span class="sc-comment">// ⑩ Render Pass — 指定此管线在哪个 Subpass 中使用</span>
+pipelineInfo.<span class="sc-field">renderPass</span>          = renderPass;
+pipelineInfo.<span class="sc-field">subpass</span>             = 0;</pre>
+      </div>
+    </div>
+
+    <!-- Descriptor System -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 2.3 资源绑定体系：Descriptor</h3>
+      <div class="descriptor-flow">
+        <div class="desc-box desc-layout">
+          <h5>Descriptor Set Layout</h5>
+          <p>定义"模板"：binding 0 是 UBO，binding 1 是 Sampler2D...</p>
+          <code>// 类比 C++ struct 的定义
+layout(set=0, binding=0) uniform CameraUBO { ... };
+layout(set=0, binding=1) uniform sampler2D albedo;</code>
+        </div>
+        <div class="desc-arrow">+</div>
+        <div class="desc-box desc-pool">
+          <h5>Descriptor Pool</h5>
+          <p>预先分配固定数量的描述符槽位</p>
+          <code>poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+poolSizes[0].descriptorCount = MAX_FRAMES;</code>
+        </div>
+        <div class="desc-arrow">→</div>
+        <div class="desc-box desc-set">
+          <h5>Descriptor Set</h5>
+          <p>实际持有资源引用的"实例"</p>
+          <code>// 写入实际资源
+VkWriteDescriptorSet write{};
+write.dstBinding = 0;
+write.pBufferInfo = &bufferInfo;
+vkUpdateDescriptorSets(device, 1, &write, 0, nullptr);</code>
+        </div>
+        <div class="desc-arrow">→</div>
+        <div class="desc-box desc-bind">
+          <h5>绑定到命令</h5>
+          <p>录制时绑定到管线</p>
+          <code>vkCmdBindDescriptorSets(
+  cmdBuf,
+  VK_PIPELINE_BIND_POINT_GRAPHICS,
+  pipelineLayout, 0, 1,
+  &descriptorSet, 0, nullptr);</code>
+        </div>
+      </div>
+
+      <div class="set-freq-table">
+        <h4>描述符集频率设计 (Set 分层策略)</h4>
+        <table class="vk-table">
+          <thead>
+            <tr><th>Set 编号</th><th>更新频率</th><th>典型内容</th><th>引擎对应</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="set-badge s0">Set 0</span></td>
+              <td>每帧一次</td>
+              <td>View/Projection 矩阵、时间、摄像机参数</td>
+              <td>UE: SceneUniformBuffer / Unity: PerFrameBuffer</td>
+            </tr>
+            <tr>
+              <td><span class="set-badge s1">Set 1</span></td>
+              <td>每 Pass 一次</td>
+              <td>灯光数据、阴影贴图</td>
+              <td>UE: ViewUniformBuffer</td>
+            </tr>
+            <tr>
+              <td><span class="set-badge s2">Set 2</span></td>
+              <td>每材质一次</td>
+              <td>Albedo/Normal/Roughness 贴图、材质参数</td>
+              <td>UE: MaterialUniformBuffer</td>
+            </tr>
+            <tr>
+              <td><span class="set-badge s3">Set 3</span></td>
+              <td>每物体一次</td>
+              <td>Model 矩阵、骨骼矩阵</td>
+              <td>UE: PrimitiveUniformBuffer</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Render Pass -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 2.4 Render Pass 与 Framebuffer</h3>
+      <div class="rp-visual">
+        <div class="rp-left">
+          <div class="rp-box rp-renderpass">
+            <h5>VkRenderPass</h5>
+            <div class="rp-item">
+              <span class="rp-tag">Attachment 0</span>
+              <span>Color — format:B8G8R8A8_SRGB<br/>loadOp: CLEAR → storeOp: STORE<br/>initialLayout: UNDEFINED → finalLayout: PRESENT_SRC</span>
+            </div>
+            <div class="rp-item">
+              <span class="rp-tag">Attachment 1</span>
+              <span>Depth — format:D32_SFLOAT<br/>loadOp: CLEAR → storeOp: DONT_CARE</span>
+            </div>
+            <div class="rp-item rp-subpass">
+              <span class="rp-tag">Subpass 0</span>
+              <span>pColorAttachments[0]: attachment=0, layout=COLOR_ATTACHMENT_OPTIMAL<br/>pDepthStencilAttachment: attachment=1</span>
+            </div>
+            <div class="rp-dep">
+              Subpass Dependency: EXTERNAL → 0<br/>
+              srcStage: COLOR_ATTACHMENT_OUTPUT<br/>dstStage: COLOR_ATTACHMENT_OUTPUT
+            </div>
+          </div>
+        </div>
+        <div class="rp-mid">↔</div>
+        <div class="rp-right">
+          <div class="rp-box rp-framebuffer">
+            <h5>VkFramebuffer</h5>
+            <div class="rp-item">
+              <span class="rp-tag">pAttachments[0]</span>
+              <span>VkImageView → Swapchain Image</span>
+            </div>
+            <div class="rp-item">
+              <span class="rp-tag">pAttachments[1]</span>
+              <span>VkImageView → Depth Image</span>
+            </div>
+            <div class="rp-item">
+              <span class="rp-tag">renderPass</span>
+              <span>引用上面的 VkRenderPass</span>
+            </div>
+            <div class="rp-item">
+              <span class="rp-tag">width / height</span>
+              <span>= Swapchain extent</span>
+            </div>
+          </div>
+          <div class="rp-note">
+            ⚠ Framebuffer 持有实际 ImageView，RenderPass 只是"描述"——它们必须兼容（相同 attachment 数量和格式）。
+          </div>
+        </div>
+      </div>
+
+      <div class="loadop-table">
+        <h4>Load/Store Op 对性能的影响（移动端尤为重要）</h4>
+        <table class="vk-table">
+          <thead>
+            <tr><th>操作</th><th>含义</th><th>性能影响</th><th>使用场景</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>LOAD_OP_CLEAR</td>
+              <td>渲染前清除附件</td>
+              <td>✅ 移动端友好（避免加载）</td>
+              <td>每帧重绘的颜色/深度</td>
+            </tr>
+            <tr>
+              <td>LOAD_OP_LOAD</td>
+              <td>保留上一帧内容</td>
+              <td>⚠ 移动端需从内存加载</td>
+              <td>TAA 需要历史帧时</td>
+            </tr>
+            <tr>
+              <td>LOAD_OP_DONT_CARE</td>
+              <td>内容未定义，不关心</td>
+              <td>✅ 最优（驱动可跳过）</td>
+              <td>深度附件（通常不需要保留）</td>
+            </tr>
+            <tr>
+              <td>STORE_OP_STORE</td>
+              <td>写回内存</td>
+              <td>⚠ 移动端需写出 Tile</td>
+              <td>需要后续采样的附件</td>
+            </tr>
+            <tr>
+              <td>STORE_OP_DONT_CARE</td>
+              <td>丢弃内容</td>
+              <td>✅ 移动端可留在 Tile</td>
+              <td>中间深度缓冲（不需要读回）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ PART 3 ════════════════════════════ -->
+<section id="part3" class="content-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <div>
+        <h2 class="section-title">同步机制 — 最难也最关键</h2>
+        <p class="section-desc">Vulkan 假设所有操作默认是无序的，开发者必须显式声明依赖关系。</p>
+      </div>
+    </div>
+
+    <!-- Three Primitives -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 3.1 三个核心同步原语</h3>
+      <div class="sync-cards">
+        <div class="sync-card sync-fence">
+          <div class="sync-icon">🚧</div>
+          <h4>Fence</h4>
+          <div class="sync-scope">CPU ↔ GPU</div>
+          <p>CPU 等待 GPU 完成某批工作。典型用途：等待上一帧渲染结束后，才重用 Command Buffer / 读取结果。</p>
+          <code>// 提交时附带 Fence
+vkQueueSubmit(queue, 1, &submitInfo, inFlightFence);
+// CPU 阻塞等待
+vkWaitForFences(device, 1, &inFlightFence,
+                VK_TRUE, UINT64_MAX);
+vkResetFences(device, 1, &inFlightFence);</code>
+          <div class="sync-note">⚠ Fence 只能 CPU 侧等待，不能在 GPU 队列间传递信号。</div>
+        </div>
+        <div class="sync-card sync-sem">
+          <div class="sync-icon">🚦</div>
+          <h4>Semaphore</h4>
+          <div class="sync-scope">GPU Queue ↔ GPU Queue</div>
+          <p>一个队列提交完成后，通知另一个队列可以开始。典型用途：Swapchain 图像可用后，通知渲染队列开始渲染。</p>
+          <code>// 渲染等待 imageAvailable Semaphore
+submitInfo.waitSemaphoreCount = 1;
+submitInfo.pWaitSemaphores = &imageAvailableSem;
+submitInfo.pWaitDstStageMask = &waitStage;
+// 渲染完成后发出 renderFinished 信号
+submitInfo.signalSemaphoreCount = 1;
+submitInfo.pSignalSemaphores = &renderFinishedSem;</code>
+          <div class="sync-note">💡 Binary Semaphore（等待后自动重置） vs Timeline Semaphore（单调递增值，更灵活）。</div>
+        </div>
+        <div class="sync-card sync-barrier">
+          <div class="sync-icon">🔒</div>
+          <h4>Pipeline Barrier / Memory Barrier</h4>
+          <div class="sync-scope">同一队列内资源状态转换</div>
+          <p>控制资源在不同管线阶段间的可见性，以及 Image Layout 转换（如 UNDEFINED → SHADER_READ_ONLY）。</p>
+          <code>VkImageMemoryBarrier barrier{};
+barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+barrier.srcAccessMask = 0;
+barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+vkCmdPipelineBarrier(
+  cmdBuf,
+  VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,  // src
+  VK_PIPELINE_STAGE_TRANSFER_BIT,      // dst
+  0, 0, nullptr, 0, nullptr,
+  1, &barrier);</code>
+          <div class="sync-note">🔑 Image Layout 是 Vulkan 中最常见的错误来源之一——每次使用前必须保证 Layout 正确。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- One Frame Timeline -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 3.2 一帧的完整时序图</h3>
+      <div class="timeline-wrap">
+        <div class="timeline-legend">
+          <span class="tl-cpu">CPU</span>
+          <span class="tl-gpu">GPU</span>
+          <span class="tl-sem">Semaphore</span>
+          <span class="tl-fence">Fence</span>
+        </div>
+        <div class="timeline" id="frame-timeline">
+          <div class="tl-row tl-row-cpu">
+            <div class="tl-label">CPU</div>
+            <div class="tl-track">
+              <div class="tl-block tl-b-wait" style="left:0%;width:12%">等待上帧 Fence</div>
+              <div class="tl-block tl-b-acquire" style="left:13%;width:10%">Acquire Image</div>
+              <div class="tl-block tl-b-record" style="left:24%;width:20%">录制 CmdBuffer</div>
+              <div class="tl-block tl-b-submit" style="left:45%;width:8%">Submit</div>
+              <div class="tl-block tl-b-present" style="left:54%;width:8%">Present</div>
+              <div class="tl-block tl-b-next" style="left:63%;width:25%">下一帧逻辑...</div>
+            </div>
+          </div>
+          <div class="tl-row tl-row-sem">
+            <div class="tl-label">Sem</div>
+            <div class="tl-track">
+              <div class="tl-signal" style="left:22%">imageAvailable ✓</div>
+              <div class="tl-signal tl-sig-r" style="left:62%">renderFinished ✓</div>
+            </div>
+          </div>
+          <div class="tl-row tl-row-gpu">
+            <div class="tl-label">GPU</div>
+            <div class="tl-track">
+              <div class="tl-block tl-b-render" style="left:45%;width:18%">渲染执行</div>
+              <div class="tl-block tl-b-display" style="left:64%;width:15%">Present/Display</div>
+            </div>
+          </div>
+          <div class="tl-row tl-row-fence">
+            <div class="tl-label">Fence</div>
+            <div class="tl-track">
+              <div class="tl-fence-signal" style="left:62%">inFlight Signal</div>
+            </div>
+          </div>
+        </div>
+        <div class="swapchain-explain">
+          <h4>Swapchain 双/三缓冲逻辑</h4>
+          <div class="sc-boxes">
+            <div class="sc-box sc-front">
+              <span>Front Buffer</span>
+              <span class="sc-state">Display 中</span>
+            </div>
+            <div class="sc-arrow">⇄</div>
+            <div class="sc-box sc-back">
+              <span>Back Buffer</span>
+              <span class="sc-state">GPU 渲染中</span>
+            </div>
+            <div class="sc-arrow">+</div>
+            <div class="sc-box sc-third">
+              <span>Buffer 2</span>
+              <span class="sc-state">CPU 录制中</span>
+            </div>
+          </div>
+          <p class="sc-note">vkAcquireNextImageKHR 获取可用的后台缓冲索引，vkQueuePresentKHR 将渲染完成的图像提交显示。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Layout -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 3.3 Image Layout 状态机</h3>
+      <div class="layout-grid">
+        <div class="layout-node ln-undef">UNDEFINED<br/><small>初始状态，内容不保证</small></div>
+        <div class="layout-trans">
+          <span>→ TRANSFER_DST_OPTIMAL</span>
+          <span>上传纹理数据时</span>
+        </div>
+        <div class="layout-node ln-transfer">TRANSFER_DST<br/><small>用于 vkCmdCopyBufferToImage</small></div>
+        <div class="layout-trans">
+          <span>→ SHADER_READ_ONLY_OPTIMAL</span>
+          <span>上传完成后，供 Shader 采样</span>
+        </div>
+        <div class="layout-node ln-shader">SHADER_READ_ONLY<br/><small>Fragment Shader 采样纹理</small></div>
+        <div class="layout-trans">
+          <span>→ COLOR_ATTACHMENT_OPTIMAL</span>
+          <span>用作 RenderTarget 时</span>
+        </div>
+        <div class="layout-node ln-color">COLOR_ATTACHMENT<br/><small>RenderPass 写入颜色</small></div>
+        <div class="layout-trans">
+          <span>→ PRESENT_SRC_KHR</span>
+          <span>渲染完成，准备显示</span>
+        </div>
+        <div class="layout-node ln-present">PRESENT_SRC<br/><small>提交给 Swapchain 显示</small></div>
+      </div>
+      <div class="layout-note">每次 Layout 转换都需要通过 <code>vkCmdPipelineBarrier</code> 显式声明，指定 srcStage/dstStage 和 srcAccess/dstAccess 掩码。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ PART 4 ════════════════════════════ -->
+<section id="part4" class="content-section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <div>
+        <h2 class="section-title">引擎封装 (RHI) 与现代渲染实践</h2>
+        <p class="section-desc">理解 Vulkan 如何被 Unity / UE 抽象为高层 RHI，以及现代引擎的前沿设计。</p>
+      </div>
+    </div>
+
+    <!-- RHI Abstraction -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 4.1 RHI 抽象层</h3>
+      <div class="rhi-stack">
+        <div class="rhi-layer rhi-engine">
+          <span class="rhi-label">游戏逻辑 / 渲染特性</span>
+          <span class="rhi-apis">DrawMesh / RenderTexture / ShaderGraph</span>
+        </div>
+        <div class="rhi-arrow-down">↓ 调用</div>
+        <div class="rhi-layer rhi-rhi">
+          <span class="rhi-label">RHI 抽象层</span>
+          <span class="rhi-apis">FRHICommandList (UE) / CommandBuffer (Unity) / GfxDevice</span>
+        </div>
+        <div class="rhi-arrow-down">↓ 翻译为</div>
+        <div class="rhi-layer rhi-backend">
+          <span class="rhi-label">图形 API 后端</span>
+          <span class="rhi-apis">
+            <span class="be-vk">Vulkan</span>
+            <span class="be-dx">DirectX 12</span>
+            <span class="be-mtl">Metal</span>
+            <span class="be-gl">OpenGL ES</span>
+          </span>
+        </div>
+        <div class="rhi-arrow-down">↓ 驱动转换</div>
+        <div class="rhi-layer rhi-gpu">
+          <span class="rhi-label">GPU 硬件</span>
+          <span class="rhi-apis">Shader Cores / Memory Controller / Display Engine</span>
+        </div>
+      </div>
+
+      <div class="two-col mt-lg">
+        <div class="card-dark">
+          <h4>Unity URP — NativeRenderPass</h4>
+          <ul class="feature-list">
+            <li>Unity 2020+ 引入 <code>NativeRenderPassAttachment</code>，将 SRP 的 Pass 直接映射到 <code>VkRenderPass</code> 的 Subpass</li>
+            <li>核心收益：避免 G-Buffer 在移动端 Tile Memory 和主存之间的 Store/Load 往返——这是 TBDR 架构性能的关键</li>
+            <li>Unity 的 <code>CommandBuffer.SetRenderTarget</code> → 内部翻译为 vkCmdBeginRenderPass + Attachment 配置</li>
+            <li>Descriptor Set 管理：Unity 维护一个环形的 DescriptorPool，每帧重置</li>
+          </ul>
+        </div>
+        <div class="card-dark">
+          <h4>UE VulkanRHI — 源码目录</h4>
+          <pre class="dir-tree">Engine/Source/Runtime/VulkanRHI/
+├── Private/
+│   ├── VulkanDevice.cpp      ← 逻辑设备管理
+│   ├── VulkanMemory.cpp      ← 内存分配（类VMA）
+│   ├── VulkanPipeline.cpp    ← PSO 创建与缓存
+│   ├── VulkanDescriptorSets.cpp ← Descriptor 管理
+│   ├── VulkanCommandBuffer.cpp  ← 命令录制
+│   └── VulkanQueue.cpp       ← 队列提交
+└── Public/
+    ├── VulkanRHI.h
+    └── VulkanResources.h</pre>
+          <div class="tip-box">UE 的 Descriptor Set 策略：静态资源（贴图）用 Global Bindless Table；动态数据（UBO）每帧通过 Ring Buffer 更新。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bindless -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 4.2 Bindless 无绑定设计</h3>
+      <div class="bindless-compare">
+        <div class="bl-traditional">
+          <h4>传统绑定模式</h4>
+          <div class="bl-flow">
+            <div class="bl-step">DrawCall A：绑定 Descriptor Set A (贴图0,1,2)</div>
+            <div class="bl-step-cost">⏱ vkCmdBindDescriptorSets</div>
+            <div class="bl-step">DrawCall B：绑定 Descriptor Set B (贴图3,4,5)</div>
+            <div class="bl-step-cost">⏱ vkCmdBindDescriptorSets（每次切换有开销）</div>
+            <div class="bl-step">DrawCall C：重新绑定 Set A...</div>
+          </div>
+          <div class="bl-problem">问题：大量 DrawCall 导致频繁切换 Descriptor Set，CPU 侧瓶颈明显。</div>
+        </div>
+        <div class="bl-bindless">
+          <h4>Bindless 模式（UE5 / 现代引擎）</h4>
+          <div class="bl-flow">
+            <div class="bl-step bl-global">一次绑定：全局 Bindless Texture Array（数千张贴图）</div>
+            <div class="bl-step bl-push">DrawCall A：Push Constant → textureIndex = 42</div>
+            <div class="bl-step bl-push">DrawCall B：Push Constant → textureIndex = 7</div>
+            <div class="bl-step bl-push">DrawCall C：Push Constant → textureIndex = 156</div>
+          </div>
+          <div class="bl-solution">
+            Vulkan 扩展：<code>VK_EXT_descriptor_indexing</code><br/>
+            GLSL：<code>layout(set=0, binding=0) uniform sampler2D textures[];</code><br/>
+            Shader 内通过动态索引访问任意贴图，无需切换 Descriptor Set。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-thread -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 4.3 多线程并行命令录制</h3>
+      <div class="mt-diagram">
+        <div class="mt-row mt-main">
+          <div class="mt-thread">主渲染线程</div>
+          <div class="mt-ops">
+            <div class="mt-op mt-begin">Begin Frame</div>
+            <div class="mt-op mt-cull">CPU Culling</div>
+            <div class="mt-op mt-dispatch">派发 Job</div>
+            <div class="mt-op mt-merge">合并 CmdBuf</div>
+            <div class="mt-op mt-submit">Submit</div>
+          </div>
+        </div>
+        <div class="mt-row mt-worker">
+          <div class="mt-thread">Worker 0</div>
+          <div class="mt-ops">
+            <div class="mt-op mt-record" style="margin-left:28%">录制 CmdBuf (Shadow Pass)</div>
+          </div>
+        </div>
+        <div class="mt-row mt-worker">
+          <div class="mt-thread">Worker 1</div>
+          <div class="mt-ops">
+            <div class="mt-op mt-record" style="margin-left:28%">录制 CmdBuf (Opaque Pass)</div>
+          </div>
+        </div>
+        <div class="mt-row mt-worker">
+          <div class="mt-thread">Worker 2</div>
+          <div class="mt-ops">
+            <div class="mt-op mt-record" style="margin-left:28%">录制 CmdBuf (UI Pass)</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-note">
+        <strong>关键约束：</strong>每个线程必须有独立的 <code>VkCommandPool</code>（Command Pool 不是线程安全的）。使用 Secondary Command Buffer 让工作线程录制后，由主线程通过 <code>vkCmdExecuteCommands</code> 合并。
+        <br/>Unity Jobs System → 对应多个工作线程各持独立 CommandBuffer；UE Task Graph → FVulkanCommandBufferManager 管理每线程的 Pool。
+      </div>
+    </div>
+
+    <!-- Shader Pipeline -->
+    <div class="subsection">
+      <h3 class="subsec-title">// 4.4 着色器编译流水线 & PSO 缓存</h3>
+      <div class="shader-pipeline">
+        <div class="sp-node sp-hlsl">HLSL<br/><small>.hlsl</small></div>
+        <div class="sp-arrow">→ DXC</div>
+        <div class="sp-node sp-spirv">SPIR-V<br/><small>.spv</small></div>
+        <div class="sp-arrow">→ Vulkan Driver</div>
+        <div class="sp-node sp-native">Native ISA<br/><small>GPU 机器码</small></div>
+      </div>
+      <div class="pso-cache">
+        <h4>PSO Cache — 解决首帧卡顿 (Stuttering)</h4>
+        <div class="pso-two">
+          <div class="pso-problem">
+            <h5>🔴 问题</h5>
+            <p>Vulkan 的 Pipeline 创建（<code>vkCreateGraphicsPipelines</code>）是耗时操作。首次遇到新材质/新 Pass 组合时，驱动需要编译 SPIR-V → ISA，可能造成数十毫秒卡顿。</p>
+          </div>
+          <div class="pso-solution">
+            <h5>🟢 解决方案</h5>
+            <ul>
+              <li><strong>Pipeline Cache（VkPipelineCache）：</strong>将编译结果序列化到磁盘，下次启动直接复用驱动缓存。</li>
+              <li><strong>Pipeline Library（VK_EXT_graphics_pipeline_library）：</strong>将管线拆分为可复用的片段（Vertex Input、Pre-Rasterization、Fragment Output），加速变体创建。</li>
+              <li><strong>Async Pipeline Compilation：</strong>UE5 和 Unity HDRP 均支持后台线程预热 PSO，游戏过场时提前编译当前场景所需的全部管线。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ COMPARE TABLE ════════════════════ -->
+<section id="compare" class="content-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <div>
+        <h2 class="section-title">图形 API 全面对比</h2>
+        <p class="section-desc">OpenGL vs Vulkan vs DirectX 12 vs Metal — 核心设计哲学差异。</p>
+      </div>
+    </div>
+
+    <div class="compare-tabs" id="compare-tabs">
+      <button class="tab-btn tab-active" data-tab="paradigm">编程范式</button>
+      <button class="tab-btn" data-tab="memory">内存管理</button>
+      <button class="tab-btn" data-tab="pipeline">管线状态</button>
+      <button class="tab-btn" data-tab="sync">同步机制</button>
+      <button class="tab-btn" data-tab="threading">多线程</button>
+      <button class="tab-btn" data-tab="shader">着色器</button>
+    </div>
+
+    <div id="tab-paradigm" class="tab-content tab-active-content">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th class="col-gl">OpenGL</th>
+            <th class="col-vk">Vulkan</th>
+            <th class="col-dx">DirectX 12</th>
+            <th class="col-mt">Metal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>控制粒度</td>
+            <td class="col-gl">隐式，驱动决定</td>
+            <td class="col-vk">完全显式，开发者控制</td>
+            <td class="col-dx">完全显式</td>
+            <td class="col-mt">半显式，部分托管</td>
+          </tr>
+          <tr>
+            <td>状态模型</td>
+            <td class="col-gl">全局状态机（Context）</td>
+            <td class="col-vk">对象模型，无全局状态</td>
+            <td class="col-dx">对象模型</td>
+            <td class="col-mt">对象模型</td>
+          </tr>
+          <tr>
+            <td>错误处理</td>
+            <td class="col-gl">运行时（glGetError）</td>
+            <td class="col-vk">验证层（可选）+ 调试回调</td>
+            <td class="col-dx">调试层 + 错误码</td>
+            <td class="col-mt">调试工具集成</td>
+          </tr>
+          <tr>
+            <td>跨平台</td>
+            <td class="col-gl">跨平台（OpenGL ES 移动端）</td>
+            <td class="col-vk">跨平台（PC/Android/Switch）</td>
+            <td class="col-dx">仅 Windows/Xbox</td>
+            <td class="col-mt">仅 Apple 生态</td>
+          </tr>
+          <tr>
+            <td>学习曲线</td>
+            <td class="col-gl">较低，快速上手</td>
+            <td class="col-vk">极高，初始化代码量庞大</td>
+            <td class="col-dx">极高（与 Vulkan 相当）</td>
+            <td class="col-mt">中等，文档友好</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="tab-memory" class="tab-content">
+      <table class="compare-table">
+        <thead>
+          <tr><th>维度</th><th class="col-gl">OpenGL</th><th class="col-vk">Vulkan</th><th class="col-dx">DirectX 12</th><th class="col-mt">Metal</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>内存分配</td><td class="col-gl">驱动自动管理</td><td class="col-vk">vkAllocateMemory + VMA，开发者全权负责</td><td class="col-dx">CreateCommittedResource / CreatePlacedResource</td><td class="col-mt">newBufferWithLength: 自动堆管理</td></tr>
+          <tr><td>内存类型</td><td class="col-gl">STREAM/DYNAMIC/STATIC hint</td><td class="col-vk">显式堆属性（DEVICE_LOCAL / HOST_VISIBLE 等）</td><td class="col-dx">D3D12_HEAP_TYPE（DEFAULT/UPLOAD/READBACK）</td><td class="col-mt">MTLStorageMode（Private/Shared/Managed）</td></tr>
+          <tr><td>纹理上传</td><td class="col-gl">glTexImage2D（驱动内部 Staging）</td><td class="col-vk">手动 Staging Buffer → vkCmdCopyBufferToImage</td><td class="col-dx">UpdateSubresources（内部 Staging）</td><td class="col-mt">blitCommandEncoder copyFromBuffer</td></tr>
+          <tr><td>内存泄漏</td><td class="col-gl">驱动处理，GC 风格</td><td class="col-vk">开发者必须显式 vkFreeMemory，否则泄漏</td><td class="col-dx">COM 引用计数</td><td class="col-mt">ARC 自动管理</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="tab-pipeline" class="tab-content">
+      <table class="compare-table">
+        <thead>
+          <tr><th>维度</th><th class="col-gl">OpenGL</th><th class="col-vk">Vulkan</th><th class="col-dx">DirectX 12</th><th class="col-mt">Metal</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>管线状态</td><td class="col-gl">运行时可随时修改全局状态</td><td class="col-vk">PSO 预编译，不可变对象</td><td class="col-dx">PSO（D3D12_GRAPHICS_PIPELINE_STATE_DESC）</td><td class="col-mt">MTLRenderPipelineState（预编译）</td></tr>
+          <tr><td>状态切换开销</td><td class="col-gl">驱动在 DrawCall 时重新校验状态，开销隐式</td><td class="col-vk">绑定不同 Pipeline 对象，极低开销</td><td class="col-dx">SetPipelineState 开销低</td><td class="col-mt">setRenderPipelineState 开销低</td></tr>
+          <tr><td>着色器格式</td><td class="col-gl">GLSL 源码（运行时编译）</td><td class="col-vk">SPIR-V 二进制（离线编译）</td><td class="col-dx">HLSL → DXBC/DXIL</td><td class="col-mt">MSL / AIR 中间表示</td></tr>
+          <tr><td>着色器变体</td><td class="col-gl">运行时 #define 宏展开</td><td class="col-vk">Specialization Constants（编译期优化）</td><td class="col-dx">类似 SPIR-V</td><td class="col-mt">函数常量（Function Constants）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="tab-sync" class="tab-content">
+      <table class="compare-table">
+        <thead>
+          <tr><th>维度</th><th class="col-gl">OpenGL</th><th class="col-vk">Vulkan</th><th class="col-dx">DirectX 12</th><th class="col-mt">Metal</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CPU-GPU 同步</td><td class="col-gl">glFinish/glFlush（隐式等待）</td><td class="col-vk">Fence（显式，精确等待）</td><td class="col-dx">Fence + Signal/Wait Value</td><td class="col-mt">addCompletedHandler / waitUntilCompleted</td></tr>
+          <tr><td>GPU-GPU 同步</td><td class="col-gl">glTextureBarrier / 驱动自动推断</td><td class="col-vk">Semaphore（队列间）+ Pipeline Barrier（资源状态）</td><td class="col-dx">ResourceBarrier + ExecuteCommandLists 依赖</td><td class="col-mt">MTLFence / MTLEvent</td></tr>
+          <tr><td>资源状态</td><td class="col-gl">驱动自动追踪，开发者不感知</td><td class="col-vk">开发者显式管理 Image Layout + Access Mask</td><td class="col-dx">ResourceBarrier（D3D12_RESOURCE_STATES）</td><td class="col-mt">部分自动（Hazard Tracking）</td></tr>
+          <tr><td>隐患</td><td class="col-gl">驱动过保守，可能插入多余 Stall</td><td class="col-vk">遗漏 Barrier 导致未定义行为，难以调试</td><td class="col-dx">同 Vulkan，但错误提示更友好</td><td class="col-mt">Hazard Tracking 可能有隐式开销</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="tab-threading" class="tab-content">
+      <table class="compare-table">
+        <thead>
+          <tr><th>维度</th><th class="col-gl">OpenGL</th><th class="col-vk">Vulkan</th><th class="col-dx">DirectX 12</th><th class="col-mt">Metal</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>命令录制</td><td class="col-gl">Context 不可多线程共享（除非 ARB_debug_output）</td><td class="col-vk">每线程独立 CommandPool + CommandBuffer，天然线程安全</td><td class="col-dx">CommandAllocator 每线程独立，CommandList 可并行录制</td><td class="col-mt">每线程独立 CommandBuffer 编码器</td></tr>
+          <tr><td>提交线程</td><td class="col-gl">只能从拥有 Context 的线程调用</td><td class="col-vk">vkQueueSubmit 需外部加锁，但录制无锁</td><td class="col-dx">ExecuteCommandLists 需序列化</td><td class="col-mt">commit 需序列化</td></tr>
+          <tr><td>引擎实践</td><td class="col-gl">单渲染线程，Deferred Context（DX11）</td><td class="col-vk">UE Task Graph / Unity Jobs + 多 Worker 并行录制</td><td class="col-dx">同 Vulkan 策略</td><td class="col-mt">同 Vulkan 策略</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="tab-shader" class="tab-content">
+      <table class="compare-table">
+        <thead>
+          <tr><th>维度</th><th class="col-gl">OpenGL</th><th class="col-vk">Vulkan</th><th class="col-dx">DirectX 12</th><th class="col-mt">Metal</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>着色器语言</td><td class="col-gl">GLSL</td><td class="col-vk">SPIR-V（中间语言，源语言不限）</td><td class="col-dx">HLSL → DXBC/DXIL</td><td class="col-mt">MSL（Metal Shading Language）</td></tr>
+          <tr><td>编译时机</td><td class="col-gl">运行时由驱动编译</td><td class="col-vk">离线编译为 SPIR-V，驱动只做最后 ISA 编译</td><td class="col-dx">离线预编译为 DXBC/DXIL</td><td class="col-mt">离线编译为 .metallib</td></tr>
+          <tr><td>引擎工具链</td><td class="col-gl">ShaderLab（Unity）→ GLSL</td><td class="col-vk">HLSL → DXC → SPIR-V（Unity HDRP/UE 均采用）</td><td class="col-dx">HLSL → DXC → DXIL</td><td class="col-mt">HLSL / MSL → xcrun metal</td></tr>
+          <tr><td>反射</td><td class="col-gl">glGetActiveUniform 运行时反射</td><td class="col-vk">SPIRV-Reflect / glslang 离线反射生成绑定表</td><td class="col-dx">D3D Reflection API</td><td class="col-mt">MTLLibrary.newFunctionWithName</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ TIMELINE ═════════════════════════ -->
+<section id="timeline" class="content-section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <div>
+        <h2 class="section-title">图形 API 发展脉络</h2>
+        <p class="section-desc">从 SGI 的 GL 到现代显式 API——四十年的进化史。</p>
+      </div>
+    </div>
+    <div class="hist-timeline">
+      <div class="hist-item">
+        <div class="hist-year">1992</div>
+        <div class="hist-dot"></div>
+        <div class="hist-content">
+          <h4>OpenGL 1.0 (SGI)</h4>
+          <p>Iris GL 的开放版本，固定功能管线，立即渲染模式（glBegin/glEnd），状态机设计，革命性地统一了跨平台图形接口。</p>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">1995</div>
+        <div class="hist-dot"></div>
+        <div class="hist-content">
+          <h4>DirectX 1.0 (Microsoft)</h4>
+          <p>Windows 平台的直接硬件访问接口，Direct3D 的前身。与 OpenGL 形成二十年的竞争格局。</p>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">2004</div>
+        <div class="hist-dot hist-dot-major"></div>
+        <div class="hist-content">
+          <h4>OpenGL 2.0 — 可编程着色器</h4>
+          <p>GLSL 引入，Vertex/Fragment Shader 取代固定管线。GPU 从专用图形硬件走向通用可编程计算平台。</p>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">2008</div>
+        <div class="hist-dot"></div>
+        <div class="hist-content">
+          <h4>OpenGL ES 2.0 / Direct3D 11</h4>
+          <p>移动端可编程着色（OpenGL ES 2.0 成为智能手机 GPU 标准）；DX11 引入 Compute Shader，标志 GPGPU 时代开始。</p>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">2013</div>
+        <div class="hist-dot hist-dot-major"></div>
+        <div class="hist-content">
+          <h4>Mantle (AMD) — 显式 API 先驱</h4>
+          <p>AMD 发布 Mantle，第一个向开发者暴露接近硬件的低级 API。验证了显式控制的性能潜力，直接催生了 Vulkan 和 DX12。</p>
+          <div class="hist-tag">转折点</div>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">2014</div>
+        <div class="hist-dot hist-dot-major"></div>
+        <div class="hist-content">
+          <h4>Metal 1.0 (Apple) / Direct3D 12</h4>
+          <p>Apple 率先发布 Metal，低开销 API 登陆 iOS。Microsoft 同年发布 DX12 预告——显式 API 时代正式开幕。</p>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">2016</div>
+        <div class="hist-dot hist-dot-vk"></div>
+        <div class="hist-content">
+          <h4>🔥 Vulkan 1.0 (Khronos)</h4>
+          <p>Khronos 基于 Mantle 发布 Vulkan 1.0。跨平台、显式、低开销、多线程友好——成为 OpenGL 的现代继承者。同年 UE 4.12、Unity 5.4 开始支持。</p>
+          <div class="hist-tag hist-tag-vk">里程碑</div>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">2018</div>
+        <div class="hist-dot"></div>
+        <div class="hist-content">
+          <h4>Vulkan 1.1 + Ray Tracing 萌芽</h4>
+          <p>子组操作（Subgroup）、多视图渲染（Multiview）；NVIDIA 发布 RTX，DX12 和 Vulkan 扩展开始纳入光线追踪支持。</p>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">2020</div>
+        <div class="hist-dot hist-dot-major"></div>
+        <div class="hist-content">
+          <h4>Vulkan 1.2 + VK_KHR_ray_tracing</h4>
+          <p>Timeline Semaphore（精细化同步）、Buffer Device Address（Bindless 基础）、光线追踪扩展正式转正。UE5 开始 Lumen 全局光照研发，深度依赖 Vulkan 的现代特性。</p>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">2022</div>
+        <div class="hist-dot hist-dot-major"></div>
+        <div class="hist-content">
+          <h4>Vulkan 1.3 + Mesh Shader</h4>
+          <p>Dynamic Rendering（简化 RenderPass 创建）、Mesh/Task Shader 正式标准化。UE5.0 发布，Nanite 和 Lumen 完全基于现代显式 API 特性构建。</p>
+          <div class="hist-tag">当前主流</div>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-year">2024+</div>
+        <div class="hist-dot hist-dot-future"></div>
+        <div class="hist-content">
+          <h4>Vulkan SC / WebGPU 标准化</h4>
+          <p>Vulkan Safety Critical（航空/汽车行业）；WebGPU 成为浏览器中的 Vulkan-like API，将显式 GPU 编程带入 Web 生态。DirectX 12 Agility SDK 持续迭代。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="floating-controls">
+  <a href="/shows/" class="float-btn home-btn" title="回到上级">⌂</a>
+  <button id="backToTopBtn" class="float-btn top-btn" title="回到顶部">↑</button>
+</div>
+
+<!-- ═══════════════════════ FOOTER ════════════════════════════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <span class="logo-badge">VK</span>
+      <span>Vulkan Notes — Advanced Graphics Engineering</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://www.vulkan.org/learn" target="_blank">vulkan.org</a>
+      <a href="https://registry.khronos.org/vulkan/specs/latest/html/" target="_blank">Vulkan Spec</a>
+      <a href="https://github.com/KhronosGroup/Vulkan-Samples" target="_blank">Vulkan Samples</a>
+      <a href="https://gpuopen.com/vulkan-memory-allocator/" target="_blank">VMA</a>
+    </div>
+    <div class="footer-note">参考：Vulkan 1.3 Spec · VulkanTutorial.com · GDC Vault · UE VulkanRHI Source</div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
