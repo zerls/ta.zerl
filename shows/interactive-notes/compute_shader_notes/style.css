@@ -994,8 +994,8 @@ pre code {
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .sidebar {
-    position: fixed;
-    top: auto; bottom: 0; left: 0; right: 0;
+    position: sticky;
+    top: 0; bottom: 0; left: 0; right: 0;
     width: 100%;
     height: auto;
     border-right: none;
@@ -1003,6 +1003,7 @@ pre code {
     padding: 8px 0 env(safe-area-inset-bottom, 0);
     overflow-x: auto;
     overflow-y: hidden;
+    scrollbar-width: none;
   }
 
   .sidebar-title { display: none; }
