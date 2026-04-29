@@ -92,6 +92,9 @@ video {
     border-radius: 4px;
   }
 }
+.highlight>.table-wrapper {
+  margin: 0;
+}
 table {
   border-collapse: collapse;
   border-spacing: 0;
