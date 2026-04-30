@@ -67,7 +67,9 @@
     <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
   
 
-  <meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
 </head>
   <body>
     
@@ -114,7 +116,7 @@
         <div class="post-title">博客扩展语法指南 (MD-Plus)</div>
         
         <div class="post-info">
-          <div class="post-date">发布于2026-04-24 · 更新于2026-04-29
+          <div class="post-date">发布于2026-04-23 · 更新于2026-04-30
             
             
           </div>
@@ -159,7 +161,7 @@
       
         <aside class="toc-outer">
           <div class="toc-title">目录</div>
-          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-高亮块-Highlight-Block"><span class="post-toc-text">1. 高亮块 (Highlight Block)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-状态提示栏-Note"><span class="post-toc-text">2. 状态提示栏 (Note)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-1"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-1"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-代码折叠-Code-Fold"><span class="post-toc-text">3. 代码折叠 (Code Fold)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-2"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-2"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-分栏对比-Split-View"><span class="post-toc-text">4. 分栏对比 (Split View)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-3"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-3"><span class="post-toc-text">效果预览</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#噪声生成算法"><span class="post-toc-text">噪声生成算法</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-无缝图片网格-Grid-Gallery"><span class="post-toc-text">5. 无缝图片网格 (Grid Gallery)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-4"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-4"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#6-交互式图片对比-Compare-Slider"><span class="post-toc-text">6. 交互式图片对比 (Compare Slider)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-5"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-5"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#7-资源链接卡片-Card"><span class="post-toc-text">7. 资源链接卡片 (Card)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-6"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-6"><span class="post-toc-text">效果预览</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#方式-A：使用-Emoji-图标"><span class="post-toc-text">方式 A：使用 Emoji 图标</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#方式-B：使用图片预览-自动识别-URL"><span class="post-toc-text">方式 B：使用图片预览 (自动识别 URL)</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#8-引用注脚与附录"><span class="post-toc-text">8. 引用注脚与附录</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#体积云的-Raymarching-优化"><span class="post-toc-text">体积云的 Raymarching 优化</span></a></li></ol></li></ol></li></ol>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-高亮块-Highlight-Block"><span class="post-toc-text">1. 高亮块 (Highlight Block)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-状态提示栏-Note"><span class="post-toc-text">2. 状态提示栏 (Note)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-1"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-1"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-代码折叠-Code-Fold"><span class="post-toc-text">3. 代码折叠 (Code Fold)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-2"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-2"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-分栏对比-Split-View"><span class="post-toc-text">4. 分栏对比 (Split View)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-3"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-3"><span class="post-toc-text">效果预览</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#噪声生成算法"><span class="post-toc-text">噪声生成算法</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-无缝图片网格-Grid-Gallery"><span class="post-toc-text">5. 无缝图片网格 (Grid Gallery)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-4"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-4"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#6-交互式图片对比-Compare-Slider"><span class="post-toc-text">6. 交互式图片对比 (Compare Slider)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-5"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-5"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#7-资源链接卡片-Card"><span class="post-toc-text">7. 资源链接卡片 (Card)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-6"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-6"><span class="post-toc-text">效果预览</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#方式-A：使用-Emoji-图标"><span class="post-toc-text">方式 A：使用 Emoji 图标</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#方式-B：使用图片预览-自动识别-URL"><span class="post-toc-text">方式 B：使用图片预览 (自动识别 URL)</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#8-引用注脚与附录"><span class="post-toc-text">8. 引用注脚与附录</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#体积云的-Raymarching-优化"><span class="post-toc-text">体积云的 Raymarching 优化</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#9-图片说明-Figure-Caption"><span class="post-toc-text">9. 图片说明 (Figure Caption)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-7"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-7"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#10-表格底部注释-Table-Footnote"><span class="post-toc-text">10. 表格底部注释 (Table Footnote)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-8"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-8"><span class="post-toc-text">效果预览</span></a></li></ol></li></ol></li></ol>
         </aside>
       
 
@@ -301,6 +303,46 @@
 <li><a target="_blank" rel="noopener" href="https://docs.unity3d.com/">Unity URP 官方文档 - GPU Instancing 最佳实践</a></li>
 <li>本文涉及的完整 Houdini HDA 测试工程已上传至 <a href="#">GitHub</a>。</li>
 </ol></div>
+          </div>
+
+<hr>
+<h2 id="9-图片说明-Figure-Caption"><a href="#9-图片说明-Figure-Caption" class="headerlink" title="9. 图片说明 (Figure Caption)"></a>9. 图片说明 (Figure Caption)</h2><p><strong>用途</strong>：为图片&#x2F;图表添加学术期刊风格的底部说明，支持编号、斜体、代码等 Markdown 语法。</p>
+<h3 id="语法-7"><a href="#语法-7" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">![图片](url)<br>&#123;% figcap 1 %&#125;<br>球谐函数（Spherical Harmonics）前三阶基函数的空间分布可视化。<br>&#123;% endfigcap %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-7"><a href="#效果预览-7" class="headerlink" title="效果预览"></a>效果预览</h3><p><img style="max-width: 800px;" src="https://bu.dusays.com/2026/04/23/69e9f5af1695e.png"></p>
+<figure class="md-figcap">
+            <figcaption class="md-figcap-content">
+              <strong>Fig 1.</strong> <p>球谐函数（Spherical Harmonics）前三阶基函数的空间分布可视化。</p>
+
+            </figcaption>
+          </figure>
+
+<hr>
+<h2 id="10-表格底部注释-Table-Footnote"><a href="#10-表格底部注释-Table-Footnote" class="headerlink" title="10. 表格底部注释 (Table Footnote)"></a>10. 表格底部注释 (Table Footnote)</h2><p><strong>用途</strong>：为表格添加 IEEE 风格的底部说明，支持上标引用、换行、斜体等格式。</p>
+<h3 id="语法-8"><a href="#语法-8" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">| GPU | RT&lt;sup&gt;a&lt;/sup&gt; | FPS&lt;sup&gt;b&lt;/sup&gt; |<br>|-----|----------------|-----------------|<br>| A17 Pro | ✓ | 58 |<br>| Snapdragon 8 Gen 3 | ✓ | 62 |<br><br>&#123;% tablefn %&#125;<br>*Note:* 本表数据基于 2024 年移动端芯片性能测试基准。<br>&lt;sup&gt;a&lt;/sup&gt; RT (Ray Tracing) 指硬件光线追踪；&lt;sup&gt;b&lt;/sup&gt; 帧率数据为开启全局光照后的平均表现。<br>&#123;% endtablefn %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-8"><a href="#效果预览-8" class="headerlink" title="效果预览"></a>效果预览</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>GPU</th>
+<th>RT<sup>a</sup></th>
+<th>FPS<sup>b</sup></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A17 Pro</td>
+<td>✓</td>
+<td>58</td>
+</tr>
+<tr>
+<td>Snapdragon 8 Gen 3</td>
+<td>✓</td>
+<td>62</td>
+</tr>
+</tbody></table></div>
+<div class="md-tablefn">
+            <div class="md-tablefn-content"><p><em>Note:</em> 本表数据基于 2024 年移动端芯片性能测试基准。<br><sup>a</sup> RT (Ray Tracing) 指硬件光线追踪；<sup>b</sup> 帧率数据为开启全局光照后的平均表现。</p>
+</div>
           </div>
       </div>
       

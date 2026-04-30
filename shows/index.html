@@ -64,7 +64,9 @@
     
   <link rel="stylesheet" href="/css/shows.css" />
 
-  <meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
 </head>
   <body>
     
@@ -191,18 +193,9 @@
 </div>
   </div>
 </a>
-<!-- <a class="show-card show-card--page" href="/cg" >
-  
-  <div class="show-card__inner">
-    <div class="show-card__head">
-      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
-      <span class="show-card__title">体积云实时渲染</span>
-      
-    </div>
-    <div class="show-card__body"><p>基于 Raymarching 的体积云实现。使用 Worley + Perlin 多层噪声构建云密度场，引入 Beer-Lambert 透射与 Henyey-Greenstein 相位函数，配合时域抖动降低采样数。</p>
-</div>
-  </div>
-</a> -->
+<!-- {% show type="page" title="体积云实时渲染" url="/cg" %}
+基于 Raymarching 的体积云实现。使用 Worley + Perlin 多层噪声构建云密度场，引入 Beer-Lambert 透射与 Henyey-Greenstein 相位函数，配合时域抖动降低采样数。
+{% endshow %} -->
 
 <a class="show-card show-card--page" href="/shows/interactive-notes/compute_shader_notes" >
   <div class="show-card__cover" style="background-image:url('https://cdn.jsdelivr.net/gh/latias94/blog-images@main/top/frankorz/blog/imgscompute-shader-cover.jpg')"></div>
@@ -260,31 +253,13 @@
 
 <!-- ## 视频
 
-<a class="show-card show-card--video" href="https://www.bilibili.com" target="_blank" rel="noopener">
-  <div class="show-card__cover" style="background-image:url('/images/bg2.jpg')"></div>
-  <div class="show-card__inner">
-    <div class="show-card__head">
-      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
-      <span class="show-card__title">体积云渲染效果展示<svg class="show-card__ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
-      
-    </div>
-    <div class="show-card__body"><p>演示体积云在不同时段（日出、正午、黄昏）的光照变化，以及与地形阴影的交互效果。帧率锁定 60fps，分辨率 1440p。</p>
-</div>
-  </div>
-</a>
+{% show type="video" title="体积云渲染效果展示" url="https://www.bilibili.com" cover="/images/bg2.jpg" %}
+演示体积云在不同时段（日出、正午、黄昏）的光照变化，以及与地形阴影的交互效果。帧率锁定 60fps，分辨率 1440p。
+{% endshow %}
 
-<a class="show-card show-card--video" href="https://www.bilibili.com" target="_blank" rel="noopener">
-  
-  <div class="show-card__inner">
-    <div class="show-card__head">
-      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
-      <span class="show-card__title">GPU 驱动草地 — 10 万草叶实测<svg class="show-card__ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
-      
-    </div>
-    <div class="show-card__body"><p>在移动摄像机场景下，GPU Culling 草地系统的实际运行效果，包含风场驱动的动态弯曲与 LOD 切换。</p>
-</div>
-  </div>
-</a> -->
+{% show type="video" title="GPU 驱动草地 — 10 万草叶实测" url="https://www.bilibili.com" %}
+在移动摄像机场景下，GPU Culling 草地系统的实际运行效果，包含风场驱动的动态弯曲与 LOD 切换。
+{% endshow %} -->
 
 <h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><a class="show-card show-card--link" href="https://pbr-book.org" target="_blank" rel="noopener">
   

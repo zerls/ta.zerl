@@ -481,7 +481,6 @@
 }
 .md-ref-content .md-ref-item .md-ref-id {
   flex-shrink: 0;
-  width: 28px;
   color: #8e8a84;
   font-weight: 500;
   font-family: consolas, Menlo, "Fira Code", monospace;
@@ -504,6 +503,85 @@
 }
 .md-ref-content .md-ref-item:target {
   animation: refFlash 1.5s ease-out forwards;
+}
+.md-figcap {
+  margin: 16px auto;
+  text-align: center;
+  max-width: 100%;
+}
+.md-figcap .md-figcap-content {
+  font-size: 13px;
+  color: #5c5c5c;
+  margin-top: 10px;
+  font-family: 'Times New Roman', Times, sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  line-height: 1.5;
+  text-align: center;
+}
+.md-figcap .md-figcap-content strong {
+  font-weight: 600;
+  color: #393633;
+}
+.md-figcap .md-figcap-content p {
+  color: #5c5c5c;
+  font-size: 13px;
+  display: inline;
+  margin: 0;
+}
+.md-figcap .md-figcap-content em,
+.md-figcap .md-figcap-content i {
+  font-style: italic;
+}
+.md-figcap .md-figcap-content code {
+  font-family: consolas, Menlo, "Fira Code", monospace;
+  font-size: 12px;
+  background-color: rgba(26,75,117,0.08);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.md-tablefn {
+  width: 100%;
+  max-width: 800px;
+}
+.md-tablefn .md-tablefn-content {
+  font-size: 12px;
+  color: #777;
+  margin-top: 8px;
+  text-align: left;
+  line-height: 1.6;
+  border-top: 1px solid #e1e4e8;
+  padding-top: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.md-tablefn .md-tablefn-content em {
+  font-style: italic;
+  color: #666;
+}
+.md-tablefn .md-tablefn-content sup {
+  font-size: 0.85em;
+  vertical-align: super;
+  color: #1a4b75;
+  margin: 0 1px;
+}
+.md-tablefn .md-tablefn-content p {
+  color: #777;
+  font-size: clamp(8px, 2vw, 12px);
+  margin: 4px 0;
+}
+.md-tablefn .md-tablefn-content p:first-child {
+  margin-top: 0;
+}
+.md-tablefn .md-tablefn-content p:last-child {
+  margin-bottom: 0;
+}
+.md-tablefn .md-tablefn-content br {
+  line-height: 1.6;
+}
+.md-tablefn .md-tablefn-content code {
+  font-family: consolas, Menlo, "Fira Code", monospace;
+  font-size: 11px;
+  background-color: rgba(214,214,210,0.5);
+  padding: 1px 3px;
+  border-radius: 2px;
 }
 @-moz-keyframes refFlash {
   0% {
