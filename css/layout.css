@@ -818,6 +818,38 @@ mjx-container:not([display="true"]) {
   color: #e03636; /* 悬浮变为亮眼的朱砂红 */
   transform: translateY(-2px); /* 极其细微的物理上浮反馈 */
 }
+.foot-social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 0 16px;
+}
+.foot-social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f8f8f6;
+  border: 1px solid #e3e3e0;
+  color: #8e8a84;
+  font-size: 16px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+.foot-social-icon:hover {
+  color: #e03636;
+  border-color: #e03636;
+  background-color: #f0f2f5;
+  transform: translateY(-3px);
+  border: 1px dashed rgba(224,54,54,0.8);
+  box-shadow: 0 6px 20px rgba(224,54,54,0.15);
+}
+.foot-social-icon i {
+  line-height: 1;
+}
 .copyright {
   border-top: 1px solid rgba(227,227,224,0.5); /* 微弱的分界线 */
   padding-top: 20px;

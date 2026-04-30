@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <author>
+    <name>Zerl</name>
+  </author>
+  <generator uri="https://hexo.io/">Hexo</generator>
+  <id>https://ta.zerl.top/</id>
+  <link href="https://ta.zerl.top/" rel="alternate"/>
+  <link href="https://ta.zerl.top/atom.xml" rel="self"/>
+  <rights>All rights reserved 2026, Zerl</rights>
+  <subtitle>Hello World</subtitle>
+  <title>Zerl'TA Blog</title>
+  <updated>2026-04-26T17:30:24.764Z</updated>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="Note" scheme="https://ta.zerl.top/categories/Note/"/>
+    <category term="Golang" scheme="https://ta.zerl.top/tags/Golang/"/>
+    <id>https://ta.zerl.top/2026/04/27/Golang%E4%B8%AD%E7%9A%84%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/</id>
+    <link href="https://ta.zerl.top/2026/04/27/Golang%E4%B8%AD%E7%9A%84%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/"/>
+    <published>2026-04-26T17:19:19.420Z</published>
+    <summary>
+      <![CDATA[<p>在 Go 语言中，传统面向对象编程（OOP）的核心概念——类、继承——被重新诠释，以更简洁、更符合 Go 哲学的方式实现。本文详细介绍如何在 Go 中实现<strong>封装、继承、多态与抽象</strong>四大特性。</p>]]>
+    </summary>
+    <title>Golang中的面对对象编程</title>
+    <updated>2026-04-26T17:30:24.764Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="Note" scheme="https://ta.zerl.top/categories/Note/"/>
+    <category term="md" scheme="https://ta.zerl.top/tags/md/"/>
+    <id>https://ta.zerl.top/2026/04/24/md-plus-docs/</id>
+    <link href="https://ta.zerl.top/2026/04/24/md-plus-docs/"/>
+    <published>2026-04-23T18:51:43.217Z</published>
+    <summary>
+      <![CDATA[<p>为了更好地呈现博客相关的图文、代码与节点逻辑，笔者深度定制了一套基于 Hexo 的 Markdown 扩展语法（MD-Plus）。</p>]]>
+    </summary>
+    <title>博客扩展语法指南 (MD-Plus)</title>
+    <updated>2026-04-28T17:21:48.468Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="水体" scheme="https://ta.zerl.top/tags/%E6%B0%B4%E4%BD%93/"/>
+    <id>https://ta.zerl.top/2026/04/18/%E6%B0%B4%E4%BD%93%E4%BA%A4%E4%BA%92/</id>
+    <link href="https://ta.zerl.top/2026/04/18/%E6%B0%B4%E4%BD%93%E4%BA%A4%E4%BA%92/"/>
+    <published>2026-04-17T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>水体交互是游戏与实时渲染中极具表现力的视觉效果之一，也是流体模拟领域长期研究的核心课题。从技术实现的角度看，它横跨<strong>物理建模<]]>
+    </summary>
+    <title>水体交互</title>
+    <updated>2026-04-20T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
+    <category term="地形" scheme="https://ta.zerl.top/tags/%E5%9C%B0%E5%BD%A2/"/>
+    <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
+    <id>https://ta.zerl.top/2026/03/20/GPUDrivenTerrain/</id>
+    <link href="https://ta.zerl.top/2026/03/20/GPUDrivenTerrain/"/>
+    <published>2026-03-19T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<a href="https://www.yuque.com/yuqueyonghunx6wfo/ruvi97/hl962dmdyzfid4ad?singleDoc#" class="md-card" target="_blank" rel="noopener noreferre]]>
+    </summary>
+    <title>GPUDrivenTerrain</title>
+    <updated>2026-03-30T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="体积渲染" scheme="https://ta.zerl.top/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/"/>
+    <category term="RayMarching" scheme="https://ta.zerl.top/tags/RayMarching/"/>
+    <id>https://ta.zerl.top/2026/03/15/%E4%BD%93%E7%A7%AF%E4%BA%91%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93%E8%A7%A3%E6%9E%90/</id>
+    <link href="https://ta.zerl.top/2026/03/15/%E4%BD%93%E7%A7%AF%E4%BA%91%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93%E8%A7%A3%E6%9E%90/"/>
+    <published>2026-03-14T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>笔者 3 月份参考不同体积云项目和各种论文实现了一套基于物理的体积云 Unity URP渲染系统，现在就一些核心实现进行梳理，理论细节见下述链接。</p>
+<p><a href="https://www.yuque.com/yuqueyonghunx6wfo/ruvi97/]]>
+    </summary>
+    <title>体积云实时渲染解析</title>
+    <updated>2026-03-14T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
+    <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
+    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <id>https://ta.zerl.top/2025/12/13/ReSTIR_Notes/</id>
+    <link href="https://ta.zerl.top/2025/12/13/ReSTIR_Notes/"/>
+    <published>2025-12-12T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="引-为什么要学-ReSTIR？"><a href="#引-为什么要学-ReSTIR？" class="headerlink" title="引:为什么要学 ReSTIR？"></a>引:为什么要学 ReSTIR？</h2><blockquote>
+<p>如果说 1]]>
+    </summary>
+    <title>从 RIS 到 ReSTIR GI / PT</title>
+    <updated>2026-04-29T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
+    <category term="探针" scheme="https://ta.zerl.top/tags/%E6%8E%A2%E9%92%88/"/>
+    <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
+    <id>https://ta.zerl.top/2025/12/11/DDGI_Notes/</id>
+    <link href="https://ta.zerl.top/2025/12/11/DDGI_Notes/"/>
+    <published>2025-12-10T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<span id="more"></span>
+
+<h2 id="引：为什么要学-DDGI？"><a href="#引：为什么要学-DDGI？" class="headerlink" title="引：为什么要学 DDGI？"></a>引：为什么要学 DDGI？</h2><blo]]>
+    </summary>
+    <title>DDGI</title>
+    <updated>2026-04-25T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <id>https://ta.zerl.top/2025/12/06/PRTGI/</id>
+    <link href="https://ta.zerl.top/2025/12/06/PRTGI/"/>
+    <published>2025-12-05T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="引"><a href="#引" class="headerlink" title="引"></a>引</h2><p><font style="color:rgb(25, 27, 31);">实时全局光照是计算机图形学领域的终极问题之一，是渲染高质量、高保真画面的不]]>
+    </summary>
+    <title>PRTGI</title>
+    <updated>2025-12-06T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="Denoise" scheme="https://ta.zerl.top/tags/Denoise/"/>
+    <id>https://ta.zerl.top/2025/11/19/%E9%99%8D%E5%99%AA/</id>
+    <link href="https://ta.zerl.top/2025/11/19/%E9%99%8D%E5%99%AA/"/>
+    <published>2025-11-18T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<blockquote>
+<p><strong>覆盖</strong>：空间滤波 · 时域抗锯齿 · 学习型降噪 · 离线渲染降噪<br><strong>参考课程</strong>：GAMES202 实时高质量渲染</p>
+</blockquote>
+<hr>
+<h2 id="1]]>
+    </summary>
+    <title>降噪</title>
+    <updated>2025-11-18T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="体积渲染" scheme="https://ta.zerl.top/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/"/>
+    <category term="RayMarching" scheme="https://ta.zerl.top/tags/RayMarching/"/>
+    <category term="Compute" scheme="https://ta.zerl.top/tags/Compute/"/>
+    <id>https://ta.zerl.top/2025/10/25/%E5%A4%A7%E6%B0%94%E6%95%A3%E5%B0%84%E6%B8%B2%E6%9F%93%E5%AE%9E%E6%88%98/</id>
+    <link href="https://ta.zerl.top/2025/10/25/%E5%A4%A7%E6%B0%94%E6%95%A3%E5%B0%84%E6%B8%B2%E6%9F%93%E5%AE%9E%E6%88%98/"/>
+    <published>2025-10-24T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="一-、综述"><a href="#一-、综述" class="headerlink" title="一 、综述"></a>一 、综述</h2><p>大气散射是对现实世界大气现象的描述，其影响包括不限于白天和傍晚天际线的大气颜色变化，丁达尔现象的产生，人眼对于地球大]]>
+    </summary>
+    <title>大气散射渲染实战</title>
+    <updated>2025-10-30T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
+    <category term="Field" scheme="https://ta.zerl.top/tags/Field/"/>
+    <id>https://ta.zerl.top/2025/10/19/%E9%A3%8E%E5%9C%BA/</id>
+    <link href="https://ta.zerl.top/2025/10/19/%E9%A3%8E%E5%9C%BA/"/>
+    <published>2025-10-18T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p> 参考战神的风场设计思路在 URP 管线下实现了一套风场系统,并依据现在的 Compute 管线特点进行了设计调整，同时增加了对流体涡旋的模拟，下面就这套系统进行具体的介绍。</p>
+<h2 id="1-核心架构与管线设计"><a href="#1-核心架构与管线设计" c]]>
+    </summary>
+    <title>风场</title>
+    <updated>2026-03-14T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
+    <category term="Mesh" scheme="https://ta.zerl.top/tags/Mesh/"/>
+    <category term="Grass" scheme="https://ta.zerl.top/tags/Grass/"/>
+    <id>https://ta.zerl.top/2025/09/20/%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93/</id>
+    <link href="https://ta.zerl.top/2025/09/20/%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93/"/>
+    <published>2025-09-19T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>运行一个计算着色器：计算着色器的每个线程计算一片草叶。首先，计算一个位置：叶片均匀分布在地形上，略有抖动。我们通过对该位置进行截锥体和距离剔]]>
+    </summary>
+    <title>大规模草地渲染</title>
+    <updated>2026-03-09T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="半透明对象渲染" scheme="https://ta.zerl.top/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E5%AF%B9%E8%B1%A1%E6%B8%B2%E6%9F%93/"/>
+    <id>https://ta.zerl.top/2025/08/18/WBOIT/</id>
+    <link href="https://ta.zerl.top/2025/08/18/WBOIT/"/>
+    <published>2025-08-17T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="一、研究背景与核心问题"><a href="#一、研究背景与核心问题" class="headerlink" title="一、研究背景与核心问题"></a>一、研究背景与核心问题</h2><p>在计算机图形学里，<strong>半透明对象渲染</strong>一]]>
+    </summary>
+    <title>WBOIT</title>
+    <updated>2025-11-07T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="Note" scheme="https://ta.zerl.top/categories/Note/"/>
+    <category term="md" scheme="https://ta.zerl.top/tags/md/"/>
+    <id>https://ta.zerl.top/2025/08/01/hello-world/</id>
+    <link href="https://ta.zerl.top/2025/08/01/hello-world/"/>
+    <published>2025-08-01T15:56:41.829Z</published>
+    <summary>
+      <![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>]]>
+    </summary>
+    <title>Hello World</title>
+    <updated>2026-04-26T17:53:24.759Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="Note" scheme="https://ta.zerl.top/categories/Note/"/>
+    <category term="摄影" scheme="https://ta.zerl.top/tags/%E6%91%84%E5%BD%B1/"/>
+    <id>https://ta.zerl.top/2025/07/11/%E6%91%84%E5%BD%B1%E7%9A%84%E5%AE%9E%E7%94%A8%E6%80%A7%E4%B8%8E%E8%89%BA%E6%9C%AF%E6%80%A7%E6%BC%AB%E8%B0%88_%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0%E3%80%8C%E5%8C%97%E4%BA%AC%E5%B7%A5%E4%B8%9A%E5%A4%A7%E5%AD%A6%E3%80%8D/</id>
+    <link href="https://ta.zerl.top/2025/07/11/%E6%91%84%E5%BD%B1%E7%9A%84%E5%AE%9E%E7%94%A8%E6%80%A7%E4%B8%8E%E8%89%BA%E6%9C%AF%E6%80%A7%E6%BC%AB%E8%B0%88_%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0%E3%80%8C%E5%8C%97%E4%BA%AC%E5%B7%A5%E4%B8%9A%E5%A4%A7%E5%AD%A6%E3%80%8D/"/>
+    <published>2025-07-10T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h1 id="1-摄影的视觉意义"><a href="#1-摄影的视觉意义" class="headerlink" title="1. 摄影的视觉意义"></a>1. 摄影的视觉意义</h1><h2 id="摄影的定义："><a href="#摄影的定义：" class="he]]>
+    </summary>
+    <title>摄影的实用性与艺术性漫谈</title>
+    <updated>2025-07-10T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="水体" scheme="https://ta.zerl.top/tags/%E6%B0%B4%E4%BD%93/"/>
+    <id>https://ta.zerl.top/2025/03/15/%E6%B0%B4%E4%BD%93%E6%B8%B2%E6%9F%93/</id>
+    <link href="https://ta.zerl.top/2025/03/15/%E6%B0%B4%E4%BD%93%E6%B8%B2%E6%9F%93/"/>
+    <published>2025-03-14T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<!-- > TODO 细节编码有待完善 -->
+
+
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>真实感水体的渲染是一个跨越几何学与光学的复合系统，而卡通化的水体则是在真实感水体基础进]]>
+    </summary>
+    <title>水体渲染</title>
+    <updated>2026-04-10T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="RenderPipline" scheme="https://ta.zerl.top/tags/RenderPipline/"/>
+    <id>https://ta.zerl.top/2025/01/15/%E7%8E%B0%E4%BB%A3%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%9E%B6%E6%9E%84/</id>
+    <link href="https://ta.zerl.top/2025/01/15/%E7%8E%B0%E4%BB%A3%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%9E%B6%E6%9E%84/"/>
+    <published>2025-01-14T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>在现代 GPU 架构下，渲染管线的演进本质上是 <strong>“权衡顶点处理（Draw Call / 几何提交）、片元算力（ALU）与显存带宽（Bandwidth）三者关系”</strong> 的历史。</p>]]>
+    </summary>
+    <title>现代渲染管线架构</title>
+    <updated>2025-03-09T16:00:00.000Z</updated>
+  </entry>
+</feed>
