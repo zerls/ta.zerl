@@ -101,7 +101,7 @@ table {
 }
 @media screen and (max-width: 768px) {
   table {
-    min-width: 600px;
+    min-width: 400px;
   }
 }
 caption,
@@ -117,7 +117,6 @@ th {
   td,
   th {
     white-space: normal;
-    min-width: 80px;
   }
 }
 caption {
