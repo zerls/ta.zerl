@@ -61,9 +61,9 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="地形" scheme="https://ta.zerl.top/tags/%E5%9C%B0%E5%BD%A2/"/>
-    <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
+    <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
+    <category term="地形" scheme="https://ta.zerl.top/tags/%E5%9C%B0%E5%BD%A2/"/>
     <id>https://ta.zerl.top/2026/03/20/GPUDrivenTerrain/</id>
     <link href="https://ta.zerl.top/2026/03/20/GPUDrivenTerrain/"/>
     <published>2026-03-19T16:00:00.000Z</published>
@@ -98,9 +98,9 @@
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
-    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="UE5 Lumen" scheme="https://ta.zerl.top/tags/UE5-Lumen/"/>
     <category term="Unity APV" scheme="https://ta.zerl.top/tags/Unity-APV/"/>
+    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="渲染管线" scheme="https://ta.zerl.top/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/"/>
     <id>https://ta.zerl.top/2026/01/08/modern-gi-techniques/</id>
     <link href="https://ta.zerl.top/2026/01/08/modern-gi-techniques/"/>
@@ -119,12 +119,12 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
-    <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
+    <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <id>https://ta.zerl.top/2025/12/13/ReSTIR_Notes/</id>
     <link href="https://ta.zerl.top/2025/12/13/ReSTIR_Notes/"/>
     <published>2025-12-12T16:00:00.000Z</published>
@@ -140,11 +140,11 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
     <category term="探针" scheme="https://ta.zerl.top/tags/%E6%8E%A2%E9%92%88/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <id>https://ta.zerl.top/2025/12/11/DDGI_Notes/</id>
     <link href="https://ta.zerl.top/2025/12/11/DDGI_Notes/"/>
     <published>2025-12-10T16:00:00.000Z</published>
@@ -235,8 +235,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
     <category term="Mesh" scheme="https://ta.zerl.top/tags/Mesh/"/>
+    <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
     <category term="Grass" scheme="https://ta.zerl.top/tags/Grass/"/>
     <id>https://ta.zerl.top/2025/09/20/%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93/</id>
     <link href="https://ta.zerl.top/2025/09/20/%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93/"/>
