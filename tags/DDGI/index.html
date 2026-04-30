@@ -124,7 +124,7 @@
     </div>
     <div class="post__foot">
       <div class="post-tags">
-  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" class="post-tag">#全局光照</a><a href="/tags/DDGI/" class="post-tag">#DDGI</a><a href="/tags/UE5-Lumen/" class="post-tag">#UE5 Lumen</a><a href="/tags/Unity-APV/" class="post-tag">#Unity APV</a><a href="/tags/ReSTIR/" class="post-tag">#ReSTIR</a><a href="/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/" class="post-tag">#渲染管线</a>
+  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" class="post-tag">#全局光照</a><a href="/tags/DDGI/" class="post-tag">#DDGI</a><a href="/tags/ReSTIR/" class="post-tag">#ReSTIR</a><a href="/tags/UE5-Lumen/" class="post-tag">#UE5 Lumen</a><a href="/tags/Unity-APV/" class="post-tag">#Unity APV</a><a href="/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/" class="post-tag">#渲染管线</a>
 
 </div>
     </div>
@@ -133,7 +133,7 @@
   
   <div class="post-card">
     <div class="post__head">
-      <a href="/2025/12/11/DDGI_Notes/" class="post-title hover-line">DDGI</a>
+      <a href="/2025/12/11/DDGI_Notes/" class="post-title hover-line">DDGI「动态漫反射全局光照」：架构与工程概览</a>
       
     </div>
     <div class="post__body">
@@ -142,7 +142,7 @@
            class="post-cover"
            style="background-image: url(https://morgan3d.github.io/articles/2019-04-01-ddgi/x1-01-ddgi.jpg)"></a>
       
-      <div class="post-excerpt">漫反射 GI 的本质特征：低频、空间相关性强、在合理网格密度下采样无明显走样。这意味着我们**不需要为每个像素独立追踪光线**——把场景中放置一组光照探针，每个探针缓存"全方向的入射辐照度"，着色时插值即可。</div>
+      <div class="post-excerpt">漫反射 GI 的本质特征在于其低频性与强空间相关性。在合理的网格密度下，采样通常不会产生明显的走样。这意味着我们无需为每个像素独立追踪光线。DDGI 的核心思想是在场景中放置一组动态光照探针（Probes），每个探针缓存全方向的入射辐照度，并在着色阶段通过空间插值还原间接光照。</div>
     </div>
     <div class="post__foot">
       <div class="post-tags">
