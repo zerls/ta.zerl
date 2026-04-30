@@ -69,7 +69,8 @@
 
   <!-- hexo injector head_end start -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+<style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
 
@@ -181,8 +182,7 @@ mjx-container[display="true"] {
 mjx-container[display="true"] + br {
   display: none;
 }
-</style><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
-</head>
+</style></head>
   <body>
     
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
@@ -1020,7 +1020,20 @@ mjx-container[display="true"] + br {
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
     const key = new THREE.DirectionalLight(0xffffff, 0.8); key.position.set(5,5,5); scene.add(key);
     
-    function tick(){ requestAnimationFrame(tick); controls.update(); renderer.render(scene, camera); }
+    // 引入按需渲染 (Intersection Observer)
+    let isVisible = false;
+    const observer = new IntersectionObserver((entries) => {
+      isVisible = entries[0].isIntersecting;
+    }, { threshold: 0.01 });
+    observer.observe(container);
+
+    function tick(){ 
+      requestAnimationFrame(tick); 
+      if (isVisible) {
+        controls.update(); 
+        renderer.render(scene, camera); 
+      }
+    }
     tick();
     
     window.addEventListener('resize', () => {
@@ -1084,7 +1097,20 @@ mjx-container[display="true"] + br {
     }
     [slX, slY, slZ].forEach(el => el.addEventListener('input', update)); update();
 
-    function tick(){ requestAnimationFrame(tick); controls.update(); renderer.render(scene, camera); }
+    // 引入按需渲染 (Intersection Observer)
+    let isVisible = false;
+    const observer = new IntersectionObserver((entries) => {
+      isVisible = entries[0].isIntersecting;
+    }, { threshold: 0.01 });
+    observer.observe(container);
+
+    function tick(){ 
+      requestAnimationFrame(tick); 
+      if (isVisible) {
+        controls.update(); 
+        renderer.render(scene, camera); 
+      }
+    }
     tick();
   }
   if (document.readyState === 'complete') initTrilinearViewer(); else window.addEventListener('load', initTrilinearViewer);
@@ -1195,11 +1221,23 @@ mjx-container[display="true"] + br {
       ctx.fillStyle = '#ffaa44';
       ctx.beginPath(); ctx.arc(xD, yD, 6, 0, Math.PI*2); ctx.fill();
       
-      // 测点数值背景与文字 (适配白底，用深色字)
-      ctx.fillStyle = '#333';
-      ctx.font = 'bold 12px monospace';
+      // 视觉防抖处理：固定字符宽度 + 增加底衬
+      const textD = testD.toFixed(0).padStart(3, ' ');
+      const textP = pD.toFixed(3);
+      const displayText = `d=${textD}, P=${textP}`;
+      
+      const textX = xD > W - 150 ? xD - 155 : xD + 12;
+      const textY = yD - 8;
+
+      ctx.fillStyle = 'rgba(40, 44, 52, 0.85)';
+      ctx.beginPath();
+      ctx.roundRect(textX - 6, textY - 14, 145, 22, 4);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px "Courier New", Courier, monospace';
       ctx.textAlign = 'left';
-      ctx.fillText(`d=${testD.toFixed(0)}, P=${pD.toFixed(3)}`, xD+10, yD-10);
+      ctx.fillText(displayText, textX, textY + 2);
     }
 
     muSlider.addEventListener('input', draw);
@@ -1210,7 +1248,6 @@ mjx-container[display="true"] + br {
   if (document.readyState === 'complete') initCheby(); else window.addEventListener('load', initCheby);
 })();
 </script>
-
 
 
       </div>
@@ -1277,7 +1314,7 @@ mjx-container[display="true"] + br {
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/2025/12/13/ReSTIR_Notes/" title="ReSTIRGI：从 RIS 到 ReSTIR GI / PT" rel="bookmark">ReSTIRGI：从 RIS 到 ReSTIR GI / PT</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/20/GPUDrivenTerrain/" title="GPUDrivenTerrain" rel="bookmark">GPUDrivenTerrain</a></div></div><div class="null-item"><div class="null-title"><a href="/2025/12/11/DDGI_Notes/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark">DDGI「动态漫反射全局光照」：架构与工程概览</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2025/12/13/ReSTIR_Notes/" title="ReSTIRGI：从 RIS 到 ReSTIR GI / PT" rel="bookmark">ReSTIRGI：从 RIS 到 ReSTIR GI / PT</a></div></div><div class="null-item"><div class="null-title"><a href="/2025/08/18/WBOIT/" title="WBOIT" rel="bookmark">WBOIT</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/20/GPUDrivenTerrain/" title="GPUDrivenTerrain" rel="bookmark">GPUDrivenTerrain</a></div></div></div>
     
   </div>
 </div>
