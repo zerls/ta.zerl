@@ -230,6 +230,9 @@ figure.highlight pre {
   margin: 0;
   padding: 10px 0;
 }
+figure.highlight.text {
+  display: block;
+}
 figure.highlight {
   background-color: #f7f7f7;
 }
