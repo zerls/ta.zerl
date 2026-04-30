@@ -120,9 +120,9 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
     <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <id>https://ta.zerl.top/2025/12/13/ReSTIR_Notes/</id>

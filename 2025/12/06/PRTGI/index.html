@@ -556,103 +556,6 @@ mjx-container[display="true"] + br {
   </div>
 </div>
 
-<script type="module">
-  import * as THREE from 'three';
-  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-  function initSHViewer(){
-    const container = document.getElementById('sh-viewer');
-    if(!container || container.dataset.inited) return;
-    container.dataset.inited = '1';
-    
-    const w = container.clientWidth, h = container.clientHeight;
-    const scene = new THREE.Scene();
-    
-    const camera = new THREE.PerspectiveCamera(45, w/h, 0.1, 100);
-    camera.position.set(0, 0, 12);
-    
-    const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
-    renderer.setSize(w, h);
-    renderer.setClearColor(0x000000, 0); 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
-    
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 0.8;
-    
-    function shBasis(l, m, theta, phi){
-      const s = Math.sin(theta), c = Math.cos(theta);
-      if(l===0) return 0.282095;
-      if(l===1 && m===-1) return 0.488603 * s * Math.sin(phi);
-      if(l===1 && m=== 0) return 0.488603 * c;
-      if(l===1 && m=== 1) return 0.488603 * s * Math.cos(phi);
-      if(l===2 && m===-2) return 1.092548 * s*s * Math.sin(2*phi);
-      if(l===2 && m===-1) return 1.092548 * s*c * Math.sin(phi);
-      if(l===2 && m=== 0) return 0.315392 * (3*c*c - 1);
-      if(l===2 && m=== 1) return 1.092548 * s*c * Math.cos(phi);
-      if(l===2 && m=== 2) return 0.546274 * s*s * Math.cos(2*phi);
-      return 0;
-    }
-    
-    function makeSHLobe(l, m){
-      const SEG = 48; const positions = [], colors = [], indices = [];
-      for(let i=0; i<=SEG; i++){
-        const theta = i / SEG * Math.PI;
-        for(let j=0; j<=SEG; j++){
-          const phi = j / SEG * 2 * Math.PI;
-          const y = shBasis(l, m, theta, phi);
-          const r = Math.abs(y) * 1.6;
-          positions.push(r * Math.sin(theta) * Math.cos(phi), r * Math.cos(theta), r * Math.sin(theta) * Math.sin(phi));
-          if(y >= 0) colors.push(0.98, 0.40, 0.35); else colors.push(0.30, 0.65, 0.98);
-        }
-      }
-      for(let i=0; i<SEG; i++){
-        for(let j=0; j<SEG; j++){
-          const a = i*(SEG+1)+j, b = a+1, cIdx = a+(SEG+1), d = cIdx+1;
-          indices.push(a,b,cIdx, b,d,cIdx);
-        }
-      }
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-      geo.setIndex(indices); geo.computeVertexNormals();
-      return new THREE.Mesh(geo, new THREE.MeshStandardMaterial({vertexColors: true, roughness: 0.4, metalness: 0.2}));
-    }
-    
-    const ROW_Y = [3.0, 0, -3.0];
-    const lobesByRow = [[[0,0]], [[1,-1],[1,0],[1,1]], [[2,-2],[2,-1],[2,0],[2,1],[2,2]]];
-    
-    lobesByRow.forEach((row, rowIdx) => {
-      const startX = -(row.length-1) * 1.2;
-      row.forEach((lm, idx) => {
-        const lobe = makeSHLobe(lm[0], lm[1]);
-        lobe.position.set(startX + idx*2.4, ROW_Y[rowIdx], 0);
-        scene.add(lobe);
-        
-        // 适配亮底的深灰色文字
-        const canvas = document.createElement('canvas'); canvas.width = 128; canvas.height = 32;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#444444'; ctx.font = 'bold 18px monospace'; ctx.textAlign = 'center';
-        ctx.fillText('Y_'+lm[0]+'^'+(lm[1]>=0?'+'+lm[1]:lm[1]), 64, 22);
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(canvas), transparent:true}));
-        sprite.scale.set(1.4, 0.35, 1); sprite.position.set(startX + idx*2.4, ROW_Y[rowIdx]-1.6, 0);
-        scene.add(sprite);
-      });
-    });
-    
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const key = new THREE.DirectionalLight(0xffffff, 0.8); key.position.set(5,5,5); scene.add(key);
-    
-    function tick(){ requestAnimationFrame(tick); controls.update(); renderer.render(scene, camera); }
-    tick();
-    
-    window.addEventListener('resize', () => {
-      camera.aspect = container.clientWidth/container.clientHeight; camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
-    });
-  }
-  if (document.readyState === 'complete') initSHViewer(); else window.addEventListener('load', initSHViewer);
-</script>
 
 
 <h3 id="3-3-投影与重建"><a href="#3-3-投影与重建" class="headerlink" title="3.3 投影与重建"></a>3.3 投影与重建</h3><p>把一个 cubemap 上的 radiance 投影到 SH，本质就是离散化的内积求和：</p>
@@ -811,64 +714,6 @@ mjx-container[display="true"] + br {
   <div id="tri-readout" class="prtgi-widget-footer" style="font-weight:bold; color:#4a90e2;">权重计算中...</div>
 </div>
 
-<script type="module">
-  import * as THREE from 'three';
-  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-  function initTrilinearViewer(){
-    const container = document.getElementById('trilinear-viewer');
-    if(!container || container.dataset.inited) return;
-    container.dataset.inited = '1';
-
-    const w = container.clientWidth, h = container.clientHeight;
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, w/h, 0.1, 100); camera.position.set(4, 3, 5);
-
-    const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
-    renderer.setSize(w, h); renderer.setClearColor(0x000000, 0); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
-
-    const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true;
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-    const dir = new THREE.DirectionalLight(0xffffff, 0.6); dir.position.set(2, 4, 3); scene.add(dir);
-
-    // 适配白底的深色线框
-    const boxEdges = new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.BoxGeometry(2,2,2)),
-      new THREE.LineBasicMaterial({color: 0x999999, transparent:true, opacity:0.6})
-    );
-    scene.add(boxEdges);
-
-    const corners = [];
-    for(let i=0; i<8; i++) {
-      const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.15, 24, 16), new THREE.MeshStandardMaterial({color:0x4a90e2, roughness:0.4}));
-      mesh.position.set((i&1)?1:-1, (i&2)?1:-1, (i&4)?1:-1);
-      scene.add(mesh); corners.push(mesh);
-    }
-    const shadingPoint = new THREE.Mesh(new THREE.SphereGeometry(0.12, 24, 16), new THREE.MeshStandardMaterial({color:0xff4455, roughness:0.3}));
-    scene.add(shadingPoint);
-
-    const slX = document.getElementById('tri-x'), slY = document.getElementById('tri-y'), slZ = document.getElementById('tri-z');
-    const readout = document.getElementById('tri-readout');
-
-    function update() {
-      const fx = slX.value/100, fy = slY.value/100, fz = slZ.value/100;
-      shadingPoint.position.set(-1+2*fx, -1+2*fy, -1+2*fz);
-      let info = [];
-      for(let i=0; i<8; i++) {
-        const wt = ((i&1)?fx:1-fx) * ((i&2)?fy:1-fy) * ((i&4)?fz:1-fz);
-        const s = 0.4 + wt * 2.5; corners[i].scale.set(s, s, s);
-        if(wt > 0.01) info.push(`P${i}: ${(wt * 100).toFixed(1)}%`);
-      }
-      readout.textContent = info.join('  |  ');
-    }
-    [slX, slY, slZ].forEach(el => el.addEventListener('input', update)); update();
-
-    function tick(){ requestAnimationFrame(tick); controls.update(); renderer.render(scene, camera); }
-    tick();
-  }
-  if (document.readyState === 'complete') initTrilinearViewer(); else window.addEventListener('load', initTrilinearViewer);
-</script>
 
 
 <h4 id="四面体插值（Tetrahedral）"><a href="#四面体插值（Tetrahedral）" class="headerlink" title="四面体插值（Tetrahedral）"></a>四面体插值（Tetrahedral）</h4><p>适合非规则探针布局。把空间用 Delaunay 四面体化，着色点落在某个四面体内，用四面体的重心坐标做权重插值（4 个探针）。Unity Light Probe Group 用的就是这套。优点是探针布置自由，缺点是查询开销大（需要预构建四面体邻接表）。</p>
@@ -919,126 +764,6 @@ mjx-container[display="true"] + br {
   </div>
 </div>
 
-<script>
-(function() {
-  function initCheby() {
-    const canvas = document.getElementById('cheby-canvas');
-    if (!canvas || canvas.dataset.inited) return;
-    canvas.dataset.inited = '1';
-    
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    const muSlider = document.getElementById('cheby-mu');
-    const sigmaSlider = document.getElementById('cheby-sigma');
-    const muV = document.getElementById('cheby-mu-v');
-    const sigmaV = document.getElementById('cheby-sigma-v');
-
-    let testD = 130;
-    canvas.addEventListener('mousemove', e => {
-      const r = canvas.getBoundingClientRect();
-      const x = (e.clientX - r.left) * (W/r.width);
-      testD = Math.max(0, Math.min(250, x * 250 / W));
-      draw();
-    });
-
-    // 核心切比雪夫公式
-    function chebyshev(d, mu, sigma2) {
-      if (d <= mu) return 1;
-      const diff = d - mu;
-      return sigma2 / (sigma2 + diff*diff);
-    }
-
-    function draw() {
-      const mu = parseFloat(muSlider.value);
-      const sigma2 = parseFloat(sigmaSlider.value);
-      muV.textContent = mu.toFixed(0);
-      sigmaV.textContent = sigma2.toFixed(0);
-
-      ctx.clearRect(0, 0, W, H);
-      
-      // 网格线 (适配白底)
-      ctx.strokeStyle = '#e6e8eb';
-      ctx.lineWidth = 1;
-      for (let i=0; i<=10; i++) {
-        const x = i*W/10; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
-        const y = i*H/10; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
-      }
-
-      // 坐标轴 (深色)
-      ctx.strokeStyle = '#888';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(40, H-30); ctx.lineTo(W-20, H-30);
-      ctx.moveTo(40, H-30); ctx.lineTo(40, 20);
-      ctx.stroke();
-
-      // 坐标轴文字
-      ctx.fillStyle = '#666';
-      ctx.font = '12px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('测试距离 d  →', W/2, H-5);
-      ctx.save();
-      ctx.translate(15, H/2); ctx.rotate(-Math.PI/2);
-      ctx.fillText('P(visible)', 0, 0);
-      ctx.restore();
-
-      // 刻度
-      ctx.textAlign = 'center';
-      for (let i=0; i<=5; i++) {
-        const v = i*50; const x = 40 + (v/250)*(W-60);
-        ctx.fillText(v.toFixed(0), x, H-15);
-      }
-      ctx.textAlign = 'right';
-      for (let i=0; i<=4; i++) {
-        const v = i*0.25; const y = (H-30) - v*(H-50);
-        ctx.fillText(v.toFixed(2), 35, y+4);
-      }
-
-      // 绘制曲线
-      ctx.strokeStyle = '#4a90e2';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      for (let i=0; i<=W-60; i++) {
-        const d = i / (W-60) * 250;
-        const p = chebyshev(d, mu, sigma2);
-        const x = 40 + i; const y = (H-30) - p*(H-50);
-        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      }
-      ctx.stroke();
-
-      // μ 标记线
-      const xMu = 40 + (mu/250)*(W-60);
-      ctx.strokeStyle = '#ff4455';
-      ctx.setLineDash([5,4]);
-      ctx.beginPath(); ctx.moveTo(xMu, 20); ctx.lineTo(xMu, H-30); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = '#ff4455'; ctx.font = 'bold 13px monospace'; ctx.textAlign = 'center';
-      ctx.fillText('μ', xMu, 15);
-
-      // testD 滑动标记点
-      const xD = 40 + (testD/250)*(W-60);
-      const pD = chebyshev(testD, mu, sigma2);
-      const yD = (H-30) - pD*(H-50);
-      
-      // 测试点圆圈
-      ctx.fillStyle = '#ffaa44';
-      ctx.beginPath(); ctx.arc(xD, yD, 6, 0, Math.PI*2); ctx.fill();
-      
-      // 测点数值背景与文字 (适配白底，用深色字)
-      ctx.fillStyle = '#333';
-      ctx.font = 'bold 12px monospace';
-      ctx.textAlign = 'left';
-      ctx.fillText(`d=${testD.toFixed(0)}, P=${pD.toFixed(3)}`, xD+10, yD-10);
-    }
-
-    muSlider.addEventListener('input', draw);
-    sigmaSlider.addEventListener('input', draw);
-    draw();
-  }
-  
-  if (document.readyState === 'complete') initCheby(); else window.addEventListener('load', initCheby);
-})();
-</script>
 
 
 <p>直觉解释：</p>
@@ -1206,6 +931,287 @@ mjx-container[display="true"] + br {
           </div>
 
 <hr>
+
+
+<script type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+  function initSHViewer(){
+    const container = document.getElementById('sh-viewer');
+    if(!container || container.dataset.inited) return;
+    container.dataset.inited = '1';
+    
+    const w = container.clientWidth, h = container.clientHeight;
+    const scene = new THREE.Scene();
+    
+    const camera = new THREE.PerspectiveCamera(45, w/h, 0.1, 100);
+    camera.position.set(0, 0, 12);
+    
+    const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+    renderer.setSize(w, h);
+    renderer.setClearColor(0x000000, 0); 
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+    
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 0.8;
+    
+    function shBasis(l, m, theta, phi){
+      const s = Math.sin(theta), c = Math.cos(theta);
+      if(l===0) return 0.282095;
+      if(l===1 && m===-1) return 0.488603 * s * Math.sin(phi);
+      if(l===1 && m=== 0) return 0.488603 * c;
+      if(l===1 && m=== 1) return 0.488603 * s * Math.cos(phi);
+      if(l===2 && m===-2) return 1.092548 * s*s * Math.sin(2*phi);
+      if(l===2 && m===-1) return 1.092548 * s*c * Math.sin(phi);
+      if(l===2 && m=== 0) return 0.315392 * (3*c*c - 1);
+      if(l===2 && m=== 1) return 1.092548 * s*c * Math.cos(phi);
+      if(l===2 && m=== 2) return 0.546274 * s*s * Math.cos(2*phi);
+      return 0;
+    }
+    
+    function makeSHLobe(l, m){
+      const SEG = 48; const positions = [], colors = [], indices = [];
+      for(let i=0; i<=SEG; i++){
+        const theta = i / SEG * Math.PI;
+        for(let j=0; j<=SEG; j++){
+          const phi = j / SEG * 2 * Math.PI;
+          const y = shBasis(l, m, theta, phi);
+          const r = Math.abs(y) * 1.6;
+          positions.push(r * Math.sin(theta) * Math.cos(phi), r * Math.cos(theta), r * Math.sin(theta) * Math.sin(phi));
+          if(y >= 0) colors.push(0.98, 0.40, 0.35); else colors.push(0.30, 0.65, 0.98);
+        }
+      }
+      for(let i=0; i<SEG; i++){
+        for(let j=0; j<SEG; j++){
+          const a = i*(SEG+1)+j, b = a+1, cIdx = a+(SEG+1), d = cIdx+1;
+          indices.push(a,b,cIdx, b,d,cIdx);
+        }
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      geo.setIndex(indices); geo.computeVertexNormals();
+      return new THREE.Mesh(geo, new THREE.MeshStandardMaterial({vertexColors: true, roughness: 0.4, metalness: 0.2}));
+    }
+    
+    const ROW_Y = [3.0, 0, -3.0];
+    const lobesByRow = [[[0,0]], [[1,-1],[1,0],[1,1]], [[2,-2],[2,-1],[2,0],[2,1],[2,2]]];
+    
+    lobesByRow.forEach((row, rowIdx) => {
+      const startX = -(row.length-1) * 1.2;
+      row.forEach((lm, idx) => {
+        const lobe = makeSHLobe(lm[0], lm[1]);
+        lobe.position.set(startX + idx*2.4, ROW_Y[rowIdx], 0);
+        scene.add(lobe);
+        
+        // 适配亮底的深灰色文字
+        const canvas = document.createElement('canvas'); canvas.width = 128; canvas.height = 32;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#444444'; ctx.font = 'bold 18px monospace'; ctx.textAlign = 'center';
+        ctx.fillText('Y_'+lm[0]+'^'+(lm[1]>=0?'+'+lm[1]:lm[1]), 64, 22);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(canvas), transparent:true}));
+        sprite.scale.set(1.4, 0.35, 1); sprite.position.set(startX + idx*2.4, ROW_Y[rowIdx]-1.6, 0);
+        scene.add(sprite);
+      });
+    });
+    
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const key = new THREE.DirectionalLight(0xffffff, 0.8); key.position.set(5,5,5); scene.add(key);
+    
+    function tick(){ requestAnimationFrame(tick); controls.update(); renderer.render(scene, camera); }
+    tick();
+    
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth/container.clientHeight; camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+  }
+  if (document.readyState === 'complete') initSHViewer(); else window.addEventListener('load', initSHViewer);
+</script>
+
+<script type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+  function initTrilinearViewer(){
+    const container = document.getElementById('trilinear-viewer');
+    if(!container || container.dataset.inited) return;
+    container.dataset.inited = '1';
+
+    const w = container.clientWidth, h = container.clientHeight;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, w/h, 0.1, 100); camera.position.set(4, 3, 5);
+
+    const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+    renderer.setSize(w, h); renderer.setClearColor(0x000000, 0); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true;
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dir = new THREE.DirectionalLight(0xffffff, 0.6); dir.position.set(2, 4, 3); scene.add(dir);
+
+    // 适配白底的深色线框
+    const boxEdges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(2,2,2)),
+      new THREE.LineBasicMaterial({color: 0x999999, transparent:true, opacity:0.6})
+    );
+    scene.add(boxEdges);
+
+    const corners = [];
+    for(let i=0; i<8; i++) {
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.15, 24, 16), new THREE.MeshStandardMaterial({color:0x4a90e2, roughness:0.4}));
+      mesh.position.set((i&1)?1:-1, (i&2)?1:-1, (i&4)?1:-1);
+      scene.add(mesh); corners.push(mesh);
+    }
+    const shadingPoint = new THREE.Mesh(new THREE.SphereGeometry(0.12, 24, 16), new THREE.MeshStandardMaterial({color:0xff4455, roughness:0.3}));
+    scene.add(shadingPoint);
+
+    const slX = document.getElementById('tri-x'), slY = document.getElementById('tri-y'), slZ = document.getElementById('tri-z');
+    const readout = document.getElementById('tri-readout');
+
+    function update() {
+      const fx = slX.value/100, fy = slY.value/100, fz = slZ.value/100;
+      shadingPoint.position.set(-1+2*fx, -1+2*fy, -1+2*fz);
+      let info = [];
+      for(let i=0; i<8; i++) {
+        const wt = ((i&1)?fx:1-fx) * ((i&2)?fy:1-fy) * ((i&4)?fz:1-fz);
+        const s = 0.4 + wt * 2.5; corners[i].scale.set(s, s, s);
+        if(wt > 0.01) info.push(`P${i}: ${(wt * 100).toFixed(1)}%`);
+      }
+      readout.textContent = info.join('  |  ');
+    }
+    [slX, slY, slZ].forEach(el => el.addEventListener('input', update)); update();
+
+    function tick(){ requestAnimationFrame(tick); controls.update(); renderer.render(scene, camera); }
+    tick();
+  }
+  if (document.readyState === 'complete') initTrilinearViewer(); else window.addEventListener('load', initTrilinearViewer);
+</script>
+
+<script>
+(function() {
+  function initCheby() {
+    const canvas = document.getElementById('cheby-canvas');
+    if (!canvas || canvas.dataset.inited) return;
+    canvas.dataset.inited = '1';
+    
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const muSlider = document.getElementById('cheby-mu');
+    const sigmaSlider = document.getElementById('cheby-sigma');
+    const muV = document.getElementById('cheby-mu-v');
+    const sigmaV = document.getElementById('cheby-sigma-v');
+
+    let testD = 130;
+    canvas.addEventListener('mousemove', e => {
+      const r = canvas.getBoundingClientRect();
+      const x = (e.clientX - r.left) * (W/r.width);
+      testD = Math.max(0, Math.min(250, x * 250 / W));
+      draw();
+    });
+
+    // 核心切比雪夫公式
+    function chebyshev(d, mu, sigma2) {
+      if (d <= mu) return 1;
+      const diff = d - mu;
+      return sigma2 / (sigma2 + diff*diff);
+    }
+
+    function draw() {
+      const mu = parseFloat(muSlider.value);
+      const sigma2 = parseFloat(sigmaSlider.value);
+      muV.textContent = mu.toFixed(0);
+      sigmaV.textContent = sigma2.toFixed(0);
+
+      ctx.clearRect(0, 0, W, H);
+      
+      // 网格线 (适配白底)
+      ctx.strokeStyle = '#e6e8eb';
+      ctx.lineWidth = 1;
+      for (let i=0; i<=10; i++) {
+        const x = i*W/10; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+        const y = i*H/10; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+      }
+
+      // 坐标轴 (深色)
+      ctx.strokeStyle = '#888';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(40, H-30); ctx.lineTo(W-20, H-30);
+      ctx.moveTo(40, H-30); ctx.lineTo(40, 20);
+      ctx.stroke();
+
+      // 坐标轴文字
+      ctx.fillStyle = '#666';
+      ctx.font = '12px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('测试距离 d  →', W/2, H-5);
+      ctx.save();
+      ctx.translate(15, H/2); ctx.rotate(-Math.PI/2);
+      ctx.fillText('P(visible)', 0, 0);
+      ctx.restore();
+
+      // 刻度
+      ctx.textAlign = 'center';
+      for (let i=0; i<=5; i++) {
+        const v = i*50; const x = 40 + (v/250)*(W-60);
+        ctx.fillText(v.toFixed(0), x, H-15);
+      }
+      ctx.textAlign = 'right';
+      for (let i=0; i<=4; i++) {
+        const v = i*0.25; const y = (H-30) - v*(H-50);
+        ctx.fillText(v.toFixed(2), 35, y+4);
+      }
+
+      // 绘制曲线
+      ctx.strokeStyle = '#4a90e2';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let i=0; i<=W-60; i++) {
+        const d = i / (W-60) * 250;
+        const p = chebyshev(d, mu, sigma2);
+        const x = 40 + i; const y = (H-30) - p*(H-50);
+        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+
+      // μ 标记线
+      const xMu = 40 + (mu/250)*(W-60);
+      ctx.strokeStyle = '#ff4455';
+      ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(xMu, 20); ctx.lineTo(xMu, H-30); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#ff4455'; ctx.font = 'bold 13px monospace'; ctx.textAlign = 'center';
+      ctx.fillText('μ', xMu, 15);
+
+      // testD 滑动标记点
+      const xD = 40 + (testD/250)*(W-60);
+      const pD = chebyshev(testD, mu, sigma2);
+      const yD = (H-30) - pD*(H-50);
+      
+      // 测试点圆圈
+      ctx.fillStyle = '#ffaa44';
+      ctx.beginPath(); ctx.arc(xD, yD, 6, 0, Math.PI*2); ctx.fill();
+      
+      // 测点数值背景与文字 (适配白底，用深色字)
+      ctx.fillStyle = '#333';
+      ctx.font = 'bold 12px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(`d=${testD.toFixed(0)}, P=${pD.toFixed(3)}`, xD+10, yD-10);
+    }
+
+    muSlider.addEventListener('input', draw);
+    sigmaSlider.addEventListener('input', draw);
+    draw();
+  }
+  
+  if (document.readyState === 'complete') initCheby(); else window.addEventListener('load', initCheby);
+})();
+</script>
+
+
 
       </div>
       
