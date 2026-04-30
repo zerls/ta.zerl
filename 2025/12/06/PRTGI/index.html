@@ -1092,10 +1092,16 @@ mjx-container[display="true"] + br {
 </ul>
 <h3 id="6-4-内存布局陷阱"><a href="#6-4-内存布局陷阱" class="headerlink" title="6.4 内存布局陷阱"></a>6.4 内存布局陷阱</h3><p>Texture3D 的内存布局是 swizzled 的，如果探针数据按 (x, y, z) 线性写入，Compute Shader 的访存模式会非常差。<strong>建议烘焙输出时就用 Morton 编码（Z-order curve）排列</strong>，运行时 Texture3D 采样会自动命中 cache。</p>
 <hr>
-<h2 id="七、效果对比与适用场景"><a href="#七、效果对比与适用场景" class="headerlink" title="七、效果对比与适用场景"></a>七、效果对比与适用场景</h2><div class="md-grid" style="grid-template-columns: repeat(2, 1fr)"><p><img src="https://bu.dusays.com/2026/04/23/69e9f028032da.png" alt="Lightmap 烘焙"></p><p><img src="https://bu.dusays.com/2026/04/23/69e9f0293b0be.png" alt="PRTGI"></p>
-</div>
+<h2 id="七、效果对比与适用场景"><a href="#七、效果对比与适用场景" class="headerlink" title="七、效果对比与适用场景"></a>七、效果对比与适用场景</h2><div class="md-compare" onmousemove="this.style.setProperty('--pos', (event.offsetX / this.offsetWidth * 100) + '%')">
+            <img src="https://bu.dusays.com/2026/04/23/69e9f0293b0be.png" class="md-compare-after">
+            <img src="https://bu.dusays.com/2026/04/23/69e9f028032da.png" class="md-compare-before">
+            <div class="md-compare-slider"><div class="md-compare-handle"></div></div>
+            <div class="md-compare-label before">烘培 </div>
+            <div class="md-compare-label after"> PRTGI</div>
+          </div>
 
-<p>虽然两张图的太阳光方向不一致，但仍然能明显看出 PRTGI 在阴影处的暗部细节更丰富、过渡更柔和——这正是间接光在起作用。引用闫令琪教授的话：<strong>“评估 GI 好不好，看画面亮不亮、暗部细节明度对比丰不丰富”</strong>。</p>
+
+<p>虽然两张图的太阳光方向不一致，但仍然能明显看出 PRTGI相比传统 无GI 方案 在阴影处的暗部细节更丰富、过渡更柔和——这正是间接光在起作用。引用闫令琪教授的话：<strong>“评估 GI 好不好，看画面亮不亮、暗部细节明度对比丰不丰富”</strong>。</p>
 <h3 id="适用性总结"><a href="#适用性总结" class="headerlink" title="适用性总结"></a>适用性总结</h3><div class="table-wrapper"><table>
 <thead>
 <tr>
@@ -1265,7 +1271,7 @@ mjx-container[display="true"] + br {
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/2025/12/13/ReSTIR_Notes/" title="ReSTIRGI：从 RIS 到 ReSTIR GI / PT" rel="bookmark">ReSTIRGI：从 RIS 到 ReSTIR GI / PT</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/20/GPUDrivenTerrain/" title="GPUDrivenTerrain" rel="bookmark">GPUDrivenTerrain</a></div></div><div class="null-item"><div class="null-title"><a href="/2025/12/11/DDGI_Notes/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark">DDGI「动态漫反射全局光照」：架构与工程概览</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2025/12/13/ReSTIR_Notes/" title="ReSTIRGI：从 RIS 到 ReSTIR GI / PT" rel="bookmark">ReSTIRGI：从 RIS 到 ReSTIR GI / PT</a></div></div><div class="null-item"><div class="null-title"><a href="/2026/03/20/GPUDrivenTerrain/" title="GPUDrivenTerrain" rel="bookmark">GPUDrivenTerrain</a></div></div><div class="null-item"><div class="null-title"><a href="/2025/08/18/WBOIT/" title="WBOIT" rel="bookmark">WBOIT</a></div></div></div>
     
   </div>
 </div>
