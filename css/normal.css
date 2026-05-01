@@ -88,7 +88,6 @@ video {
 }
 @media screen and (max-width: 768px) {
   .table-wrapper {
-    border: 1px solid #d6d6d2;
     border-radius: 4px;
   }
 }
