@@ -120,9 +120,9 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
     <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <id>https://ta.zerl.top/2025/12/13/ReSTIR_Notes/</id>
@@ -155,6 +155,25 @@
     </summary>
     <title>DDGI「动态漫反射全局光照」：架构与工程概览</title>
     <updated>2026-04-25T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
+    <category term="IBL" scheme="https://ta.zerl.top/tags/IBL/"/>
+    <category term="Spherical Harmonics" scheme="https://ta.zerl.top/tags/Spherical-Harmonics/"/>
+    <id>https://ta.zerl.top/2025/12/07/SH_Spherical_Harmonics_Lighting/</id>
+    <link href="https://ta.zerl.top/2025/12/07/SH_Spherical_Harmonics_Lighting/"/>
+    <published>2025-12-06T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>球谐光照 (SH) 是实时渲染里”压缩光照”的经典手段：把一张几 MB 的 HDR 环境图，浓缩为 <strong>27 个浮点数 (9 系数 × RGB)</strong>，运行时只需几个 <code>dot</code> 指令就能还原漫反射环境光。这篇笔记把数学推导、工程实现、约定差异（最容易踩坑的部分）放在一起讲清楚。</p>]]>
+    </summary>
+    <title>深入理解球谐光照 (Spherical Harmonics)：从数学理论到工业级代码实践</title>
+    <updated>2025-12-07T16:00:00.000Z</updated>
   </entry>
   <entry>
     <author>
@@ -324,5 +343,25 @@
     </summary>
     <title>现代渲染管线架构</title>
     <updated>2025-03-09T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
+    <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
+    <category term="SSS" scheme="https://ta.zerl.top/tags/SSS/"/>
+    <category term="Skin" scheme="https://ta.zerl.top/tags/Skin/"/>
+    <category term="Unity" scheme="https://ta.zerl.top/tags/Unity/"/>
+    <category term="URP" scheme="https://ta.zerl.top/tags/URP/"/>
+    <id>https://ta.zerl.top/2024/12/01/skin_rendering_survey/</id>
+    <link href="https://ta.zerl.top/2024/12/01/skin_rendering_survey/"/>
+    <published>2024-11-30T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>皮肤是数字人渲染中最具挑战、也是最值得深挖的材质之一。  本文按照「提出问题 → 物理建模 → 实时近似的演进 → 工程落地 → 横向对比」的脉络，系统梳理近 20 年实时皮肤渲染的主流方案，重点解析 <strong>Pre-Integrated</strong>、<strong>Separable SSS (4S)</strong>、<strong>Spherical Gaussian (SG)</strong> 三大里程碑技术。</p>]]>
+    </summary>
+    <title>真实感皮肤渲染综述 — 从 BSSRDF 到屏幕空间可分离 SSS</title>
+    <updated>2025-11-19T16:00:00.000Z</updated>
   </entry>
 </feed>
