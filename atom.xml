@@ -160,8 +160,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
     <category term="IBL" scheme="https://ta.zerl.top/tags/IBL/"/>
     <category term="Spherical Harmonics" scheme="https://ta.zerl.top/tags/Spherical-Harmonics/"/>
@@ -179,9 +179,9 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="SH" scheme="https://ta.zerl.top/tags/SH/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <id>https://ta.zerl.top/2025/12/06/PRTGI/</id>
     <link href="https://ta.zerl.top/2025/12/06/PRTGI/"/>
     <published>2025-12-05T16:00:00.000Z</published>
@@ -200,10 +200,10 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="Real-Time Rendering" scheme="https://ta.zerl.top/tags/Real-Time-Rendering/"/>
     <category term="Area Light" scheme="https://ta.zerl.top/tags/Area-Light/"/>
     <category term="LTC" scheme="https://ta.zerl.top/tags/LTC/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
     <id>https://ta.zerl.top/2025/11/26/LTC-note/</id>
     <link href="https://ta.zerl.top/2025/11/26/LTC-note/"/>
