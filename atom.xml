@@ -61,9 +61,9 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="地形" scheme="https://ta.zerl.top/tags/%E5%9C%B0%E5%BD%A2/"/>
     <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <id>https://ta.zerl.top/2026/03/20/GPUDrivenTerrain/</id>
     <link href="https://ta.zerl.top/2026/03/20/GPUDrivenTerrain/"/>
     <published>2026-03-19T16:00:00.000Z</published>
@@ -118,9 +118,9 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
     <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
@@ -139,11 +139,11 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
     <category term="探针" scheme="https://ta.zerl.top/tags/%E6%8E%A2%E9%92%88/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <id>https://ta.zerl.top/2025/12/11/DDGI_Notes/</id>
     <link href="https://ta.zerl.top/2025/12/11/DDGI_Notes/"/>
     <published>2025-12-10T16:00:00.000Z</published>
@@ -169,7 +169,7 @@
     <link href="https://ta.zerl.top/2025/12/07/SH_Spherical_Harmonics_Lighting/"/>
     <published>2025-12-06T16:00:00.000Z</published>
     <summary>
-      <![CDATA[<p>球谐光照 (SH) 是实时渲染里”压缩光照”的经典手段：把一张几 MB 的 HDR 环境图，浓缩为 <strong>27 个浮点数 (9 系数 × RGB)</strong>，运行时只需几个 <code>dot</code> 指令就能还原漫反射环境光。这篇笔记把数学推导、工程实现、约定差异（最容易踩坑的部分）放在一起讲清楚。</p>]]>
+      <![CDATA[<p>球谐光照 (SH) 是实时渲染里”压缩光照”的经典手段：把一张几 MB 的 HDR 环境图，浓缩为 <strong>27 个浮点数 (9 系数 × RGB)</strong>，运行时只需几个 <code>dot</code> 指令就能还原漫反射环境光。这篇笔记主要讲述了数学推导、工程实现、约定差异「最容易踩坑的部分」。</p>]]>
     </summary>
     <title>深入理解球谐光照 (Spherical Harmonics)：从数学理论到工业级代码实践</title>
     <updated>2025-12-07T16:00:00.000Z</updated>
@@ -194,6 +194,25 @@
     </summary>
     <title>PRTGI「预计算辐照度全局光照」：从理论到工程实践</title>
     <updated>2025-12-06T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="Real-Time Rendering" scheme="https://ta.zerl.top/tags/Real-Time-Rendering/"/>
+    <category term="Area Light" scheme="https://ta.zerl.top/tags/Area-Light/"/>
+    <category term="LTC" scheme="https://ta.zerl.top/tags/LTC/"/>
+    <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
+    <id>https://ta.zerl.top/2025/11/26/LTC-note/</id>
+    <link href="https://ta.zerl.top/2025/11/26/LTC-note/"/>
+    <published>2025-11-25T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<div class="md-note md-note-success"><p class="md-note-title">💡核心思路</p><p>把昂贵的「BRDF 在球面多边形上的二维积分」，先用一个 <mjx-container class="MathJax" jax="]]>
+    </summary>
+    <title>深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</title>
+    <updated>2026-05-01T16:39:41.350Z</updated>
   </entry>
   <entry>
     <author>

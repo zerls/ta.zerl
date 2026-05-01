@@ -538,6 +538,24 @@
   padding: 1px 4px;
   border-radius: 3px;
 }
+figure.md-img-figcap {
+  margin: 16px auto;
+  text-align: center;
+  max-width: 100%;
+}
+figure.md-img-figcap img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+figure.md-img-figcap figcaption.md-figcap-content {
+  font-size: 13px;
+  color: #5c5c5c;
+  margin-top: 8px;
+  font-family: 'Times New Roman', Times, sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  line-height: 1.5;
+  text-align: center;
+}
 .md-tablefn {
   width: 100%;
   max-width: 800px;

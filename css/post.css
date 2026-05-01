@@ -638,6 +638,24 @@
   padding: 1px 4px;
   border-radius: 3px;
 }
+figure.md-img-figcap {
+  margin: 16px auto;
+  text-align: center;
+  max-width: 100%;
+}
+figure.md-img-figcap img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+figure.md-img-figcap figcaption.md-figcap-content {
+  font-size: 13px;
+  color: #5c5c5c;
+  margin-top: 8px;
+  font-family: 'Times New Roman', Times, sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  line-height: 1.5;
+  text-align: center;
+}
 .md-tablefn {
   width: 100%;
   max-width: 800px;
@@ -879,7 +897,7 @@
     height: 100vh;
     max-height: 100vh;
 /* 【流式优化】防止极窄屏幕（如 320px）被 280px 的 TOC 完全铺满，保留 15% 可点击关闭的空白区 */
-    width: 85vw;
+    width: 75vw;
     margin: 0;
     border-radius: 0;
     border-left: 1px solid rgba(227,227,224,0.5);
@@ -887,12 +905,12 @@
     padding: 80px 20px 30px 25px; /* 顶部留出关闭空间 */
 /* 默认隐藏在屏幕右侧外 */
     transform: translateX(100%);
-    box-shadow: -4px 0 25px rgba(0,0,0,0.1);
     z-index: 105; /* 高于导航栏 */
   }
   #toc-toggle:checked ~ * .toc-outer,
   #toc-toggle:checked ~ .toc-outer {
     transform: translateX(0);
+    box-shadow: -4px 0 25px rgba(0,0,0,0.1);
   }
 }
 @-moz-keyframes tocDotFade {
