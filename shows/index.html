@@ -118,7 +118,20 @@
     </header>
 
     <div class="shows-flow">
-      <h2 id="交互笔记"><a href="#交互笔记" class="headerlink" title="交互笔记"></a>交互笔记</h2><a class="show-card show-card--page" href="/shows/interactive-notes/kulla-conty-notes" >
+      <h2 id="交互笔记"><a href="#交互笔记" class="headerlink" title="交互笔记"></a>交互笔记</h2><a class="show-card show-card--page" href="/shows/interactive-notes/image-based-lighting" >
+  <div class="show-card__cover" style="background-image:url('https://cdnb.artstation.com/p/assets/panos/images/019/171/305/large/sebastian-rios-ernst-16.jpg')"></div>
+  <div class="show-card__inner">
+    <div class="show-card__head">
+      <span class="show-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+      <span class="show-card__title">IBL</span>
+      
+    </div>
+    <div class="show-card__body"><p><strong>基于图像的照明（Image-Based Lighting, IBL）</strong>把一张 HDR 环境贴图当作来自整个球面的入射光源，让物体能”实时”地反映出周围环境的照明信息——天光、太阳、室内灯具、地面反弹色，全部一气呵成。它是现代 PBR 管线在<em class="hl">环境光（ambient）</em>这一项上的终极形态。</p>
+</div>
+  </div>
+</a>
+
+<a class="show-card show-card--page" href="/shows/interactive-notes/kulla-conty-notes" >
   <div class="show-card__cover" style="background-image:url('/img/kulla_conty_colored.png')"></div>
   <div class="show-card__inner">
     <div class="show-card__head">
@@ -211,6 +224,13 @@
 </div>
   </div>
 </a>
+
+<!-- {% show type="page" title="Split Sum Approximation" url="/shows/interactive-notes/split-sum-notes" %}
+ 在物理渲染（PBR）体系里，<strong>基于图像的照明（Image-Based Lighting, IBL）</strong>是把一张 HDR 环境贴图当作来自整个半球的入射光源、为表面上每一点求解反射方程的技术。漫反射部分（Diffuse IBL）相对简单，<i>余弦卷积</i>一次就能塞进低 mip 立方贴图里；难点全在<em class="hl">镜面反射部分（Specular IBL）</em>——它依赖于观察方向与材质粗糙度，无法预计算成单一贴图。
+{% endshow %} -->
+
+
+
 
 
 <h2 id="开源项目"><a href="#开源项目" class="headerlink" title="开源项目"></a>开源项目</h2><a class="show-card show-card--github" href="https://github.com/zerls/TerrainDemo" target="_blank" rel="noopener">

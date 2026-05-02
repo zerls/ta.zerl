@@ -250,7 +250,7 @@ section {
   opacity: 0.7;
 }
 .section-title {
-  font-family: 'Syne', 'JetBrains Mono', sans-serif;
+  /* font-family: 'Syne', 'JetBrains Mono', sans-serif; */
   font-size: 20px;
   font-weight: 700;
   color: var(--heading);
