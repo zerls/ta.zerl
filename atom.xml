@@ -61,9 +61,9 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="地形" scheme="https://ta.zerl.top/tags/%E5%9C%B0%E5%BD%A2/"/>
     <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="四叉树" scheme="https://ta.zerl.top/tags/%E5%9B%9B%E5%8F%89%E6%A0%91/"/>
     <category term="剔除" scheme="https://ta.zerl.top/tags/%E5%89%94%E9%99%A4/"/>
     <id>https://ta.zerl.top/2026/03/20/GPUDrivenTerrain/</id>
@@ -96,8 +96,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
     <category term="UE5 Lumen" scheme="https://ta.zerl.top/tags/UE5-Lumen/"/>
     <category term="Unity APV" scheme="https://ta.zerl.top/tags/Unity-APV/"/>
@@ -120,9 +120,9 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
     <id>https://ta.zerl.top/2025/12/13/ReSTIR_Notes/</id>
@@ -140,11 +140,11 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="探针" scheme="https://ta.zerl.top/tags/%E6%8E%A2%E9%92%88/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <id>https://ta.zerl.top/2025/12/11/DDGI_Notes/</id>
     <link href="https://ta.zerl.top/2025/12/11/DDGI_Notes/"/>
     <published>2025-12-10T16:00:00.000Z</published>
@@ -391,8 +391,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="SSS" scheme="https://ta.zerl.top/tags/SSS/"/>
     <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="SSS" scheme="https://ta.zerl.top/tags/SSS/"/>
     <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
     <category term="Skin" scheme="https://ta.zerl.top/tags/Skin/"/>
     <id>https://ta.zerl.top/2024/12/01/skin_rendering_survey/</id>
@@ -432,11 +432,11 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="布料渲染" scheme="https://ta.zerl.top/tags/%E5%B8%83%E6%96%99%E6%B8%B2%E6%9F%93/"/>
     <category term="Cloth BRDF" scheme="https://ta.zerl.top/tags/Cloth-BRDF/"/>
     <category term="Charlie" scheme="https://ta.zerl.top/tags/Charlie/"/>
     <category term="Ashikhmin" scheme="https://ta.zerl.top/tags/Ashikhmin/"/>
+    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <id>https://ta.zerl.top/2024/11/22/04-cloth-sheen/</id>
     <link href="https://ta.zerl.top/2024/11/22/04-cloth-sheen/"/>
     <published>2024-11-22T04:00:00.000Z</published>
@@ -476,10 +476,10 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
+    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="Disney BRDF" scheme="https://ta.zerl.top/tags/Disney-BRDF/"/>
     <category term="Disney BSDF" scheme="https://ta.zerl.top/tags/Disney-BSDF/"/>
     <category term="各向异性" scheme="https://ta.zerl.top/tags/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7/"/>
-    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="Clearcoat" scheme="https://ta.zerl.top/tags/Clearcoat/"/>
     <id>https://ta.zerl.top/2024/11/18/02-disney-principled-brdf/</id>
     <link href="https://ta.zerl.top/2024/11/18/02-disney-principled-brdf/"/>
