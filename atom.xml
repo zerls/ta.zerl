@@ -99,9 +99,9 @@
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
+    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="UE5 Lumen" scheme="https://ta.zerl.top/tags/UE5-Lumen/"/>
     <category term="Unity APV" scheme="https://ta.zerl.top/tags/Unity-APV/"/>
-    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="渲染管线" scheme="https://ta.zerl.top/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/"/>
     <id>https://ta.zerl.top/2026/01/08/modern-gi-techniques/</id>
     <link href="https://ta.zerl.top/2026/01/08/modern-gi-techniques/"/>
@@ -123,8 +123,8 @@
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
-    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
+    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <id>https://ta.zerl.top/2025/12/13/ReSTIR_Notes/</id>
     <link href="https://ta.zerl.top/2025/12/13/ReSTIR_Notes/"/>
     <published>2025-12-12T16:00:00.000Z</published>
@@ -181,8 +181,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
-    <category term="SH" scheme="https://ta.zerl.top/tags/SH/"/>
     <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="SH" scheme="https://ta.zerl.top/tags/SH/"/>
     <id>https://ta.zerl.top/2025/12/06/PRTGI/</id>
     <link href="https://ta.zerl.top/2025/12/06/PRTGI/"/>
     <published>2025-12-05T16:00:00.000Z</published>
@@ -202,9 +202,9 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="Area Light" scheme="https://ta.zerl.top/tags/Area-Light/"/>
     <category term="LTC" scheme="https://ta.zerl.top/tags/LTC/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <id>https://ta.zerl.top/2025/11/26/LTC-note/</id>
     <link href="https://ta.zerl.top/2025/11/26/LTC-note/"/>
     <published>2025-11-25T16:00:00.000Z</published>
@@ -391,8 +391,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="SSS" scheme="https://ta.zerl.top/tags/SSS/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
     <category term="Skin" scheme="https://ta.zerl.top/tags/Skin/"/>
     <id>https://ta.zerl.top/2024/12/01/skin_rendering_survey/</id>
