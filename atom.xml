@@ -99,9 +99,9 @@
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
+    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="UE5 Lumen" scheme="https://ta.zerl.top/tags/UE5-Lumen/"/>
     <category term="Unity APV" scheme="https://ta.zerl.top/tags/Unity-APV/"/>
-    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="渲染管线" scheme="https://ta.zerl.top/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/"/>
     <id>https://ta.zerl.top/2026/01/08/modern-gi-techniques/</id>
     <link href="https://ta.zerl.top/2026/01/08/modern-gi-techniques/"/>
@@ -120,11 +120,11 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
-    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
+    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <id>https://ta.zerl.top/2025/12/13/ReSTIR_Notes/</id>
     <link href="https://ta.zerl.top/2025/12/13/ReSTIR_Notes/"/>
     <published>2025-12-12T16:00:00.000Z</published>
@@ -140,8 +140,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="探针" scheme="https://ta.zerl.top/tags/%E6%8E%A2%E9%92%88/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
@@ -201,8 +201,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
     <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
     <category term="Area Light" scheme="https://ta.zerl.top/tags/Area-Light/"/>
     <category term="LTC" scheme="https://ta.zerl.top/tags/LTC/"/>
     <id>https://ta.zerl.top/2025/11/26/LTC-note/</id>
@@ -380,7 +380,7 @@
     <link href="https://ta.zerl.top/2025/01/15/%E7%8E%B0%E4%BB%A3%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%9E%B6%E6%9E%84/"/>
     <published>2025-01-14T16:00:00.000Z</published>
     <summary>
-      <![CDATA[<p>在现代 GPU 架构下，渲染管线的演进本质上是 <strong>“权衡顶点处理（Draw Call / 几何提交）、片元算力（ALU）与显存带宽（Bandwidth）三者关系”</strong> 的历史。</p>]]>
+      <![CDATA[<p>在现代 GPU 架构下，渲染管线的演进本质上是 <strong>“权衡顶点处理（Draw Call &#x2F; 几何提交）、片元算力（ALU）与显存带宽（Bandwidth）三者关系”</strong> 的历史。</p>]]>
     </summary>
     <title>现代渲染管线架构</title>
     <updated>2025-03-09T16:00:00.000Z</updated>
@@ -432,17 +432,17 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
+    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="布料渲染" scheme="https://ta.zerl.top/tags/%E5%B8%83%E6%96%99%E6%B8%B2%E6%9F%93/"/>
     <category term="Cloth BRDF" scheme="https://ta.zerl.top/tags/Cloth-BRDF/"/>
     <category term="Charlie" scheme="https://ta.zerl.top/tags/Charlie/"/>
     <category term="Ashikhmin" scheme="https://ta.zerl.top/tags/Ashikhmin/"/>
-    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <id>https://ta.zerl.top/2024/11/22/04-cloth-sheen/</id>
     <link href="https://ta.zerl.top/2024/11/22/04-cloth-sheen/"/>
     <published>2024-11-22T04:00:00.000Z</published>
     <summary>
       <![CDATA[<blockquote>
-<p><strong>核心结论</strong>：布料是 GGX 微表面框架的第一个真正”破例”——纤维的环形反射和绒毛感无法用传统 NDF 表达。Charlie 与 Ashikhmin Velvet 是两个工业候选 NDF，配合 V_Charlie / V_Ashikhmin / V_Neubelt 几何项，再加上 sheen color、subsurface color 两参数，就能用同一个模型架构覆盖从棉麻到丝绸到天鹅绒的全谱系。本篇详解布料 BRDF 的物理动机、数学选型、以及 UE4、Filament、Unity SRP 的工程实践。</p>
+<p><strong>核心结论</strong>：布料是 GGX 微表面框架的第一个真正”破例”——纤维的环形反射和绒毛感无法用传统 NDF 表达。Charlie 与 Ashikhmin Velvet 是两个工业候选 NDF，配合 V_Charlie &#x2F; V_Ashikhmin &#x2F; V_Neubelt 几何项，再加上 sheen color、subsurface color 两参数，就能用同一个模型架构覆盖从棉麻到丝绸到天鹅绒的全谱系。本篇详解布料 BRDF 的物理动机、数学选型、以及 UE4、Filament、Unity SRP 的工程实践。</p>
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第四篇 · 布料与 Sheen 渲染：从 Charlie 到丝绸天鹅绒之辨</title>
@@ -476,10 +476,10 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="Disney BRDF" scheme="https://ta.zerl.top/tags/Disney-BRDF/"/>
     <category term="Disney BSDF" scheme="https://ta.zerl.top/tags/Disney-BSDF/"/>
     <category term="各向异性" scheme="https://ta.zerl.top/tags/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7/"/>
+    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="Clearcoat" scheme="https://ta.zerl.top/tags/Clearcoat/"/>
     <id>https://ta.zerl.top/2024/11/18/02-disney-principled-brdf/</id>
     <link href="https://ta.zerl.top/2024/11/18/02-disney-principled-brdf/"/>
@@ -490,7 +490,7 @@
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第二篇 · Disney Principled BRDF 全解析：从十一参数到 BSDF 扩展</title>
-    <updated>2026-05-05T07:03:20.128Z</updated>
+    <updated>2026-05-05T07:33:28.642Z</updated>
   </entry>
   <entry>
     <author>
@@ -507,7 +507,7 @@
     <published>2024-11-16T04:00:00.000Z</published>
     <summary>
       <![CDATA[<blockquote>
-<p><strong>核心结论</strong>：PBR 不是某一个公式，而是一个由「渲染方程 + 微表面理论 + 能量守恒 + 互易性」构成的框架。Cook-Torrance 把镜面 BRDF 拆成 D / G / F 三项，于是后续四十年的工作都可以归类到对这三项的精修——以及对 Lambert 漫反射的扩展。</p>
+<p><strong>核心结论</strong>：PBR 不是某一个公式，而是一个由「渲染方程 + 微表面理论 + 能量守恒 + 互易性」构成的框架。Cook-Torrance 把镜面 BRDF 拆成 D &#x2F; G &#x2F; F 三项，于是后续四十年的工作都可以归类到对这三项的精修——以及对 Lambert 漫反射的扩展。</p>
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第一篇 · 理论基石：从渲染方程到 Cook-Torrance 框架</title>
