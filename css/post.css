@@ -966,7 +966,7 @@ body {
 }
 .post-inner {
   margin: 0 auto;
-  max-width: 90ch;
+  max-width: 120ch;
 }
 .post-inner .post-banner {
   width: 100%;
@@ -1036,7 +1036,7 @@ body {
   margin: 40px 0;
 }
 .post__foot {
-  max-width: 900px;
+  max-width: 120ch;
   margin: 100px auto;
 }
 .post-nav {
