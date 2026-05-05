@@ -360,6 +360,7 @@ mjx-container:not([display="true"]) {
 .paginator {
   display: flex;
   align-items: center;
+  margin-top: 12px;
 }
 /* post */
 .post-info {
