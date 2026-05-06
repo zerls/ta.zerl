@@ -235,11 +235,9 @@ mjx-container[display="true"] + br {
         
         <div class="post-info">
           <div class="post-date">发布于2024-07-08 · 更新于2026-05-01
-            
-            
           </div>
           
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" class="post-tag">#全局光照</a><a href="/tags/Light-Probe/" class="post-tag">#Light Probe</a><a href="/tags/Reflection-Probe/" class="post-tag">#Reflection Probe</a>
+  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" class="post-tag">#全局光照</a><a href="/tags/Light-Probe/" class="post-tag">#Light Probe</a><a href="/tags/Reflection-Probe/" class="post-tag">#Reflection Probe</a>
 
 
         </div>
@@ -327,7 +325,26 @@ mjx-container[display="true"] + br {
 </tr>
 </tbody></table></div>
 <p><strong>镜面反射对所有对象都用 Reflection Probe</strong>——这是因为 Lightmap 与 Light Probe 都不能编码视角依赖的反射，必须依赖 Cubemap。</p>
-<h3 id="1-2-GI-数据流"><a href="#1-2-GI-数据流" class="headerlink" title="1.2 GI 数据流"></a>1.2 GI 数据流</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[场景烘焙阶段·Editor] --&gt; B[Meta Pass 输出 Albedo / Emission]<br>    B --&gt; C[Progressive Lightmapper 求解]<br>    C --&gt; D[Lightmap Texture&lt;br/&gt;静态对象 UV2]<br>    C --&gt; E[Light Probe SH 系数&lt;br/&gt;球面采样点]<br>    C --&gt; F[ShadowMask Texture&lt;br/&gt;遮挡数据]<br><br>    G[Reflection Probe 烘焙] --&gt; H[Cubemap with Mips&lt;br/&gt;预过滤粗糙度]<br><br>    D --&gt; I[运行时·Shader]<br>    E --&gt; I<br>    F --&gt; I<br>    H --&gt; I<br><br>    I --&gt; J[GI struct&lt;br/&gt;diffuse · specular · shadowMask]<br>    J --&gt; K[IndirectBRDF&lt;br/&gt;Note 3 §3.3]<br><br>    style A fill:#fff3e0,stroke:#f57c00<br>    style I fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br>    style K fill:#e8f5e9,stroke:#388e3c,stroke-width:2px<br></code></pre></td></tr></table></div></figure>
+<h3 id="1-2-GI-数据流"><a href="#1-2-GI-数据流" class="headerlink" title="1.2 GI 数据流"></a>1.2 GI 数据流</h3><pre class="mermaid">flowchart TD
+    A[场景烘焙阶段·Editor] --&gt; B[Meta Pass 输出 Albedo / Emission]
+    B --&gt; C[Progressive Lightmapper 求解]
+    C --&gt; D[Lightmap Texture<br>静态对象 UV2]
+    C --&gt; E[Light Probe SH 系数<br>球面采样点]
+    C --&gt; F[ShadowMask Texture<br>遮挡数据]
+
+    G[Reflection Probe 烘焙] --&gt; H[Cubemap with Mips<br>预过滤粗糙度]
+
+    D --&gt; I[运行时·Shader]
+    E --&gt; I
+    F --&gt; I
+    H --&gt; I
+
+    I --&gt; J[GI struct<br>diffuse · specular · shadowMask]
+    J --&gt; K[IndirectBRDF<br>Note 3 §3.3]
+
+    style A fill:#fff3e0,stroke:#f57c00
+    style I fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style K fill:#e8f5e9,stroke:#388e3c,stroke-width:2px</pre>
 
 <p>整个流程横跨 <strong>编辑器烘焙阶段</strong> 与 <strong>运行时着色阶段</strong>：编辑器把 GI 求解结果固化到资源（Lightmap 贴图、Probe 系数、ShadowMask），运行时由 Shader 按对象类型采样这些预烘焙数据。</p>
 <p>Custom SRP 的工作集中在两端的最末环节：<strong>编辑器侧</strong> 提供正确的 Meta Pass 让烘焙器读取材质属性；<strong>运行时侧</strong> 在 Lit Shader 中正确采样并融合到 BRDF。中间的求解过程（Progressive Lightmapper、Bakery、Enlighten）由 Unity 引擎或第三方插件负责，与 SRP 解耦。</p>
@@ -549,7 +566,7 @@ mjx-container[display="true"] + br {
 
     
     
-      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script src="https://unpkg.com/mermaid@11.14.0/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
           /* 添加 safe 过滤器防止 JSON 被转义 */
@@ -602,12 +619,12 @@ mjx-container[display="true"] + br {
     
       <div class="related-post">
   <div class="related__head">
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" class="post-tag">#全局光照</a><a href="/tags/Light-Probe/" class="post-tag">#Light Probe</a><a href="/tags/Reflection-Probe/" class="post-tag">#Reflection Probe</a>
+  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" class="post-tag">#全局光照</a><a href="/tags/Light-Probe/" class="post-tag">#Light Probe</a><a href="/tags/Reflection-Probe/" class="post-tag">#Reflection Probe</a>
 
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e962819a878a/" title="「Custom SRP」：直接光照与 Tiled Forward+" rel="bookmark">「Custom SRP」：直接光照与 Tiled Forward+</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/9ddadbe5b731/" title="「Custom SRP」：几何可见性与批次优化" rel="bookmark">「Custom SRP」：几何可见性与批次优化</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/16400eceeb11/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark">DDGI「动态漫反射全局光照」：架构与工程概览</a></div></div></div>
     
   </div>
 </div>

@@ -235,11 +235,9 @@ mjx-container[display="true"] + br {
         
         <div class="post-info">
           <div class="post-date">发布于2024-06-24 · 更新于2026-05-01
-            
-            
           </div>
           
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Forward/" class="post-tag">#Forward+</a><a href="/tags/%E5%85%89%E7%85%A7/" class="post-tag">#光照</a><a href="/tags/Burst-Job/" class="post-tag">#Burst Job</a><a href="/tags/StructuredBuffer/" class="post-tag">#StructuredBuffer</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a>
+  <a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Forward/" class="post-tag">#Forward+</a><a href="/tags/%E5%85%89%E7%85%A7/" class="post-tag">#光照</a><a href="/tags/Burst-Job/" class="post-tag">#Burst Job</a><a href="/tags/StructuredBuffer/" class="post-tag">#StructuredBuffer</a>
 
 
         </div>
@@ -401,7 +399,30 @@ mjx-container[display="true"] + br {
 <hr>
 <h2 id="4-Tiled-Forward-：屏幕空间光源剔除"><a href="#4-Tiled-Forward-：屏幕空间光源剔除" class="headerlink" title="4. Tiled Forward+：屏幕空间光源剔除"></a>4. Tiled Forward+：屏幕空间光源剔除</h2><h3 id="4-1-设计动机"><a href="#4-1-设计动机" class="headerlink" title="4.1 设计动机"></a>4.1 设计动机</h3><p>朴素 Forward 渲染的复杂度是 <code>O(像素数 × 总光源数)</code>。一个 1080p 屏幕配 64 个动态点光源，单帧着色器要执行 64 × 2M ≈ <strong>1.3 亿次光照计算</strong>——绝大多数像素离绝大多数光源很远，贡献几乎为零，但 BRDF 仍然被完整计算并被距离衰减为 0。这是典型的”为不存在的贡献付出全额成本”。</p>
 <p>Forward+ 的解决思路：先以屏幕 Tile 为粒度做一次粗剔除，每个 Tile 只保留实际覆盖它的光源索引。Shader 端遍历的不再是全部光源，而是当前像素所在 Tile 的命中列表——通常每 Tile 只有几个光源。复杂度从 <code>O(像素 × 总光源)</code> 降到 <code>O(像素 × 每 Tile 平均光源)</code>，光源密度越高、收益越大。</p>
-<h3 id="4-2-整体数据流"><a href="#4-2-整体数据流" class="headerlink" title="4.2 整体数据流"></a>4.2 整体数据流</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[CullingResults.visibleLights] --&gt; B[SetupLights&lt;br/&gt;遍历分类 + 预计算]<br><br>    B --&gt; C[DirectionalLightData[]&lt;br/&gt;NativeArray]<br>    B --&gt; D[OtherLightData[]&lt;br/&gt;NativeArray]<br>    B --&gt; E[Light Screen Bounds[]&lt;br/&gt;NativeArray]<br><br>    E --&gt; F[ForwardPlusTilesJob&lt;br/&gt;Burst 并行&lt;br/&gt;每 Tile 测试覆盖]<br>    F --&gt; G[TileData[]&lt;br/&gt;NativeArray of int]<br><br>    C --&gt; H[Directional Buffer]<br>    D --&gt; I[Other Buffer]<br>    G --&gt; J[Tiles Buffer]<br><br>    H --&gt; K[Shader · 直接 for 循环]<br>    I --&gt; L[Shader · Tile Lookup&lt;br/&gt;+ 命中光源 for 循环]<br>    J --&gt; L<br><br>    K --&gt; M[BRDF 累加输出]<br>    L --&gt; M<br><br>    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px<br>    style L fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br>    style M fill:#e8f5e9,stroke:#388e3c,stroke-width:2px<br></code></pre></td></tr></table></div></figure>
+<h3 id="4-2-整体数据流"><a href="#4-2-整体数据流" class="headerlink" title="4.2 整体数据流"></a>4.2 整体数据流</h3><pre class="mermaid">flowchart TD
+    A[CullingResults.visibleLights] --&gt; B[SetupLights<br>遍历分类 + 预计算]
+
+    B --&gt; C[DirectionalLightData[]<br>NativeArray]
+    B --&gt; D[OtherLightData[]<br>NativeArray]
+    B --&gt; E[Light Screen Bounds[]<br>NativeArray]
+
+    E --&gt; F[ForwardPlusTilesJob<br>Burst 并行<br>每 Tile 测试覆盖]
+    F --&gt; G[TileData[]<br>NativeArray of int]
+
+    C --&gt; H[Directional Buffer]
+    D --&gt; I[Other Buffer]
+    G --&gt; J[Tiles Buffer]
+
+    H --&gt; K[Shader · 直接 for 循环]
+    I --&gt; L[Shader · Tile Lookup<br>+ 命中光源 for 循环]
+    J --&gt; L
+
+    K --&gt; M[BRDF 累加输出]
+    L --&gt; M
+
+    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style L fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style M fill:#e8f5e9,stroke:#388e3c,stroke-width:2px</pre>
 
 <p>整个链路有三处资源同步点：</p>
 <ul>
@@ -591,7 +612,7 @@ mjx-container[display="true"] + br {
 
     
     
-      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script src="https://unpkg.com/mermaid@11.14.0/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
           /* 添加 safe 过滤器防止 JSON 被转义 */
@@ -644,12 +665,12 @@ mjx-container[display="true"] + br {
     
       <div class="related-post">
   <div class="related__head">
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Forward/" class="post-tag">#Forward+</a><a href="/tags/%E5%85%89%E7%85%A7/" class="post-tag">#光照</a><a href="/tags/Burst-Job/" class="post-tag">#Burst Job</a><a href="/tags/StructuredBuffer/" class="post-tag">#StructuredBuffer</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a>
+  <a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Forward/" class="post-tag">#Forward+</a><a href="/tags/%E5%85%89%E7%85%A7/" class="post-tag">#光照</a><a href="/tags/Burst-Job/" class="post-tag">#Burst Job</a><a href="/tags/StructuredBuffer/" class="post-tag">#StructuredBuffer</a>
 
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/9ddadbe5b731/" title="「Custom SRP」：几何可见性与批次优化" rel="bookmark">「Custom SRP」：几何可见性与批次优化</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/9ddadbe5b731/" title="「Custom SRP」：几何可见性与批次优化" rel="bookmark">「Custom SRP」：几何可见性与批次优化</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/16400eceeb11/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark">DDGI「动态漫反射全局光照」：架构与工程概览</a></div></div></div>
     
   </div>
 </div>

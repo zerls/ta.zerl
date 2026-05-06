@@ -235,11 +235,9 @@ mjx-container[display="true"] + br {
         
         <div class="post-info">
           <div class="post-date">发布于2024-07-15 · 更新于2026-05-01
-            
-            
           </div>
           
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/%E5%90%8E%E5%A4%84%E7%90%86/" class="post-tag">#后处理</a><a href="/tags/Bloom/" class="post-tag">#Bloom</a><a href="/tags/Color-Grading/" class="post-tag">#Color Grading</a><a href="/tags/FXAA/" class="post-tag">#FXAA</a><a href="/tags/Tone-Mapping/" class="post-tag">#Tone Mapping</a>
+  <a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E5%90%8E%E5%A4%84%E7%90%86/" class="post-tag">#后处理</a><a href="/tags/Bloom/" class="post-tag">#Bloom</a><a href="/tags/Color-Grading/" class="post-tag">#Color Grading</a><a href="/tags/FXAA/" class="post-tag">#FXAA</a><a href="/tags/Tone-Mapping/" class="post-tag">#Tone Mapping</a>
 
 
         </div>
@@ -302,7 +300,23 @@ mjx-container[display="true"] + br {
 <li><strong>6.2.0 起使用真 3D Texture + Compute Shader 生成 LUT</strong>：替代旧版 2D 模拟方案，提升采样精度与编程清晰度。</li>
 </ul>
 <hr>
-<h2 id="1-后处理栈架构"><a href="#1-后处理栈架构" class="headerlink" title="1. 后处理栈架构"></a>1. 后处理栈架构</h2><h3 id="1-1-整体数据流"><a href="#1-1-整体数据流" class="headerlink" title="1.1 整体数据流"></a>1.1 整体数据流</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[Camera Color Attachment&lt;br/&gt;HDR Linear · R11G11B10F] --&gt; B[BloomPass]<br>    B --&gt; C[Bloom Pyramid&lt;br/&gt;多级 RT]<br>    C --&gt; D[Bloom Result&lt;br/&gt;HDR · 与原图同尺寸]<br><br>    E[PostFXSettings · 调色参数] --&gt; F[ColorLUTPass · Compute Shader]<br>    F --&gt; G[Color LUT 3D Texture&lt;br/&gt;32³ · Log-C 空间]<br><br>    A --&gt; H[PostFXPass]<br>    D --&gt; H<br>    G --&gt; H<br><br>    H --&gt; I[最终输出&lt;br/&gt;LDR sRGB · Camera Target]<br><br>    style B fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br>    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px<br>    style H fill:#e8f5e9,stroke:#388e3c,stroke-width:2px<br></code></pre></td></tr></table></div></figure>
+<h2 id="1-后处理栈架构"><a href="#1-后处理栈架构" class="headerlink" title="1. 后处理栈架构"></a>1. 后处理栈架构</h2><h3 id="1-1-整体数据流"><a href="#1-1-整体数据流" class="headerlink" title="1.1 整体数据流"></a>1.1 整体数据流</h3><pre class="mermaid">flowchart TD
+    A[Camera Color Attachment<br>HDR Linear · R11G11B10F] --&gt; B[BloomPass]
+    B --&gt; C[Bloom Pyramid<br>多级 RT]
+    C --&gt; D[Bloom Result<br>HDR · 与原图同尺寸]
+
+    E[PostFXSettings · 调色参数] --&gt; F[ColorLUTPass · Compute Shader]
+    F --&gt; G[Color LUT 3D Texture<br>32³ · Log-C 空间]
+
+    A --&gt; H[PostFXPass]
+    D --&gt; H
+    G --&gt; H
+
+    H --&gt; I[最终输出<br>LDR sRGB · Camera Target]
+
+    style B fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style H fill:#e8f5e9,stroke:#388e3c,stroke-width:2px</pre>
 
 <p>三个 Pass 各司其职：</p>
 <ul>
@@ -428,7 +442,18 @@ mjx-container[display="true"] + br {
 <p><code>unity_to_ACES</code> 把 Unity 的工作色彩空间（线性 sRGB）转换到 ACES2065-1 / ACEScg；<code>AcesTonemap</code> 应用 RRT + ODT 简化曲线后输出。</p>
 <p>ACES 的特点：<strong>胶片质感的高光卷曲（roll-off）</strong>、<strong>暗部的丰富深度</strong>、整体<strong>色调偏暖</strong>。这是当代 3A 游戏的事实标准（《最后生还者》《荒野大镖客 2》《赛博朋克 2077》等都使用 ACES 路径）。</p>
 <p>代价：计算量稍高（多几次矩阵乘法），但移动端高端机型完全能承担。</p>
-<h3 id="4-3-模式选择决策"><a href="#4-3-模式选择决策" class="headerlink" title="4.3 模式选择决策"></a>4.3 模式选择决策</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[项目风格] --&gt; B{追求什么?}<br>    B --&gt;|纯净中性| C[Reinhard / Neutral]<br>    B --&gt;|电影质感| D[ACES]<br>    B --&gt;|风格化| E[Reinhard + Color Grading]<br><br>    C --&gt; F[移动端低端: Reinhard&lt;br/&gt;桌面端: Neutral]<br>    D --&gt; G[全平台 ACES&lt;br/&gt;性能预算允许]<br>    E --&gt; H[依赖 Color LUT 风格化]<br><br>    style D fill:#e8f5e9,stroke:#388e3c<br>    style G fill:#e8f5e9,stroke:#388e3c<br></code></pre></td></tr></table></div></figure>
+<h3 id="4-3-模式选择决策"><a href="#4-3-模式选择决策" class="headerlink" title="4.3 模式选择决策"></a>4.3 模式选择决策</h3><pre class="mermaid">flowchart TD
+    A[项目风格] --&gt; B{追求什么?}
+    B --&gt;|纯净中性| C[Reinhard / Neutral]
+    B --&gt;|电影质感| D[ACES]
+    B --&gt;|风格化| E[Reinhard + Color Grading]
+
+    C --&gt; F[移动端低端: Reinhard<br>桌面端: Neutral]
+    D --&gt; G[全平台 ACES<br>性能预算允许]
+    E --&gt; H[依赖 Color LUT 风格化]
+
+    style D fill:#e8f5e9,stroke:#388e3c
+    style G fill:#e8f5e9,stroke:#388e3c</pre>
 
 <p>实践中 <strong>ACES 是默认选择</strong>——除非性能极度紧张或风格上明确不要电影感。</p>
 <hr>
@@ -665,7 +690,7 @@ mjx-container[display="true"] + br {
 
     
     
-      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script src="https://unpkg.com/mermaid@11.14.0/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
           /* 添加 safe 过滤器防止 JSON 被转义 */
@@ -718,12 +743,12 @@ mjx-container[display="true"] + br {
     
       <div class="related-post">
   <div class="related__head">
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/%E5%90%8E%E5%A4%84%E7%90%86/" class="post-tag">#后处理</a><a href="/tags/Bloom/" class="post-tag">#Bloom</a><a href="/tags/Color-Grading/" class="post-tag">#Color Grading</a><a href="/tags/FXAA/" class="post-tag">#FXAA</a><a href="/tags/Tone-Mapping/" class="post-tag">#Tone Mapping</a>
+  <a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E5%90%8E%E5%A4%84%E7%90%86/" class="post-tag">#后处理</a><a href="/tags/Bloom/" class="post-tag">#Bloom</a><a href="/tags/Color-Grading/" class="post-tag">#Color Grading</a><a href="/tags/FXAA/" class="post-tag">#FXAA</a><a href="/tags/Tone-Mapping/" class="post-tag">#Tone Mapping</a>
 
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e962819a878a/" title="「Custom SRP」：直接光照与 Tiled Forward+" rel="bookmark">「Custom SRP」：直接光照与 Tiled Forward+</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/9ddadbe5b731/" title="「Custom SRP」：几何可见性与批次优化" rel="bookmark">「Custom SRP」：几何可见性与批次优化</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/16400eceeb11/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark">DDGI「动态漫反射全局光照」：架构与工程概览</a></div></div></div>
     
   </div>
 </div>

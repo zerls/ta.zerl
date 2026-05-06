@@ -235,11 +235,9 @@ mjx-container[display="true"] + br {
         
         <div class="post-info">
           <div class="post-date">发布于2024-07-01 · 更新于2026-05-01
-            
-            
           </div>
           
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/CSM/" class="post-tag">#CSM</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/Shadow-Mask/" class="post-tag">#Shadow Mask</a>
+  <a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/CSM/" class="post-tag">#CSM</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/Shadow-Mask/" class="post-tag">#Shadow Mask</a>
 
 
         </div>
@@ -302,7 +300,34 @@ mjx-container[display="true"] + br {
 <li><strong>Unity 6 阴影剔除并行化</strong>：<code>LightShadowCasterCullingInfo</code> 把”剔除-绘制”串行链路改为”剔除-剔除-…-绘制-绘制-…”并行调度，多光源场景 CPU 阴影耗时显著下降。</li>
 </ul>
 <hr>
-<h2 id="1-阴影系统全景"><a href="#1-阴影系统全景" class="headerlink" title="1. 阴影系统全景"></a>1. 阴影系统全景</h2><h3 id="1-1-整体数据流"><a href="#1-1-整体数据流" class="headerlink" title="1.1 整体数据流"></a>1.1 整体数据流</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[CullingResults.visibleLights] --&gt; B[Shadows.ReserveDirectionalShadows&lt;br/&gt;分配 Atlas Tile + 计算阴影矩阵]<br>    A --&gt; C[Shadows.ReserveOtherShadows&lt;br/&gt;分配 Atlas Tile + 处理点光6面]<br><br>    B --&gt; D[ShadowedDirectionalLight[]&lt;br/&gt;NativeArray]<br>    C --&gt; E[ShadowedOtherLight[]&lt;br/&gt;NativeArray]<br><br>    D --&gt; F[ShadowsPass · BuildRendererList&lt;br/&gt;每光源·每Tile 一个 RendererList]<br>    E --&gt; F<br><br>    F --&gt; G[Render Graph 调度&lt;br/&gt;多 List 并行剔除]<br>    G --&gt; H[ShadowCaster Pass 绘制&lt;br/&gt;写入 Atlas Tile]<br><br>    H --&gt; I[_DirectionalShadowAtlas&lt;br/&gt;R32_FLOAT depth-only]<br>    H --&gt; J[_OtherShadowAtlas&lt;br/&gt;R32_FLOAT depth-only]<br><br>    I --&gt; K[Lit Shader · 采样阶段]<br>    J --&gt; K<br><br>    L[unity_ShadowMask&lt;br/&gt;烘焙 4 通道 RGBA] --&gt; K<br>    M[unity_ProbesOcclusion&lt;br/&gt;动态对象用] --&gt; K<br><br>    K --&gt; N[light.attenuation&lt;br/&gt;送回 Note 4 BRDF]<br><br>    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px<br>    style G fill:#fff3e0,stroke:#f57c00,stroke-width:2px<br>    style K fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br>    style N fill:#e8f5e9,stroke:#388e3c,stroke-width:2px<br></code></pre></td></tr></table></div></figure>
+<h2 id="1-阴影系统全景"><a href="#1-阴影系统全景" class="headerlink" title="1. 阴影系统全景"></a>1. 阴影系统全景</h2><h3 id="1-1-整体数据流"><a href="#1-1-整体数据流" class="headerlink" title="1.1 整体数据流"></a>1.1 整体数据流</h3><pre class="mermaid">flowchart TD
+    A[CullingResults.visibleLights] --&gt; B[Shadows.ReserveDirectionalShadows<br>分配 Atlas Tile + 计算阴影矩阵]
+    A --&gt; C[Shadows.ReserveOtherShadows<br>分配 Atlas Tile + 处理点光6面]
+
+    B --&gt; D[ShadowedDirectionalLight[]<br>NativeArray]
+    C --&gt; E[ShadowedOtherLight[]<br>NativeArray]
+
+    D --&gt; F[ShadowsPass · BuildRendererList<br>每光源·每Tile 一个 RendererList]
+    E --&gt; F
+
+    F --&gt; G[Render Graph 调度<br>多 List 并行剔除]
+    G --&gt; H[ShadowCaster Pass 绘制<br>写入 Atlas Tile]
+
+    H --&gt; I[_DirectionalShadowAtlas<br>R32_FLOAT depth-only]
+    H --&gt; J[_OtherShadowAtlas<br>R32_FLOAT depth-only]
+
+    I --&gt; K[Lit Shader · 采样阶段]
+    J --&gt; K
+
+    L[unity_ShadowMask<br>烘焙 4 通道 RGBA] --&gt; K
+    M[unity_ProbesOcclusion<br>动态对象用] --&gt; K
+
+    K --&gt; N[light.attenuation<br>送回 Note 4 BRDF]
+
+    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style G fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style K fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style N fill:#e8f5e9,stroke:#388e3c,stroke-width:2px</pre>
 
 <p>整个流程分四段：<strong>Reserve</strong>（CPU 端确定哪些光源能拿到 Atlas Tile） → <strong>BuildList</strong>（每个 Tile 一个 RendererList） → <strong>Render</strong>（写入深度到 Atlas） → <strong>Sample</strong>（光照 Pass 中按表面位置采样并融合）。前三段在 ShadowsPass 中完成，第四段嵌入到 Lit Shader 的 GetLighting 调用链里。</p>
 <h3 id="1-2-双-Atlas-设计"><a href="#1-2-双-Atlas-设计" class="headerlink" title="1.2 双 Atlas 设计"></a>1.2 双 Atlas 设计</h3><p>阴影 Atlas 选择两张而不是一张统一图：</p>
@@ -656,7 +681,7 @@ mjx-container[display="true"] + br {
 
     
     
-      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script src="https://unpkg.com/mermaid@11.14.0/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
           /* 添加 safe 过滤器防止 JSON 被转义 */
@@ -709,12 +734,12 @@ mjx-container[display="true"] + br {
     
       <div class="related-post">
   <div class="related__head">
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/CSM/" class="post-tag">#CSM</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/Shadow-Mask/" class="post-tag">#Shadow Mask</a>
+  <a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/CSM/" class="post-tag">#CSM</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/Shadow-Mask/" class="post-tag">#Shadow Mask</a>
 
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e962819a878a/" title="「Custom SRP」：直接光照与 Tiled Forward+" rel="bookmark">「Custom SRP」：直接光照与 Tiled Forward+</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/9ddadbe5b731/" title="「Custom SRP」：几何可见性与批次优化" rel="bookmark">「Custom SRP」：几何可见性与批次优化</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/16400eceeb11/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark">DDGI「动态漫反射全局光照」：架构与工程概览</a></div></div></div>
     
   </div>
 </div>

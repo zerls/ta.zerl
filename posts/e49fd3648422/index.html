@@ -235,11 +235,9 @@ mjx-container[display="true"] + br {
         
         <div class="post-info">
           <div class="post-date">发布于2024-06-17 · 更新于2026-05-01
-            
-            
           </div>
           
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/PBR/" class="post-tag">#PBR</a><a href="/tags/BRDF/" class="post-tag">#BRDF</a><a href="/tags/HLSL/" class="post-tag">#HLSL</a>
+  <a href="/tags/PBR/" class="post-tag">#PBR</a><a href="/tags/BRDF/" class="post-tag">#BRDF</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/HLSL/" class="post-tag">#HLSL</a>
 
 
         </div>
@@ -331,7 +329,20 @@ mjx-container[display="true"] + br {
 </tbody></table></div>
 <p><code>HLSLINCLUDE</code> 块中的 include 是所有 Pass 共享的——这避免了在每个 Pass 中重复声明纹理与 CBUFFER。<code>LitInput.hlsl</code> 集中管理材质属性的声明与采样函数，是材质级的”input 抽象层”。</p>
 <h3 id="1-2-HLSL-库分层"><a href="#1-2-HLSL-库分层" class="headerlink" title="1.2 HLSL 库分层"></a>1.2 HLSL 库分层</h3><p>Shader 库的分层组织决定了维护性与扩展性。Catlike 实现采用六层分级：</p>
-<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[UnityInput.hlsl&lt;br/&gt;引擎 builtin 变量&lt;br/&gt;unity_ObjectToWorld / unity_MatrixVP / ...] --&gt; B<br>    B[Common.hlsl&lt;br/&gt;UNITY_MATRIX 宏 / 空间变换 / Dither / DecodeNormal] --&gt; C<br>    C[Surface.hlsl&lt;br/&gt;struct Surface · 表面物理属性] --&gt; E<br>    C --&gt; D<br>    D[Light.hlsl&lt;br/&gt;struct Light · 光源统一抽象&lt;br/&gt;StructuredBuffer 读取] --&gt; E<br>    E[BRDF.hlsl&lt;br/&gt;struct BRDF · 反射率分解&lt;br/&gt;Disney Diffuse / GGX / Smith / Schlick] --&gt; F<br>    F[Shadows.hlsl&lt;br/&gt;采样 Atlas · PCF · Cascade 选择] --&gt; G<br>    G[Lighting.hlsl&lt;br/&gt;GetLighting · BRDF × Light 累加&lt;br/&gt;Forward+ Tile 遍历] --&gt; H<br>    H[GI.hlsl&lt;br/&gt;间接光 · Lightmap / SH / Reflection Probe] --&gt; I<br>    I[LitPass.hlsl&lt;br/&gt;Vertex/Fragment 入口&lt;br/&gt;整合所有上层]<br><br>    style A fill:#f5f5f5,stroke:#999<br>    style I fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br></code></pre></td></tr></table></div></figure>
+<pre class="mermaid">flowchart TD
+    A[UnityInput.hlsl<br>引擎 builtin 变量<br>unity_ObjectToWorld / unity_MatrixVP / ...] --&gt; B
+    B[Common.hlsl<br>UNITY_MATRIX 宏 / 空间变换 / Dither / DecodeNormal] --&gt; C
+    C[Surface.hlsl<br>struct Surface · 表面物理属性] --&gt; E
+    C --&gt; D
+    D[Light.hlsl<br>struct Light · 光源统一抽象<br>StructuredBuffer 读取] --&gt; E
+    E[BRDF.hlsl<br>struct BRDF · 反射率分解<br>Disney Diffuse / GGX / Smith / Schlick] --&gt; F
+    F[Shadows.hlsl<br>采样 Atlas · PCF · Cascade 选择] --&gt; G
+    G[Lighting.hlsl<br>GetLighting · BRDF × Light 累加<br>Forward+ Tile 遍历] --&gt; H
+    H[GI.hlsl<br>间接光 · Lightmap / SH / Reflection Probe] --&gt; I
+    I[LitPass.hlsl<br>Vertex/Fragment 入口<br>整合所有上层]
+
+    style A fill:#f5f5f5,stroke:#999
+    style I fill:#e3f2fd,stroke:#1976d2,stroke-width:2px</pre>
 
 <p>依赖方向是单向的——下层不引用上层。这条”无环依赖”约束让 Shader 库可以被独立编译验证，也让 include 顺序自然有序：</p>
 <figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// LitPass.hlsl 的标准 include 顺序<br>#include "Assets/Custom RP/ShaderLibrary/Surface.hlsl"<br>#include "Assets/Custom RP/ShaderLibrary/Shadows.hlsl"<br>#include "Assets/Custom RP/ShaderLibrary/Light.hlsl"<br>#include "Assets/Custom RP/ShaderLibrary/BRDF.hlsl"<br>#include "Assets/Custom RP/ShaderLibrary/GI.hlsl"<br>#include "Assets/Custom RP/ShaderLibrary/Lighting.hlsl"<br></code></pre></td></tr></table></div></figure>
@@ -756,7 +767,7 @@ mjx-container[display="true"] + br {
 
     
     
-      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script src="https://unpkg.com/mermaid@11.14.0/dist/mermaid.min.js"></script>
       <script>
         if (window.mermaid) {
           /* 添加 safe 过滤器防止 JSON 被转义 */
@@ -809,12 +820,12 @@ mjx-container[display="true"] + br {
     
       <div class="related-post">
   <div class="related__head">
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/PBR/" class="post-tag">#PBR</a><a href="/tags/BRDF/" class="post-tag">#BRDF</a><a href="/tags/HLSL/" class="post-tag">#HLSL</a>
+  <a href="/tags/PBR/" class="post-tag">#PBR</a><a href="/tags/BRDF/" class="post-tag">#BRDF</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/HLSL/" class="post-tag">#HLSL</a>
 
 </div>
   <div class="realated__body">
     
-      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/bb49e33ef41f/" title="「PBR 系列」总览：基于物理的渲染从理论到引擎落地" rel="bookmark">「PBR 系列」总览：基于物理的渲染从理论到引擎落地</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e962819a878a/" title="「Custom SRP」：直接光照与 Tiled Forward+" rel="bookmark">「Custom SRP」：直接光照与 Tiled Forward+</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/bb49e33ef41f/" title="「PBR 系列」总览：基于物理的渲染从理论到引擎落地" rel="bookmark">「PBR 系列」总览：基于物理的渲染从理论到引擎落地</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/db873891e07d/" title="「PBR 系列」第一篇 · 理论基石：从渲染方程到 Cook-Torrance 框架" rel="bookmark">「PBR 系列」第一篇 · 理论基石：从渲染方程到 Cook-Torrance 框架</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/9ddadbe5b731/" title="「Custom SRP」：几何可见性与批次优化" rel="bookmark">「Custom SRP」：几何可见性与批次优化</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/16400eceeb11/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark">DDGI「动态漫反射全局光照」：架构与工程概览</a></div></div></div>
     
   </div>
 </div>
