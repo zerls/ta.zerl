@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        「Custom SRP」：后处理栈 | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+          <div class="post-banner">
+            <img src="https://catlikecoding.com/unity/tutorials/custom-srp/color-grading/tutorial-image.jpg" alt="Banner">
+          </div>
+        
+        
+        <div class="post-title">「Custom SRP」：后处理栈</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2024-07-15 · 更新于2026-05-01
+            
+            
+          </div>
+          
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/%E5%90%8E%E5%A4%84%E7%90%86/" class="post-tag">#后处理</a><a href="/tags/Bloom/" class="post-tag">#Bloom</a><a href="/tags/Color-Grading/" class="post-tag">#Color Grading</a><a href="/tags/FXAA/" class="post-tag">#FXAA</a><a href="/tags/Tone-Mapping/" class="post-tag">#Tone Mapping</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#TL-DR"><span class="post-toc-text">TL;DR</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-后处理栈架构"><span class="post-toc-text">1. 后处理栈架构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-1-整体数据流"><span class="post-toc-text">1.1 整体数据流</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-2-Render-Graph-资源复用"><span class="post-toc-text">1.2 Render Graph 资源复用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-3-PostFX-启用判断"><span class="post-toc-text">1.3 PostFX 启用判断</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-HDR-与中间-RT-格式"><span class="post-toc-text">2. HDR 与中间 RT 格式</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-1-为什么需要-HDR"><span class="post-toc-text">2.1 为什么需要 HDR</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-2-R11G11B10F：性能甜区"><span class="post-toc-text">2.2 R11G11B10F：性能甜区</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-3-Pre-Exposure：避免精度浪费"><span class="post-toc-text">2.3 Pre-Exposure：避免精度浪费</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-4-KeepAlpha：透明度保留判断"><span class="post-toc-text">2.4 KeepAlpha：透明度保留判断</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-Bloom：HDR-高光泛光"><span class="post-toc-text">3. Bloom：HDR 高光泛光</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-物理原理与设计目标"><span class="post-toc-text">3.1 物理原理与设计目标</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-Threshold-的-Soft-Knee-曲线"><span class="post-toc-text">3.2 Threshold 的 Soft Knee 曲线</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-3-Dual-Filter-Pyramid"><span class="post-toc-text">3.3 Dual Filter Pyramid</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-4-BloomPass-的-Render-Graph-资源声明"><span class="post-toc-text">3.4 BloomPass 的 Render Graph 资源声明</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-Tone-Mapping"><span class="post-toc-text">4. Tone Mapping</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-1-设计动机"><span class="post-toc-text">4.1 设计动机</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-2-三种-Tone-Mapping-模式"><span class="post-toc-text">4.2 三种 Tone Mapping 模式</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Reinhard"><span class="post-toc-text">Reinhard</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Neutral"><span class="post-toc-text">Neutral</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ACES"><span class="post-toc-text">ACES</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-3-模式选择决策"><span class="post-toc-text">4.3 模式选择决策</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-Color-Grading"><span class="post-toc-text">5. Color Grading</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-1-调色管线"><span class="post-toc-text">5.1 调色管线</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-2-LUT-烘焙的核心思想"><span class="post-toc-text">5.2 LUT 烘焙的核心思想</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-3-ColorLUTPass-的-Compute-Shader-实现"><span class="post-toc-text">5.3 ColorLUTPass 的 Compute Shader 实现</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-4-Log-C-空间的工作意义"><span class="post-toc-text">5.4 Log-C 空间的工作意义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-5-LUT-采样"><span class="post-toc-text">5.5 LUT 采样</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-6-LUT-调试"><span class="post-toc-text">5.6 LUT 调试</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#6-Render-Scale-与中间分辨率"><span class="post-toc-text">6. Render Scale 与中间分辨率</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-1-设计目标"><span class="post-toc-text">6.1 设计目标</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-2-中间-RT-与最终-Blit"><span class="post-toc-text">6.2 中间 RT 与最终 Blit</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-3-Bicubic-Filtering：上采样质量"><span class="post-toc-text">6.3 Bicubic Filtering：上采样质量</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-4-与后处理的协同"><span class="post-toc-text">6.4 与后处理的协同</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#7-FXAA-抗锯齿"><span class="post-toc-text">7. FXAA 抗锯齿</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-1-抗锯齿方案对比"><span class="post-toc-text">7.1 抗锯齿方案对比</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-2-FXAA-算法概要"><span class="post-toc-text">7.2 FXAA 算法概要</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-3-Luma-计算"><span class="post-toc-text">7.3 Luma 计算</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#8-PostFXPass-总集成"><span class="post-toc-text">8. PostFXPass 总集成</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#8-1-屏幕空间抖动（Dithering）：消除-8-bit-色带的最后一道工序"><span class="post-toc-text">8.1 屏幕空间抖动（Dithering）：消除 8-bit 色带的最后一道工序</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#9-TA-Takeaway"><span class="post-toc-text">9. TA Takeaway</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#9-1-后处理的总成本图谱"><span class="post-toc-text">9.1 后处理的总成本图谱</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#9-2-LUT-烘焙是性能优化的范式案例"><span class="post-toc-text">9.2 LUT 烘焙是性能优化的范式案例</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#9-3-中间分辨率与-PostFX-的协同设计"><span class="post-toc-text">9.3 中间分辨率与 PostFX 的协同设计</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#9-4-实践原则"><span class="post-toc-text">9.4 实践原则</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#关键-API-速查"><span class="post-toc-text">关键 API 速查</span></a></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <blockquote>
+<p>系列第 7 篇。前六篇笔记把场景从几何提交一路走到 GI 接入——到这一步，相机的 color attachment 中存储的是一张<strong>线性空间的 HDR 图像</strong>：物理光度学单位下的真实辐射度，可能远超 [0, 1]，包含了所有直接光、间接光、阴影信息。本篇关注的是从这张 HDR 图像到最终显示器输出的完整加工链——Bloom 模拟相机镜头光晕、Tone Mapping 把 HDR 映射到 LDR、Color Grading 进行风格化调色、Render Scale 处理动态分辨率、FXAA 收尾抗锯齿。</p>
+</blockquote>
+<h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h2><ul>
+<li><strong>后处理是 Render Graph 中的三个独立 Pass</strong>：BloomPass（光晕金字塔）→ ColorLUTPass（生成 3D 调色查找表）→ PostFXPass（最终合成 + FXAA + 输出）。Render Graph 自动复用格式相同、生命周期不重叠的中间 RT，显著减少分配。</li>
+<li><strong>HDR 的核心 RT 格式是 R11G11B10F</strong>：32 位/像素、近似 RGBA16F 的视觉质量、显著节省带宽。这是后处理性能与质量的甜区。</li>
+<li><strong>Bloom 用 Dual Filter Pyramid</strong>：下采样 + 上采样的双向金字塔，每级用低成本 Box Filter 模拟高斯模糊。Threshold 用 soft knee 曲线避免硬截断造成的 Mach Band。</li>
+<li><strong>Tone Mapping 三模式各有适用场景</strong>：Reinhard 简单稳定、Neutral 中性自然、ACES 电影级胶片质感（计算量稍高）。所有模式都在 Log-C 空间外完成。</li>
+<li><strong>Color LUT 是性能优化的灵魂</strong>：把所有逐像素调色（白平衡、对比度、饱和度、Channel Mixer、SMH）烘焙到一张 32³ 的 3D 纹理，全屏只需一次三线性查找——把每像素几十次浮点计算压缩为一次纹理采样。</li>
+<li><strong>6.2.0 起使用真 3D Texture + Compute Shader 生成 LUT</strong>：替代旧版 2D 模拟方案，提升采样精度与编程清晰度。</li>
+</ul>
+<hr>
+<h2 id="1-后处理栈架构"><a href="#1-后处理栈架构" class="headerlink" title="1. 后处理栈架构"></a>1. 后处理栈架构</h2><h3 id="1-1-整体数据流"><a href="#1-1-整体数据流" class="headerlink" title="1.1 整体数据流"></a>1.1 整体数据流</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[Camera Color Attachment&lt;br/&gt;HDR Linear · R11G11B10F] --&gt; B[BloomPass]<br>    B --&gt; C[Bloom Pyramid&lt;br/&gt;多级 RT]<br>    C --&gt; D[Bloom Result&lt;br/&gt;HDR · 与原图同尺寸]<br><br>    E[PostFXSettings · 调色参数] --&gt; F[ColorLUTPass · Compute Shader]<br>    F --&gt; G[Color LUT 3D Texture&lt;br/&gt;32³ · Log-C 空间]<br><br>    A --&gt; H[PostFXPass]<br>    D --&gt; H<br>    G --&gt; H<br><br>    H --&gt; I[最终输出&lt;br/&gt;LDR sRGB · Camera Target]<br><br>    style B fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br>    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px<br>    style H fill:#e8f5e9,stroke:#388e3c,stroke-width:2px<br></code></pre></td></tr></table></div></figure>
+
+<p>三个 Pass 各司其职：</p>
+<ul>
+<li><strong>BloomPass</strong> — 提取 HDR 高亮部分、生成模糊金字塔、合成回原图</li>
+<li><strong>ColorLUTPass</strong> — 用 Compute Shader 生成 3D 颜色查找表（不依赖输入图像、只依赖参数）</li>
+<li><strong>PostFXPass</strong> — 最终合成阶段：从原图 + Bloom 结果 + LUT 一次性产出 LDR 输出，期间完成 Tone Mapping、Color Grading 查表、FXAA、Render Scale 缩放</li>
+</ul>
+<h3 id="1-2-Render-Graph-资源复用"><a href="#1-2-Render-Graph-资源复用" class="headerlink" title="1.2 Render Graph 资源复用"></a>1.2 Render Graph 资源复用</h3><p>后处理的中间 RT 数量很多——Bloom 金字塔可能有 5-7 级、加上 Color Copy、Color Grading Result 等中间副本。如果每个都独立分配，是显著的显存负担。</p>
+<p>Render Graph 会自动检测<strong>格式相同 + 生命周期不重叠</strong>的资源，在底层复用同一张物理 RT。Frame Debugger 中会显示”Color Copy”和”Color Grading Result”使用了同名的物理 RT——这就是复用生效的标志。</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// 业务代码声明的逻辑资源</span><br><span class="hljs-keyword">var</span> colorCopy = builder.UseTexture(...);<br><span class="hljs-keyword">var</span> colorGradingResult = builder.UseTexture(...);<br><br><span class="hljs-comment">// 引擎实际分配可能只有一张物理 RT</span><br><span class="hljs-comment">// 因为 colorCopy 在 PostFXPass 入口被消费完</span><br><span class="hljs-comment">// colorGradingResult 才开始写入</span><br></code></pre></td></tr></table></div></figure>
+
+<p>这是 Render Graph 相对手动 RT 管理的核心收益之一——<strong>资源声明的颗粒度可以做得很细，物理分配由引擎统一优化</strong>。</p>
+<h3 id="1-3-PostFX-启用判断"><a href="#1-3-PostFX-启用判断" class="headerlink" title="1.3 PostFX 启用判断"></a>1.3 PostFX 启用判断</h3><p>不是每个相机都需要后处理。Custom SRP 在 CameraRenderer 中根据相机配置与 PostFX 设置决定走完整 PostFXPass 还是直接 FinalPass：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-built_in">bool</span> hasActivePostFX = postFXSettings != <span class="hljs-literal">null</span><br>                    &amp;&amp; cameraSettings.allowPostFX<br>                    &amp;&amp; camera.cameraType &lt;= CameraType.SceneView;<br><br><span class="hljs-keyword">if</span> (hasActivePostFX)<br>    PostFXPass.Record(renderGraph, postFXSettings, textures, ...);<br><span class="hljs-keyword">else</span><br>    FinalPass.Record(renderGraph, copier, textures);<br></code></pre></td></tr></table></div></figure>
+
+<p><code>camera.cameraType &lt;= CameraType.SceneView</code> 跳过预览相机和反射 Probe 相机——对它们做后处理通常无意义且会拖慢编辑器响应。</p>
+<hr>
+<h2 id="2-HDR-与中间-RT-格式"><a href="#2-HDR-与中间-RT-格式" class="headerlink" title="2. HDR 与中间 RT 格式"></a>2. HDR 与中间 RT 格式</h2><h3 id="2-1-为什么需要-HDR"><a href="#2-1-为什么需要-HDR" class="headerlink" title="2.1 为什么需要 HDR"></a>2.1 为什么需要 HDR</h3><p>直接用 LDR（每通道 8 位 [0, 1]）做后处理会撞上两个问题：</p>
+<ul>
+<li><strong>过曝信息丢失</strong>：场景中超过 1.0 的辐射度（直接光、霓虹灯、阳光反射）在 LDR 中被截断为纯白——后续 Bloom 无法区分”白纸”和”灯泡”</li>
+<li><strong>精度链式损失</strong>：每次 Blit 都会产生 8 位量化误差，链式后处理多次累积后出现可见 banding</li>
+</ul>
+<p>HDR 用浮点格式存储辐射度，保留 [0, ∞) 全范围。Bloom 提取时能精确区分高光程度，Tone Mapping 阶段才把 HDR 映射到 LDR。</p>
+<h3 id="2-2-R11G11B10F：性能甜区"><a href="#2-2-R11G11B10F：性能甜区" class="headerlink" title="2.2 R11G11B10F：性能甜区"></a>2.2 R11G11B10F：性能甜区</h3><p>HDR 中间 RT 的格式选择直接影响带宽与质量。三个候选：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>格式</th>
+<th>位深/像素</th>
+<th>范围</th>
+<th>精度</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RGBA16F</td>
+<td>64 bit</td>
+<td>[-65504, 65504]</td>
+<td>11 位尾数</td>
+<td>桌面端、对精度极敏感的场景</td>
+</tr>
+<tr>
+<td><strong>R11G11B10F</strong></td>
+<td><strong>32 bit</strong></td>
+<td><strong>[0, 65000]</strong></td>
+<td><strong>6-7 位尾数</strong></td>
+<td><strong>后处理标准</strong></td>
+</tr>
+<tr>
+<td>RGBA8 (LDR)</td>
+<td>32 bit</td>
+<td>[0, 1]</td>
+<td>8 位定点</td>
+<td>最终输出</td>
+</tr>
+</tbody></table></div>
+<p>R11G11B10F 的精度安排：R 与 G 通道 11 位（5 位指数 + 6 位尾数）、B 通道 10 位（5 位指数 + 5 位尾数）——B 通道精度略低是因为人眼对蓝色亮度变化最不敏感。</p>
+<p>视觉对比 RGBA16F 时几乎无差，但带宽减半——这在移动端 TBR 架构下意味着片上内存占用减半、Pass 间 store-load 也减半。<strong>这是 R11G11B10F 成为 URP / HDRP / Custom SRP 后处理标准格式的根本原因</strong>。</p>
+<h3 id="2-3-Pre-Exposure：避免精度浪费"><a href="#2-3-Pre-Exposure：避免精度浪费" class="headerlink" title="2.3 Pre-Exposure：避免精度浪费"></a>2.3 Pre-Exposure：避免精度浪费</h3><p>R11G11B10F 的 6-7 位尾数虽然够用，但当场景辐射度数值范围跨度大（暗部 0.001、阳光 1000）时仍会出现暗部精度不足。</p>
+<p><strong>Pre-Exposure</strong> 是 HDR 管线的前置技巧：在 Tone Mapping 之前，把整个 HDR buffer 乘以一个全局曝光值，让”中等亮度”的辐射度落到 1.0 附近——浮点精度在 1.0 附近最高。</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-built_in">float</span> exposureValue = Mathf.Pow(<span class="hljs-number">2f</span>, colorAdjustments.postExposure);<br><span class="hljs-comment">// 整个 HDR 缓冲乘以 exposureValue 后再做后续处理</span><br></code></pre></td></tr></table></div></figure>
+
+<p><code>postExposure</code> 暴露给美术的单位是 EV（Exposure Value，stops）——每 +1 EV 等同曝光时间翻倍或光圈大一档。这与摄影师的工作语言一致，在场景照明调整时直观。</p>
+<h3 id="2-4-KeepAlpha：透明度保留判断"><a href="#2-4-KeepAlpha：透明度保留判断" class="headerlink" title="2.4 KeepAlpha：透明度保留判断"></a>2.4 KeepAlpha：透明度保留判断</h3><p>PostFX 链路是否需要保留 alpha 通道是个常被忽视的选项。Custom SRP 暴露 <code>keepAlpha</code> 配置：</p>
+<ul>
+<li><strong>keepAlpha = false（默认）</strong>：Alpha 通道在 PostFX 阶段被覆盖。此时 Bloom 可以借用 Alpha 通道存储中间数据</li>
+<li><strong>keepAlpha = true</strong>：Alpha 通道严格保留——用于需要把渲染结果合成到外部图层的情况（比如视频会议背景虚化、AR 应用、UI 层叠加）</li>
+</ul>
+<p>这个开关影响 Bloom 实现细节——如果允许使用 Alpha，可以把”Bloom 强度”打包到 alpha 中省一张 RT。</p>
+<hr>
+<h2 id="3-Bloom：HDR-高光泛光"><a href="#3-Bloom：HDR-高光泛光" class="headerlink" title="3. Bloom：HDR 高光泛光"></a>3. Bloom：HDR 高光泛光</h2><h3 id="3-1-物理原理与设计目标"><a href="#3-1-物理原理与设计目标" class="headerlink" title="3.1 物理原理与设计目标"></a>3.1 物理原理与设计目标</h3><p>真实相机镜头不是完美的——亮光源在感光元件上产生散射光晕，强度越大、扩散越广。Bloom 模拟这个效应，让 HDR 高光部分自然”溢出”到周围区域。</p>
+<p>Bloom 的关键参数：</p>
+<ul>
+<li><strong>Threshold</strong> — 高光提取阈值。低于此值的像素不参与 Bloom</li>
+<li><strong>Knee</strong> — Threshold 的软过渡范围。避免硬截断造成的 Mach Band</li>
+<li><strong>Intensity</strong> — Bloom 总强度</li>
+<li><strong>Scatter</strong> — 散射程度。决定金字塔上采样的混合比例</li>
+<li><strong>Iterations</strong> — 金字塔层级数。越多越柔和但也越糊</li>
+</ul>
+<h3 id="3-2-Threshold-的-Soft-Knee-曲线"><a href="#3-2-Threshold-的-Soft-Knee-曲线" class="headerlink" title="3.2 Threshold 的 Soft Knee 曲线"></a>3.2 Threshold 的 Soft Knee 曲线</h3><p>朴素 threshold 用 <code>max(color - threshold, 0)</code> 截断——但这会让略高于阈值的像素突然出现，亮度与阈值之差很小时容易出现可见的边界。</p>
+<p><strong>Soft Knee</strong> 曲线让 threshold 周围有一段平滑过渡：</p>
+
+<mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -3.8ex;" xmlns="http://www.w3.org/2000/svg" width="31.006ex" height="8.731ex" role="img" focusable="false" viewBox="0 -2179.6 13704.8 3859.2"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mtext"><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(394,0)"></path><path data-c="66" d="M273 0Q255 3 146 3Q43 3 34 0H26V46H42Q70 46 91 49Q99 52 103 60Q104 62 104 224V385H33V431H104V497L105 564L107 574Q126 639 171 668T266 704Q267 704 275 704T289 705Q330 702 351 679T372 627Q372 604 358 590T321 576T284 590T270 627Q270 647 288 667H284Q280 668 273 668Q245 668 223 647T189 592Q183 572 182 497V431H293V385H185V225Q185 63 186 61T189 57T194 54T199 51T206 49T213 48T222 47T231 47T241 46T251 46H282V0H273Z" transform="translate(894,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(1200,0)"></path></g><g data-mml-node="mo" transform="translate(1866.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mrow" transform="translate(2922.6,0)"><g data-mml-node="mo"><path data-c="23A7" d="M712 899L718 893V876V865Q718 854 704 846Q627 793 577 710T510 525Q510 524 509 521Q505 493 504 349Q504 345 504 334Q504 277 504 240Q504 -2 503 -4Q502 -8 494 -9T444 -10Q392 -10 390 -9Q387 -8 386 -5Q384 5 384 230Q384 262 384 312T383 382Q383 481 392 535T434 656Q510 806 664 892L677 899H712Z" transform="translate(0,1280.6)"></path><path data-c="23A9" d="M718 -893L712 -899H677L666 -893Q542 -825 468 -714T385 -476Q384 -466 384 -282Q384 3 385 5L389 9Q392 10 444 10Q486 10 494 9T503 4Q504 2 504 -239V-310V-366Q504 -470 508 -513T530 -609Q546 -657 569 -698T617 -767T661 -812T699 -843T717 -856T718 -876V-893Z" transform="translate(0,-780.6)"></path><path data-c="23A8" d="M389 1159Q391 1160 455 1160Q496 1160 498 1159Q501 1158 502 1155Q504 1145 504 924Q504 691 503 682Q494 549 425 439T243 259L229 250L243 241Q349 175 421 66T503 -182Q504 -191 504 -424Q504 -600 504 -629T499 -659H498Q496 -660 444 -660T390 -659Q387 -658 386 -655Q384 -645 384 -425V-282Q384 -176 377 -116T342 10Q325 54 301 92T255 155T214 196T183 222T171 232Q170 233 170 250T171 268Q171 269 191 284T240 331T300 407T354 524T383 679Q384 691 384 925Q384 1152 385 1155L389 1159Z" transform="translate(0,0)"></path><svg width="889" height="310.6" y="1060" x="0" viewBox="0 54.7 889 310.6"><path data-c="23AA" d="M384 150V266Q384 304 389 309Q391 310 455 310Q496 310 498 309Q502 308 503 298Q504 283 504 150Q504 32 504 12T499 -9H498Q496 -10 444 -10T390 -9Q386 -8 385 2Q384 17 384 150Z" transform="scale(1,1.528)"></path></svg><svg width="889" height="310.6" y="-870.6" x="0" viewBox="0 54.7 889 310.6"><path data-c="23AA" d="M384 150V266Q384 304 389 309Q391 310 455 310Q496 310 498 309Q502 308 503 298Q504 283 504 150Q504 32 504 12T499 -9H498Q496 -10 444 -10T390 -9Q386 -8 385 2Q384 17 384 150Z" transform="scale(1,1.528)"></path></svg></g><g data-mml-node="mtable" transform="translate(889,0)"><g data-mml-node="mtr" transform="translate(0,1429.6)"><g data-mml-node="mtd"><g data-mml-node="mn"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></g></g><g data-mml-node="mtd" transform="translate(4546.7,0)"><g data-mml-node="mtext"><path data-c="69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z"></path><path data-c="66" d="M273 0Q255 3 146 3Q43 3 34 0H26V46H42Q70 46 91 49Q99 52 103 60Q104 62 104 224V385H33V431H104V497L105 564L107 574Q126 639 171 668T266 704Q267 704 275 704T289 705Q330 702 351 679T372 627Q372 604 358 590T321 576T284 590T270 627Q270 647 288 667H284Q280 668 273 668Q245 668 223 647T189 592Q183 572 182 497V431H293V385H185V225Q185 63 186 61T189 57T194 54T199 51T206 49T213 48T222 47T231 47T241 46T251 46H282V0H273Z" transform="translate(278,0)"></path><path data-c="A0" d="" transform="translate(584,0)"></path></g><g data-mml-node="mi" transform="translate(834,0)"><path data-c="1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path></g><g data-mml-node="mo" transform="translate(1540.8,0)"><path data-c="2264" d="M674 636Q682 636 688 630T694 615T687 601Q686 600 417 472L151 346L399 228Q687 92 691 87Q694 81 694 76Q694 58 676 56H670L382 192Q92 329 90 331Q83 336 83 348Q84 359 96 365Q104 369 382 500T665 634Q669 636 674 636ZM84 -118Q84 -108 99 -98H678Q694 -104 694 -118Q694 -130 679 -138H98Q84 -131 84 -118Z"></path></g><g data-mml-node="mo" transform="translate(2596.6,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mtext" transform="translate(3374.6,0)"><path data-c="6B" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T97 124T98 167T98 217T98 272T98 329Q98 366 98 407T98 482T98 542T97 586T97 603Q94 622 83 628T38 637H20V660Q20 683 22 683L32 684Q42 685 61 686T98 688Q115 689 135 690T165 693T176 694H179V463L180 233L240 287Q300 341 304 347Q310 356 310 364Q310 383 289 385H284V431H293Q308 428 412 428Q475 428 484 431H489V385H476Q407 380 360 341Q286 278 286 274Q286 273 349 181T420 79Q434 60 451 53T500 46H511V0H505Q496 3 418 3Q322 3 307 0H299V46H306Q330 48 330 65Q330 72 326 79Q323 84 276 153T228 222L176 176V120V84Q176 65 178 59T189 49Q210 46 238 46H254V0H246Q231 3 137 3T28 0H20V46H36Z"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(528,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1084,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1528,0)"></path></g></g></g><g data-mml-node="mtr" transform="translate(0,-126.8)"><g data-mml-node="mtd"><g data-mml-node="mfrac"><g data-mml-node="mrow" transform="translate(220,516.8) scale(0.707)"><g data-mml-node="mo"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(389,0)"><path data-c="1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path></g><g data-mml-node="mo" transform="translate(818,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mtext" transform="translate(1596,0)"><path data-c="6B" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T97 124T98 167T98 217T98 272T98 329Q98 366 98 407T98 482T98 542T97 586T97 603Q94 622 83 628T38 637H20V660Q20 683 22 683L32 684Q42 685 61 686T98 688Q115 689 135 690T165 693T176 694H179V463L180 233L240 287Q300 341 304 347Q310 356 310 364Q310 383 289 385H284V431H293Q308 428 412 428Q475 428 484 431H489V385H476Q407 380 360 341Q286 278 286 274Q286 273 349 181T420 79Q434 60 451 53T500 46H511V0H505Q496 3 418 3Q322 3 307 0H299V46H306Q330 48 330 65Q330 72 326 79Q323 84 276 153T228 222L176 176V120V84Q176 65 178 59T189 49Q210 46 238 46H254V0H246Q231 3 137 3T28 0H20V46H36Z"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(528,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1084,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1528,0)"></path></g><g data-mml-node="msup" transform="translate(3568,0)"><g data-mml-node="mo"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mn" transform="translate(422,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g></g><g data-mml-node="mrow" transform="translate(801.1,-345) scale(0.707)"><g data-mml-node="mn"><path data-c="34" d="M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z"></path></g><g data-mml-node="mo" transform="translate(500,0)"><path data-c="22C5" d="M78 250Q78 274 95 292T138 310Q162 310 180 294T199 251Q199 226 182 208T139 190T96 207T78 250Z"></path></g><g data-mml-node="mtext" transform="translate(778,0)"><path data-c="6B" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T97 124T98 167T98 217T98 272T98 329Q98 366 98 407T98 482T98 542T97 586T97 603Q94 622 83 628T38 637H20V660Q20 683 22 683L32 684Q42 685 61 686T98 688Q115 689 135 690T165 693T176 694H179V463L180 233L240 287Q300 341 304 347Q310 356 310 364Q310 383 289 385H284V431H293Q308 428 412 428Q475 428 484 431H489V385H476Q407 380 360 341Q286 278 286 274Q286 273 349 181T420 79Q434 60 451 53T500 46H511V0H505Q496 3 418 3Q322 3 307 0H299V46H306Q330 48 330 65Q330 72 326 79Q323 84 276 153T228 222L176 176V120V84Q176 65 178 59T189 49Q210 46 238 46H254V0H246Q231 3 137 3T28 0H20V46H36Z"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(528,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1084,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1528,0)"></path></g></g><rect width="3306.7" height="60" x="120" y="220"></rect></g></g><g data-mml-node="mtd" transform="translate(4546.7,0)"><g data-mml-node="mtext"><path data-c="69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z"></path><path data-c="66" d="M273 0Q255 3 146 3Q43 3 34 0H26V46H42Q70 46 91 49Q99 52 103 60Q104 62 104 224V385H33V431H104V497L105 564L107 574Q126 639 171 668T266 704Q267 704 275 704T289 705Q330 702 351 679T372 627Q372 604 358 590T321 576T284 590T270 627Q270 647 288 667H284Q280 668 273 668Q245 668 223 647T189 592Q183 572 182 497V431H293V385H185V225Q185 63 186 61T189 57T194 54T199 51T206 49T213 48T222 47T231 47T241 46T251 46H282V0H273Z" transform="translate(278,0)"></path><path data-c="A0" d="" transform="translate(584,0)"></path></g><g data-mml-node="mo" transform="translate(834,0) translate(0 -0.5)"><path data-c="7C" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path></g><g data-mml-node="mi" transform="translate(1112,0)"><path data-c="1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path></g><g data-mml-node="mo" transform="translate(1541,0) translate(0 -0.5)"><path data-c="7C" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path></g><g data-mml-node="mo" transform="translate(2096.8,0)"><path data-c="3C" d="M694 -11T694 -19T688 -33T678 -40Q671 -40 524 29T234 166L90 235Q83 240 83 250Q83 261 91 266Q664 540 678 540Q681 540 687 534T694 519T687 505Q686 504 417 376L151 250L417 124Q686 -4 687 -5Q694 -11 694 -19Z"></path></g><g data-mml-node="mtext" transform="translate(3152.6,0)"><path data-c="6B" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T97 124T98 167T98 217T98 272T98 329Q98 366 98 407T98 482T98 542T97 586T97 603Q94 622 83 628T38 637H20V660Q20 683 22 683L32 684Q42 685 61 686T98 688Q115 689 135 690T165 693T176 694H179V463L180 233L240 287Q300 341 304 347Q310 356 310 364Q310 383 289 385H284V431H293Q308 428 412 428Q475 428 484 431H489V385H476Q407 380 360 341Q286 278 286 274Q286 273 349 181T420 79Q434 60 451 53T500 46H511V0H505Q496 3 418 3Q322 3 307 0H299V46H306Q330 48 330 65Q330 72 326 79Q323 84 276 153T228 222L176 176V120V84Q176 65 178 59T189 49Q210 46 238 46H254V0H246Q231 3 137 3T28 0H20V46H36Z"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(528,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1084,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1528,0)"></path></g></g></g><g data-mml-node="mtr" transform="translate(0,-1429.6)"><g data-mml-node="mtd"><g data-mml-node="mi"><path data-c="1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path></g></g><g data-mml-node="mtd" transform="translate(4546.7,0)"><g data-mml-node="mtext"><path data-c="69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z"></path><path data-c="66" d="M273 0Q255 3 146 3Q43 3 34 0H26V46H42Q70 46 91 49Q99 52 103 60Q104 62 104 224V385H33V431H104V497L105 564L107 574Q126 639 171 668T266 704Q267 704 275 704T289 705Q330 702 351 679T372 627Q372 604 358 590T321 576T284 590T270 627Q270 647 288 667H284Q280 668 273 668Q245 668 223 647T189 592Q183 572 182 497V431H293V385H185V225Q185 63 186 61T189 57T194 54T199 51T206 49T213 48T222 47T231 47T241 46T251 46H282V0H273Z" transform="translate(278,0)"></path><path data-c="A0" d="" transform="translate(584,0)"></path></g><g data-mml-node="mi" transform="translate(834,0)"><path data-c="1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path></g><g data-mml-node="mo" transform="translate(1540.8,0)"><path data-c="2265" d="M83 616Q83 624 89 630T99 636Q107 636 253 568T543 431T687 361Q694 356 694 346T687 331Q685 329 395 192L107 56H101Q83 58 83 76Q83 77 83 79Q82 86 98 95Q117 105 248 167Q326 204 378 228L626 346L360 472Q291 505 200 548Q112 589 98 597T83 616ZM84 -118Q84 -108 99 -98H678Q694 -104 694 -118Q694 -130 679 -138H98Q84 -131 84 -118Z"></path></g><g data-mml-node="mtext" transform="translate(2596.6,0)"><path data-c="6B" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T97 124T98 167T98 217T98 272T98 329Q98 366 98 407T98 482T98 542T97 586T97 603Q94 622 83 628T38 637H20V660Q20 683 22 683L32 684Q42 685 61 686T98 688Q115 689 135 690T165 693T176 694H179V463L180 233L240 287Q300 341 304 347Q310 356 310 364Q310 383 289 385H284V431H293Q308 428 412 428Q475 428 484 431H489V385H476Q407 380 360 341Q286 278 286 274Q286 273 349 181T420 79Q434 60 451 53T500 46H511V0H505Q496 3 418 3Q322 3 307 0H299V46H306Q330 48 330 65Q330 72 326 79Q323 84 276 153T228 222L176 176V120V84Q176 65 178 59T189 49Q210 46 238 46H254V0H246Q231 3 137 3T28 0H20V46H36Z"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(528,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1084,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1528,0)"></path></g></g></g></g><g data-mml-node="mo" transform="translate(10782.3,0) translate(0 250)"></g></g></g></g></svg></mjx-container>
+
+
+<p>其中 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="26.704ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 11803 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path></g><g data-mml-node="mo" transform="translate(706.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mo" transform="translate(1762.6,0)"><path data-c="6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(833,0)"></path><path data-c="78" d="M201 0Q189 3 102 3Q26 3 17 0H11V46H25Q48 47 67 52T96 61T121 78T139 96T160 122T180 150L226 210L168 288Q159 301 149 315T133 336T122 351T113 363T107 370T100 376T94 379T88 381T80 383Q74 383 44 385H16V431H23Q59 429 126 429Q219 429 229 431H237V385Q201 381 201 369Q201 367 211 353T239 315T268 274L272 270L297 304Q329 345 329 358Q329 364 327 369T322 376T317 380T310 384L307 385H302V431H309Q324 428 408 428Q487 428 493 431H499V385H492Q443 385 411 368Q394 360 377 341T312 257L296 236L358 151Q424 61 429 57T446 50Q464 46 499 46H516V0H510H502Q494 1 482 1T457 2T432 2T414 3Q403 3 377 3T327 1L304 0H295V46H298Q309 46 320 51T331 63Q331 65 291 120L250 175Q249 174 219 133T185 88Q181 83 181 74Q181 63 188 55T206 46Q208 46 208 23V0H201Z" transform="translate(1333,0)"></path></g><g data-mml-node="mo" transform="translate(3623.6,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mtext" transform="translate(4012.6,0)"><path data-c="63" d="M370 305T349 305T313 320T297 358Q297 381 312 396Q317 401 317 402T307 404Q281 408 258 408Q209 408 178 376Q131 329 131 219Q131 137 162 90Q203 29 272 29Q313 29 338 55T374 117Q376 125 379 127T395 129H409Q415 123 415 120Q415 116 411 104T395 71T366 33T318 2T249 -11Q163 -11 99 53T34 214Q34 318 99 383T250 448T370 421T404 357Q404 334 387 320Z"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(444,0)"></path><path data-c="6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z" transform="translate(944,0)"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(1222,0)"></path><path data-c="72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z" transform="translate(1722,0)"></path></g><g data-mml-node="mo" transform="translate(6126.6,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mo" transform="translate(6737.8,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mtext" transform="translate(7738,0)"><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z"></path><path data-c="68" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 124T102 167T103 217T103 272T103 329Q103 366 103 407T103 482T102 542T102 586T102 603Q99 622 88 628T43 637H25V660Q25 683 27 683L37 684Q47 685 66 686T103 688Q120 689 140 690T170 693T181 694H184V367Q244 442 328 442Q451 442 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(389,0)"></path><path data-c="72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z" transform="translate(945,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1337,0)"></path><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z" transform="translate(1781,0)"></path><path data-c="68" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 124T102 167T103 217T103 272T103 329Q103 366 103 407T103 482T102 542T102 586T102 603Q99 622 88 628T43 637H25V660Q25 683 27 683L37 684Q47 685 66 686T103 688Q120 689 140 690T170 693T181 694H184V367Q244 442 328 442Q451 442 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(2175,0)"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(2731,0)"></path><path data-c="6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z" transform="translate(3231,0)"></path><path data-c="64" d="M376 495Q376 511 376 535T377 568Q377 613 367 624T316 637H298V660Q298 683 300 683L310 684Q320 685 339 686T376 688Q393 689 413 690T443 693T454 694H457V390Q457 84 458 81Q461 61 472 55T517 46H535V0Q533 0 459 -5T380 -11H373V44L365 37Q307 -11 235 -11Q158 -11 96 50T34 215Q34 315 97 378T244 442Q319 442 376 393V495ZM373 342Q328 405 260 405Q211 405 173 369Q146 341 139 305T131 211Q131 155 138 120T173 59Q203 26 251 26Q322 26 373 103V342Z" transform="translate(3509,0)"></path></g></g></g></svg></mjx-container>。结果是阈值附近的 quadratic 平滑、远离阈值后线性。</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float3 ApplyBloomThreshold(float3 color)<br>{<br>    float brightness = Max3(color.r, color.g, color.b);<br>    float soft = brightness + _BloomThreshold.y;     // y = -knee<br>    soft = clamp(soft, 0.0, _BloomThreshold.z);      // z = 2 × knee<br>    soft = soft * soft * _BloomThreshold.w;          // w = 1 / (4 × knee + epsilon)<br>    float contribution = max(soft, brightness - _BloomThreshold.x);<br>    contribution /= max(brightness, 0.00001);<br>    return color * contribution;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>_BloomThreshold.xyzw</code> 在 CPU 端预计算好四个系数，Shader 端只用 4 次乘法 + 几次比较即可完成 soft threshold——比展开公式直接计算快得多。</p>
+<h3 id="3-3-Dual-Filter-Pyramid"><a href="#3-3-Dual-Filter-Pyramid" class="headerlink" title="3.3 Dual Filter Pyramid"></a>3.3 Dual Filter Pyramid</h3><p>Bloom 的核心算法是<strong>多级模糊金字塔</strong>。直接对全屏做大半径高斯模糊成本极高（半径 R 的高斯需要 R² 次采样），分层金字塔把这个成本压到对数级：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Level 0 (full size)<br>   ↓ Downsample with box filter<br>Level 1 (1/2 size)<br>   ↓ Downsample<br>Level 2 (1/4 size)<br>   ↓ Downsample<br>   ...<br>Level N (very small)<br></code></pre></td></tr></table></div></figure>
+
+<p>下采样阶段每像素只需要 4 次采样（box filter），总成本是 <code>O(N × tap)</code>，远低于单级大核高斯。</p>
+<p>更精妙的是<strong>上采样阶段反向走金字塔</strong>，在每级把当前模糊结果与上一级原始结果按 Scatter 权重混合：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Level N (modeled blur) ──┐<br>                          ├─→ Upsample to Level N-1<br>Level N-1 (downsampled) ──┘<br>                              │<br>                              ├─→ Upsample to Level N-2<br>Level N-2 (downsampled) ──────┘<br>                                  ...<br>                                  → Final Bloom Result<br></code></pre></td></tr></table></div></figure>
+
+<p>这种 dual filter（下采样 + 上采样的两阶段对称结构）的视觉效果接近高质量高斯模糊，但成本只有单次大核模糊的几分之一——Kawase 在 CryEngine 时代提出的优化思路，至今仍是现代游戏引擎 Bloom 的事实标准。</p>
+<h3 id="3-4-BloomPass-的-Render-Graph-资源声明"><a href="#3-4-BloomPass-的-Render-Graph-资源声明" class="headerlink" title="3.4 BloomPass 的 Render Graph 资源声明"></a>3.4 BloomPass 的 Render Graph 资源声明</h3><p>Bloom 金字塔的每一级都是独立 RT。BloomPass 需要在录制阶段批量声明：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Record</span>(<span class="hljs-params">RenderGraph renderGraph, <span class="hljs-comment">/*...*/</span>, <span class="hljs-keyword">in</span> CameraRendererTextures textures</span>)</span><br>{<br>    <span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> builder = renderGraph.AddRasterRenderPass(<br>        <span class="hljs-string">"Bloom"</span>, <span class="hljs-keyword">out</span> BloomPass pass, sampler);<br><br>    <span class="hljs-comment">// 输入：HDR color</span><br>    builder.UseTexture(textures.colorAttachment, AccessFlags.Read);<br><br>    <span class="hljs-comment">// 创建金字塔级别（动态决定数量）</span><br>    <span class="hljs-built_in">int</span> width = bufferSize.x / <span class="hljs-number">2</span>;<br>    <span class="hljs-built_in">int</span> height = bufferSize.y / <span class="hljs-number">2</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; maxBloomIterations; i++)<br>    {<br>        <span class="hljs-keyword">if</span> (width &lt; <span class="hljs-number">2</span> || height &lt; <span class="hljs-number">2</span>) <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">var</span> desc = <span class="hljs-keyword">new</span> TextureDesc(width, height) {<br>            format = colorFormat,<br>            name = <span class="hljs-string">$"Bloom Pyramid <span class="hljs-subst">{i}</span>"</span><br>        };<br>        pass.bloomPyramid[i] = renderGraph.CreateTexture(desc);<br>        builder.SetRenderAttachment(pass.bloomPyramid[i], <span class="hljs-number">0</span>);   <span class="hljs-comment">// 写入</span><br><br>        width /= <span class="hljs-number">2</span>;<br>        height /= <span class="hljs-number">2</span>;<br>    }<br><br>    builder.SetRenderFunc&lt;BloomPass&gt;(Render);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>每级金字塔都是独立 attachment——Render Graph 会自动判断这些 RT 中能否复用物理资源。<strong>注意 Bloom 各级 attachment 的尺寸不同，无法跨级合并为同一原生 render pass</strong>——这是 Bloom 必然打断 attachment 合并链的原因，也是为什么 Note 1 §7 强调”PostFX 必然打断合并链”。</p>
+<hr>
+<h2 id="4-Tone-Mapping"><a href="#4-Tone-Mapping" class="headerlink" title="4. Tone Mapping"></a>4. Tone Mapping</h2><h3 id="4-1-设计动机"><a href="#4-1-设计动机" class="headerlink" title="4.1 设计动机"></a>4.1 设计动机</h3><p>人眼的动态范围（暗适应到亮适应）跨越约 14 个数量级，单次场景中可感知约 3-4 个数量级；显示器只能显示约 2 个数量级（典型 250 nits 标准显示器）；HDR 渲染输出可能跨越 6-8 个数量级。</p>
+<p><strong>Tone Mapping</strong> 的核心任务是把 HDR 辐射度智能地压缩到 LDR 范围，保留视觉重要的细节、舍弃眼睛不敏感的部分。这不是简单的 <code>min(color, 1.0)</code> 截断——而是模拟人眼或胶片对亮度的非线性响应。</p>
+<h3 id="4-2-三种-Tone-Mapping-模式"><a href="#4-2-三种-Tone-Mapping-模式" class="headerlink" title="4.2 三种 Tone Mapping 模式"></a>4.2 三种 Tone Mapping 模式</h3><p>Custom SRP 实现三种典型 Tone Mapper：</p>
+<h4 id="Reinhard"><a href="#Reinhard" class="headerlink" title="Reinhard"></a>Reinhard</h4><p>最简单的 Tone Mapper，公式：</p>
+
+<mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -1.891ex;" xmlns="http://www.w3.org/2000/svg" width="15.166ex" height="5.016ex" role="img" focusable="false" viewBox="0 -1381 6703.5 2217"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D436" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"></path></g><g data-mml-node="TeXAtom" transform="translate(748,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mtext"><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z"></path><path data-c="75" d="M383 58Q327 -10 256 -10H249Q124 -10 105 89Q104 96 103 226Q102 335 102 348T96 369Q86 385 36 385H25V408Q25 431 27 431L38 432Q48 433 67 434T105 436Q122 437 142 438T172 441T184 442H187V261Q188 77 190 64Q193 49 204 40Q224 26 264 26Q290 26 311 35T343 58T363 90T375 120T379 144Q379 145 379 161T380 201T380 248V315Q380 361 370 372T320 385H302V431Q304 431 378 436T457 442H464V264Q464 84 465 81Q468 61 479 55T524 46H542V0Q540 0 467 -5T390 -11H383V58Z" transform="translate(500,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(1056,0)"></path></g></g></g><g data-mml-node="mo" transform="translate(2097.5,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mfrac" transform="translate(3153.3,0)"><g data-mml-node="msub" transform="translate(1081.2,676)"><g data-mml-node="mi"><path data-c="1D436" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"></path></g><g data-mml-node="TeXAtom" transform="translate(748,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mtext"><path data-c="69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(278,0)"></path></g></g></g><g data-mml-node="mrow" transform="translate(220,-686)"><g data-mml-node="mn"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mo" transform="translate(722.2,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="msub" transform="translate(1722.4,0)"><g data-mml-node="mi"><path data-c="1D436" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"></path></g><g data-mml-node="TeXAtom" transform="translate(748,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mtext"><path data-c="69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(278,0)"></path></g></g></g></g><rect width="3310.2" height="60" x="120" y="220"></rect></g></g></g></svg></mjx-container>
+
+
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float3 ToneMappingReinhard(float3 color)<br>{<br>    color.rgb /= color.rgb + 1.0;<br>    return color;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>特点：对 HDR 任意值都收敛到 [0, 1]、没有截断、计算极廉。但视觉上偏淡——所有高亮区域都被均匀压缩，缺少电影感。</p>
+<p>适合：debug 用、性能极致受限的场景、追求中性风格的项目。</p>
+<h4 id="Neutral"><a href="#Neutral" class="headerlink" title="Neutral"></a>Neutral</h4><p>Unity 内置的 Neutral Tone Mapper 采用 Hable / Lottes 风格的多项式拟合，特点是<strong>中等亮度区域几乎线性</strong>（保持准确色彩）、<strong>高光部分柔和压缩</strong>：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float3 ToneMappingNeutral(float3 color)<br>{<br>    color = NeutralTonemap(color);<br>    return color;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>NeutralTonemap</code> 是 RP Core Library 提供的标准实现，参数已经调好（white point、shoulder、toe 等）。视觉上比 Reinhard 自然许多——高光不那么平淡、暗部也保持细节。</p>
+<p>适合：写实游戏、户外场景、对色彩准确性要求高的项目。</p>
+<h4 id="ACES"><a href="#ACES" class="headerlink" title="ACES"></a>ACES</h4><p><strong>ACES</strong>（Academy Color Encoding System）是电影工业的色彩管线标准，包含完整的 Input → Reference Rendering Transform → Output 链路。游戏中常用的是简化版的 ACES Filmic Tone Mapping 曲线：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float3 ToneMappingACES(float3 color)<br>{<br>    color = unity_to_ACES(color);<br>    return AcesTonemap(color);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>unity_to_ACES</code> 把 Unity 的工作色彩空间（线性 sRGB）转换到 ACES2065-1 / ACEScg；<code>AcesTonemap</code> 应用 RRT + ODT 简化曲线后输出。</p>
+<p>ACES 的特点：<strong>胶片质感的高光卷曲（roll-off）</strong>、<strong>暗部的丰富深度</strong>、整体<strong>色调偏暖</strong>。这是当代 3A 游戏的事实标准（《最后生还者》《荒野大镖客 2》《赛博朋克 2077》等都使用 ACES 路径）。</p>
+<p>代价：计算量稍高（多几次矩阵乘法），但移动端高端机型完全能承担。</p>
+<h3 id="4-3-模式选择决策"><a href="#4-3-模式选择决策" class="headerlink" title="4.3 模式选择决策"></a>4.3 模式选择决策</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[项目风格] --&gt; B{追求什么?}<br>    B --&gt;|纯净中性| C[Reinhard / Neutral]<br>    B --&gt;|电影质感| D[ACES]<br>    B --&gt;|风格化| E[Reinhard + Color Grading]<br><br>    C --&gt; F[移动端低端: Reinhard&lt;br/&gt;桌面端: Neutral]<br>    D --&gt; G[全平台 ACES&lt;br/&gt;性能预算允许]<br>    E --&gt; H[依赖 Color LUT 风格化]<br><br>    style D fill:#e8f5e9,stroke:#388e3c<br>    style G fill:#e8f5e9,stroke:#388e3c<br></code></pre></td></tr></table></div></figure>
+
+<p>实践中 <strong>ACES 是默认选择</strong>——除非性能极度紧张或风格上明确不要电影感。</p>
+<hr>
+<h2 id="5-Color-Grading"><a href="#5-Color-Grading" class="headerlink" title="5. Color Grading"></a>5. Color Grading</h2><p>Color Grading 是后处理中最复杂的子系统——涉及多个独立的调色阶段串联，每阶段都有自己的参数。但 Custom SRP 通过 LUT 烘焙巧妙地把整个链路成本固化为”一次 3D 纹理采样”。</p>
+<h3 id="5-1-调色管线"><a href="#5-1-调色管线" class="headerlink" title="5.1 调色管线"></a>5.1 调色管线</h3><p>调色阶段按顺序串联：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Input HDR<br>   ↓<br>Post Exposure (EV 调整)<br>   ↓<br>White Balance (色温 / 色调)<br>   ↓<br>Contrast (在 Log-C 空间内)<br>   ↓<br>Color Filter (整体 tint)<br>   ↓<br>Hue Shift (色相旋转)<br>   ↓<br>Saturation (饱和度)<br>   ↓<br>Channel Mixer (通道交叉混合)<br>   ↓<br>Split Toning (高光/阴影分别染色)<br>   ↓<br>Shadows / Midtones / Highlights (三段独立调色)<br>   ↓<br>Tone Mapping<br>   ↓<br>Output LDR<br></code></pre></td></tr></table></div></figure>
+
+<p>每个阶段都有独立的参数集，对应美术界面上的多个分区。完整链路如果<strong>逐像素</strong>计算，每像素需要执行整套数学操作——典型 50-100 ALU。</p>
+<h3 id="5-2-LUT-烘焙的核心思想"><a href="#5-2-LUT-烘焙的核心思想" class="headerlink" title="5.2 LUT 烘焙的核心思想"></a>5.2 LUT 烘焙的核心思想</h3><p>观察一下整个调色链路的特性：</p>
+<ul>
+<li><strong>它是一个纯函数 <code>f(rgb_in) = rgb_out</code></strong>——输入 RGB 决定输出 RGB，不依赖屏幕位置、不依赖时间、不依赖其他像素</li>
+<li><strong>参数变化频率低</strong>——美术调好一组参数后，每一帧都用同一组参数</li>
+</ul>
+<p>既然是纯函数且参数稳定，可以<strong>预计算所有可能的输入对应的输出</strong>，存在 3D 纹理里——这就是 <strong>Color LUT</strong>（Lookup Table）。</p>
+<p>LUT 的尺寸常见 16³ / 32³ / 64³。32³ 是甜区——压缩 4096 像素长的 1D LUT 为可三线性插值的 3D 纹理，覆盖整个 RGB 空间且精度足够。</p>
+<p>每像素的成本从”50-100 ALU 整套调色计算”压缩为”一次 3D 纹理三线性查找”——后处理的核心性能优化。</p>
+<h3 id="5-3-ColorLUTPass-的-Compute-Shader-实现"><a href="#5-3-ColorLUTPass-的-Compute-Shader-实现" class="headerlink" title="5.3 ColorLUTPass 的 Compute Shader 实现"></a>5.3 ColorLUTPass 的 Compute Shader 实现</h3><p>Custom SRP 6.2.0 起使用真正的 3D 纹理 + Compute Shader 生成 LUT。Compute Shader 比 fragment shader 直接写入更适合 3D 纹理（fragment 无法直接渲染到 3D RT）：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// colorLUT.compute<br>#pragma kernel ColorGradingNonePassFragment<br>#pragma kernel ColorGradingReinhardPassFragment<br>#pragma kernel ColorGradingNeutralPassFragment<br>#pragma kernel ColorGradingACESPassFragment<br><br>RWTexture3D&lt;float4&gt; _ColorGradingLUT;<br>float4 _ColorGradingLUTParameters;<br>// ... 调色参数<br><br>float3 GetColorGradedLUT(uint3 id)<br>{<br>    float scale = _ColorGradingLUTParameters.w;<br>    float3 color = id * scale;        // 把 thread id 映射回 RGB<br><br>    if (_ColorGradingLUTParameters.x &gt; 0.0)<br>        color = LogCToLinear(color);  // Log-C 空间转回线性<br><br>    return ColorGrade(color);          // 应用所有调色阶段<br>}<br><br>[numthreads(4, 4, 4)]<br>void ColorGradingACESPassFragment(uint3 id : SV_DispatchThreadID)<br>{<br>    float3 color = GetColorGradedLUT(id);<br>    color = ColorGradingACES(color);<br>    _ColorGradingLUT[id] = float4(color, 1.0);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>numthreads(4, 4, 4)</code> 是个看似保守的选择——<code>64</code> thread/group 在所有支持 Compute Shader 的硬件上都能运行（Mali、Adreno、Apple、Nvidia、AMD）。32³ LUT 用 8×8×8 = 512 个 thread group 完成填充——一次 dispatch 即可。</p>
+<blockquote>
+<p>💡 <strong>64 线程的硬件哲学：Wavefront 与 Warp 的对齐</strong>：<code>4 × 4 × 4 = 64</code> 不是随意的魔法数字，而是<strong>对 GPU 硬件执行单元（SIMD）的精确对齐</strong>。64 个线程恰好填满 <strong>AMD GPU 的一个完整 Wavefront（Wave64）</strong>，同时<strong>完美等分为 NVIDIA GPU 的两个 Warp（Warp32）</strong>——也对得上 Apple GPU 的 32 SIMD-group、Mali 的 16/8 量子。这种”最大公约对齐”保证了：<strong>(1)</strong> 寄存器分配在硬件层最优化，没有任何线程组内的部分填充浪费；<strong>(2)</strong> 完全规避 Divergence——同一 dispatch 内所有线程走相同代码路径（都是 LUT 填充计算），没有 if-else 分歧导致的空转；<strong>(3)</strong> 跨厂商兼容——大于 64 的 thread group 可能在某些移动 GPU 上被强制拆分降低效率，小于 32 的会让 NVIDIA Warp 没填满。<strong>64 线程是 Compute Shader 跨平台的兼容性甜区，也是性能调优的基石</strong>。当你看到现代引擎的 Compute Shader 反复出现 <code>numthreads(8, 8, 1)</code>（64）、<code>numthreads(64, 1, 1)</code>、<code>numthreads(4, 4, 4)</code>（64）时，背后是同一条硬件对齐准则。</p>
+</blockquote>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// CPU 端 dispatch</span><br>buffer.SetComputeTextureParam(shader, kernel, colorGradingLUTId, colorLUT);<br><span class="hljs-built_in">int</span> groups = colorLUTResolution / <span class="hljs-number">4</span>;<br>buffer.DispatchCompute(shader, kernel, groups, groups, groups);<br>buffer.SetGlobalTexture(colorGradingLUTId, colorLUT);<br></code></pre></td></tr></table></div></figure>
+
+<p><code>SetGlobalTexture</code> 让 LUT 对所有后续 PostFXPass 可见——这是 Compute → Raster Pass 之间最常见的资源共享方式。</p>
+<h3 id="5-4-Log-C-空间的工作意义"><a href="#5-4-Log-C-空间的工作意义" class="headerlink" title="5.4 Log-C 空间的工作意义"></a>5.4 Log-C 空间的工作意义</h3><p>调色操作在不同色彩空间中表现差异巨大。一些操作（contrast、white balance）在 <strong>Log-C 空间</strong> 中比在线性 RGB 中更接近人眼感知：</p>
+<ul>
+<li><strong>线性空间下的对比度调整</strong>：高光区域被剧烈拉开（数值大、变化大）、阴影区域被压扁（数值小、变化小）。视觉上不均匀</li>
+<li><strong>Log-C 空间下的对比度调整</strong>：所有亮度区间均匀缩放——这正是胶片摄影师调对比度时的预期效果</li>
+</ul>
+<p>Log-C 是 ARRI Log-C 的简称，类似的还有 Sony S-Log、RED Log3G10 等——所有都是为电影级调色优化的对数曲线。</p>
+<p>ColorLUTPass 的工作流程：</p>
+<ol>
+<li>将 LUT 输入坐标 <code>id</code> 视作 LDR RGB（[0, 1]）</li>
+<li>如果 <code>inLogC</code> 标志启用：用 <code>LogCToLinear(rgb)</code> 把它解读为 Log-C 空间的坐标，转换为线性 RGB（这样输入范围扩展到 HDR 的等效区域）</li>
+<li>应用所有调色阶段</li>
+<li>应用 Tone Mapping</li>
+<li>写入 LUT</li>
+</ol>
+<p>PostFXPass 采样时反向使用：把每像素的 HDR 颜色 <code>LinearToLogC()</code> 转换为 Log-C 编码后查找 LUT——这样一张 32³ LUT 能覆盖 HDR 全范围。</p>
+<h3 id="5-5-LUT-采样"><a href="#5-5-LUT-采样" class="headerlink" title="5.5 LUT 采样"></a>5.5 LUT 采样</h3><p>PostFXPass 中应用 LUT：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">TEXTURE3D(_ColorGradingLUT);<br>SAMPLER(sampler_LinearClamp);<br><br>float3 ApplyColorGradingLUT(float3 color)<br>{<br>    float scale = _ColorGradingLUTParameters.y;<br>    float offset = _ColorGradingLUTParameters.z;<br><br>    if (_ColorGradingLUTParameters.x &gt; 0.0)<br>        color = LinearToLogC(color);   // HDR 输入转 Log-C<br><br>    color = saturate(color);<br><br>    return SAMPLE_TEXTURE3D(<br>        _ColorGradingLUT,<br>        sampler_LinearClamp,<br>        color * scale + offset).rgb;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>scale</code> 与 <code>offset</code> 是 32³ LUT 与 [0, 1] 输入坐标空间的转换系数（避免边缘 voxel 的精度损失）：<code>scale = (resolution - 1) / resolution</code>、<code>offset = 1 / (2 × resolution)</code>。</p>
+<p>整个采样只占 1 次 ALU 运算 + 1 次 3D 纹理三线性插值（GPU 硬件原生支持）。</p>
+<h3 id="5-6-LUT-调试"><a href="#5-6-LUT-调试" class="headerlink" title="5.6 LUT 调试"></a>5.6 LUT 调试</h3><p>Color LUT 的内容是个 3D 纹理，无法直接观察。Custom SRP 6.1.0 起提供 LUT 调试可视化——把 LUT 作为渐变色块覆盖在屏幕角落，让美术能直观确认调色参数是否产生预期效果。这对调试”为什么调色看起来不对”极有帮助——美术可以对照标准的渐变色块判断当前 LUT 把哪些颜色区域怎么变换了。</p>
+<hr>
+<h2 id="6-Render-Scale-与中间分辨率"><a href="#6-Render-Scale-与中间分辨率" class="headerlink" title="6. Render Scale 与中间分辨率"></a>6. Render Scale 与中间分辨率</h2><h3 id="6-1-设计目标"><a href="#6-1-设计目标" class="headerlink" title="6.1 设计目标"></a>6.1 设计目标</h3><p><strong>Render Scale</strong> 让渲染分辨率与显示分辨率解耦：</p>
+<ul>
+<li>Render Scale = 0.5：以一半分辨率渲染，最后放大到屏幕——大幅省 GPU</li>
+<li>Render Scale = 1.5：超采样渲染，缩小到屏幕——抗锯齿质量极高（SSAA 等效）</li>
+<li>Render Scale = 1.0：原生分辨率（默认）</li>
+</ul>
+<p>这是动态分辨率（DRS）的基础——在性能压力大时降低 Render Scale 维持帧率，性能宽裕时回升保持画质。移动端项目中是必备特性。</p>
+<h3 id="6-2-中间-RT-与最终-Blit"><a href="#6-2-中间-RT-与最终-Blit" class="headerlink" title="6.2 中间 RT 与最终 Blit"></a>6.2 中间 RT 与最终 Blit</h3><p>启用 Render Scale 时，整个渲染流程都在中间 RT 上完成：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">所有渲染 Pass → Intermediate RT (renderScale × screenSize)<br>                        ↓<br>              FinalPass / PostFXPass<br>                        ↓<br>           Bicubic Blit → Camera Target (screenSize)<br></code></pre></td></tr></table></div></figure>
+
+<p>中间 RT 的尺寸：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs csharp">Vector2Int bufferSize;<br>bufferSize.x = (<span class="hljs-built_in">int</span>)(camera.pixelWidth * renderScale);<br>bufferSize.y = (<span class="hljs-built_in">int</span>)(camera.pixelHeight * renderScale);<br></code></pre></td></tr></table></div></figure>
+
+<p>整个 PostFX 链路（Bloom 金字塔、Color Grading 输出）都在 <code>bufferSize</code> 尺度下进行——这意味着 Bloom pyramid 的级数、PCF 的相对像素尺寸等都自适应缩放。</p>
+<h3 id="6-3-Bicubic-Filtering：上采样质量"><a href="#6-3-Bicubic-Filtering：上采样质量" class="headerlink" title="6.3 Bicubic Filtering：上采样质量"></a>6.3 Bicubic Filtering：上采样质量</h3><p>最终 Blit 把中间 RT 拉伸到屏幕尺寸时，简单 bilinear 会造成可见模糊。<strong>Bicubic</strong> 上采样使用 16 个邻域 texel（4×4）做高阶插值，效果显著优于 bilinear：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float4 GetSourceBicubic(float2 screenUV)<br>{<br>    return SampleTexture2DBicubic(<br>        TEXTURE2D_ARGS(_PostFXSource, sampler_linear_clamp),<br>        screenUV, _PostFXSource_TexelSize.zwxy,<br>        1.0, 0.0);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>Bicubic 的代价是约 5-7 倍的采样开销（16 tap vs bilinear 的 4 tap 实质成本）。Custom SRP 通过 <code>_CopyBicubic</code> 关键字让美术按需启用——大多数场景下 Render Scale &gt; 0.7 时 bilinear 已经足够，更激进的下采样才需要 bicubic。</p>
+<h3 id="6-4-与后处理的协同"><a href="#6-4-与后处理的协同" class="headerlink" title="6.4 与后处理的协同"></a>6.4 与后处理的协同</h3><p>Render Scale 与 Bloom 的协同需要注意：Bloom pyramid 的级数应该基于<strong>中间 RT 尺寸</strong>计算，而不是屏幕尺寸。否则在 Render Scale = 0.5 时 pyramid 会少一级，Bloom 范围意外变小。</p>
+<p>Catlike 实现已经处理这个细节——<code>bufferSize</code> 是所有 PostFX 阶段的统一尺寸基准。</p>
+<hr>
+<h2 id="7-FXAA-抗锯齿"><a href="#7-FXAA-抗锯齿" class="headerlink" title="7. FXAA 抗锯齿"></a>7. FXAA 抗锯齿</h2><h3 id="7-1-抗锯齿方案对比"><a href="#7-1-抗锯齿方案对比" class="headerlink" title="7.1 抗锯齿方案对比"></a>7.1 抗锯齿方案对比</h3><p>主流抗锯齿技术：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>原理</th>
+<th>成本</th>
+<th>质量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>MSAA</strong></td>
+<td>多采样几何边缘</td>
+<td>高（带宽 × 4）</td>
+<td>最高</td>
+</tr>
+<tr>
+<td><strong>SSAA</strong></td>
+<td>全屏超采样</td>
+<td>极高</td>
+<td>最高</td>
+</tr>
+<tr>
+<td><strong>TAA</strong></td>
+<td>时间累积抗锯齿</td>
+<td>中</td>
+<td>高（动态画面有 ghosting）</td>
+</tr>
+<tr>
+<td><strong>FXAA</strong></td>
+<td>单帧屏幕空间分析</td>
+<td>极低</td>
+<td>中</td>
+</tr>
+<tr>
+<td><strong>SMAA</strong></td>
+<td>形态学 + 多采样混合</td>
+<td>中低</td>
+<td>高</td>
+</tr>
+</tbody></table></div>
+<p><strong>FXAA</strong>（Fast Approximate Anti-Aliasing）由 Nvidia 的 Timothy Lottes 在 2009 年提出，核心是在 LDR 图像上通过 luma 检测边缘并对边缘做单方向模糊。计算量极低、不依赖 MSAA、不依赖时间累积——是移动端项目的现代默认选择。</p>
+<h3 id="7-2-FXAA-算法概要"><a href="#7-2-FXAA-算法概要" class="headerlink" title="7.2 FXAA 算法概要"></a>7.2 FXAA 算法概要</h3><p>简化的 FXAA 流程：</p>
+<ol>
+<li><strong>采样中心像素与四个邻居</strong>（上下左右）的 luma</li>
+<li><strong>检测对比度</strong>：max - min 是否超过 threshold？低于 → 不是边缘、跳过</li>
+<li><strong>判定边缘方向</strong>：水平边缘（左右 luma 差大）还是垂直边缘？</li>
+<li><strong>沿边缘方向迭代</strong>：步进探测边缘端点位置</li>
+<li><strong>混合样本</strong>：根据探测结果在边缘垂直方向 lerp 模糊</li>
+</ol>
+<p>Custom SRP 集成 RP Core Library 的 FXAA 实现，分三个质量等级：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">static</span> <span class="hljs-keyword">readonly</span> GlobalKeyword<br>    fxaaLowKeyword = GlobalKeyword.Create(<span class="hljs-string">"FXAA_QUALITY_LOW"</span>),<br>    fxaaMediumKeyword = GlobalKeyword.Create(<span class="hljs-string">"FXAA_QUALITY_MEDIUM"</span>);<br></code></pre></td></tr></table></div></figure>
+
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>等级</th>
+<th>EXTRA_EDGE_STEPS</th>
+<th>边缘探测能力</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Low</td>
+<td>3</td>
+<td>中等长度边缘</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>8</td>
+<td>大多数边缘</td>
+</tr>
+<tr>
+<td>High</td>
+<td>12 (默认)</td>
+<td>极长边缘</td>
+</tr>
+</tbody></table></div>
+<p>EXTRA_EDGE_STEPS 越多越能处理倾斜的长边（屋顶天际线、远处地平线），代价是每像素几次额外采样。移动端通常用 Medium，桌面端用 High。</p>
+<h3 id="7-3-Luma-计算"><a href="#7-3-Luma-计算" class="headerlink" title="7.3 Luma 计算"></a>7.3 Luma 计算</h3><p>FXAA 需要 luma（亮度）输入。两种获取路径：</p>
+<ul>
+<li><strong>从 RGB 现算</strong>：<code>luma = sqrt(dot(rgb, float3(0.299, 0.587, 0.114)))</code>——最常见</li>
+<li><strong>使用 alpha 通道</strong>：在最终 Blit 时把 luma 写入 alpha——节省 FXAA Pass 内的运算</li>
+</ul>
+<p>第二种是 Custom SRP 的现代实现选择——前一个 Pass 写入 alpha = sqrt(luma)，FXAA Pass 直接读 alpha。这是 <code>keepAlpha = false</code> 路径下的优化。</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float Luminance(float3 rgb)<br>{<br>    return dot(rgb, float3(0.2126729, 0.7151522, 0.0721750));<br>}<br><br>float GetLuma(float2 uv)<br>{<br>    return SAMPLE_TEXTURE2D(_PostFXSource, sampler_linear_clamp, uv).a;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>注意：BT.709（HD）的 luma 系数是 (0.2126, 0.7152, 0.0722)，比 BT.601（SD）的 (0.299, 0.587, 0.114) 略有不同。现代项目应使用 BT.709。</p>
+<hr>
+<h2 id="8-PostFXPass-总集成"><a href="#8-PostFXPass-总集成" class="headerlink" title="8. PostFXPass 总集成"></a>8. PostFXPass 总集成</h2><p>最终的 PostFXPass 是所有上述阶段的集成器。它的任务是从中间 HDR RT、Bloom 结果、Color LUT 三个输入，一次产出最终 LDR 输出：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float4 PostFXFragment(Varyings input) : SV_TARGET<br>{<br>    // 1. 采样原始 HDR 颜色<br>    float3 color = SAMPLE_TEXTURE2D(_PostFXSource, sampler_linear_clamp, input.uv).rgb;<br><br>    // 2. 加上 Bloom 贡献<br>    float3 bloom = SAMPLE_TEXTURE2D(_PostFXSource2, sampler_linear_clamp, input.uv).rgb;<br>    color = lerp(color, bloom, _BloomIntensity);<br><br>    // 3. Color LUT 应用（包含 Tone Mapping）<br>    color = ApplyColorGradingLUT(color);<br><br>    // 4. 屏幕空间抖动（消除 8-bit 量化色带）<br>    color += ScreenSpaceDither(input.positionCS.xy);<br><br>    // 5. 写入 alpha = sqrt(luma) 供 FXAA Pass 用<br>    return float4(color, sqrt(Luminance(color)));<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>后续 FXAA Pass 在此输出上应用边缘检测与模糊。最终输出到 Camera Target——也就是屏幕本身或外部 RT。</p>
+<h3 id="8-1-屏幕空间抖动（Dithering）：消除-8-bit-色带的最后一道工序"><a href="#8-1-屏幕空间抖动（Dithering）：消除-8-bit-色带的最后一道工序" class="headerlink" title="8.1 屏幕空间抖动（Dithering）：消除 8-bit 色带的最后一道工序"></a>8.1 屏幕空间抖动（Dithering）：消除 8-bit 色带的最后一道工序</h3><p>即使中间 RT 全程使用 R11G11B10F、LUT 是 RGBA16F、计算全在浮点空间——<strong>最终输出给显示器的依然是 8-bit RGBA8 图像</strong>。Tone Mapping 的输出曲线在暗部（接近 0）和高光（接近 1）的斜率较小，意味着 HDR 输入的相邻浮点值映射到 LDR 后落在同一个 256 级量化档位上。</p>
+<p>这种量化截断在以下场景产生明显的可见<strong>色带（Color Banding）</strong>：</p>
+<ul>
+<li>暗室墙壁的渐变阴影</li>
+<li>夜晚天空盒的颜色过渡</li>
+<li>平缓的雾效和大气散射</li>
+<li>渐变 UI 背景</li>
+</ul>
+<p><strong>屏幕空间抖动</strong>通过给每像素引入微小的、空间分布合理的随机扰动，让”相邻的两档量化值在屏幕上随机分布”——人眼的视觉暂留效应会把这种分布感知为更平滑的中间色，色带被彻底打散。</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float3 ScreenSpaceDither(float2 positionSS)<br>{<br>    // Bayer Matrix 或 Interleaved Gradient Noise<br>    float dither = InterleavedGradientNoise(positionSS, 0.0);<br>    // 1/255 量级的扰动 = 一档 8-bit 量化精度<br>    return (dither - 0.5) / 255.0;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>InterleavedGradientNoise</code>（Jorge Jimenez 提出）是 Custom SRP 中已经使用的稳定屏幕空间噪声函数（Note 5 §2.4 LOD Cross-fade 和 Note 2 也用过它）。它的特点是<strong>同一像素位置每帧给出相同噪声值</strong>——如果用 frame-varying 的随机数会产生闪烁，反而比色带更糟糕。</p>
+<p>更高质量的实现使用预计算的 <strong>蓝噪声（Blue Noise）</strong> 贴图——蓝噪声的频谱特性在视觉上比白噪声更不可见，是当代 3A 项目的标准选择：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">TEXTURE2D(_BlueNoiseTexture);<br>float3 ScreenSpaceDither(float2 positionSS)<br>{<br>    float2 noiseUV = positionSS * _BlueNoiseTexture_TexelSize.xy;<br>    float dither = SAMPLE_TEXTURE2D(_BlueNoiseTexture,<br>        sampler_PointRepeat, noiseUV).r;<br>    return (dither - 0.5) / 255.0;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>sampler_PointRepeat</code> 让蓝噪声在屏幕上周期性平铺，64×64 或 128×128 的蓝噪声贴图就足够全屏使用。</p>
+<blockquote>
+<p>💡 <strong>抖动是 3A 后处理栈的隐形收尾工序</strong>：成本极低（一次纹理采样 + 一次 lerp），收益显著（彻底消除 8-bit banding）。<strong>不加抖动的 PostFX 链路在中等画质需求下就能撞墙</strong>——美术经常发现”暗部就是有色带，调什么都调不掉”的根源就是这一步缺失。Custom SRP 教程没有展开这一步，但 production 项目应该把它视为 PostFXPass 的必备最后一公里。HDRP 的 <code>_DitherTexture</code> 和 UE5 的 <code>DitherFinalOutput</code> 都对应这个工作。</p>
+</blockquote>
+<p>需要注意：抖动应用在<strong>输出 sRGB 之前</strong>——即在线性空间内施加 1/255 的扰动。如果在 sRGB 编码后施加，扰动量就需要根据 sRGB gamma 曲线非线性调整，复杂得多。</p>
+<hr>
+<h2 id="9-TA-Takeaway"><a href="#9-TA-Takeaway" class="headerlink" title="9. TA Takeaway"></a>9. TA Takeaway</h2><h3 id="9-1-后处理的总成本图谱"><a href="#9-1-后处理的总成本图谱" class="headerlink" title="9.1 后处理的总成本图谱"></a>9.1 后处理的总成本图谱</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Bloom (主要成本):<br>├─ Threshold extract: 1 sample + Soft Knee<br>├─ Downsample × N levels: N × 4 sample<br>├─ Upsample × N levels: N × 8 sample (双源混合)<br>└─ 总成本: ~30-50 samples per pixel (相对原图)<br><br>Color LUT 生成 (一次性):<br>└─ Compute Shader 32³ × 50 ALU = 一次 dispatch<br><br>PostFXPass (每像素):<br>├─ HDR sample: 1<br>├─ Bloom sample: 1<br>├─ LUT sample (3D 三线性): 1<br>└─ Total: ~3 samples + 5-10 ALU<br><br>FXAA:<br>├─ Luma sample × 9 (3×3 邻域): 9<br>├─ 边缘检测: 5-10 ALU<br>└─ 总成本: ~9-12 samples + 10-20 ALU<br><br>整个 PostFX 链路 per frame (1080p 60Hz):<br>├─ Bloom: ~3-6 ms (移动端)<br>├─ Color LUT 生成: &lt; 0.5 ms (一次性)<br>├─ PostFX 主合成: ~1-2 ms<br>└─ FXAA: ~0.5-1 ms<br></code></pre></td></tr></table></div></figure>
+
+<p>后处理通常占整个 GPU 帧时间的 <strong>20-30%</strong>——这是移动端帧率最容易撞墙的阶段。</p>
+<blockquote>
+<p>📱 <strong>Bloom 在 TBR 架构下的带宽真相</strong>：上述成本图谱的 ALU 数字是桌面级 GPU 的视角。<strong>在移动端 TBR 架构下，Bloom 的真实成本根本不在 ALU 上——而在带宽</strong>。Dual Filter Pyramid 在算法层面虽然是 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="8.764ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 3873.7 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path></g><g data-mml-node="mo" transform="translate(763,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(1152,0)"><path data-c="6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(278,0)"></path><path data-c="67" d="M329 409Q373 453 429 453Q459 453 472 434T485 396Q485 382 476 371T449 360Q416 360 412 390Q410 404 415 411Q415 412 416 414V415Q388 412 363 393Q355 388 355 386Q355 385 359 381T368 369T379 351T388 325T392 292Q392 230 343 187T222 143Q172 143 123 171Q112 153 112 133Q112 98 138 81Q147 75 155 75T227 73Q311 72 335 67Q396 58 431 26Q470 -13 470 -72Q470 -139 392 -175Q332 -206 250 -206Q167 -206 107 -175Q29 -140 29 -75Q29 -39 50 -15T92 18L103 24Q67 55 67 108Q67 155 96 193Q52 237 52 292Q52 355 102 398T223 442Q274 442 318 416L329 409ZM299 343Q294 371 273 387T221 404Q192 404 171 388T145 343Q142 326 142 292Q142 248 149 227T179 192Q196 182 222 182Q244 182 260 189T283 207T294 227T299 242Q302 258 302 292T299 343ZM403 -75Q403 -50 389 -34T348 -11T299 -2T245 0H218Q151 0 138 -6Q118 -15 107 -34T95 -74Q95 -84 101 -97T122 -127T170 -155T250 -167Q319 -167 361 -139T403 -75Z" transform="translate(778,0)"></path></g><g data-mml-node="mo" transform="translate(2430,0)"><path data-c="2061" d=""></path></g><g data-mml-node="mi" transform="translate(2596.7,0)"><path data-c="1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z"></path></g><g data-mml-node="mo" transform="translate(3484.7,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container> 的优雅设计，但<strong>每一次 Downsample 与 Upsample 都意味着切换 RT</strong>——从 Note 1 §7 已经确立的 TBR 行为推论：每次 RT 切换都触发一次完整的 attachment store-load 往返。一个 6 级 Bloom Pyramid 包含 6 次下采样 + 6 次上采样 = <strong>12 次 store-load 往返</strong>。1080p × R11G11B10F 单次往返约 <strong>8MB</strong>，6 级 Pyramid 加上原图采样约 <strong>30-50MB 带宽</strong>——这在移动端 25-50 GB/s 的总带宽预算下是个惊人的数字，足以让单帧温度上升一个台阶。这也是为什么在重度移动端项目优化中，<strong>宁愿用更复杂的单 Pass 算法（Compute Shader 实现的合并下/上采样）减少 RT 切换次数，也要极力压缩 Bloom 的迭代层级</strong>——<code>maxBloomIterations</code> 在移动端通常配置为 4 而非默认的 5-6。同样的逻辑适用于所有多级 Pass 后处理：DOF、SSAO、Volumetric 等。在 TBR 架构上，<strong>带宽是比 ALU 更紧迫的预算</strong>，这是后处理优化的核心硬件认知。</p>
+</blockquote>
+<h3 id="9-2-LUT-烘焙是性能优化的范式案例"><a href="#9-2-LUT-烘焙是性能优化的范式案例" class="headerlink" title="9.2 LUT 烘焙是性能优化的范式案例"></a>9.2 LUT 烘焙是性能优化的范式案例</h3><p>Color Grading 的 LUT 化是一个值得反复学习的优化范式：</p>
+<p><strong>问题特征</strong>：</p>
+<ul>
+<li>计算成本高（50-100 ALU）</li>
+<li>是纯函数（无状态依赖）</li>
+<li>输入是有限的（RGB 三维空间）</li>
+<li>参数变化频率低（美术调好后稳定）</li>
+</ul>
+<p><strong>优化思路</strong>：</p>
+<p>把”逐像素计算”换成”一次性预计算 + 全屏查找表”。<strong>当问题满足上述四个特征时，LUT 化几乎总是巨大胜利</strong>。</p>
+<p>类似可以 LUT 化的场景：</p>
+<ul>
+<li>BRDF 预积分（Karis BRDF LUT，HDRP/UE 标准实现）</li>
+<li>Atmospheric Scattering 预积分</li>
+<li>复杂的颜色空间转换（如 PQ → SDR / HLG → SDR）</li>
+<li>噪声模式生成</li>
+</ul>
+<p>理解 LUT 化的背后哲学——<strong>用空间换时间、用一次预计算换每像素的运行时计算</strong>——是 TA 优化思路的核心工具之一。</p>
+<h3 id="9-3-中间分辨率与-PostFX-的协同设计"><a href="#9-3-中间分辨率与-PostFX-的协同设计" class="headerlink" title="9.3 中间分辨率与 PostFX 的协同设计"></a>9.3 中间分辨率与 PostFX 的协同设计</h3><p>Render Scale 是当代移动端的必备特性，但与 PostFX 协同有几个隐性约束：</p>
+<ul>
+<li><strong>Bloom 阈值是绝对值</strong>：Render Scale 改变后场景”亮”的认知不变，Bloom Threshold 不需要随之调整</li>
+<li><strong>FXAA 在中间 RT 上工作</strong>：Render Scale = 0.5 时 FXAA 处理的是低分辨率图像，最终 Blit 时小尺度边缘已经被 bicubic 平滑——可以考虑跳过 FXAA 或用 Low 等级</li>
+<li><strong>LUT 与 Render Scale 完全解耦</strong>：LUT 是颜色空间映射，与分辨率无关，无需任何调整</li>
+</ul>
+<p>实践推论：移动端项目推荐 Render Scale 在 0.7-1.0 之间动态调整，配合 ACES + Color LUT + FXAA Medium——这是当前移动端 PBR 项目的画质/性能甜区组合。</p>
+<h3 id="9-4-实践原则"><a href="#9-4-实践原则" class="headerlink" title="9.4 实践原则"></a>9.4 实践原则</h3><ul>
+<li><strong>HDR 中间 RT 用 R11G11B10F</strong>：除非碰到精度问题再上 RGBA16F</li>
+<li><strong>Pre-Exposure 先于 Tone Mapping</strong>：让暗部精度集中在 1.0 附近</li>
+<li><strong>Bloom 用 Soft Knee 而不是硬截断</strong>：Mach Band 是常被忽视的视觉瑕疵</li>
+<li><strong>Bloom 移动端层级 ≤ 4</strong>：每多一级 = 多一次 store-load 往返，带宽收益负优化点比 ALU 来得早</li>
+<li><strong>Color Grading 必走 LUT 路径</strong>：逐像素调色在中等画质需求下就能撞墙</li>
+<li><strong>3D LUT &gt; 2D 模拟</strong>：Compute Shader 路径的精度与可读性都更好</li>
+<li><strong>ACES Tone Mapping 是默认选择</strong>：除非有明确的非电影感需求</li>
+<li><strong>Dithering 是 PostFX 必备最后一公里</strong>：1/255 量级的蓝噪声扰动，彻底消除 8-bit 色带</li>
+<li><strong>FXAA 优于不抗锯齿</strong>：成本 &lt; 1ms，效果显著</li>
+<li><strong>Render Scale 而不是降低 PostFX 质量</strong>：先降分辨率再削 PostFX</li>
+</ul>
+<hr>
+<h2 id="关键-API-速查"><a href="#关键-API-速查" class="headerlink" title="关键 API 速查"></a>关键 API 速查</h2><details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// 三个 PostFX Pass 的注册</span><br>BloomPass.Record(renderGraph, postFXSettings, ...);<br>ColorLUTPass.Record(renderGraph, postFXSettings, lutResolution, ...);<br>PostFXPass.Record(renderGraph, postFXSettings, lutResolution, fxaaQuality, ...);<br><br><span class="hljs-comment">// HDR RT 格式</span><br>GraphicsFormat hdrFormat = GraphicsFormat.B10G11R11_UFloatPack32;   <span class="hljs-comment">// R11G11B10F</span><br><br><span class="hljs-comment">// Color LUT 资源（3D Texture）</span><br><span class="hljs-keyword">new</span> TextureDesc {<br>    width = lutResolution,<br>    height = lutResolution,<br>    slices = lutResolution,            <span class="hljs-comment">// 3D 维度</span><br>    dimension = TextureDimension.Tex3D,<br>    format = GraphicsFormat.R16G16B16A16_SFloat,<br>    enableRandomWrite = <span class="hljs-literal">true</span>,          <span class="hljs-comment">// Compute Shader 写入</span><br>    name = <span class="hljs-string">"Color Grading LUT"</span><br>};<br><br><span class="hljs-comment">// Compute Shader Dispatch</span><br>buffer.SetComputeTextureParam(shader, kernel, lutId, lutTexture);<br>buffer.DispatchCompute(shader, kernel, groups, groups, groups);<br>buffer.SetGlobalTexture(lutId, lutTexture);<br><br><span class="hljs-comment">// FXAA 关键字</span><br>GlobalKeyword.Create(<span class="hljs-string">"FXAA_QUALITY_LOW"</span>);<br>GlobalKeyword.Create(<span class="hljs-string">"FXAA_QUALITY_MEDIUM"</span>);<br><span class="hljs-comment">// (无关键字时为 High)</span><br><br><span class="hljs-comment">// Render Scale 配置</span><br><span class="hljs-built_in">float</span> renderScale = settings.renderScale;<br>Vector2Int bufferSize = <span class="hljs-keyword">new</span>(<br>    (<span class="hljs-built_in">int</span>)(camera.pixelWidth * renderScale),<br>    (<span class="hljs-built_in">int</span>)(camera.pixelHeight * renderScale));<br><br><span class="hljs-comment">// PostFXSettings 关键参数</span><br><span class="hljs-keyword">public</span> <span class="hljs-built_in">enum</span> ToneMappingMode { None, Reinhard, Neutral, ACES }<br><span class="hljs-keyword">public</span> <span class="hljs-built_in">enum</span> ColorLUTResolution { _16 = <span class="hljs-number">16</span>, _32 = <span class="hljs-number">32</span>, _64 = <span class="hljs-number">64</span> }<br><span class="hljs-keyword">public</span> <span class="hljs-built_in">enum</span> BloomMode { Additive, Scattering }<br><span class="hljs-keyword">public</span> <span class="hljs-built_in">enum</span> FXAAQuality { Low, Medium, High }<br></code></pre></td></tr></table></div></figure></details>
+
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// 3D LUT 采样（PostFX Pass 内）<br>TEXTURE3D(_ColorGradingLUT);<br>float3 ApplyColorGradingLUT(float3 color);<br><br>// HDR / LDR 转换<br>LinearToLogC(float3 color);<br>LogCToLinear(float3 color);<br>unity_to_ACES(float3 color);<br>AcesTonemap(float3 color);<br>NeutralTonemap(float3 color);<br><br>// Bloom Soft Threshold<br>float3 ApplyBloomThreshold(float3 color);   // 用 _BloomThreshold.xyzw 预计算<br><br>// Bicubic 上采样<br>SampleTexture2DBicubic(...);<br><br>// Luma<br>float Luminance(float3 rgb);   // BT.709<br><br>// Compute Shader 入口<br>[numthreads(4, 4, 4)]<br>void ColorGradingACESPassFragment(uint3 id : SV_DispatchThreadID);<br></code></pre></td></tr></table></div></figure>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/posts/ec8bca77f552/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>「Custom SRP」：相机系统与工程架构</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/7a3b251c9e25/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      「Custom SRP」：全局光照与环境
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/%E5%90%8E%E5%A4%84%E7%90%86/" class="post-tag">#后处理</a><a href="/tags/Bloom/" class="post-tag">#Bloom</a><a href="/tags/Color-Grading/" class="post-tag">#Color Grading</a><a href="/tags/FXAA/" class="post-tag">#FXAA</a><a href="/tags/Tone-Mapping/" class="post-tag">#Tone Mapping</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e962819a878a/" title="「Custom SRP」：直接光照与 Tiled Forward+" rel="bookmark">「Custom SRP」：直接光照与 Tiled Forward+</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>

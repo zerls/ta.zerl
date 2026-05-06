@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        「Custom SRP」：相机系统与工程架构 | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+          <div class="post-banner">
+            <img src="https://catlikecoding.com/unity/tutorials/custom-srp/multiple-cameras/tutorial-image.jpg" alt="Banner">
+          </div>
+        
+        
+        <div class="post-title">「Custom SRP」：相机系统与工程架构</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2024-07-22 · 更新于2026-05-01
+            
+            
+          </div>
+          
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/%E5%A4%9A%E7%9B%B8%E6%9C%BA/" class="post-tag">#多相机</a><a href="/tags/Shader-%E5%85%B3%E9%94%AE%E5%AD%97/" class="post-tag">#Shader 关键字</a><a href="/tags/%E5%B7%A5%E7%A8%8B%E6%9E%B6%E6%9E%84/" class="post-tag">#工程架构</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#TL-DR"><span class="post-toc-text">TL;DR</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-多相机渲染"><span class="post-toc-text">1. 多相机渲染</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-1-渲染栈的设计动机"><span class="post-toc-text">1.1 渲染栈的设计动机</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-2-相机渲染顺序"><span class="post-toc-text">1.2 相机渲染顺序</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-3-Camera-Settings-字段总览"><span class="post-toc-text">1.3 Camera Settings 字段总览</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-4-CustomRenderPipelineCamera-组件"><span class="post-toc-text">1.4 CustomRenderPipelineCamera 组件</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-5-Final-Blend-Mode-与叠加渲染"><span class="post-toc-text">1.5 Final Blend Mode 与叠加渲染</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-6-Scene-View-与-Reflection-Probe-相机"><span class="post-toc-text">1.6 Scene View 与 Reflection Probe 相机</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-Shader-关键字管理"><span class="post-toc-text">2. Shader 关键字管理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-1-关键字爆炸的成本"><span class="post-toc-text">2.1 关键字爆炸的成本</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-2-multi-compile-vs-shader-feature"><span class="post-toc-text">2.2 multi_compile vs shader_feature</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-3-收敛策略一：质量等级合并"><span class="post-toc-text">2.3 收敛策略一：质量等级合并</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-4-收敛策略二：枚举值代替关键字"><span class="post-toc-text">2.4 收敛策略二：枚举值代替关键字</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-5-收敛策略三：Stripping-工具链"><span class="post-toc-text">2.5 收敛策略三：Stripping 工具链</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-6-Shader-Variant-Collection"><span class="post-toc-text">2.6 Shader Variant Collection</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-RP-Settings-架构演进"><span class="post-toc-text">3. RP Settings 架构演进</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-内联字段的局限"><span class="post-toc-text">3.1 内联字段的局限</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-拆分为独立-ScriptableObject"><span class="post-toc-text">3.2 拆分为独立 ScriptableObject</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-3-Quality-Settings-集成"><span class="post-toc-text">3.3 Quality Settings 集成</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-调试工具链"><span class="post-toc-text">4. 调试工具链</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-1-Frame-Debugger：命令流诊断"><span class="post-toc-text">4.1 Frame Debugger：命令流诊断</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-2-Render-Graph-Viewer：资源依赖诊断"><span class="post-toc-text">4.2 Render Graph Viewer：资源依赖诊断</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-3-RenderDoc：硬件层诊断"><span class="post-toc-text">4.3 RenderDoc：硬件层诊断</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-4-三工具协作模式"><span class="post-toc-text">4.4 三工具协作模式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-5-Profiling-Sampler-的命名艺术"><span class="post-toc-text">4.5 Profiling Sampler 的命名艺术</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-6-ProfilingSampler-缓存陷阱"><span class="post-toc-text">4.6 ProfilingSampler 缓存陷阱</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-RenderingLayer：跨系统的对象-光源过滤"><span class="post-toc-text">5. RenderingLayer：跨系统的对象-光源过滤</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-1-应用场景"><span class="post-toc-text">5.1 应用场景</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-2-数据流"><span class="post-toc-text">5.2 数据流</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-3-Unity-6-的-RenderingLayerMask-类型"><span class="post-toc-text">5.3 Unity 6 的 RenderingLayerMask 类型</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#6-TA-Takeaway"><span class="post-toc-text">6. TA Takeaway</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-1-关键字管理是项目长期健康的命脉"><span class="post-toc-text">6.1 关键字管理是项目长期健康的命脉</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-2-RP-Settings-拆分是规模化的前提"><span class="post-toc-text">6.2 RP Settings 拆分是规模化的前提</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-3-调试工具链的内功修炼"><span class="post-toc-text">6.3 调试工具链的内功修炼</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-4-多相机栈的常见误用"><span class="post-toc-text">6.4 多相机栈的常见误用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-5-实践原则"><span class="post-toc-text">6.5 实践原则</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#系列收束"><span class="post-toc-text">系列收束</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#What’s-Next：基于这套底座可以走向哪里"><span class="post-toc-text">What’s Next：基于这套底座可以走向哪里</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#GPU-驱动的渲染管线（GPU-Driven-Rendering）"><span class="post-toc-text">GPU 驱动的渲染管线（GPU-Driven Rendering）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#体积散射与体积光（Volumetric-Scattering）"><span class="post-toc-text">体积散射与体积光（Volumetric Scattering）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#屏幕空间反射-SSR"><span class="post-toc-text">屏幕空间反射 SSR</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#程序化内容生成（PCG）渲染"><span class="post-toc-text">程序化内容生成（PCG）渲染</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Cluster-Forward-Visibility-Buffer"><span class="post-toc-text">Cluster Forward / Visibility Buffer</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#收束"><span class="post-toc-text">收束</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#关键-API-速查"><span class="post-toc-text">关键 API 速查</span></a></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <blockquote>
+<p>系列收束篇。前七篇笔记从管线骨架一路走到后处理输出——这些都是单相机内部的故事。本篇拉远视角，关注更宏观的工程层：多相机如何编排、相机级配置如何注入、Shader 关键字如何收敛、调试工具如何串联。这些不是某个具体的渲染技术，但<strong>它们决定一个 Custom SRP 项目能否长期维护、能否多人协作、能否在生产环境中稳定运行</strong>。</p>
+</blockquote>
+<h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h2><ul>
+<li><strong>多相机栈</strong>：Base Camera 渲染主场景到中间 RT、Overlay Camera 在同一 RT 上叠加（UI、武器、第一人称视角）。Render Graph 的资源声明让跨相机 RT 复用变得自然。</li>
+<li><strong>Per-Camera 配置注入</strong>：通过 <code>CustomRenderPipelineCamera</code> 组件在每个 Camera GameObject 上挂载独立设置——RenderingLayerMask、Final Blend、PostFX 开关、Render Scale 都能 per-camera 覆盖。</li>
+<li><strong>Shader 关键字收敛是工程命脉</strong>：原始 144 排列经过 3.2.0 简化合并后压到 18 排列、Shader 编译时间下降 87.5%。<code>shader_feature</code> 与 <code>multi_compile</code> 的精确划分决定 Player 包体大小。</li>
+<li><strong>RP Settings 架构演进</strong>：从 Asset 内联字段 → 独立 ScriptableObject 集合，分离关注点让大型项目的 RP 配置可以多人协作、按系统独立 review。</li>
+<li><strong>三套调试工具串联</strong>：Frame Debugger 看命令流、Render Graph Viewer 看资源依赖、RenderDoc 看硬件层细节。每套工具都对应一类问题域，知道何时用哪个是高效调试的前提。</li>
+</ul>
+<hr>
+<h2 id="1-多相机渲染"><a href="#1-多相机渲染" class="headerlink" title="1. 多相机渲染"></a>1. 多相机渲染</h2><h3 id="1-1-渲染栈的设计动机"><a href="#1-1-渲染栈的设计动机" class="headerlink" title="1.1 渲染栈的设计动机"></a>1.1 渲染栈的设计动机</h3><p>游戏中常见的相机叠加场景：</p>
+<ul>
+<li><strong>第一人称游戏</strong>：主相机渲染场景、武器相机渲染近距离武器（避免武器穿墙）</li>
+<li><strong>UI 系统</strong>：主相机 + UI 相机分离 PostFX——UI 不希望被 Bloom 弄糊</li>
+<li><strong>小地图 / 后视镜</strong>：从其他角度渲染场景到 RT、最终覆盖到主屏角落</li>
+<li><strong>过场动画</strong>：剧情时切换到电影相机、保持游戏 UI 渲染</li>
+</ul>
+<p>这些场景都需要 <strong>多个 Camera 协同工作</strong>。Custom SRP 通过两种相机角色实现：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>角色</th>
+<th>行为</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Base Camera</strong></td>
+<td>渲染完整场景（含天空盒、PostFX）</td>
+<td>主视角、主场景</td>
+</tr>
+<tr>
+<td><strong>Overlay Camera</strong></td>
+<td>在已有 RT 上叠加渲染</td>
+<td>UI、武器、特效层</td>
+</tr>
+</tbody></table></div>
+<h3 id="1-2-相机渲染顺序"><a href="#1-2-相机渲染顺序" class="headerlink" title="1.2 相机渲染顺序"></a>1.2 相机渲染顺序</h3><p><code>RenderPipeline.Render(context, cameras)</code> 接收的相机列表已经被引擎按 <code>Camera.depth</code> 排序——depth 小的先渲染，大的后渲染。这意味着：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">主相机 (depth = 0) → 渲染到中间 RT<br>武器相机 (depth = 1) → 在同一 RT 上叠加<br>UI 相机 (depth = 2) → 最后叠加 UI<br></code></pre></td></tr></table></div></figure>
+
+<p>相机间的 RT 复用通过 <code>CameraSettings.copyColor</code> 或 <code>CameraSettings.copyDepth</code> 显式声明——下一个相机是否需要前一个相机的 color/depth 作为输入。</p>
+<h3 id="1-3-Camera-Settings-字段总览"><a href="#1-3-Camera-Settings-字段总览" class="headerlink" title="1.3 Camera Settings 字段总览"></a>1.3 Camera Settings 字段总览</h3><p><code>CameraSettings</code> 是 per-camera 的配置容器：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">Serializable</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CameraSettings</span><br>{<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> copyColor = <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> copyDepth = <span class="hljs-literal">true</span>;<br><br>    <span class="hljs-keyword">public</span> RenderingLayerMask renderingLayerMask = ~<span class="hljs-number">0u</span>;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> maskLights = <span class="hljs-literal">false</span>;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">enum</span> RenderScaleMode { Inherit, Multiply, Override }<br>    <span class="hljs-keyword">public</span> RenderScaleMode renderScaleMode = RenderScaleMode.Inherit;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">float</span> renderScale = <span class="hljs-number">1f</span>;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> overridePostFX = <span class="hljs-literal">false</span>;<br>    <span class="hljs-keyword">public</span> PostFXSettings postFXSettings = <span class="hljs-literal">default</span>;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> allowFXAA = <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> keepAlpha = <span class="hljs-literal">false</span>;<br><br>    [<span class="hljs-meta">Serializable</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> FinalBlendMode {<br>        <span class="hljs-keyword">public</span> BlendMode source;<br>        <span class="hljs-keyword">public</span> BlendMode destination;<br>    }<br>    <span class="hljs-keyword">public</span> FinalBlendMode finalBlendMode = <span class="hljs-keyword">new</span> FinalBlendMode {<br>        source = BlendMode.One,<br>        destination = BlendMode.Zero<br>    };<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>每个字段都对应一类 per-camera 决策：</p>
+<ul>
+<li><strong>copyColor / copyDepth</strong>：是否生成可被后续相机或 Soft Particles 采样的副本</li>
+<li><strong>renderingLayerMask</strong>：相机只渲染哪些 Rendering Layer（Note 4 §5）</li>
+<li><strong>maskLights</strong>：是否对光源也应用 layer mask（用于 per-camera 独立打光）</li>
+<li><strong>renderScale / renderScaleMode</strong>：相机分辨率倍率，三种模式让相机可以继承、相乘或独占覆盖全局设置</li>
+<li><strong>overridePostFX</strong>：是否使用相机专属的 PostFX 配置（小地图相机不需要 Bloom）</li>
+<li><strong>finalBlendMode</strong>：Overlay 相机叠加到中间 RT 时的混合方程</li>
+</ul>
+<h3 id="1-4-CustomRenderPipelineCamera-组件"><a href="#1-4-CustomRenderPipelineCamera-组件" class="headerlink" title="1.4 CustomRenderPipelineCamera 组件"></a>1.4 CustomRenderPipelineCamera 组件</h3><p>让 CameraSettings 落到具体相机上的方式是挂载 <code>CustomRenderPipelineCamera</code> 组件：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">DisallowMultipleComponent, RequireComponent(typeof(Camera))</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPipelineCamera</span> : <span class="hljs-title">MonoBehaviour</span><br>{<br>    [<span class="hljs-meta">SerializeField</span>] CameraSettings settings = <span class="hljs-literal">default</span>;<br><br>    ProfilingSampler sampler;<br>    <span class="hljs-keyword">public</span> ProfilingSampler Sampler =&gt;<br>        sampler ??= <span class="hljs-keyword">new</span> ProfilingSampler(GetComponent&lt;Camera&gt;().name);<br><br>    <span class="hljs-keyword">public</span> CameraSettings Settings =&gt; settings ??= <span class="hljs-keyword">new</span> CameraSettings();<br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> UNITY_EDITOR || DEVELOPMENT_BUILD</span><br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">OnEnable</span>()</span><br>    {<br>        sampler = <span class="hljs-literal">null</span>;   <span class="hljs-comment">// 相机改名后清除缓存</span><br>    }<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>CameraRenderer 读取这个组件：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs csharp">ProfilingSampler cameraSampler;<br>CameraSettings cameraSettings;<br><br><span class="hljs-keyword">if</span> (camera.TryGetComponent(<span class="hljs-keyword">out</span> CustomRenderPipelineCamera crpCamera))<br>{<br>    cameraSampler = crpCamera.Sampler;<br>    cameraSettings = crpCamera.Settings;<br>}<br><span class="hljs-keyword">else</span><br>{<br>    cameraSampler = GetDefaultProfileSampler(camera);<br>    cameraSettings = settings.defaultCameraSettings;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>没挂组件的相机使用 RP Asset 中的全局默认设置——这种 fallback 设计让 Scene View / Reflection Probe 等隐式相机也能工作。</p>
+<h3 id="1-5-Final-Blend-Mode-与叠加渲染"><a href="#1-5-Final-Blend-Mode-与叠加渲染" class="headerlink" title="1.5 Final Blend Mode 与叠加渲染"></a>1.5 Final Blend Mode 与叠加渲染</h3><p>Overlay 相机的核心机制：<strong>最终输出阶段使用自定义 Blend 模式</strong>，让本相机渲染结果与 RT 中已有内容混合。</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> FinalBlendMode {<br>    <span class="hljs-keyword">public</span> BlendMode source;        <span class="hljs-comment">// 默认 One</span><br>    <span class="hljs-keyword">public</span> BlendMode destination;   <span class="hljs-comment">// 默认 Zero</span><br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>不同 BlendMode 组合的常见用途：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Destination</th>
+<th>效果</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>One</td>
+<td>Zero</td>
+<td>完全覆盖</td>
+<td>Base 相机、不透明覆盖</td>
+</tr>
+<tr>
+<td>SrcAlpha</td>
+<td>OneMinusSrcAlpha</td>
+<td>标准 alpha 混合</td>
+<td>半透明 UI、武器 overlay</td>
+</tr>
+<tr>
+<td>One</td>
+<td>One</td>
+<td>加性混合</td>
+<td>发光特效叠加</td>
+</tr>
+<tr>
+<td>One</td>
+<td>OneMinusSrcAlpha</td>
+<td>Premultiplied Alpha 叠加</td>
+<td>已 PMA 处理的 UI 层</td>
+</tr>
+</tbody></table></div>
+<p>PostFXPass 与 FinalPass 的最终 Blit 都使用这个 BlendMode——这是 Overlay 相机能与已有内容融合的根本机制。</p>
+<blockquote>
+<p>⚠️ <strong>Overlay Camera 的 Depth Clear 陷阱</strong>：Final Blend Mode 处理的是颜色叠加，但<strong>深度缓冲（Depth Buffer）也需要单独处理</strong>——否则会出现典型的”3D 模型穿透 UI”现象。当纯 UI 相机以 Overlay 模式叠加到 Base 相机的 RT 上时，如果<strong>继续沿用 Base 相机写入的 Depth Attachment</strong>，UI 元素的 ZTest 会与 3D 场景的深度发生交叉判定：UI 元素的 NDC.z（通常很小，靠近近平面）会被场景中靠近相机的 3D 模型的深度反向遮挡，导致原本应该浮在最上层的血条、十字准星、对话框被场景对象”穿透”挡住。修复方式有两种：<strong>(1)</strong> Overlay 相机录制时显式触发一次 <code>ClearDepth</code>（CommandBuffer.ClearRenderTarget(true, false, …)）；<strong>(2)</strong> 在 Render Graph 中<strong>不绑定 Base 相机的 Depth Attachment</strong>，让 Overlay Pass 使用自己的全新深度缓冲（或干脆 ZTest Always 完全不依赖深度）。Custom SRP 通过 <code>CameraSettings</code> 区分 Base / Overlay 角色——Overlay 相机的 SetupPass 应该清除继承的深度。这是真实项目中”UI 突然被场景挡住、查半天找不到原因”的标准答案。</p>
+</blockquote>
+<h3 id="1-6-Scene-View-与-Reflection-Probe-相机"><a href="#1-6-Scene-View-与-Reflection-Probe-相机" class="headerlink" title="1.6 Scene View 与 Reflection Probe 相机"></a>1.6 Scene View 与 Reflection Probe 相机</h3><p>Custom SRP 在编辑器中还需要处理几种隐式相机：</p>
+<ul>
+<li><strong>Scene View</strong>：编辑器场景视图——开发者每秒看到的画面</li>
+<li><strong>Reflection Probe</strong>：实时反射探针——每帧从 6 个面渲染场景到 cubemap</li>
+<li><strong>Material Preview</strong>：材质球预览</li>
+<li><strong>Manual Render</strong>：用户调用 <code>Camera.Render()</code> 主动触发</li>
+</ul>
+<p>这些相机通常没有 <code>CustomRenderPipelineCamera</code> 组件——使用全局默认设置。Scene View 的特殊处理：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">if</span> (camera.cameraType == CameraType.SceneView)<br>{<br>    ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);<br>    useScaledRendering = <span class="hljs-literal">false</span>;  <span class="hljs-comment">// 编辑器视图不缩放</span><br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>EmitWorldGeometryForSceneView</code> 让 UI 元素（Canvas）在 Scene View 中也能可见——否则 UI 只在 Game View 中渲染。Reflection Probe 的处理则需要避开 PostFX、避开 Render Scale——这些会让反射结果失真。</p>
+<hr>
+<h2 id="2-Shader-关键字管理"><a href="#2-Shader-关键字管理" class="headerlink" title="2. Shader 关键字管理"></a>2. Shader 关键字管理</h2><h3 id="2-1-关键字爆炸的成本"><a href="#2-1-关键字爆炸的成本" class="headerlink" title="2.1 关键字爆炸的成本"></a>2.1 关键字爆炸的成本</h3><p>每个 <code>multi_compile</code> 行会让 Shader 编译出 2 个或更多的 variant。Custom SRP 的 Lit Shader 完整 keyword 列表：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">#pragma multi_compile_instancing<br>#pragma multi_compile _ LIGHTMAP_ON<br>#pragma multi_compile _ DIRLIGHTMAP_COMBINED<br>#pragma multi_compile _ _SHADOW_FILTER_MEDIUM _SHADOW_FILTER_HIGH<br>#pragma multi_compile _ _CASCADE_BLEND_DITHER<br>#pragma multi_compile _ _SHADOW_MASK_ALWAYS _SHADOW_MASK_DISTANCE<br>#pragma multi_compile _ LIGHTS_PER_OBJECT<br>#pragma multi_compile _ FXAA_QUALITY_LOW FXAA_QUALITY_MEDIUM<br>#pragma shader_feature _CLIPPING<br>#pragma shader_feature _PREMULTIPLY_ALPHA<br>#pragma shader_feature _NORMAL_MAP<br>#pragma shader_feature _MASK_MAP<br>#pragma shader_feature _DETAIL_MAP<br>#pragma shader_feature _EMISSION<br></code></pre></td></tr></table></div></figure>
+
+<p>排列组合数：<code>2 × 2 × 2 × 3 × 2 × 3 × 2 × 3 × 2⁶ = ~13800 variant</code>——单一 Shader 在最坏情况下可能编译万级 variant。</p>
+<p>每个 variant 都意味着：</p>
+<ul>
+<li><strong>编译时间</strong>：单 variant 编译约 100-500 ms。13800 variant × 200 ms ≈ 46 分钟。修改 Shader 后等编译完是开发体验的灾难</li>
+<li><strong>Player 包体</strong>：每 variant 在 build 中都占用空间，移动端项目尤其敏感</li>
+<li><strong>运行时加载</strong>：首次切换到新 variant 时引擎需要 JIT 编译或从磁盘加载——产生明显的卡顿尖峰</li>
+</ul>
+<p><strong>关键字数量与项目质量正相关、与构建效率负相关</strong>——找到收敛点是 TA 的核心工作。</p>
+<h3 id="2-2-multi-compile-vs-shader-feature"><a href="#2-2-multi-compile-vs-shader-feature" class="headerlink" title="2.2 multi_compile vs shader_feature"></a>2.2 multi_compile vs shader_feature</h3><p>两种 pragma 的根本区别：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Pragma</th>
+<th>编译时机</th>
+<th>运行时启用方式</th>
+<th>包体行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>multi_compile</strong></td>
+<td>编译期生成所有 variant</td>
+<td><code>Shader.EnableKeyword</code> 全局 / <code>material.EnableKeyword</code> per-material</td>
+<td><strong>所有 variant 都打入 Player 包</strong></td>
+</tr>
+<tr>
+<td><strong>shader_feature</strong></td>
+<td>编译期生成所有 variant</td>
+<td>仅 <code>material.EnableKeyword</code> per-material</td>
+<td><strong>Player 包仅保留实际被材质使用的 variant</strong></td>
+</tr>
+</tbody></table></div>
+<p>关键洞察：<code>shader_feature</code> 在开发期与 <code>multi_compile</code> 行为一致（编辑器中所有 variant 都可用），但 build 时引擎会扫描所有材质实际启用的 keyword 组合，<strong>只把这些组合打包</strong>——unused variant 被自动剔除。</p>
+<p>实践规则：</p>
+<ul>
+<li><strong>Code-driven 关键字</strong>（由 C# 代码全局开关，如阴影质量、FXAA 等级、Lightmap）→ <code>multi_compile</code></li>
+<li><strong>Material-driven 关键字</strong>（由材质 inspector 勾选，如透明度模式、Normal Map 启用）→ <code>shader_feature</code></li>
+</ul>
+<p>误用 <code>multi_compile</code> 替代 <code>shader_feature</code> 会让 Player 包体翻倍（Material 实际只用其中几个 variant，但所有 variant 都被打包）。</p>
+<h3 id="2-3-收敛策略一：质量等级合并"><a href="#2-3-收敛策略一：质量等级合并" class="headerlink" title="2.3 收敛策略一：质量等级合并"></a>2.3 收敛策略一：质量等级合并</h3><p>最有效的关键字收敛是合并多档质量为统一全局质量等级。Note 5 §3.2 已经详细介绍：</p>
+<p><strong>合并前</strong>（4 个独立 PCF 模式）：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">#pragma multi_compile _ _DIRECTIONAL_PCF3 _DIRECTIONAL_PCF5 _DIRECTIONAL_PCF7<br>#pragma multi_compile _ _OTHER_PCF3 _OTHER_PCF5 _OTHER_PCF7<br></code></pre></td></tr></table></div></figure>
+<p>→ 4 × 4 = 16 排列</p>
+<p><strong>合并后</strong>（统一 Filter Quality 三档）：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">#pragma multi_compile _ _SHADOW_FILTER_MEDIUM _SHADOW_FILTER_HIGH<br></code></pre></td></tr></table></div></figure>
+<p>→ 3 排列（5.3× 减少）</p>
+<p>这种合并的代价：方向光与其他光不能再独立配置质量。但实际项目中两者通常协调一致——独立配置的灵活性收益小于关键字爆炸的工程成本。</p>
+<h3 id="2-4-收敛策略二：枚举值代替关键字"><a href="#2-4-收敛策略二：枚举值代替关键字" class="headerlink" title="2.4 收敛策略二：枚举值代替关键字"></a>2.4 收敛策略二：枚举值代替关键字</h3><p>某些”配置型”参数可以从关键字改为运行时 uniform 变量。比如 Cascade Blend 从两个关键字（Soft / Dither）改为一个 <code>_CascadeBlendMode</code> uniform：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// 之前：两个 variant<br>#if defined(_CASCADE_BLEND_DITHER)<br>    // dither blend<br>#elif defined(_CASCADE_BLEND_SOFT)<br>    // soft blend<br>#endif<br><br>// 之后：一个 variant<br>if (_CascadeBlendMode == 1)<br>    // dither blend<br>else if (_CascadeBlendMode == 2)<br>    // soft blend<br></code></pre></td></tr></table></div></figure>
+
+<p>代价：一次 if-else 分支判断（GPU 上稍微低效）。收益：消除一组关键字。<strong>当分支两侧的代码量都很小，且分支判断频率低时，运行时分支比 variant 更划算</strong>。</p>
+<h3 id="2-5-收敛策略三：Stripping-工具链"><a href="#2-5-收敛策略三：Stripping-工具链" class="headerlink" title="2.5 收敛策略三：Stripping 工具链"></a>2.5 收敛策略三：Stripping 工具链</h3><p>即使经过收敛，大型项目仍可能有几千 variant。Unity 提供 <code>IPreprocessShaders</code> 接口让构建期主动剔除未使用的 variant：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">StripUnusedVariants</span> : <span class="hljs-title">IPreprocessShaders</span><br>{<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> callbackOrder =&gt; <span class="hljs-number">0</span>;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnProcessShader</span>(<span class="hljs-params">Shader shader, ShaderSnippetData snippet,</span></span><br><span class="hljs-params"><span class="hljs-function">                                IList&lt;ShaderCompilerData&gt; data</span>)</span><br>    {<br>        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = data.Count - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--)<br>        {<br>            <span class="hljs-keyword">if</span> (ShouldStrip(data[i]))<br>                data.RemoveAt(i);<br>        }<br>    }<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>典型 stripping 规则：</p>
+<ul>
+<li>移动端 build 不需要的高质量 keyword（_SHADOW_FILTER_HIGH）</li>
+<li>桌面端 build 不需要的低端 keyword（FXAA_QUALITY_LOW）</li>
+<li>项目从未启用的特性（DirectionalLightmap）</li>
+</ul>
+<p>精细的 stripping 能让 build 时 variant 数从 5000+ 降到 500-。这是大型项目 production-ready 的必经之路。</p>
+<blockquote>
+<p>💡 <strong>配置感知 Stripping（Configuration-Aware Stripping）</strong>：上述基础 stripping 还是按 Build Target 平台粗筛——但工业界更高级的做法是 <strong>直接读取项目的 RP Settings 来驱动剔除</strong>。在 <code>OnProcessShader</code> 回调中通过 <code>GraphicsSettings.currentRenderPipeline</code> 拿到当前的 <code>CustomRenderPipelineAsset</code>，进而读取 <code>ShadowSettings.filterQuality</code>、<code>PostFXSettings.fxaaQuality</code> 等具体配置——<strong>如果项目实际只配置了最大 Medium 等级的阴影，那 <code>_SHADOW_FILTER_HIGH</code> 关键字对应的所有 variant 都可以在 build 期被自动剔除</strong>。</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnProcessShader</span>(<span class="hljs-params">Shader shader, ShaderSnippetData snippet,</span></span><br><span class="hljs-params"><span class="hljs-function">                            IList&lt;ShaderCompilerData&gt; data</span>)</span><br>{<br>    <span class="hljs-keyword">var</span> rpAsset = GraphicsSettings.currentRenderPipeline <span class="hljs-keyword">as</span> CustomRenderPipelineAsset;<br>    <span class="hljs-keyword">var</span> maxShadowQuality = rpAsset.Settings.shadows.maxFilterQuality;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = data.Count - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--)<br>    {<br>        <span class="hljs-keyword">var</span> keywords = data[i].shaderKeywordSet;<br>        <span class="hljs-keyword">if</span> (keywords.IsEnabled(highShadowKeyword) &amp;&amp; maxShadowQuality &lt; High)<br>            data.RemoveAt(i);<br>    }<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>这种”<strong>修改 Settings → 自动剔除对应 variant</strong>“的闭环让美术 / TA 调整 RP 配置时，build 体积与编译时间<strong>自动跟随收缩</strong>——不需要手动维护 stripping 规则与配置之间的一致性。这是顶级工程架构的标志：<strong>配置即真相、构建感知配置</strong>。HDRP 与 URP 都内建了类似机制（<code>ShaderStripping</code> 接口家族），Custom SRP 项目应当在中后期建立类似的自动化层。</p>
+</blockquote>
+<h3 id="2-6-Shader-Variant-Collection"><a href="#2-6-Shader-Variant-Collection" class="headerlink" title="2.6 Shader Variant Collection"></a>2.6 Shader Variant Collection</h3><p>为了避免运行时首次切换 variant 的卡顿，可以预先 warm up：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">CreateAssetMenu(menuName = <span class="hljs-string">"Rendering/Shader Variant Collection"</span>)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomShaderVariantCollection</span> : <span class="hljs-title">ShaderVariantCollection</span><br>{<br>}<br><br><span class="hljs-comment">// 启动时调用</span><br>collection.WarmUp();<br></code></pre></td></tr></table></div></figure>
+
+<p><code>WarmUp()</code> 强制编译并加载列表中所有 variant，把卡顿前置到 Loading Screen 阶段。Custom SRP 项目通常在游戏启动时 warm up 所有可能用到的 Lit Shader variant——首次场景加载多 1-2 秒，但游戏运行时再无切换卡顿。</p>
+<hr>
+<h2 id="3-RP-Settings-架构演进"><a href="#3-RP-Settings-架构演进" class="headerlink" title="3. RP Settings 架构演进"></a>3. RP Settings 架构演进</h2><h3 id="3-1-内联字段的局限"><a href="#3-1-内联字段的局限" class="headerlink" title="3.1 内联字段的局限"></a>3.1 内联字段的局限</h3><p>最初的 RP Asset 把所有配置内联在一个文件中：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">CreateAssetMenu(menuName = <span class="hljs-string">"Rendering/Custom Render Pipeline"</span>)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPipelineAsset</span> : <span class="hljs-title">RenderPipelineAsset</span><br>{<br>    [<span class="hljs-meta">SerializeField</span>] <span class="hljs-built_in">bool</span> useDynamicBatching = <span class="hljs-literal">true</span>;<br>    [<span class="hljs-meta">SerializeField</span>] <span class="hljs-built_in">bool</span> useGPUInstancing = <span class="hljs-literal">true</span>;<br>    [<span class="hljs-meta">SerializeField</span>] <span class="hljs-built_in">bool</span> useSRPBatcher = <span class="hljs-literal">true</span>;<br>    [<span class="hljs-meta">SerializeField</span>] <span class="hljs-built_in">bool</span> useLightsPerObject = <span class="hljs-literal">true</span>;<br>    [<span class="hljs-meta">SerializeField</span>] ShadowSettings shadows = <span class="hljs-literal">default</span>;<br>    [<span class="hljs-meta">SerializeField</span>] PostFXSettings postFXSettings = <span class="hljs-literal">default</span>;<br>    [<span class="hljs-meta">SerializeField</span>] CameraBufferSettings cameraBuffer = <span class="hljs-literal">default</span>;<br>    [<span class="hljs-meta">SerializeField</span>] Shader cameraRendererShader = <span class="hljs-literal">default</span>;<br>    [<span class="hljs-meta">SerializeField</span>] ColorLUTResolution colorLUTResolution = ColorLUTResolution._32;<br>    [<span class="hljs-meta">SerializeField</span>] FXAASettings fxaa = <span class="hljs-literal">default</span>;<br>    [<span class="hljs-meta">SerializeField</span>] ForwardPlusSettings forwardPlus = <span class="hljs-literal">default</span>;<br>    <span class="hljs-comment">// ... 数十个字段</span><br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>随着特性增加，字段数量爆炸。问题：</p>
+<ul>
+<li><strong>Inspector 滚动疲劳</strong>：开发者在 30+ 字段中找特定设置变得困难</li>
+<li><strong>Git diff 噪音</strong>：任何字段修改都会触发 Asset 文件 diff，多人协作时 conflict 频繁</li>
+<li><strong>职责混淆</strong>：阴影设置与后处理设置在同一文件中，难以独立 review</li>
+</ul>
+<h3 id="3-2-拆分为独立-ScriptableObject"><a href="#3-2-拆分为独立-ScriptableObject" class="headerlink" title="3.2 拆分为独立 ScriptableObject"></a>3.2 拆分为独立 ScriptableObject</h3><p>3.2.0 简化版本把所有设置拆为独立 ScriptableObject 集合：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">CreateAssetMenu(menuName = <span class="hljs-string">"Rendering/Custom Render Pipeline Settings"</span>)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPipelineSettings</span> : <span class="hljs-title">ScriptableObject</span><br>{<br>    <span class="hljs-keyword">public</span> CameraBufferSettings cameraBuffer = <span class="hljs-literal">default</span>;<br>    <span class="hljs-keyword">public</span> ShadowSettings shadows = <span class="hljs-literal">default</span>;<br>    <span class="hljs-keyword">public</span> PostFXSettings postFXSettings = <span class="hljs-literal">default</span>;<br>    <span class="hljs-keyword">public</span> ForwardPlusSettings forwardPlus = <span class="hljs-literal">default</span>;<br>    <span class="hljs-keyword">public</span> CameraSettings defaultCameraSettings = <span class="hljs-literal">default</span>;<br>    <span class="hljs-keyword">public</span> ColorLUTResolution colorLUTResolution = ColorLUTResolution._32;<br>    <span class="hljs-keyword">public</span> Shader cameraRendererShader = <span class="hljs-literal">default</span>;<br>}<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPipelineAsset</span> : <span class="hljs-title">RenderPipelineAsset</span><br>{<br>    [<span class="hljs-meta">SerializeField</span>] CustomRenderPipelineSettings settings = <span class="hljs-literal">default</span>;<br><br>    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> RenderPipeline <span class="hljs-title">CreatePipeline</span>()</span><br>    {<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> CustomRenderPipeline(settings);<br>    }<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>或更进一步——每个子系统一个独立 Asset：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">ProjectSettings/<br>├── CustomRenderPipelineAsset.asset       (引用其他 settings)<br>├── ShadowSettings_Default.asset<br>├── PostFXSettings_Default.asset<br>├── PostFXSettings_LowEnd.asset            (针对低端机型的变体)<br>├── ForwardPlusSettings_Default.asset<br>└── CameraBufferSettings_Default.asset<br></code></pre></td></tr></table></div></figure>
+
+<p>这种粒度的好处：</p>
+<ul>
+<li><strong>独立调整</strong>：阴影美术调 Shadow 不会触碰 PostFX</li>
+<li><strong>配置变体</strong>：低端机型用 LowEnd 后处理 Asset、旗舰机型用 Default</li>
+<li><strong>Git 友好</strong>：每个文件只在对应职责修改时 diff</li>
+<li><strong>运行时切换</strong>：高端 / 低端配置可以在 quality preset 中动态切换</li>
+</ul>
+<h3 id="3-3-Quality-Settings-集成"><a href="#3-3-Quality-Settings-集成" class="headerlink" title="3.3 Quality Settings 集成"></a>3.3 Quality Settings 集成</h3><p>Unity 的 Quality Settings 系统可以为不同质量等级（Low / Medium / High / Ultra）分别绑定不同的 RP Asset：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Quality Level  →  RP Asset  →  Settings Asset<br>Low            →  RPAsset_Low.asset    →  PostFX_LowEnd.asset<br>Medium         →  RPAsset_Med.asset    →  PostFX_Medium.asset<br>High           →  RPAsset_High.asset   →  PostFX_Default.asset<br></code></pre></td></tr></table></div></figure>
+
+<p>玩家在游戏内切换质量等级时，引擎自动切换到对应的 RP Asset——所有渲染配置（阴影分辨率、PostFX 强度、Forward+ Tile 大小、LUT 精度）一键全切。这是大型项目支持广覆盖硬件的标准做法。</p>
+<hr>
+<h2 id="4-调试工具链"><a href="#4-调试工具链" class="headerlink" title="4. 调试工具链"></a>4. 调试工具链</h2><p>Custom SRP 的调试需要在三套工具间灵活切换。每套工具对应一类问题域。</p>
+<h3 id="4-1-Frame-Debugger：命令流诊断"><a href="#4-1-Frame-Debugger：命令流诊断" class="headerlink" title="4.1 Frame Debugger：命令流诊断"></a>4.1 Frame Debugger：命令流诊断</h3><p><code>Window / Analysis / Frame Debugger</code>——展示帧内所有 GPU 命令的提交序列。</p>
+<p>适用问题：</p>
+<ul>
+<li>某个 Pass 是否实际被执行</li>
+<li>某次 Draw Call 使用的 Material / Shader Variant</li>
+<li>SRP Batcher 是否生效（”SRP Batch” 节点存在）</li>
+<li>ClearRenderTarget 是否在预期时机</li>
+<li>中间 RT 内容查看（每个节点可单步调试）</li>
+</ul>
+<p>局限：</p>
+<ul>
+<li>不显示 Render Graph 的资源依赖</li>
+<li>不显示原生 GPU 层级行为（tile memory、warp occupancy 等）</li>
+<li>大量节点（数百 Draw Call）时翻找困难</li>
+</ul>
+<p>实践：当某个对象画错了，第一反应是 Frame Debugger 找到对应 Draw Call → 检查 Shader Variant → 检查输入纹理。</p>
+<h3 id="4-2-Render-Graph-Viewer：资源依赖诊断"><a href="#4-2-Render-Graph-Viewer：资源依赖诊断" class="headerlink" title="4.2 Render Graph Viewer：资源依赖诊断"></a>4.2 Render Graph Viewer：资源依赖诊断</h3><p><code>Window / Analysis / Render Graph Viewer</code>——展示 Pass 之间的资源读写依赖图。</p>
+<p>适用问题：</p>
+<ul>
+<li>某个 Pass 是否被引擎裁剪</li>
+<li>哪些 Raster Pass 被合并为单个 native render pass（蓝色横条标记）</li>
+<li>资源生命周期与 RT 复用情况</li>
+<li>资源依赖是否符合预期（Soft Particles 是否正确读到 Depth Copy）</li>
+</ul>
+<p>局限：</p>
+<ul>
+<li>需要先开启相机的 debug data 收集（性能开销）</li>
+<li>编辑器外不可用</li>
+</ul>
+<p>实践：当怀疑 Pass 合并优化没生效，或 RT 分配过多时，第一时间打开 Render Graph Viewer 看资源图。Note 1 §7 描述的 TBR 合并优化是否生效完全靠这个工具验证。</p>
+<h3 id="4-3-RenderDoc：硬件层诊断"><a href="#4-3-RenderDoc：硬件层诊断" class="headerlink" title="4.3 RenderDoc：硬件层诊断"></a>4.3 RenderDoc：硬件层诊断</h3><p>外部工具——抓取整个帧的原生 API 调用序列，包含 D3D12 / Vulkan 层级的所有细节。</p>
+<p>适用问题：</p>
+<ul>
+<li>Compute Shader 的 thread group 实际执行行为</li>
+<li>Tile memory 占用与 Bandwidth 消耗</li>
+<li>GPU 端 barrier / sync 时机</li>
+<li>Driver 层面是否产生意外的 PSO 切换</li>
+</ul>
+<p>局限：</p>
+<ul>
+<li>学习曲线陡峭，需要熟悉图形 API 细节</li>
+<li>抓帧可能改变性能行为（典型放慢 5-10×）</li>
+<li>不直接对应 Unity 的高层概念</li>
+</ul>
+<p>实践：当 Frame Debugger 与 Render Graph Viewer 都看不出问题、但性能就是不对时，RenderDoc 是最后的 fallback。也是 Note 4 §4.8 描述的 Compute Shader 移动端兼容性问题的主要诊断工具。</p>
+<h3 id="4-4-三工具协作模式"><a href="#4-4-三工具协作模式" class="headerlink" title="4.4 三工具协作模式"></a>4.4 三工具协作模式</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[发现性能或视觉问题] --&gt; B{问题类型?}<br><br>    B --&gt;|画面错了| C[Frame Debugger&lt;br/&gt;找对应 Draw Call]<br>    B --&gt;|Pass 被意外裁剪| D[Render Graph Viewer&lt;br/&gt;检查资源依赖]<br>    B --&gt;|性能掉帧但找不到原因| E[RenderDoc&lt;br/&gt;抓帧硬件分析]<br><br>    C --&gt; F[检查 Shader Variant&lt;br/&gt;检查输入纹理]<br>    D --&gt; G[检查资源声明&lt;br/&gt;检查 Pass 顺序]<br>    E --&gt; H[检查 GPR 占用&lt;br/&gt;检查 Bandwidth]<br><br>    F --&gt; I{解决?}<br>    G --&gt; I<br>    H --&gt; I<br><br>    I --&gt;|否| J[换一种工具]<br>    J --&gt; B<br><br>    style A fill:#fff3e0,stroke:#f57c00<br>    style I fill:#e8f5e9,stroke:#388e3c<br></code></pre></td></tr></table></div></figure>
+
+<p>工程实践：</p>
+<ul>
+<li><strong>日常开发</strong>：Frame Debugger 是主力工具，应该熟练到反射式使用</li>
+<li><strong>架构调试</strong>：Render Graph Viewer 是 RP 重构期的必备工具</li>
+<li><strong>性能优化</strong>：RenderDoc 是最后阶段的精细化工具</li>
+</ul>
+<h3 id="4-5-Profiling-Sampler-的命名艺术"><a href="#4-5-Profiling-Sampler-的命名艺术" class="headerlink" title="4.5 Profiling Sampler 的命名艺术"></a>4.5 Profiling Sampler 的命名艺术</h3><p>每个 Pass 的 ProfilingSampler 名字直接出现在 Frame Debugger 和 Profiler 的 Hierarchy 中——好的命名让调试效率倍增：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// 不好的命名</span><br><span class="hljs-keyword">new</span> ProfilingSampler(<span class="hljs-string">"Pass1"</span>);<br><span class="hljs-keyword">new</span> ProfilingSampler(<span class="hljs-string">"Render"</span>);<br><br><span class="hljs-comment">// 好的命名</span><br><span class="hljs-keyword">new</span> ProfilingSampler(<span class="hljs-string">"Opaque Geometry"</span>);<br><span class="hljs-keyword">new</span> ProfilingSampler(<span class="hljs-string">"Directional Shadows"</span>);<br><span class="hljs-keyword">new</span> ProfilingSampler(<span class="hljs-string">"Bloom Pyramid"</span>);<br><span class="hljs-keyword">new</span> ProfilingSampler(<span class="hljs-string">"Color LUT Generation"</span>);<br></code></pre></td></tr></table></div></figure>
+
+<p>命名规范建议：</p>
+<ul>
+<li><strong>以名词短语开头</strong>：标识”是什么”而不是”做什么”</li>
+<li><strong>保持稳定</strong>：不在循环中拼接 index（”Cascade 0” / “Cascade 1” 在 Profiler 中会被聚合，反而失去对比能力）</li>
+<li><strong>跨 Pass 一致</strong>：同类工作用同一前缀（”Shadow / …”、”PostFX / …”）</li>
+</ul>
+<h3 id="4-6-ProfilingSampler-缓存陷阱"><a href="#4-6-ProfilingSampler-缓存陷阱" class="headerlink" title="4.6 ProfilingSampler 缓存陷阱"></a>4.6 ProfilingSampler 缓存陷阱</h3><p><code>ProfilingSampler</code> 通常缓存为 <code>static readonly</code> 字段：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GeometryPass</span><br>{<br>    <span class="hljs-keyword">static</span> <span class="hljs-keyword">readonly</span> ProfilingSampler<br>        samplerOpaque = <span class="hljs-keyword">new</span>(<span class="hljs-string">"Opaque Geometry"</span>),<br>        samplerTransparent = <span class="hljs-keyword">new</span>(<span class="hljs-string">"Transparent Geometry"</span>);<br>    <span class="hljs-comment">// ...</span><br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>但相机的 sampler 不能 static——它依赖 Camera.name 动态生成：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">public</span> ProfilingSampler Sampler =&gt;<br>    sampler ??= <span class="hljs-keyword">new</span> ProfilingSampler(GetComponent&lt;Camera&gt;().name);<br></code></pre></td></tr></table></div></figure>
+
+<p>这里的 <code>??=</code> 缓存有一个 editor-only 陷阱：相机改名后缓存的 Sampler 仍带旧名字，Frame Debugger 显示错误。修复方式是 OnEnable 清缓存：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-meta">#<span class="hljs-keyword">if</span> UNITY_EDITOR || DEVELOPMENT_BUILD</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">OnEnable</span>()</span> =&gt; sampler = <span class="hljs-literal">null</span>;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></div></figure>
+
+<p>这是 Note 1 §5.3 提到过的细节——在工程层面再次强调，因为这是真实项目中容易被遗漏的开发体验细节。</p>
+<hr>
+<h2 id="5-RenderingLayer：跨系统的对象-光源过滤"><a href="#5-RenderingLayer：跨系统的对象-光源过滤" class="headerlink" title="5. RenderingLayer：跨系统的对象-光源过滤"></a>5. RenderingLayer：跨系统的对象-光源过滤</h2><p><code>RenderingLayer</code> 是贯穿多个子系统的 32 位掩码——Note 4 §5 介绍了它在光源系统中的角色。在工程层级它的应用更广：</p>
+<h3 id="5-1-应用场景"><a href="#5-1-应用场景" class="headerlink" title="5.1 应用场景"></a>5.1 应用场景</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Per-Camera 光源屏蔽</td>
+<td><code>cameraSettings.maskLights = true</code> + <code>renderingLayerMask</code></td>
+</tr>
+<tr>
+<td>第一人称武器独立打光</td>
+<td>武器对象 + 武器灯光独占 layer</td>
+</tr>
+<tr>
+<td>动态/静态对象分组</td>
+<td>静态对象一组、动态对象一组，用于 GI 或阴影策略差异</td>
+</tr>
+<tr>
+<td>UI 与场景分离渲染</td>
+<td>UI 对象一组，过滤掉所有场景光</td>
+</tr>
+</tbody></table></div>
+<h3 id="5-2-数据流"><a href="#5-2-数据流" class="headerlink" title="5.2 数据流"></a>5.2 数据流</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Renderer.renderingLayerMask (Renderer 上的 uint32)<br>    ↓ 引擎自动写入 unity_RenderingLayer<br>    ↓ 通过 UnityPerDraw CBUFFER 传到 Shader<br>    ↓ Shader 读取 surface.renderingLayerMask<br><br>Light.renderingLayerMask (Light 上的 uint32)<br>    ↓ Lighting.SetupLights 写入 OtherLightData.directionAndMask.w<br>    ↓ asfloat() 编码 + asuint() 解码（StructuredBuffer 的整数 trick）<br>    ↓ Shader 读取 light.renderingLayerMask<br><br>Camera.renderingLayerMask (CameraSettings)<br>    ↓ FilteringSettings.renderingLayerMask<br>    ↓ 影响 RendererList 剔除（哪些对象被渲染）<br></code></pre></td></tr></table></div></figure>
+
+<p>三层独立但协同——对象的 layer 决定它被哪些 light 照亮、相机的 layer 决定它渲染哪些对象、光源的 layer 决定它影响哪些对象。</p>
+<h3 id="5-3-Unity-6-的-RenderingLayerMask-类型"><a href="#5-3-Unity-6-的-RenderingLayerMask-类型" class="headerlink" title="5.3 Unity 6 的 RenderingLayerMask 类型"></a>5.3 Unity 6 的 RenderingLayerMask 类型</h3><p>Unity 6 引入了官方的 <code>RenderingLayerMask</code> 类型替代裸 uint：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">SerializeField</span>] RenderingLayerMask renderingLayerMask = ~<span class="hljs-number">0u</span>;<br></code></pre></td></tr></table></div></figure>
+
+<p>这个类型在 Inspector 中渲染为下拉多选 UI（类似 LayerMask），用户可以勾选预先定义的命名 layer。命名通过 Project Settings 配置：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Tags and Layers / Rendering Layers<br>├── Default<br>├── First Person Weapon<br>├── UI<br>├── Static Geometry<br>└── ...<br></code></pre></td></tr></table></div></figure>
+
+<p>实践：早期项目用 LayerMask，重构到 Unity 6 时迁移到 RenderingLayerMask——这是 4.0.0 与之后版本的重要 API 变化。</p>
+<hr>
+<h2 id="6-TA-Takeaway"><a href="#6-TA-Takeaway" class="headerlink" title="6. TA Takeaway"></a>6. TA Takeaway</h2><h3 id="6-1-关键字管理是项目长期健康的命脉"><a href="#6-1-关键字管理是项目长期健康的命脉" class="headerlink" title="6.1 关键字管理是项目长期健康的命脉"></a>6.1 关键字管理是项目长期健康的命脉</h3><p>关键字数量与项目质量正相关、与构建效率负相关——这是 RP 工程层最核心的 trade-off。具体数字：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">小项目（&lt; 100 材质）:<br>├─ 单 Lit Shader &lt; 64 variant 是健康范围<br>├─ 编译时间 &lt; 1 分钟可接受<br>└─ 关键字策略：以 shader_feature 为主<br><br>中型项目（100-1000 材质）:<br>├─ 单 Lit Shader &lt; 256 variant<br>├─ 必须 stripping<br>├─ Shader Variant Collection warmup<br>└─ 关键字策略：multi_compile 与 shader_feature 精确划分<br><br>大型项目（&gt; 1000 材质，多平台）:<br>├─ Quality Preset × 设备分级 → 多套 RP Asset<br>├─ 严格 stripping 规则<br>├─ Shader Variant Collection 必备<br>├─ 单 Shader &gt; 1000 variant 需要 review<br>└─ 关键字策略：质量等级合并、运行时分支替代 variant<br></code></pre></td></tr></table></div></figure>
+
+<p>每升一级，工程纪律的要求显著提高。<strong>项目早期就应该制定关键字预算</strong>——而不是在 build 时间从 5 分钟涨到 50 分钟时才被迫处理。</p>
+<h3 id="6-2-RP-Settings-拆分是规模化的前提"><a href="#6-2-RP-Settings-拆分是规模化的前提" class="headerlink" title="6.2 RP Settings 拆分是规模化的前提"></a>6.2 RP Settings 拆分是规模化的前提</h3><p>单文件 Settings 在小项目能用、中型项目难受、大型项目不可用。拆分为独立 ScriptableObject 集合的工程红利：</p>
+<ul>
+<li><strong>代码所有权清晰</strong>：阴影系统的 owner 维护 ShadowSettings、后处理的 owner 维护 PostFXSettings</li>
+<li><strong>Code Review 粒度合理</strong>：每个 PR 只触碰相关 Settings 文件</li>
+<li><strong>配置变体管理</strong>：通过 Asset Variant 而非 #if 条件编译实现多平台分支</li>
+<li><strong>运行时切换效率</strong>：直接交换 Settings 引用而不是重新解析整个 Asset</li>
+</ul>
+<h3 id="6-3-调试工具链的内功修炼"><a href="#6-3-调试工具链的内功修炼" class="headerlink" title="6.3 调试工具链的内功修炼"></a>6.3 调试工具链的内功修炼</h3><p>Frame Debugger / Render Graph Viewer / RenderDoc 三套工具的熟练度直接决定 TA 的工作效率。新手到老手的成长曲线：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">新手:<br>└─ 主要靠肉眼看画面 + console log<br><br>进阶:<br>├─ Frame Debugger 排查具体 Draw Call<br>└─ 大致理解 Profiler 各项指标<br><br>熟练:<br>├─ Frame Debugger 反射式使用<br>├─ Render Graph Viewer 验证 Pass 合并<br>├─ Stats 面板速查 Batches/SetPass/Triangles 三件套<br>└─ Profiler GPU 模块定位 ms 级瓶颈<br><br>精通:<br>├─ RenderDoc 抓帧分析寄存器占用<br>├─ Mali Offline Compiler / Adreno GPU Profiler 静态分析<br>├─ 跨平台行为差异定位（如 Mali vs Adreno 的 Compute Shader 行为）<br>└─ 能从 ALU / Texture / Bandwidth 三个维度独立判断瓶颈<br></code></pre></td></tr></table></div></figure>
+
+<p>每个层级都对应不同的问题域。<strong>TA 的核心能力之一是知道何时用哪个工具</strong>——这个判断本身就需要长期实践积累。</p>
+<h3 id="6-4-多相机栈的常见误用"><a href="#6-4-多相机栈的常见误用" class="headerlink" title="6.4 多相机栈的常见误用"></a>6.4 多相机栈的常见误用</h3><p>多相机栈的强大常带来误用诱惑。常见反模式：</p>
+<ul>
+<li><strong>滥用 Overlay 相机</strong>：每个 UI 元素一个独立相机——每相机都是完整 culling + Pass 调度，开销大。正确做法是单 UI 相机 + Canvas 排序</li>
+<li><strong>Camera depth 链式依赖</strong>：相机 A 渲染结果被相机 B 读取、B 又被 C 读取——失去并行机会，调试困难</li>
+<li><strong>混用 Game View 与 Reflection Probe 配置</strong>：Reflection Probe 不应该有 PostFX、不应该有 FXAA、不应该有 Render Scale——但默认设置常常忘记关闭</li>
+<li><strong>Scene View 不一致</strong>：编辑器 Scene View 用了与 Game View 不同的 PostFX——美术看到的画面与玩家看到的不一样</li>
+</ul>
+<p>工程纪律：<strong>相机数量应该 ≤ 3</strong>（Base + 武器 + UI），超出说明架构有问题。每加一个相机需要专门 review 必要性。</p>
+<h3 id="6-5-实践原则"><a href="#6-5-实践原则" class="headerlink" title="6.5 实践原则"></a>6.5 实践原则</h3><ul>
+<li><strong>CustomRenderPipelineCamera 是相机的标配</strong>：默认给每个 Camera 挂上，避免 fallback 逻辑分支爆炸</li>
+<li><strong>PostFX 在 Reflection Probe / Material Preview 上必须关闭</strong>：否则反射结果与编辑器显示都失真</li>
+<li><strong>关键字预算项目早期就定</strong>：等到 build 慢得受不了再改，重构成本极高</li>
+<li><strong>shader_feature 比 multi_compile 优先</strong>：除非确定关键字需要 C# 全局开关</li>
+<li><strong>Settings 拆分阈值是 ~10 字段</strong>：超过这个数应该考虑独立 ScriptableObject</li>
+<li><strong>Frame Debugger 应该是肌肉记忆</strong>：开发过程中遇到任何渲染问题，第一反应打开它</li>
+<li><strong>ProfilingSampler 名字精心设计</strong>：调试时 5 倍效率</li>
+<li><strong>RenderingLayerMask 是 Unity 6 的标准</strong>：新项目直接用，老项目重构时迁移</li>
+</ul>
+<hr>
+<h2 id="系列收束"><a href="#系列收束" class="headerlink" title="系列收束"></a>系列收束</h2><p>至此，<strong>Custom SRP 的 8 篇笔记</strong>完整覆盖了从管线骨架到工程架构的所有核心系统：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Note 1 · 渲染管线架构与 Render Graph<br>   ↓ 执行框架确立<br>Note 2 · 几何可见性与批次优化<br>   ↓ 几何提交链路<br>Note 3 · 表面着色器与 BRDF<br>   ↓ 材质物理基础<br>Note 4 · 直接光照与 Tiled Forward+<br>   ↓ 光照算法核心<br>Note 5 · 阴影系统<br>   ↓ 遮挡与混合<br>Note 6 · 全局光照与环境<br>   ↓ 间接光照接入<br>Note 7 · 后处理栈<br>   ↓ 图像最终加工<br>Note 8 · 相机系统与工程架构<br>   ↑ 工程层规模化<br></code></pre></td></tr></table></div></figure>
+
+<p>每篇都遵循同一节奏：<strong>TL;DR 速览 → 系统全景 → 子模块展开 → TA Takeaway → API 速查</strong>。每篇内部又通过 ⚠️ 工程陷阱、💡 工程见解、📱 移动端视角三类 blockquote 标识不同维度的工程价值。</p>
+<p>这套笔记的目标读者是已经熟悉基础渲染概念、希望深入理解现代 Unity Custom SRP 工业实现的开发者。它不是教程的搬运——Catlike 教程的代码细节本身极其充分，读者应该作为权威参考；这套笔记是<strong>对这些代码细节的提炼、归类、连接、上升</strong>——把 33 篇分散的渐进式实现重组为 8 个对应渲染引擎核心系统的知识模块，让读者能：</p>
+<ul>
+<li><strong>快速定位</strong>：遇到具体问题时知道翻哪一篇</li>
+<li><strong>横向连接</strong>：理解光照、阴影、GI 之间的数据契约（Surface / Light / BRDF / GI 四个 struct 是核心枢纽）</li>
+<li><strong>工程认知</strong>：超越教程层面，建立 production 级别的硬件意识、关键字预算意识、调试方法论</li>
+</ul>
+<p><strong>愿这套笔记能成为读者深入现代渲染管线工程实践的可靠参考。</strong></p>
+<hr>
+<h2 id="What’s-Next：基于这套底座可以走向哪里"><a href="#What’s-Next：基于这套底座可以走向哪里" class="headerlink" title="What’s Next：基于这套底座可以走向哪里"></a>What’s Next：基于这套底座可以走向哪里</h2><p>这套笔记完成的不只是 Custom SRP 的知识梳理——它<strong>搭建了一个具有高度扩展性的现代管线底座</strong>。Render Graph 的资源声明模型、Compute Shader 的 LUT 范式、Forward+ 的屏幕空间分块剔除框架都不是孤立的实现，而是为承载更复杂的渲染技术准备的工程脚手架。基于这套底座，下面几类高级特性可以<strong>极其平滑地接入</strong>：</p>
+<h3 id="GPU-驱动的渲染管线（GPU-Driven-Rendering）"><a href="#GPU-驱动的渲染管线（GPU-Driven-Rendering）" class="headerlink" title="GPU 驱动的渲染管线（GPU-Driven Rendering）"></a>GPU 驱动的渲染管线（GPU-Driven Rendering）</h3><p>当前的几何提交链路（Note 2）仍然是 CPU 端的 Cull → 提交 RendererList → GPU 绘制。<strong>GPU-Driven</strong> 模式把 Cull 整个搬到 GPU：</p>
+<ul>
+<li>所有 Mesh 的 InstanceData 打包到 StructuredBuffer（Note 4 的数据传递模式直接复用）</li>
+<li>Compute Shader 在 GPU 端做视锥剔除、遮挡剔除、LOD 选择（与 Forward+ Tile 剔除同构）</li>
+<li><code>DrawProceduralIndirect</code> + <code>DispatchIndirect</code> 让 GPU 自己决定画什么、画多少</li>
+</ul>
+<p>这是 UE5 Nanite、Frostbite GPU-Driven、Activision 的 Geometry Streaming 的核心范式。<strong>Render Graph 的资源声明模型天然支持 indirect buffer 作为 RendererList 输入</strong>——本套底座只需扩展 Pass 实现即可接入。</p>
+<h3 id="体积散射与体积光（Volumetric-Scattering）"><a href="#体积散射与体积光（Volumetric-Scattering）" class="headerlink" title="体积散射与体积光（Volumetric Scattering）"></a>体积散射与体积光（Volumetric Scattering）</h3><p>体积雾、上帝光、舞台烟雾等效果需要在 3D 空间中沿光线步进求积分。现代实现有两条主流路径：</p>
+<ul>
+<li><strong>3D Volume Texture + Compute Shader</strong>：在屏幕空间分 froxel（frustum voxel）网格，每帧 Compute Shader 填充每个 froxel 的 in-scattering 与 transmittance（Note 5 的 Atlas + Note 7 的 LUT 烘焙思想结合）</li>
+<li><strong>Ray Marching Pass</strong>：在主着色阶段对每像素步进采样体积纹理（Note 4 Forward+ Tile 数据可以加速光源剔除）</li>
+</ul>
+<p>Custom SRP 已经具备了 3D 纹理（Color LUT）、Compute Shader（LUT 生成）、屏幕空间分块（Forward+）三大基础设施——接入 Volumetric 主要是<strong>新增一个 ComputePass + 一个 Sampling Pass</strong>，不需要改动核心架构。</p>
+<h3 id="屏幕空间反射-SSR"><a href="#屏幕空间反射-SSR" class="headerlink" title="屏幕空间反射 SSR"></a>屏幕空间反射 SSR</h3><p>Note 6 §4.3 提到 Box Projection 失效时的兜底方案就是 SSR。SSR 的实现需要：</p>
+<ul>
+<li>屏幕空间深度纹理（Note 7 已有 CopyAttachmentsPass 的 depth copy）</li>
+<li>HDR 颜色作为反射源（Note 7 的中间 HDR RT）</li>
+<li>每像素光线步进（典型 16-32 步）+ Hi-Z 加速</li>
+</ul>
+<p><strong>所有依赖资源都已在本套管线中存在</strong>——SSR 是一个标准的 Raster Pass，输入两张已有 RT，输出反射颜色，最终在 PostFXPass 之前加性混合到主图。</p>
+<h3 id="程序化内容生成（PCG）渲染"><a href="#程序化内容生成（PCG）渲染" class="headerlink" title="程序化内容生成（PCG）渲染"></a>程序化内容生成（PCG）渲染</h3><p>PCG（Procedural Content Generation）地形、植被、城市的实时渲染需要把”运行时生成的几何数据”无缝接入渲染管线：</p>
+<ul>
+<li>程序生成的 Mesh 数据存入 ComputeBuffer（与 Forward+ 的 OtherLightData 同构）</li>
+<li>通过 GPU-Driven 路径自动剔除与提交</li>
+<li>光照、阴影、GI 接入复用现有所有系统</li>
+</ul>
+<p>随着 UE5 PCG、Unity Splines、Houdini Engine 等工具普及，PCG 接入是下一代游戏管线的标配。Custom SRP 的现代框架天然支持——这是把数据（StructuredBuffer）与提交（RendererList / DrawProceduralIndirect）解耦的红利。</p>
+<h3 id="Cluster-Forward-Visibility-Buffer"><a href="#Cluster-Forward-Visibility-Buffer" class="headerlink" title="Cluster Forward / Visibility Buffer"></a>Cluster Forward / Visibility Buffer</h3><p>Forward+ 的 2D Tile 剔除（Note 4 §4）可以扩展为 3D Cluster——不仅按屏幕分块，还按深度分层。这能进一步降低高密度光源场景下的每像素光源测试数量。再进一步是 <strong>Visibility Buffer</strong> 路径——Pass 1 写入 instance-id + primitive-id（Note 1 的 Render Graph 资源声明无缝支持），Pass 2 在像素 shader 中按 ID 重建几何属性进行光照。这是 UE5 Nanite 的关键技术之一。</p>
+<h3 id="收束"><a href="#收束" class="headerlink" title="收束"></a>收束</h3><p>每一条扩展路径都不是”从零搭建”——而是<strong>在本套底座上叠加新的 Pass</strong>。Render Graph 的声明式架构让这些扩展互相隔离、可测试、可回退。这正是现代 SRP 设计的终极工程价值：<strong>渲染特性可以独立演进、累加贡献，而不会让管线代码退化为难以维护的状态机</strong>。</p>
+<p>笔记到这里画上句号——但<strong>这套架构能承载的故事才刚刚开始</strong>。</p>
+<hr>
+<h2 id="关键-API-速查"><a href="#关键-API-速查" class="headerlink" title="关键 API 速查"></a>关键 API 速查</h2><details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// 多相机配置</span><br>[<span class="hljs-meta">DisallowMultipleComponent, RequireComponent(typeof(Camera))</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPipelineCamera</span> : <span class="hljs-title">MonoBehaviour</span><br>{<br>    <span class="hljs-keyword">public</span> ProfilingSampler Sampler;<br>    <span class="hljs-keyword">public</span> CameraSettings Settings;<br>}<br><br><span class="hljs-comment">// CameraSettings 关键字段</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CameraSettings</span><br>{<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> copyColor, copyDepth;<br>    <span class="hljs-keyword">public</span> RenderingLayerMask renderingLayerMask;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> maskLights;<br>    <span class="hljs-keyword">public</span> RenderScaleMode renderScaleMode;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">float</span> renderScale;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> overridePostFX, allowFXAA, keepAlpha;<br>    <span class="hljs-keyword">public</span> PostFXSettings postFXSettings;<br>    <span class="hljs-keyword">public</span> FinalBlendMode finalBlendMode;<br>}<br><br><span class="hljs-comment">// Final Blend Mode 配置</span><br><span class="hljs-keyword">public</span> <span class="hljs-built_in">enum</span> BlendMode {<br>    Zero, One, SrcAlpha, OneMinusSrcAlpha,<br>    DstColor, OneMinusDstColor, SrcColor,<br>    <span class="hljs-comment">// ...</span><br>}<br><br><span class="hljs-comment">// Shader Stripping 接口</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">StripUnusedVariants</span> : <span class="hljs-title">IPreprocessShaders</span><br>{<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> callbackOrder;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnProcessShader</span>(<span class="hljs-params">Shader shader,</span></span><br><span class="hljs-params"><span class="hljs-function">        ShaderSnippetData snippet, IList&lt;ShaderCompilerData&gt; data</span>)</span>;<br>}<br><br><span class="hljs-comment">// Shader Variant Collection</span><br>[<span class="hljs-meta">CreateAssetMenu(menuName = <span class="hljs-string">"..."</span>)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomShaderVariantCollection</span> : <span class="hljs-title">ShaderVariantCollection</span><br>{<br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">WarmUp</span>()</span>;<br>}<br><br><span class="hljs-comment">// RP Settings 拆分</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPipelineSettings</span> : <span class="hljs-title">ScriptableObject</span><br>{<br>    <span class="hljs-keyword">public</span> CameraBufferSettings cameraBuffer;<br>    <span class="hljs-keyword">public</span> ShadowSettings shadows;<br>    <span class="hljs-keyword">public</span> PostFXSettings postFXSettings;<br>    <span class="hljs-keyword">public</span> ForwardPlusSettings forwardPlus;<br>    <span class="hljs-keyword">public</span> CameraSettings defaultCameraSettings;<br>    <span class="hljs-keyword">public</span> ColorLUTResolution colorLUTResolution;<br>    <span class="hljs-keyword">public</span> Shader cameraRendererShader;<br>}<br><br><span class="hljs-comment">// 调试工具入口</span><br><span class="hljs-comment">// Frame Debugger:        Window / Analysis / Frame Debugger</span><br><span class="hljs-comment">// Render Graph Viewer:   Window / Analysis / Render Graph Viewer</span><br><span class="hljs-comment">// RenderDoc:             外部工具，IBaseHook 集成</span><br><br><span class="hljs-comment">// ProfilingSampler 推荐用法</span><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">readonly</span> ProfilingSampler sampler = <span class="hljs-keyword">new</span>(<span class="hljs-string">"Pass Name"</span>);<br><span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> scope = <span class="hljs-keyword">new</span> ProfilingScope(cmd, sampler);<br></code></pre></td></tr></table></div></figure></details>
+
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// 关键字 pragma<br>#pragma multi_compile_instancing<br>#pragma multi_compile _ LIGHTMAP_ON<br>#pragma multi_compile _ _SHADOW_FILTER_MEDIUM _SHADOW_FILTER_HIGH<br>#pragma multi_compile _ FXAA_QUALITY_LOW FXAA_QUALITY_MEDIUM<br>#pragma shader_feature _CLIPPING<br>#pragma shader_feature _NORMAL_MAP<br><br>// RenderingLayer 测试<br>bool RenderingLayersOverlap(Surface surface, Light light) {<br>    return (surface.renderingLayerMask &amp; light.renderingLayerMask) != 0;<br>}<br><br>// unity_RenderingLayer 来源（UnityPerDraw CBUFFER）<br>real4 unity_RenderingLayer;<br>uint renderingLayer = asuint(unity_RenderingLayer.x);<br></code></pre></td></tr></table></div></figure>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/posts/bb49e33ef41f/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>「PBR 系列」总览：基于物理的渲染从理论到引擎落地</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/fdbf8f97bbc1/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      「Custom SRP」：后处理栈
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/%E5%A4%9A%E7%9B%B8%E6%9C%BA/" class="post-tag">#多相机</a><a href="/tags/Shader-%E5%85%B3%E9%94%AE%E5%AD%97/" class="post-tag">#Shader 关键字</a><a href="/tags/%E5%B7%A5%E7%A8%8B%E6%9E%B6%E6%9E%84/" class="post-tag">#工程架构</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e962819a878a/" title="「Custom SRP」：直接光照与 Tiled Forward+" rel="bookmark">「Custom SRP」：直接光照与 Tiled Forward+</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>

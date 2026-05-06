@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        「Custom SRP」：渲染管线架构与 Render Graph | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+          <div class="post-banner">
+            <img src="https://catlikecoding.com/unity/custom-srp/2-0-0/tutorial-image.jpg" alt="Banner">
+          </div>
+        
+        
+        <div class="post-title">「Custom SRP」：渲染管线架构与 Render Graph</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2024-06-03 · 更新于2026-05-01
+            
+            
+          </div>
+          
+  <a href="/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/" class="post-tag">#渲染管线</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/Render-Graph/" class="post-tag">#Render Graph</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Note-1-·-渲染管线架构与-Render-Graph"><span class="post-toc-text">Note 1 · 渲染管线架构与 Render Graph</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#TL-DR"><span class="post-toc-text">TL;DR</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-SRP-的执行模型"><span class="post-toc-text">1. SRP 的执行模型</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-Render-Graph：声明式渲染"><span class="post-toc-text">2. Render Graph：声明式渲染</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-1-设计动机"><span class="post-toc-text">2.1 设计动机</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-2-资源句柄"><span class="post-toc-text">2.2 资源句柄</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-3-录制与执行分离"><span class="post-toc-text">2.3 录制与执行分离</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-Pass-类型与实现模式"><span class="post-toc-text">3. Pass 类型与实现模式</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-三种-Pass-类型"><span class="post-toc-text">3.1 三种 Pass 类型</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-标准-Pass-实现模板"><span class="post-toc-text">3.2 标准 Pass 实现模板</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-3-资源声明-API"><span class="post-toc-text">3.3 资源声明 API</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-4-Native-Render-Passes-与-Pass-合并"><span class="post-toc-text">3.4 Native Render Passes 与 Pass 合并</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-Renderer-Lists：几何提交的统一句柄"><span class="post-toc-text">4. Renderer Lists：几何提交的统一句柄</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-相机渲染编排"><span class="post-toc-text">5. 相机渲染编排</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-1-单相机执行流"><span class="post-toc-text">5.1 单相机执行流</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-2-Per-Camera-配置"><span class="post-toc-text">5.2 Per-Camera 配置</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-3-隐式相机"><span class="post-toc-text">5.3 隐式相机</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-4-Render-Graph-Debug-Data"><span class="post-toc-text">5.4 Render Graph Debug Data</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#6-调试工具索引"><span class="post-toc-text">6. 调试工具索引</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#7-TA-Takeaway：从-API-设计到硬件带宽"><span class="post-toc-text">7. TA Takeaway：从 API 设计到硬件带宽</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-1-TBR-架构下的带宽真相"><span class="post-toc-text">7.1 TBR 架构下的带宽真相</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-2-Render-Graph-限制的硬件意义"><span class="post-toc-text">7.2 Render Graph 限制的硬件意义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-3-实践推论"><span class="post-toc-text">7.3 实践推论</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#附录：项目文件与-Pass-类型速查"><span class="post-toc-text">附录：项目文件与 Pass 类型速查</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#本篇关键-API-速查"><span class="post-toc-text">本篇关键 API 速查</span></a></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="Note-1-·-渲染管线架构与-Render-Graph"><a href="#Note-1-·-渲染管线架构与-Render-Graph" class="headerlink" title="Note 1 · 渲染管线架构与 Render Graph"></a>Note 1 · 渲染管线架构与 Render Graph</h1><blockquote>
+<p>系列首篇。本篇定位是引擎的”执行骨架”——它定义了所有其他系统（光照、阴影、后处理、相机管理）的宿主形态。理解这一篇，后续每个系统的接入方式都不再陌生。</p>
+</blockquote>
+<h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h2><ul>
+<li><strong>声明式资源生命周期</strong>：Render Graph 把资源依赖、Pass 顺序、attachment 绑定全部显式化。引擎在编译期完成依赖分析、裁剪冗余 Pass、规划 RT 复用——开发者只声明意图，不管理生命周期。</li>
+<li><strong>Raster Pass 合并机制</strong>：禁止 Pass 内切换 RenderTarget 是为了让引擎能把相邻 Pass 合并为单个原生 render pass。在移动端 TBR 架构下，attachment 全程留在片上内存，省下整屏量级的带宽往返（详见 §7）。</li>
+<li><strong>RendererList 剔除前置</strong>：所有几何提交统一到 <code>RendererListHandle</code>。剔除可并行调度，空 List 触发 Pass 自动消除——dead-code elimination 在渲染管线层的体现。</li>
+<li><strong>API 演进基线</strong>：全文基于 Unity 6.3 的 <code>AddRasterRenderPass</code> / <code>SetRenderAttachment</code> / <code>RecordAndExecute</code> 现代范式，已废弃的 <code>AddRenderPass</code> 与手动 <code>SetRenderTarget</code> 不再涉及。</li>
+</ul>
+<hr>
+<h2 id="1-SRP-的执行模型"><a href="#1-SRP-的执行模型" class="headerlink" title="1. SRP 的执行模型"></a>1. SRP 的执行模型</h2><p>SRP 的本质是把渲染管线变成一个<strong>用户态实现</strong>。Unity 引擎只负责剔除、网格上传、命令提交、原生 API 调用等底层任务，而”什么时候画什么、用什么 RT、按什么顺序”则全部交由 C# 决定。</p>
+<p>整个体系建立在两个核心类型之上：</p>
+<ul>
+<li><code>RenderPipelineAsset</code> — <code>ScriptableObject</code>，作为配置容器与工厂，负责创建 <code>RenderPipeline</code> 实例</li>
+<li><code>RenderPipeline</code> — 实际承担渲染工作的对象，每帧由引擎调用其 <code>Render</code> 方法</li>
+</ul>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">CreateAssetMenu(menuName = <span class="hljs-string">"Rendering/Custom Render Pipeline"</span>)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">partial</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPipelineAsset</span> : <span class="hljs-title">RenderPipelineAsset</span><br>{<br>    [<span class="hljs-meta">SerializeField</span>] CameraBufferSettings cameraBuffer;<br>    [<span class="hljs-meta">SerializeField</span>] ShadowSettings shadows;<br>    [<span class="hljs-meta">SerializeField</span>] PostFXSettings postFXSettings;<br><br>    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> RenderPipeline <span class="hljs-title">CreatePipeline</span>()</span><br>    {<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> CustomRenderPipeline(<br>            cameraBuffer, shadows, postFXSettings, ...);<br>    }<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>CustomRenderPipeline</code> 重写 <code>Render(ScriptableRenderContext, List&lt;Camera&gt;)</code>，按相机列表依次驱动渲染：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Render</span>(<span class="hljs-params"></span></span><br><span class="hljs-params"><span class="hljs-function">    ScriptableRenderContext context, List&lt;Camera&gt; cameras</span>)</span><br>{<br>    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; cameras.Count; i++)<br>    {<br>        renderer.Render(renderGraph, context, cameras[i], settings);<br>    }<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>ScriptableRenderContext</code> 是与底层引擎之间的桥梁，提供剔除、查询场景资源、提交命令等接口。但在 Render Graph 时代，它退到次要位置——绝大部分工作通过 <code>RenderGraph</code> 对象进行声明式描述，只有命令缓冲的最终提交仍然落到 <code>context.ExecuteCommandBuffer / Submit</code> 上。</p>
+<hr>
+<h2 id="2-Render-Graph：声明式渲染"><a href="#2-Render-Graph：声明式渲染" class="headerlink" title="2. Render Graph：声明式渲染"></a>2. Render Graph：声明式渲染</h2><h3 id="2-1-设计动机"><a href="#2-1-设计动机" class="headerlink" title="2.1 设计动机"></a>2.1 设计动机</h3><p>传统命令式渲染存在三个无法回避的问题。第一，RT 的生命周期由开发者手动管理，资源复用与释放容易出错或浪费。第二，Pass 之间的依赖关系隐式编码在代码顺序里，引擎无法据此做调度优化。第三，tile-based GPU 想要利用片上内存做 frame-buffer fetch，必须知道哪些 Pass 可以合并到同一原生 render pass 内——而这种结构化信息在传统命令流中是缺失的。</p>
+<p>Render Graph 把这些信息全部显式化：每个 Pass 在录制阶段声明它读哪些资源、写哪些资源、绑定哪些 attachment。引擎在执行前先做依赖分析，再决定真正的资源分配、Pass 调度、Pass 合并。</p>
+<h3 id="2-2-资源句柄"><a href="#2-2-资源句柄" class="headerlink" title="2.2 资源句柄"></a>2.2 资源句柄</h3><p>Render Graph 中所有资源以句柄形式存在：<code>TextureHandle</code>、<code>BufferHandle</code>、<code>RendererListHandle</code>。这些句柄是引用，不是对象——真正的 GPU 资源在 Compile 阶段才被分配，并按生命周期被多个句柄复用。</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs csharp">TextureHandle colorAttachment = renderGraph.CreateTexture(<span class="hljs-keyword">new</span> TextureDesc {<br>    width = bufferSize.x,<br>    height = bufferSize.y,<br>    format = colorFormat,<br>    name = <span class="hljs-string">"Color Attachment"</span>,<br>});<br></code></pre></td></tr></table></div></figure>
+
+<p>句柄的意义在录制阶段是”占位符”，在执行阶段才被解析为真实的 <code>RenderTargetIdentifier</code>。</p>
+<h3 id="2-3-录制与执行分离"><a href="#2-3-录制与执行分离" class="headerlink" title="2.3 录制与执行分离"></a>2.3 录制与执行分离</h3><p>整个相机渲染包裹在一对 <code>RecordAndExecute</code> 调用里：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">using</span> (renderGraph.RecordAndExecute(renderGraphParameters))<br>{<br>    SetupPass.Record(...);<br>    LightingPass.Record(...);<br>    ShadowsPass.Record(...);<br>    GeometryPass.Record(...);<br>    SkyboxPass.Record(...);<br>    CopyAttachmentsPass.Record(...);<br>    PostFXPass.Record(...);<br>    FinalPass.Record(...);<br>    DebugPass.Record(...);<br>    GizmosPass.Record(...);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<blockquote>
+<p><code>using (renderGraph.RecordAndExecute(...))</code> 是 Unity 6 引入 Render Graph 后的现代范式。<code>RecordAndExecute</code> 返回一个 <code>IDisposable</code>：录制阶段在 <code>using</code> 块内进行，块退出时触发 <code>Dispose</code>，引擎在此刻才完成依赖编译并执行图。相对手写 <code>Begin/End</code> 配对的核心优势是<strong>异常安全</strong>——录制中途抛错时引擎仍能正确释放资源、关闭 profiling scope，不会留下损坏的图状态。</p>
+</blockquote>
+<p><code>RecordAndExecute</code> 块结束时，Render Graph 完成四步工作：</p>
+<ol>
+<li>分析所有 Pass 的输入输出依赖</li>
+<li>裁剪没有任何下游消费的 Pass（dead code elimination）</li>
+<li>决定每个资源的实际分配时机和复用方式</li>
+<li>在原生层执行——Unity 6.3 起默认启用 native render passes</li>
+</ol>
+<p><code>RenderGraphParameters</code> 携带本次录制所需的上下文：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">var</span> rgParameters = <span class="hljs-keyword">new</span> RenderGraphParameters<br>{<br>    commandBuffer = CommandBufferPool.Get(),<br>    currentFrameIndex = Time.frameCount,<br>    executionName = cameraSampler.name,<br>    rendererListCulling = <span class="hljs-literal">true</span>,<br>    scriptableRenderContext = context,<br>};<br></code></pre></td></tr></table></div></figure>
+
+<p><code>rendererListCulling = true</code> 是关键开关——它允许引擎根据 RendererList 是否为空，自动裁剪不会产生绘制的 Pass。</p>
+<hr>
+<h2 id="3-Pass-类型与实现模式"><a href="#3-Pass-类型与实现模式" class="headerlink" title="3. Pass 类型与实现模式"></a>3. Pass 类型与实现模式</h2><h3 id="3-1-三种-Pass-类型"><a href="#3-1-三种-Pass-类型" class="headerlink" title="3.1 三种 Pass 类型"></a>3.1 三种 Pass 类型</h3><p>Render Graph 把 Pass 分为三档，限制由松到紧：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>API</th>
+<th>用途</th>
+<th>关键限制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Unsafe Pass</td>
+<td><code>AddUnsafePass</code></td>
+<td>需要任意 CommandBuffer 操作的特殊场景</td>
+<td>不参与合并、不参与 native pass 优化</td>
+</tr>
+<tr>
+<td>Compute Pass</td>
+<td><code>AddComputePass</code></td>
+<td>纯 Compute Shader 工作（如 LUT 生成、Tile Forward+ 光源分配）</td>
+<td>不能写 attachment</td>
+</tr>
+<tr>
+<td>Raster Pass</td>
+<td><code>AddRasterRenderPass</code></td>
+<td>标准光栅化绘制</td>
+<td>Pass 内不允许 SetRenderTarget；attachment 必须显式声明</td>
+</tr>
+</tbody></table></div>
+<p><strong>Raster Pass 是核心</strong>。它的限制——禁止 Pass 内切换 RT——正是引擎能做合并优化的前提。当连续多个 Raster Pass 渲染到同一组 attachment 时，引擎可以把它们合并为单个原生 render pass，让中间结果留在 tile-based GPU 的片上内存里，避免一次往返显存的带宽开销。</p>
+<p>Unsafe Pass 是过渡性兜底：当某个 Pass 暂时无法满足 Raster Pass 的限制时，先用它跑通；后续再逐步收敛到 Raster Pass。Compute Pass 专门用来组织 Compute Shader 的 Dispatch。</p>
+<h3 id="3-2-标准-Pass-实现模板"><a href="#3-2-标准-Pass-实现模板" class="headerlink" title="3.2 标准 Pass 实现模板"></a>3.2 标准 Pass 实现模板</h3><p>每个 Pass 在 Custom SRP 里通常是一个独立类，约定包含三部分：</p>
+<ul>
+<li>一个数据结构（Pass Data），由 Render Graph 内部池化复用</li>
+<li>一个静态 <code>Record</code> 方法，在录制阶段调用，负责声明资源与注册执行函数</li>
+<li>一个静态 <code>Render</code> 方法，由 Render Graph 在执行阶段回调</li>
+</ul>
+<p>以 <code>GeometryPass</code> 为例：</p>
+<details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GeometryPass</span><br>{<br>    <span class="hljs-keyword">static</span> <span class="hljs-keyword">readonly</span> ProfilingSampler<br>        samplerOpaque = <span class="hljs-keyword">new</span>(<span class="hljs-string">"Opaque Geometry"</span>),<br>        samplerTransparent = <span class="hljs-keyword">new</span>(<span class="hljs-string">"Transparent Geometry"</span>);<br><br>    RendererListHandle list;<br><br>    <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Render</span>(<span class="hljs-params">GeometryPass pass, RasterGraphContext context</span>)</span><br>    {<br>        context.cmd.DrawRendererList(pass.list);<br>    }<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Record</span>(<span class="hljs-params"></span></span><br><span class="hljs-params"><span class="hljs-function">        RenderGraph renderGraph,</span></span><br><span class="hljs-params"><span class="hljs-function">        Camera camera,</span></span><br><span class="hljs-params"><span class="hljs-function">        CullingResults cullingResults,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-built_in">bool</span> opaque,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-keyword">in</span> CameraRendererTextures textures,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-keyword">in</span> LightResources lightData</span>)</span><br>    {<br>        ProfilingSampler sampler = opaque ? samplerOpaque : samplerTransparent;<br><br>        <span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> builder = renderGraph.AddRasterRenderPass(<br>            sampler.name, <span class="hljs-keyword">out</span> GeometryPass pass, sampler);<br><br>        pass.list = builder.UseRendererList(<br>            renderGraph.CreateRendererList(<br>                <span class="hljs-keyword">new</span> RendererListDesc(shaderTagId, cullingResults, camera) { ... }));<br><br>        builder.SetRenderAttachment(textures.colorAttachment, <span class="hljs-number">0</span>);<br>        builder.SetRenderAttachmentDepth(textures.depthAttachment);<br>        builder.UseBuffer(lightData.directionalLightDataBuffer);<br><br>        builder.SetRenderFunc&lt;GeometryPass&gt;(Render);<br>    }<br>}<br></code></pre></td></tr></table></div></figure></details>
+
+<p>这个模板有几个值得记住的约束。Pass Data 实例由 Render Graph 池化，<strong>不要在其上保存帧间状态</strong>。<code>Render</code> 函数签名固定为 <code>(PassData, RasterGraphContext)</code>，函数体只能通过 <code>context.cmd</code>（一个受限的 <code>RasterCommandBuffer</code>）发出命令。<code>SetRenderFunc</code> 调用必须在 builder 销毁之前完成——这正是 <code>using</code> 语法承担的职责。</p>
+<h3 id="3-3-资源声明-API"><a href="#3-3-资源声明-API" class="headerlink" title="3.3 资源声明 API"></a>3.3 资源声明 API</h3><p>builder 提供三类资源声明方法：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// 作为采样源（不写入）</span><br>builder.UseTexture(handle, AccessFlags.Read);<br><br><span class="hljs-comment">// 作为 color attachment</span><br>builder.SetRenderAttachment(handle, index: <span class="hljs-number">0</span>, AccessFlags.Write);<br><br><span class="hljs-comment">// 作为 depth attachment</span><br>builder.SetRenderAttachmentDepth(handle, AccessFlags.ReadWrite);<br><br><span class="hljs-comment">// 作为 RendererList（同时声明几何依赖）</span><br>pass.list = builder.UseRendererList(listHandle);<br><br><span class="hljs-comment">// 作为 ComputeBuffer / StructuredBuffer</span><br>builder.UseBuffer(bufferHandle, AccessFlags.Read);<br></code></pre></td></tr></table></div></figure>
+
+<p><code>SetRenderAttachment</code> 的 attachment index 在使用 MRT（Multiple Render Target）时区分多个颜色目标。Skybox 这类只写颜色不写深度的 Pass，需要把深度 attachment 的访问权限设为只读：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs csharp">builder.SetRenderAttachmentDepth(textures.depthAttachment, AccessFlags.Read);<br></code></pre></td></tr></table></div></figure>
+
+<p>attachment 的绑定与解绑由引擎在 Pass 起止时自动完成。Pass 函数体内<strong>调用 <code>SetRenderTarget</code> 是非法的</strong>——这条规则一旦违反，所有合并优化都会失效。</p>
+<h3 id="3-4-Native-Render-Passes-与-Pass-合并"><a href="#3-4-Native-Render-Passes-与-Pass-合并" class="headerlink" title="3.4 Native Render Passes 与 Pass 合并"></a>3.4 Native Render Passes 与 Pass 合并</h3><p>Unity 6.3 起，<code>renderGraph.nativeRenderPassesEnabled</code> 默认为 <code>true</code>。引擎主动尝试把相邻 Raster Pass 合并为单个原生 render pass。在 Render Graph Viewer 中，被合并的 Pass 会以蓝色横条标记，并显示合并的判断依据。</p>
+<p>合并发生需要满足以下条件：</p>
+<ul>
+<li>都是 Raster Pass（Unsafe Pass、Compute Pass 一律打断合并）</li>
+<li>attachment 集合视为同一组：颜色与深度的数量、格式、load/store 行为兼容</li>
+<li>没有外部依赖把它们隔开（比如某个中间 Pass 把 attachment 当纹理采样了）</li>
+</ul>
+<p>典型的合并组合：Skybox + 不透明几何（同一对 color/depth）；透明几何 + Unsupported Shaders 调试 Pass；颜色与深度的两个独立 Copy Pass。</p>
+<p>合并是引擎层的优化，业务代码不需要改动，但<strong>业务代码必须正确遵守 Raster Pass 的所有限制</strong>——任何错误的 attachment 声明都会让引擎无法判定 Pass 可合并。</p>
+<hr>
+<h2 id="4-Renderer-Lists：几何提交的统一句柄"><a href="#4-Renderer-Lists：几何提交的统一句柄" class="headerlink" title="4. Renderer Lists：几何提交的统一句柄"></a>4. Renderer Lists：几何提交的统一句柄</h2><p><code>RendererList</code> 是几何剔除与提交的统一抽象。在 Render Graph 时代，几何不再通过 <code>context.DrawRenderers</code> 直接提交，而是先创建 <code>RendererListHandle</code>，再绑定到 Pass 上由引擎统一调度。</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs csharp">RendererListHandle list = renderGraph.CreateRendererList(<br>    <span class="hljs-keyword">new</span> RendererListDesc(shaderTagId, cullingResults, camera)<br>    {<br>        sortingCriteria = SortingCriteria.CommonOpaque,<br>        renderQueueRange = RenderQueueRange.opaque,<br>        rendererConfiguration =<br>            PerObjectData.ReflectionProbes |<br>            PerObjectData.Lightmaps |<br>            PerObjectData.ShadowMask |<br>            PerObjectData.LightProbe |<br>            PerObjectData.OcclusionProbe |<br>            PerObjectData.LightProbeProxyVolume |<br>            PerObjectData.OcclusionProbeProxyVolume,<br>    });<br></code></pre></td></tr></table></div></figure>
+
+<p>通过 <code>builder.UseRendererList(list)</code> 注册到 Pass 后，引擎在执行时会自动安排剔除任务。这带来两个直接收益。其一，<strong>所有 RendererList 的剔除工作可以并行调度</strong>——传统 cull-draw-cull-draw 的串行依赖被打破，剔除阶段集中前置，绘制阶段集中后置。其二，<strong>空 List 触发 Pass 自动裁剪</strong>：如果一个 Pass 仅依赖一个 RendererList，且 List 中无可见对象，整个 Pass 会被引擎在 Compile 阶段直接消除。</p>
+<p>执行阶段的提交一行搞定：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs csharp">context.cmd.DrawRendererList(list);<br></code></pre></td></tr></table></div></figure>
+
+<p>需要特别记住一条限制：<strong>RendererList 不可复用</strong>。每个 List 只允许在一个 Pass 中绘制一次。点光源的 6 面 cube shadow 必须创建 6 个独立的 RendererList，即使每个 List 的 <code>ShadowDrawingSettings</code> 完全相同。</p>
+<p>阴影 List 与天空盒 List 各有专门构造接口：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs csharp">renderGraph.CreateShadowRendererList(<span class="hljs-keyword">in</span> shadowDrawingSettings);<br>renderGraph.CreateSkyboxRendererList(camera);<br></code></pre></td></tr></table></div></figure>
+
+<p>天空盒还有一个特殊点：它在引擎眼里不算几何，所以默认的”裁剪空 Pass”逻辑会误删 SkyboxPass。需要显式声明该 Pass 不允许被裁剪：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs csharp">builder.AllowPassCulling(<span class="hljs-literal">false</span>);<br></code></pre></td></tr></table></div></figure>
+
+<hr>
+<h2 id="5-相机渲染编排"><a href="#5-相机渲染编排" class="headerlink" title="5. 相机渲染编排"></a>5. 相机渲染编排</h2><h3 id="5-1-单相机执行流"><a href="#5-1-单相机执行流" class="headerlink" title="5.1 单相机执行流"></a>5.1 单相机执行流</h3><p>每个 Camera 独立完成一次 Render Graph 录制与执行。整体生命周期如下：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A([Camera 渲染入口]) --&gt; B[解析 per-camera 配置&lt;br/&gt;Sampler / CameraSettings]<br>    B --&gt; C[context.Cull&lt;br/&gt;→ CullingResults]<br>    C --&gt; D[RecordAndExecute 块开启]<br><br>    D --&gt; E[Record Phase&lt;br/&gt;SetupPass · Lighting · Shadows&lt;br/&gt;Geometry · Skybox · CopyAttachments&lt;br/&gt;PostFX · Debug · Gizmos&lt;br/&gt;逐一声明资源与执行函数]<br>    E --&gt; F[Compile Phase&lt;br/&gt;依赖分析 · 裁剪空 Pass · RT 复用规划]<br>    F --&gt; G[Execute Phase&lt;br/&gt;Native Render Pass 合并 · 命令录制]<br>    G --&gt; H[ExecuteCommandBuffer · Submit]<br>    H --&gt; I([帧提交完成])<br><br>    style D fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br>    style E fill:#e3f2fd,stroke:#1976d2<br>    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px<br>    style G fill:#e8f5e9,stroke:#388e3c,stroke-width:2px<br></code></pre></td></tr></table></div></figure>
+
+<p><code>CameraRenderer.Render</code> 是这条生命线的代码实现：</p>
+<details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Render</span>(<span class="hljs-params"></span></span><br><span class="hljs-params"><span class="hljs-function">    RenderGraph renderGraph,</span></span><br><span class="hljs-params"><span class="hljs-function">    ScriptableRenderContext context,</span></span><br><span class="hljs-params"><span class="hljs-function">    Camera camera,</span></span><br><span class="hljs-params"><span class="hljs-function">    CustomRenderPipelineSettings settings</span>)</span><br>{<br>    <span class="hljs-comment">// 1. 解析 per-camera 配置</span><br>    ProfilingSampler cameraSampler;<br>    CameraSettings cameraSettings;<br>    <span class="hljs-keyword">if</span> (camera.TryGetComponent(<span class="hljs-keyword">out</span> CustomRenderPipelineCamera crpCamera))<br>    {<br>        cameraSampler = crpCamera.Sampler;<br>        cameraSettings = crpCamera.Settings;<br>    }<br>    <span class="hljs-keyword">else</span><br>    {<br>        cameraSampler = GetDefaultProfileSampler(camera);<br>        cameraSettings = settings.defaultCameraSettings;<br>    }<br><br>    <span class="hljs-comment">// 2. 剔除</span><br>    <span class="hljs-keyword">if</span> (!camera.TryGetCullingParameters(<span class="hljs-keyword">out</span> <span class="hljs-keyword">var</span> cullingParameters)) <span class="hljs-keyword">return</span>;<br>    cullingParameters.shadowDistance = Mathf.Min(<br>        settings.shadows.maxDistance, camera.farClipPlane);<br>    <span class="hljs-keyword">var</span> cullingResults = context.Cull(<span class="hljs-keyword">ref</span> cullingParameters);<br><br>    <span class="hljs-comment">// 3. 录制并执行 Render Graph</span><br>    <span class="hljs-keyword">var</span> rgParameters = <span class="hljs-keyword">new</span> RenderGraphParameters<br>    {<br>        commandBuffer = CommandBufferPool.Get(),<br>        currentFrameIndex = Time.frameCount,<br>        executionName = cameraSampler.name,<br>        rendererListCulling = <span class="hljs-literal">true</span>,<br>        scriptableRenderContext = context,<br>    };<br><br>    <span class="hljs-keyword">using</span> (renderGraph.RecordAndExecute(rgParameters))<br>    {<br>        <span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> _ = <span class="hljs-keyword">new</span> RenderGraphProfilingScope(renderGraph, cameraSampler);<br><br>        <span class="hljs-keyword">var</span> textures = SetupPass.Record(renderGraph, ..., camera);<br>        <span class="hljs-keyword">var</span> lightResources = LightingPass.Record(renderGraph, cullingResults, ...);<br>        ShadowsPass.Record(renderGraph, cullingResults, lightResources, ...);<br><br>        GeometryPass.Record(renderGraph, camera, cullingResults,<br>                            opaque: <span class="hljs-literal">true</span>, textures, lightResources);<br>        SkyboxPass.Record(renderGraph, camera, textures);<br>        CopyAttachmentsPass.Record(renderGraph, ..., textures);<br>        GeometryPass.Record(renderGraph, camera, cullingResults,<br>                            opaque: <span class="hljs-literal">false</span>, textures, lightResources);<br><br>        <span class="hljs-keyword">if</span> (hasActivePostFX)<br>            PostFXPass.Record(renderGraph, postFXSettings, textures, ...);<br>        <span class="hljs-keyword">else</span><br>            FinalPass.Record(renderGraph, copier, textures);<br><br>        DebugPass.Record(renderGraph, settings, camera, lightResources);<br>        GizmosPass.Record(renderGraph, copier, textures);<br>    }<br><br>    <span class="hljs-comment">// 4. 提交</span><br>    context.ExecuteCommandBuffer(rgParameters.commandBuffer);<br>    CommandBufferPool.Release(rgParameters.commandBuffer);<br>    context.Submit();<br>}<br></code></pre></td></tr></table></div></figure></details>
+
+<p>整个流程的关键节奏：先做剔除拿到 <code>CullingResults</code>，再用它驱动整个 Render Graph 录制。所有 <code>XxxPass.Record</code> 调用都不立即执行——它们仅在图中登记意图。<code>using</code> 块退出时引擎才真正编译并执行。</p>
+<h3 id="5-2-Per-Camera-配置"><a href="#5-2-Per-Camera-配置" class="headerlink" title="5.2 Per-Camera 配置"></a>5.2 Per-Camera 配置</h3><p><code>CustomRenderPipelineCamera</code> 是挂在 Camera GameObject 上的扩展组件，承载相机级别的设置：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">DisallowMultipleComponent, RequireComponent(typeof(Camera))</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPipelineCamera</span> : <span class="hljs-title">MonoBehaviour</span><br>{<br>    [<span class="hljs-meta">SerializeField</span>] CameraSettings settings = <span class="hljs-literal">default</span>;<br><br>    ProfilingSampler sampler;<br>    <span class="hljs-keyword">public</span> ProfilingSampler Sampler =&gt;<br>        sampler ??= <span class="hljs-keyword">new</span> ProfilingSampler(GetComponent&lt;Camera&gt;().name);<br><br>    <span class="hljs-keyword">public</span> CameraSettings Settings =&gt; settings ??= <span class="hljs-keyword">new</span> CameraSettings();<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>CameraSettings</code> 通常包含：自定义 final blend 模式、<code>RenderingLayerMask</code>、是否启用 PostFX、Render Scale 倍数等。具体字段会在 Note 8（相机系统与工程架构）展开。</p>
+<p><code>ProfilingSampler</code> 缓存有一个 editor-only 边界：相机改名后，缓存的 Sampler 仍然带着旧名字，Frame Debugger 会显示错误。解决方法是组件 OnEnable 时清除缓存：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-meta">#<span class="hljs-keyword">if</span> UNITY_EDITOR || DEVELOPMENT_BUILD</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">OnEnable</span>()</span> =&gt; sampler = <span class="hljs-literal">null</span>;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></div></figure>
+
+<p>这样进入 Play Mode 或重新启用相机时，Sampler 会重建。</p>
+<h3 id="5-3-隐式相机"><a href="#5-3-隐式相机" class="headerlink" title="5.3 隐式相机"></a>5.3 隐式相机</h3><p>除了游戏相机，<code>Render</code> 还会被以下相机调用：Scene View、Material Preview、Realtime Reflection Probe、用户通过 <code>Camera.Render()</code> 主动触发的 manual render。这些相机一般没有 <code>CustomRenderPipelineCamera</code> 组件，需要 fallback：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">static</span> ProfilingSampler <span class="hljs-title">GetDefaultProfileSampler</span>(<span class="hljs-params">Camera camera</span>)</span><br>{<br><span class="hljs-meta">#<span class="hljs-keyword">if</span> UNITY_EDITOR || DEVELOPMENT_BUILD</span><br>    <span class="hljs-keyword">return</span> ProfilingSampler.Get(camera.cameraType);<br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>    <span class="hljs-keyword">return</span> defaultSamplerCatchAll;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>Unity 6 在 release build 中存在一个已知 bug：<code>ProfilingSampler.Get</code> 在某些情况下返回 null，会导致 reflection probe 渲染崩溃。生产环境用一个统一的 catch-all sampler 兜底是当前最稳妥的做法。</p>
+<h3 id="5-4-Render-Graph-Debug-Data"><a href="#5-4-Render-Graph-Debug-Data" class="headerlink" title="5.4 Render Graph Debug Data"></a>5.4 Render Graph Debug Data</h3><p>Render Graph Viewer 需要相机渲染时启用 debug data 才能呈现内容。但启用会引入额外的内存分配与 CPU 开销，所以只对真正需要观察的相机开启。参考 URP 的做法，跳过预览相机和 manual render 请求：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">if</span> (camera.cameraType != CameraType.Preview &amp;&amp;<br>    !camera.isProcessingRenderRequest)<br>{<br>    renderGraph.RequestCaptureDebugData(cameraSampler.name);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>调试完毕后关闭 Render Graph Viewer 窗口，引擎会自动停止 debug data 收集。</p>
+<hr>
+<h2 id="6-调试工具索引"><a href="#6-调试工具索引" class="headerlink" title="6. 调试工具索引"></a>6. 调试工具索引</h2><p>三套工具，各有职责。</p>
+<p><strong>Frame Debugger</strong> — <code>Window / Analysis / Frame Debugger</code><br>观察实际的 GPU 提交序列。每个 DrawCall、SetGlobalTexture、ClearRenderTarget 都展开为一行，可以单步检查中间 RT。Frame Debugger 反映的是命令流，看不到 Render Graph 的资源依赖。需要快速验证”某个像素是怎么画出来的”时首选。</p>
+<p><strong>Render Graph Viewer</strong> — <code>Window / Analysis / Render Graph Viewer</code><br>观察 Pass 之间的依赖关系与资源生命周期。Pass 之间的连线对应资源读写，被裁剪的 Pass 标灰，被合并的 Raster Pass 序列以蓝色横条标记。Unity 6.3 后这是诊断 native render pass 优化是否生效的主要工具。注意打开窗口本身会触发 debug data 分配，调试完关闭。</p>
+<p><strong>RenderDoc</strong><br>当 Frame Debugger 信息不够细时（Compute Shader 的 thread group 行为、tile memory 实际占用、API 提交层的真实顺序），RenderDoc 抓帧分析能给出引擎与 Frame Debugger 都无法呈现的硬件层细节。</p>
+<hr>
+<h2 id="7-TA-Takeaway：从-API-设计到硬件带宽"><a href="#7-TA-Takeaway：从-API-设计到硬件带宽" class="headerlink" title="7. TA Takeaway：从 API 设计到硬件带宽"></a>7. TA Takeaway：从 API 设计到硬件带宽</h2><p>Render Graph 的所有限制——Raster Pass 禁止 <code>SetRenderTarget</code>、attachment 必须显式声明、RendererList 不可复用——单看 API 显得繁琐，但每条限制都对应一个<strong>移动端硬件层面的带宽收益</strong>。</p>
+<h3 id="7-1-TBR-架构下的带宽真相"><a href="#7-1-TBR-架构下的带宽真相" class="headerlink" title="7.1 TBR 架构下的带宽真相"></a>7.1 TBR 架构下的带宽真相</h3><p>主流移动 GPU（ARM Mali、Qualcomm Adreno、Apple Silicon、PowerVR）普遍采用 <strong>TBR / TBDR</strong>（Tile-Based / Deferred Rendering）架构。GPU 把屏幕划分为若干小 Tile（典型尺寸 16×16 至 64×64 像素），每个 Tile 在渲染时占用一块 <strong>On-chip Memory</strong>（片上内存，物理上是 SRAM），其访问延迟与带宽相比主显存（DRAM）有一个数量级的优势。</p>
+<p>传统命令式管线频繁切换 RenderTarget 时，硬件被迫执行两个动作：</p>
+<ul>
+<li><strong>Store</strong>：把当前 Tile 的 color / depth 数据从片上内存回写到主显存</li>
+<li><strong>Load</strong>：把新目标对应的 Tile 数据从主显存加载回片上内存</li>
+</ul>
+<p>每次 <code>SetRenderTarget</code> 都隐含全屏所有 Tile 的一轮 store-load 往返。以 1080p、4 byte color + 4 byte depth 计算，单次切换的带宽成本约为 <strong>16 MB</strong>。一帧若发生 5–10 次切换，叠加多相机栈与后处理链，仅 RT 切换就吞掉数百 MB——而移动端 GPU 的可用带宽预算典型值仅 25–50 GB/s。发热、降频、续航崩塌的根因，往往就是这个。</p>
+<h3 id="7-2-Render-Graph-限制的硬件意义"><a href="#7-2-Render-Graph-限制的硬件意义" class="headerlink" title="7.2 Render Graph 限制的硬件意义"></a>7.2 Render Graph 限制的硬件意义</h3><p>把 Raster Pass 的核心限制和 TBR 行为对应起来看：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>API 层限制</th>
+<th>硬件层意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pass 内禁止 <code>SetRenderTarget</code></td>
+<td>保证 attachment 在 Pass 执行期间稳定，不触发中途的 store-load</td>
+</tr>
+<tr>
+<td><code>SetRenderAttachment</code> 必须显式声明</td>
+<td>引擎能精确识别”哪些相邻 Pass 共享同一对 color/depth”</td>
+</tr>
+<tr>
+<td>Native Render Pass 合并</td>
+<td>共享 attachment 的 Raster Pass 在硬件层被压缩为单个原生 render pass：attachment <strong>全程留在片上内存</strong>，整段链只在开始 Load、结束 Store</td>
+</tr>
+</tbody></table></div>
+<p>Render Graph Viewer 中的蓝色合并条，本质上就是在可视化”这些 Pass 之间省下了多少 store-load 往返”。在移动端项目里，这个数字直接决定 60 FPS 能否稳住、设备温度能否压住、电池续航如何。</p>
+<h3 id="7-3-实践推论"><a href="#7-3-实践推论" class="headerlink" title="7.3 实践推论"></a>7.3 实践推论</h3><p>结合上述硬件视角，后续 7 篇笔记的所有 Pass 划分都遵循以下隐含原则：</p>
+<ul>
+<li><strong>几何类 Pass 一律 Raster Pass</strong>。Skybox、不透明几何、半透明几何、debug 渲染都走 <code>AddRasterRenderPass</code>。Unsafe Pass 是兜底，不是默认。</li>
+<li><strong>避免中途采样未结束的 attachment</strong>。在某个 Pass 中读取尚未结束的 color/depth attachment 作为纹理，会强制 store 到主存，切断整段合并链。如需要场景颜色或深度的副本，通过专门的 <code>CopyAttachmentsPass</code> 显式生成独立纹理，让原 attachment 留在合并链上。</li>
+<li><strong>PostFX 必然打断合并链</strong>。后处理需要采样上一阶段结果，store-load 无法避免——这是必要代价。但合并链应该在 PostFX <strong>之前</strong>尽可能延长。</li>
+</ul>
+<p>这条隐性约束会贯穿所有后续笔记。当某个 Pass 看似可以”图省事用 Unsafe Pass”时，要意识到代价是放弃了整段合并优化——在移动端这通常意味着几个毫秒的 GPU 时间和一个台阶的设备温度。</p>
+<hr>
+<h2 id="附录：项目文件与-Pass-类型速查"><a href="#附录：项目文件与-Pass-类型速查" class="headerlink" title="附录：项目文件与 Pass 类型速查"></a>附录：项目文件与 Pass 类型速查</h2><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Runtime/<br>├── CustomRenderPipelineAsset.cs       // ScriptableObject 配置入口<br>├── CustomRenderPipeline.cs            // RenderPipeline 实现<br>├── CustomRenderPipelineCamera.cs      // 相机扩展组件<br>├── CustomRenderPipelineSettings.cs    // 设置容器<br>├── CameraRenderer.cs                  // 单相机渲染入口<br>├── CameraRendererCopier.cs            // RT 复制工具<br>├── CameraRendererTextures.cs          // 相机纹理句柄包<br>├── CameraSettings.cs                  // 相机级别配置<br>└── Passes/<br>    ├── SetupPass.cs                   // 创建 attachments、清屏<br>    ├── LightingPass.cs                // 光源数据 Buffer 上传<br>    ├── ShadowsPass.cs                 // 阴影 atlas 渲染<br>    ├── GeometryPass.cs                // 不透明 / 透明几何（共用）<br>    ├── SkyboxPass.cs                  // 天空盒<br>    ├── CopyAttachmentsPass.cs         // 颜色 / 深度备份<br>    ├── PostFXPass.cs                  // 后处理栈<br>    ├── FinalPass.cs                   // 直接输出（无 PostFX 路径）<br>    ├── DebugPass.cs                   // Tile Forward+ 等可视化<br>    └── GizmosPass.cs                  // 编辑器 gizmos<br></code></pre></td></tr></table></div></figure>
+
+<p>每个 Pass 类的契约一致：私有 Pass Data 字段集合、一个静态 <code>Record</code> 方法负责录制、一个静态 <code>Render</code> 方法由 Render Graph 在执行阶段回调。后续每篇笔记中提到具体 Pass 时，都默认遵循这一形态。</p>
+<hr>
+<h2 id="本篇关键-API-速查"><a href="#本篇关键-API-速查" class="headerlink" title="本篇关键 API 速查"></a>本篇关键 API 速查</h2><details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// RenderGraph 录制入口</span><br><span class="hljs-keyword">using</span> (renderGraph.RecordAndExecute(rgParameters)) { ... }<br><br><span class="hljs-comment">// 三种 Pass 注册</span><br>renderGraph.AddRasterRenderPass&lt;TPassData&gt;(name, <span class="hljs-keyword">out</span> passData, sampler);<br>renderGraph.AddComputePass&lt;TPassData&gt;(name, <span class="hljs-keyword">out</span> passData, sampler);<br>renderGraph.AddUnsafePass&lt;TPassData&gt;(name, <span class="hljs-keyword">out</span> passData, sampler);<br><br><span class="hljs-comment">// 资源声明</span><br>builder.SetRenderAttachment(handle, index, AccessFlags);<br>builder.SetRenderAttachmentDepth(handle, AccessFlags);<br>builder.UseTexture(handle, AccessFlags);<br>builder.UseBuffer(handle, AccessFlags);<br>builder.UseRendererList(listHandle);<br>builder.AllowPassCulling(<span class="hljs-literal">false</span>);<br><br><span class="hljs-comment">// 注册执行函数</span><br>builder.SetRenderFunc&lt;TPassData&gt;(<span class="hljs-keyword">static</span> (data, ctx) =&gt; { ... });<br><br><span class="hljs-comment">// RendererList 创建</span><br>renderGraph.CreateRendererList(rendererListDesc);<br>renderGraph.CreateShadowRendererList(<span class="hljs-keyword">in</span> shadowDrawingSettings);<br>renderGraph.CreateSkyboxRendererList(camera);<br><br><span class="hljs-comment">// 资源创建</span><br>renderGraph.CreateTexture(textureDesc);<br>renderGraph.CreateBuffer(bufferDesc);<br><br><span class="hljs-comment">// 命令上下文</span><br>context.cmd.DrawRendererList(list);  <span class="hljs-comment">// RasterCommandBuffer</span><br></code></pre></td></tr></table></div></figure></details>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/posts/9ddadbe5b731/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>「Custom SRP」：几何可见性与批次优化</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <div class="post-nav-item-right"></div>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/" class="post-tag">#渲染管线</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/Render-Graph/" class="post-tag">#Render Graph</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e962819a878a/" title="「Custom SRP」：直接光照与 Tiled Forward+" rel="bookmark">「Custom SRP」：直接光照与 Tiled Forward+</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/9ddadbe5b731/" title="「Custom SRP」：几何可见性与批次优化" rel="bookmark">「Custom SRP」：几何可见性与批次优化</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>

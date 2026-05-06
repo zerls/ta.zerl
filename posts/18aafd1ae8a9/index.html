@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        「Custom SRP」：阴影系统 | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+          <div class="post-banner">
+            <img src="https://catlikecoding.com/unity/tutorials/custom-srp/directional-shadows/tutorial-image.jpg" alt="Banner">
+          </div>
+        
+        
+        <div class="post-title">「Custom SRP」：阴影系统</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2024-07-01 · 更新于2026-05-01
+            
+            
+          </div>
+          
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/CSM/" class="post-tag">#CSM</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/Shadow-Mask/" class="post-tag">#Shadow Mask</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#TL-DR"><span class="post-toc-text">TL;DR</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-阴影系统全景"><span class="post-toc-text">1. 阴影系统全景</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-1-整体数据流"><span class="post-toc-text">1.1 整体数据流</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-2-双-Atlas-设计"><span class="post-toc-text">1.2 双 Atlas 设计</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-3-ShadowTextures-资源声明"><span class="post-toc-text">1.3 ShadowTextures 资源声明</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-方向光与级联阴影贴图"><span class="post-toc-text">2. 方向光与级联阴影贴图</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-1-CSM-的设计动机"><span class="post-toc-text">2.1 CSM 的设计动机</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-2-Cascade-数据组织"><span class="post-toc-text">2.2 Cascade 数据组织</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-3-Shader-端-Cascade-选择"><span class="post-toc-text">2.3 Shader 端 Cascade 选择</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-4-Cascade-Blend：边界过渡"><span class="post-toc-text">2.4 Cascade Blend：边界过渡</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-5-阴影写入：ShadowCaster-Pass"><span class="post-toc-text">2.5 阴影写入：ShadowCaster Pass</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-6-Atlas-矩阵转换"><span class="post-toc-text">2.6 Atlas 矩阵转换</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-PCF-滤波与质量等级"><span class="post-toc-text">3. PCF 滤波与质量等级</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-硬件-PCF-与软阴影需求"><span class="post-toc-text">3.1 硬件 PCF 与软阴影需求</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-Filter-Quality-三档统一"><span class="post-toc-text">3.2 Filter Quality 三档统一</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-3-滤波尺寸传递"><span class="post-toc-text">3.3 滤波尺寸传递</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-阴影伪影修复"><span class="post-toc-text">4. 阴影伪影修复</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-1-Shadow-Acne：自阴影伪影"><span class="post-toc-text">4.1 Shadow Acne：自阴影伪影</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-2-Peter-Panning：阴影漂浮"><span class="post-toc-text">4.2 Peter-Panning：阴影漂浮</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-3-Light-Bleeding：光泄漏"><span class="post-toc-text">4.3 Light Bleeding：光泄漏</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-4-三种-Bias-的工程总结"><span class="post-toc-text">4.4 三种 Bias 的工程总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-聚光灯与点光源阴影"><span class="post-toc-text">5. 聚光灯与点光源阴影</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-1-聚光灯：单-Tile-透视投影"><span class="post-toc-text">5.1 聚光灯：单 Tile 透视投影</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-2-点光源：Cubemap-与-Atlas-6-面布局"><span class="post-toc-text">5.2 点光源：Cubemap 与 Atlas 6 面布局</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-3-Shader-端面选择"><span class="post-toc-text">5.3 Shader 端面选择</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-4-Atlas-容量与-fallback"><span class="post-toc-text">5.4 Atlas 容量与 fallback</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#6-Shadow-Mask：烘焙与实时混合"><span class="post-toc-text">6. Shadow Mask：烘焙与实时混合</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-1-设计动机"><span class="post-toc-text">6.1 设计动机</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-2-Shadowmask-数据结构"><span class="post-toc-text">6.2 Shadowmask 数据结构</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-3-两种-Shadowmask-模式"><span class="post-toc-text">6.3 两种 Shadowmask 模式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-4-Shader-端融合"><span class="post-toc-text">6.4 Shader 端融合</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-5-GPU-Instancing-兼容性"><span class="post-toc-text">6.5 GPU Instancing 兼容性</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#7-Unity-6-阴影剔除并行化"><span class="post-toc-text">7. Unity 6 阴影剔除并行化</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-1-老路径：cull-draw-串行"><span class="post-toc-text">7.1 老路径：cull-draw 串行</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-2-新路径：cull-并行化"><span class="post-toc-text">7.2 新路径：cull 并行化</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-3-工程收益"><span class="post-toc-text">7.3 工程收益</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#8-TA-Takeaway"><span class="post-toc-text">8. TA Takeaway</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#8-1-阴影系统的总成本图谱"><span class="post-toc-text">8.1 阴影系统的总成本图谱</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#8-2-配置优先级"><span class="post-toc-text">8.2 配置优先级</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#8-3-Atlas-容量的-Tile-预算思维"><span class="post-toc-text">8.3 Atlas 容量的 Tile 预算思维</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#8-4-Shader-关键字爆炸的教训"><span class="post-toc-text">8.4 Shader 关键字爆炸的教训</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#8-5-实践原则"><span class="post-toc-text">8.5 实践原则</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#关键-API-速查"><span class="post-toc-text">关键 API 速查</span></a></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <blockquote>
+<p>系列第 5 篇。承接 Note 4 的光照框架——光源的 <code>light.attenuation</code> 字段中的阴影分量正是本篇要回答的”光是如何被遮挡的”。本篇是整个系列技术密度最高的一篇：CSM、PCF、点光阴影、Shadowmask 烘焙混合，每一项都涉及 CPU 端数据组织、Atlas 资源管理、Shader 端采样链路三个层面的协同。整体内容按”方向光 → 其他光 → 烘焙混合”的从主到次顺序展开。</p>
+</blockquote>
+<h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h2><ul>
+<li><strong>双 Atlas 架构</strong>：方向光独占一张 Atlas（CSM 占多 Tile），点光与聚光共享另一张 Atlas（每点光占 6 个面、每聚光占 1 个面）。Render Graph 用 <code>TextureDesc { isShadowMap = true }</code> 声明，省去 stencil buffer 分配。</li>
+<li><strong>CSM 是空间 LoD</strong>：相机近处用高分辨率近 cascade、远处用低分辨率远 cascade，本质是用屏幕空间分布替代固定分辨率，对抗透视投影下的远近精度需求差。</li>
+<li><strong>PCF 三档统一</strong>：Low(3×3) / Medium(5×5) / High(7×7) 全局质量等级，覆盖方向光与其他光。Shader 关键字从 4×4=16 种排列收敛为 3 种，编译时间下降 80%+。</li>
+<li><strong>阴影伪影修复三件套</strong>：Depth Bias 防 Acne、Normal Bias 防 Light Bleeding、Slope Scale Bias 自适应入射角。</li>
+<li><strong>Shadowmask 双通道</strong>：每 texel 4 通道支持最多 4 重叠光源；Shadowmask 模式只远端用烘焙、Distance Shadowmask 全程用实时 + 远端 fallback 烘焙。</li>
+<li><strong>Unity 6 阴影剔除并行化</strong>：<code>LightShadowCasterCullingInfo</code> 把”剔除-绘制”串行链路改为”剔除-剔除-…-绘制-绘制-…”并行调度，多光源场景 CPU 阴影耗时显著下降。</li>
+</ul>
+<hr>
+<h2 id="1-阴影系统全景"><a href="#1-阴影系统全景" class="headerlink" title="1. 阴影系统全景"></a>1. 阴影系统全景</h2><h3 id="1-1-整体数据流"><a href="#1-1-整体数据流" class="headerlink" title="1.1 整体数据流"></a>1.1 整体数据流</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[CullingResults.visibleLights] --&gt; B[Shadows.ReserveDirectionalShadows&lt;br/&gt;分配 Atlas Tile + 计算阴影矩阵]<br>    A --&gt; C[Shadows.ReserveOtherShadows&lt;br/&gt;分配 Atlas Tile + 处理点光6面]<br><br>    B --&gt; D[ShadowedDirectionalLight[]&lt;br/&gt;NativeArray]<br>    C --&gt; E[ShadowedOtherLight[]&lt;br/&gt;NativeArray]<br><br>    D --&gt; F[ShadowsPass · BuildRendererList&lt;br/&gt;每光源·每Tile 一个 RendererList]<br>    E --&gt; F<br><br>    F --&gt; G[Render Graph 调度&lt;br/&gt;多 List 并行剔除]<br>    G --&gt; H[ShadowCaster Pass 绘制&lt;br/&gt;写入 Atlas Tile]<br><br>    H --&gt; I[_DirectionalShadowAtlas&lt;br/&gt;R32_FLOAT depth-only]<br>    H --&gt; J[_OtherShadowAtlas&lt;br/&gt;R32_FLOAT depth-only]<br><br>    I --&gt; K[Lit Shader · 采样阶段]<br>    J --&gt; K<br><br>    L[unity_ShadowMask&lt;br/&gt;烘焙 4 通道 RGBA] --&gt; K<br>    M[unity_ProbesOcclusion&lt;br/&gt;动态对象用] --&gt; K<br><br>    K --&gt; N[light.attenuation&lt;br/&gt;送回 Note 4 BRDF]<br><br>    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px<br>    style G fill:#fff3e0,stroke:#f57c00,stroke-width:2px<br>    style K fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br>    style N fill:#e8f5e9,stroke:#388e3c,stroke-width:2px<br></code></pre></td></tr></table></div></figure>
+
+<p>整个流程分四段：<strong>Reserve</strong>（CPU 端确定哪些光源能拿到 Atlas Tile） → <strong>BuildList</strong>（每个 Tile 一个 RendererList） → <strong>Render</strong>（写入深度到 Atlas） → <strong>Sample</strong>（光照 Pass 中按表面位置采样并融合）。前三段在 ShadowsPass 中完成，第四段嵌入到 Lit Shader 的 GetLighting 调用链里。</p>
+<h3 id="1-2-双-Atlas-设计"><a href="#1-2-双-Atlas-设计" class="headerlink" title="1.2 双 Atlas 设计"></a>1.2 双 Atlas 设计</h3><p>阴影 Atlas 选择两张而不是一张统一图：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Atlas</th>
+<th>内容</th>
+<th>Tile 布局</th>
+<th>典型分辨率</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>_DirectionalShadowAtlas</code></td>
+<td>方向光 CSM</td>
+<td>每光源占 cascade 数 Tile（1-4）</td>
+<td>1024 / 2048 / 4096</td>
+</tr>
+<tr>
+<td><code>_OtherShadowAtlas</code></td>
+<td>聚光 + 点光</td>
+<td>聚光 1 Tile、点光 6 Tile</td>
+<td>1024 / 2048</td>
+</tr>
+</tbody></table></div>
+<p>分离的设计理由：</p>
+<ul>
+<li><strong>采样上下文不同</strong>：方向光用正交投影（线性深度）+ Cascade 选择逻辑；其他光用透视投影 + Tile 索引查找</li>
+<li><strong>数量级不同</strong>：方向光最多 4 个但 Tile 大；其他光最多 16 个但 Tile 小</li>
+<li><strong>更新频率不同</strong>：方向光阴影对相机移动敏感（每帧重建 cascade）；点光阴影只在光源或场景变化时重建</li>
+</ul>
+<p>合并到单 Atlas 会让 Shader 端的采样逻辑被迫统一处理两种投影类型，反而增加复杂度。</p>
+<h3 id="1-3-ShadowTextures-资源声明"><a href="#1-3-ShadowTextures-资源声明" class="headerlink" title="1.3 ShadowTextures 资源声明"></a>1.3 ShadowTextures 资源声明</h3><p>ShadowsPass 通过 ShadowTextures 把两个 Atlas 句柄打包传递：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">ref</span> <span class="hljs-keyword">struct</span> ShadowTextures<br>{<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">readonly</span> TextureHandle directionalAtlas, otherAtlas;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ShadowTextures</span>(<span class="hljs-params">TextureHandle directional, TextureHandle other</span>)</span><br>    {<br>        <span class="hljs-keyword">this</span>.directionalAtlas = directional;<br>        <span class="hljs-keyword">this</span>.otherAtlas = other;<br>    }<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>Render Graph 中的资源创建有一个关键标志：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">var</span> desc = <span class="hljs-keyword">new</span> TextureDesc(atlasSize, atlasSize)<br>{<br>    depthBufferBits = DepthBits.Depth32,<br>    isShadowMap = <span class="hljs-literal">true</span>,           <span class="hljs-comment">// 关键：跳过 stencil 分配</span><br>    name = <span class="hljs-string">"Directional Shadow Atlas"</span><br>};<br>TextureHandle directional = renderGraph.CreateTexture(desc);<br></code></pre></td></tr></table></div></figure>
+
+<p><code>isShadowMap = true</code> 让引擎知道这张 RT 只用于阴影深度测试，<strong>省略 stencil buffer 的分配</strong>。在 1024² Atlas 上，这是 4MB → 5MB 的差异；4096² 上是 64MB → 80MB 的差异——对移动端是显著节省。</p>
+<p>如果某个 Atlas 不需要（比如场景没有点光阴影），还是必须提供有效的 TextureHandle，否则 Shader 端的 SAMPLER_CMP 绑定会失败。Render Graph 提供了 <code>defaultResources.defaultShadowTexture</code> 作为 1×1 fallback：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs csharp">TextureHandle other = otherShadowedLightCount &gt; <span class="hljs-number">0</span><br>    ? renderGraph.CreateTexture(otherDesc)<br>    : renderGraph.defaultResources.defaultShadowTexture;<br></code></pre></td></tr></table></div></figure>
+
+<hr>
+<h2 id="2-方向光与级联阴影贴图"><a href="#2-方向光与级联阴影贴图" class="headerlink" title="2. 方向光与级联阴影贴图"></a>2. 方向光与级联阴影贴图</h2><h3 id="2-1-CSM-的设计动机"><a href="#2-1-CSM-的设计动机" class="headerlink" title="2.1 CSM 的设计动机"></a>2.1 CSM 的设计动机</h3><p>方向光照射范围是整个场景，单张 Shadow Map 覆盖到 max shadow distance 时面临精度灾难。一张 4096² Atlas、覆盖 100 米半径，每 texel 对应世界空间约 24cm——近处角色脚下的阴影锯齿肉眼可见，远处又过度精细毫无收益。</p>
+<p>CSM（Cascaded Shadow Maps）的核心思路：<strong>把视锥体按距离切片，每片用一张独立的 Shadow Map</strong>。近处切片覆盖小范围（高分辨率精度），远处切片覆盖大范围（低分辨率即可）。每像素根据其距相机的距离选择最合适的 cascade 采样。</p>
+<p>数学描述：第 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="0.781ex" height="1.52ex" role="img" focusable="false" viewBox="0 -661 345 672"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path></g></g></g></svg></mjx-container> 个 cascade 的覆盖半径 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.357ex;" xmlns="http://www.w3.org/2000/svg" width="1.76ex" height="1.357ex" role="img" focusable="false" viewBox="0 -442 778 599.8"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mi" transform="translate(484,-150) scale(0.707)"><path data-c="1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path></g></g></g></g></svg></mjx-container> 通过 ratio sliders 配置，第 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.357ex" height="1.025ex" role="img" focusable="false" viewBox="0 -442 600 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g></g></g></svg></mjx-container> 个 cascade 的远界等于 max shadow distance <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.357ex;" xmlns="http://www.w3.org/2000/svg" width="4.341ex" height="1.927ex" role="img" focusable="false" viewBox="0 -694 1918.9 851.8"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="TeXAtom" transform="translate(553,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><path data-c="6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(833,0)"></path><path data-c="78" d="M201 0Q189 3 102 3Q26 3 17 0H11V46H25Q48 47 67 52T96 61T121 78T139 96T160 122T180 150L226 210L168 288Q159 301 149 315T133 336T122 351T113 363T107 370T100 376T94 379T88 381T80 383Q74 383 44 385H16V431H23Q59 429 126 429Q219 429 229 431H237V385Q201 381 201 369Q201 367 211 353T239 315T268 274L272 270L297 304Q329 345 329 358Q329 364 327 369T322 376T317 380T310 384L307 385H302V431H309Q324 428 408 428Q487 428 493 431H499V385H492Q443 385 411 368Q394 360 377 341T312 257L296 236L358 151Q424 61 429 57T446 50Q464 46 499 46H516V0H510H502Q494 1 482 1T457 2T432 2T414 3Q403 3 377 3T327 1L304 0H295V46H298Q309 46 320 51T331 63Q331 65 291 120L250 175Q249 174 219 133T185 88Q181 83 181 74Q181 63 188 55T206 46Q208 46 208 23V0H201Z" transform="translate(1333,0)"></path></g></g></g></g></g></svg></mjx-container>。Catlike 实现支持 1-4 cascade，4 是 Unity 引擎的硬上限。</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">相机 ──┐<br>       │  Cascade 0      Cascade 1            Cascade 2                    Cascade 3<br>       ├──────────┬──────────────────┬──────────────────────────┬───────────────────────────►<br>                 r0                  r1                         r2                          d_max<br>       │   高精度   │      中精度        │           低精度            │           最低精度<br>       │ (10% 距离) │    (25% 距离)      │         (50% 距离)         │         (远界 d_max)<br></code></pre></td></tr></table></div></figure>
+
+<p>每个 cascade 在 Atlas 中占据一个独立 Tile。4 cascade × 4 光源 → 16 Tile，按 4×4 网格平铺在 Atlas 中。</p>
+<h3 id="2-2-Cascade-数据组织"><a href="#2-2-Cascade-数据组织" class="headerlink" title="2.2 Cascade 数据组织"></a>2.2 Cascade 数据组织</h3><p>每个 cascade 携带两组数据：CullingSphere（用于 Shader 端选择）和 ShadowMatrix（用于 Atlas 采样坐标转换）。</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> DirectionalShadowCascade<br>{<br>    <span class="hljs-keyword">public</span> Vector4 cullingSphere;   <span class="hljs-comment">// XYZ: 中心, W: 半径²（预平方便于比较）</span><br>    <span class="hljs-keyword">public</span> Vector4 data;            <span class="hljs-comment">// X: texelSize × normalBiasFactor, YZW: 备用</span><br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> stride =&gt; <span class="hljs-number">4</span> * <span class="hljs-number">4</span> * <span class="hljs-number">2</span>;  <span class="hljs-comment">// 32 bytes</span><br>}<br><br>StructuredBuffer&lt;DirectionalShadowCascade&gt; _DirectionalShadowCascades;<br>StructuredBuffer&lt;float4x4&gt; _DirectionalShadowMatrices;<br></code></pre></td></tr></table></div></figure>
+
+<p>CPU 端从 <code>cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives</code> 拿到每 cascade 的视图矩阵、投影矩阵、CullingSphere：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs csharp">cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives(<br>    visibleLightIndex,<br>    cascadeIndex,                  <span class="hljs-comment">// 当前 cascade</span><br>    cascadeCount,                  <span class="hljs-comment">// 总 cascade 数</span><br>    cascadeRatios,                 <span class="hljs-comment">// Vector3，每 cascade 的覆盖比例</span><br>    tileSize,                      <span class="hljs-comment">// Atlas Tile 像素尺寸</span><br>    light.shadowNearPlane,<br>    <span class="hljs-keyword">out</span> Matrix4x4 viewMatrix,<br>    <span class="hljs-keyword">out</span> Matrix4x4 projectionMatrix,<br>    <span class="hljs-keyword">out</span> ShadowSplitData splitData);<br><br>cullingSphere = splitData.cullingSphere;<br></code></pre></td></tr></table></div></figure>
+
+<p><code>splitData.cullingSphere</code> 是 Unity 帮我们计算好的最优包围球，球心 + 半径平方刚好覆盖该 cascade 的体积。</p>
+<h3 id="2-3-Shader-端-Cascade-选择"><a href="#2-3-Shader-端-Cascade-选择" class="headerlink" title="2.3 Shader 端 Cascade 选择"></a>2.3 Shader 端 Cascade 选择</h3><p>每个像素需要在着色时选定一个 cascade。最简单的方法：从近到远遍历，找到第一个包含该像素世界位置的 CullingSphere。</p>
+<details class="md-code-fold"><summary>HLSL</summary><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">struct ShadowData<br>{<br>    int cascadeIndex;<br>    float cascadeBlend;<br>    float strength;<br>    int shadowMaskChannel;<br>    float4 shadowMask;<br>};<br><br>ShadowData GetShadowData(Surface surfaceWS)<br>{<br>    ShadowData data;<br>    data.shadowMask = 0.0;<br>    data.shadowMaskChannel = -1;<br>    data.strength = FadedShadowStrength(<br>        surfaceWS.depth, _ShadowDistanceFade.x, _ShadowDistanceFade.y);<br><br>    int i;<br>    for (i = 0; i &lt; _CascadeCount; i++)<br>    {<br>        DirectionalShadowCascade cascade = _DirectionalShadowCascades[i];<br>        float distSqr = DistanceSquared(surfaceWS.position, cascade.cullingSphere.xyz);<br>        if (distSqr &lt; cascade.cullingSphere.w)<br>        {<br>            // 找到最近的覆盖 cascade<br>            float fade = FadedShadowStrength(<br>                distSqr, _CascadeData[i].x, _CascadeData[i].y);<br>            if (i == _CascadeCount - 1)<br>                data.strength *= fade;<br>            else<br>                data.cascadeBlend = fade;<br>            break;<br>        }<br>    }<br><br>    if (i == _CascadeCount)<br>        data.strength = 0.0;     // 所有 cascade 都不覆盖：放弃实时阴影<br><br>    data.cascadeIndex = i;<br>    return data;<br>}<br></code></pre></td></tr></table></div></figure></details>
+
+<p>注意几个关键设计：</p>
+<ul>
+<li><strong>CullingSphere 用平方距离比较</strong>，省一次 sqrt（每像素都要做的开销）</li>
+<li><strong>最远 cascade 的 strength 渐隐</strong>到 0：避免 cascade 边界处出现硬切换</li>
+<li><strong>i == _CascadeCount 表示像素超出所有 cascade</strong>：直接放弃实时阴影、依赖 Shadow Distance Fade</li>
+</ul>
+<h3 id="2-4-Cascade-Blend：边界过渡"><a href="#2-4-Cascade-Blend：边界过渡" class="headerlink" title="2.4 Cascade Blend：边界过渡"></a>2.4 Cascade Blend：边界过渡</h3><p>Cascade 之间的边界总是会有不连续——相邻 cascade 分辨率不同，Acne、Bias、PCF 核大小都不一样。让两个相邻 cascade 在过渡区共存采样能消除接缝。</p>
+<p>Custom SRP 提供两种 blend 模式（toggle 切换）：</p>
+<p><strong>Soft Blend</strong>：每像素同时采样当前 cascade 和下一 cascade，按距离权重 lerp。</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float shadow = GetCascadedShadow(directional, global, surfaceWS);<br>#if defined(_CASCADE_BLEND_SOFT)<br>    if (global.cascadeBlend &lt; 1.0)<br>    {<br>        directional.tileIndex += 1;<br>        float nextShadow = GetCascadedShadow(directional, global, surfaceWS);<br>        shadow = lerp(nextShadow, shadow, global.cascadeBlend);<br>    }<br>#endif<br></code></pre></td></tr></table></div></figure>
+
+<p>成本是过渡区像素双倍采样。</p>
+<p><strong>Dither Blend</strong>：每像素只采样一个 cascade，但根据屏幕 dither pattern 在过渡区随机选择当前或下一 cascade。</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">#if defined(_CASCADE_BLEND_DITHER)<br>    float dither = InterleavedGradientNoise(positionCS.xy, 0);<br>    if (global.cascadeBlend &lt; dither)<br>        directional.tileIndex += 1;<br>#endif<br></code></pre></td></tr></table></div></figure>
+
+<p>Dither 模式只采样一次，但视觉上有噪点。</p>
+<p>实践选择：桌面端默认 Soft（视觉平滑），移动端建议 Dither（性能优先）。Soft 模式在 PCF 5×5/7×7 时单像素采样数翻倍，移动端难以承担。</p>
+<h3 id="2-5-阴影写入：ShadowCaster-Pass"><a href="#2-5-阴影写入：ShadowCaster-Pass" class="headerlink" title="2.5 阴影写入：ShadowCaster Pass"></a>2.5 阴影写入：ShadowCaster Pass</h3><p>Atlas 写入阶段每个 Tile 都需要一个独立的 RendererList——这是 Note 1 中”RendererList 不可复用”约束的直接后果。</p>
+<details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">RenderDirectionalShadows</span>()</span><br>{<br>    <span class="hljs-built_in">int</span> tileSize = atlasSize / split;  <span class="hljs-comment">// split = sqrt(maxTiles)，4 cascade × 1 光源用 split=2</span><br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; shadowedDirectionalLightCount; i++)<br>    {<br>        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> c = <span class="hljs-number">0</span>; c &lt; cascadeCount; c++)<br>        {<br>            <span class="hljs-built_in">int</span> tileIndex = i * cascadeCount + c;<br>            Vector2 offset = SetTileViewport(tileIndex, split, tileSize);<br><br>            cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives(<br>                light.visibleLightIndex, c, cascadeCount, cascadeRatios,<br>                tileSize, <span class="hljs-number">0f</span>,<br>                <span class="hljs-keyword">out</span> Matrix4x4 view, <span class="hljs-keyword">out</span> Matrix4x4 proj, <span class="hljs-keyword">out</span> ShadowSplitData splitData);<br><br>            <span class="hljs-comment">// 写入 Cascade 数据</span><br>            directionalShadowCascades[c] = <span class="hljs-keyword">new</span> DirectionalShadowCascade(<br>                splitData.cullingSphere, tileSize, settings.directional.filterSize);<br><br>            <span class="hljs-comment">// 计算 Atlas 矩阵</span><br>            directionalShadowMatrices[tileIndex] = ConvertToAtlasMatrix(<br>                proj * view, offset, split);<br><br>            <span class="hljs-comment">// RendererList 创建（Render Graph 阶段）</span><br>            BuildRendererList(visibleLightIndex, splitData);<br><br>            <span class="hljs-comment">// 实际绘制（Execute 阶段）</span><br>            cmd.SetViewProjectionMatrices(view, proj);<br>            cmd.SetGlobalDepthBias(<span class="hljs-number">0f</span>, light.slopeScaleBias);<br>            cmd.DrawRendererList(renderInfo[tileIndex].rendererList);<br>            cmd.SetGlobalDepthBias(<span class="hljs-number">0f</span>, <span class="hljs-number">0f</span>);<br>        }<br>    }<br>}<br></code></pre></td></tr></table></div></figure></details>
+
+<p><code>SetGlobalDepthBias</code> 在 ShadowCaster Pass 中独立设置，绘制完后立即清零——避免污染后续 Pass。</p>
+<blockquote>
+<p>⚠️ <strong>Shadow Pancaking 与 <code>light.shadowNearPlane</code></strong>：方向光阴影使用正交投影，引擎默认会把投影体积紧密贴合 cascade 的可见包围盒。这带来一个极其隐蔽的 Bug——<strong>位于相机背后的高大遮挡物</strong>（比如玩家身后的高楼、悬崖）会被正交投影的 Near Plane 裁掉，导致它们无法投射阴影到相机前方的地面上，明明应该有的影子却消失了。这种现象叫 <em>Shadow Pancaking</em>——可见区域被”压扁”丢失了 Z 方向的可投射深度。修复方式是 <code>light.shadowNearPlane</code> 参数：它把阴影相机的近裁平面<strong>向光源方向往后推一段距离</strong>，让背后的高物体也能被纳入投影体积。Light 组件的 <code>Near Plane</code> 滑块就是它的暴露入口，默认值偏小，对城市/室外场景应该上调到 1-3 米。这是方向光阴影排查列表中”明明所有 bias 都对、阴影还是缺一块”的首选检查项。</p>
+</blockquote>
+<h3 id="2-6-Atlas-矩阵转换"><a href="#2-6-Atlas-矩阵转换" class="headerlink" title="2.6 Atlas 矩阵转换"></a>2.6 Atlas 矩阵转换</h3><p>Shader 端采样需要把世界坐标转换到 Atlas UV 空间。<code>ConvertToAtlasMatrix</code> 把投影矩阵后乘以 Atlas Tile 偏移与缩放：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">static</span> Matrix4x4 <span class="hljs-title">ConvertToAtlasMatrix</span>(<span class="hljs-params">Matrix4x4 m, Vector2 offset, <span class="hljs-built_in">int</span> split</span>)</span><br>{<br>    <span class="hljs-comment">// Z 轴反转（部分图形 API 深度方向问题）</span><br>    <span class="hljs-keyword">if</span> (SystemInfo.usesReversedZBuffer)<br>    {<br>        m.m20 = -m.m20; m.m21 = -m.m21; m.m22 = -m.m22; m.m23 = -m.m23;<br>    }<br><br>    <span class="hljs-built_in">float</span> scale = <span class="hljs-number">1f</span> / split;<br>    m.m00 = (<span class="hljs-number">0.5f</span> * (m.m00 + m.m30) + offset.x * m.m30) * scale;<br>    m.m01 = (<span class="hljs-number">0.5f</span> * (m.m01 + m.m31) + offset.x * m.m31) * scale;<br>    m.m02 = (<span class="hljs-number">0.5f</span> * (m.m02 + m.m32) + offset.x * m.m32) * scale;<br>    m.m03 = (<span class="hljs-number">0.5f</span> * (m.m03 + m.m33) + offset.x * m.m33) * scale;<br>    m.m10 = (<span class="hljs-number">0.5f</span> * (m.m10 + m.m30) + offset.y * m.m30) * scale;<br>    m.m11 = (<span class="hljs-number">0.5f</span> * (m.m11 + m.m31) + offset.y * m.m31) * scale;<br>    m.m12 = (<span class="hljs-number">0.5f</span> * (m.m12 + m.m32) + offset.y * m.m32) * scale;<br>    m.m13 = (<span class="hljs-number">0.5f</span> * (m.m13 + m.m33) + offset.y * m.m33) * scale;<br>    m.m20 = <span class="hljs-number">0.5f</span> * (m.m20 + m.m30);<br>    m.m21 = <span class="hljs-number">0.5f</span> * (m.m21 + m.m31);<br>    m.m22 = <span class="hljs-number">0.5f</span> * (m.m22 + m.m32);<br>    m.m23 = <span class="hljs-number">0.5f</span> * (m.m23 + m.m33);<br>    <span class="hljs-keyword">return</span> m;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>矩阵融合了三步变换：</p>
+<ul>
+<li>投影矩阵的 NDC 输出从 <code>[-1, 1]</code> 映射到 <code>[0, 1]</code>（标准 UV 空间）</li>
+<li>加上 Atlas Tile 偏移</li>
+<li>按 split 数缩放到 Tile 子区域</li>
+</ul>
+<p>预先计算并存入 StructuredBuffer，Shader 端只需一次矩阵乘法即可拿到 Atlas UV：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float4 positionShadowAtlas = mul(_DirectionalShadowMatrices[tileIndex],<br>                                  float4(positionWS, 1.0));<br></code></pre></td></tr></table></div></figure>
+
+<hr>
+<h2 id="3-PCF-滤波与质量等级"><a href="#3-PCF-滤波与质量等级" class="headerlink" title="3. PCF 滤波与质量等级"></a>3. PCF 滤波与质量等级</h2><h3 id="3-1-硬件-PCF-与软阴影需求"><a href="#3-1-硬件-PCF-与软阴影需求" class="headerlink" title="3.1 硬件 PCF 与软阴影需求"></a>3.1 硬件 PCF 与软阴影需求</h3><p>Shadow Map 采样的本质问题：阴影投射图与接收点的几何精度不匹配，单点采样会产生严重锯齿。<strong>PCF（Percentage-Closer Filtering）</strong> 通过对深度比较结果进行加权平均产生软边缘。</p>
+<p>现代 GPU 提供硬件 PCF：使用 <code>SAMPLER_CMP</code> 类型的 sampler 配合 <code>SampleCmp</code> 系列指令，单次调用就能完成 2×2 双线性插值的 PCF。Catlike 实现基于此构建更大核：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">TEXTURE2D_SHADOW(_DirectionalShadowAtlas);<br>SAMPLER_CMP(SHADOW_SAMPLER);   // 使用 ShaderLibrary 的对比采样器宏<br></code></pre></td></tr></table></div></figure>
+
+<p><code>SAMPLER_CMP</code> 在创建时就配置为 LinearClamp + LessEqual 比较函数。</p>
+<h3 id="3-2-Filter-Quality-三档统一"><a href="#3-2-Filter-Quality-三档统一" class="headerlink" title="3.2 Filter Quality 三档统一"></a>3.2 Filter Quality 三档统一</h3><p>Catlike 早期版本支持 4 个独立的 PCF 模式（2×2 / 3×3 / 5×5 / 7×7），方向光与其他光各自配置——这意味着 4×4 = 16 种 keyword 排列。<strong>3.2.0 简化版本</strong>统一为三档全局质量，方向光与其他光使用相同等级：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Filter Quality</th>
+<th>Kernel</th>
+<th>Tap 数</th>
+<th>Keyword</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Low</td>
+<td>3×3</td>
+<td>4</td>
+<td>（default）</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>5×5</td>
+<td>9</td>
+<td><code>_SHADOW_FILTER_MEDIUM</code></td>
+</tr>
+<tr>
+<td>High</td>
+<td>7×7</td>
+<td>16</td>
+<td><code>_SHADOW_FILTER_HIGH</code></td>
+</tr>
+</tbody></table></div>
+<blockquote>
+<p>💡 <strong>2×2 模式被取消的工程含义</strong>：硬件 PCF 默认就是 2×2 双线性，单独编译”原生 2×2”作为最低级是冗余的。3×3 已经覆盖最低软阴影需求，且只比 2×2 多 3 个 tap。简化决策让 keyword 排列从 16 种降到 3 种，<strong>Shader 编译时间下降 80%+</strong>、生成包体减小 75%。这是 multi_compile 收敛的经典案例——后续 Note 8 会在工程架构层展开关键字管理策略。</p>
+</blockquote>
+<p>Tap 数不等于 kernel 边长平方：3×3 kernel 实际只用 4 个 tap（每 tap 是一次硬件 2×2 PCF，正好覆盖 2×2 区域，4 个 tap 重叠后等价 3×3 范围）。这个数学魔法来自 RP Core Library 的 tent filter 函数：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">real SampleShadow_PCF_Tent_3x3(float4 shadowMapTexture_TexelSize,<br>                                float3 coord, /* sampler params */)<br>{<br>    real fetchesWeights[4];<br>    real2 fetchesUV[4];<br>    SampleShadow_ComputeSamples_Tent_3x3(<br>        shadowMapTexture_TexelSize, coord.xy,<br>        fetchesWeights, fetchesUV);<br><br>    return fetchesWeights[0] * SAMPLE_TEXTURE2D_SHADOW(/*...*/, fetchesUV[0])<br>         + fetchesWeights[1] * SAMPLE_TEXTURE2D_SHADOW(/*...*/, fetchesUV[1])<br>         + fetchesWeights[2] * SAMPLE_TEXTURE2D_SHADOW(/*...*/, fetchesUV[2])<br>         + fetchesWeights[3] * SAMPLE_TEXTURE2D_SHADOW(/*...*/, fetchesUV[3]);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>5×5 用 9 个 tap 覆盖 6×6 范围、7×7 用 16 个 tap 覆盖 8×8 范围——边界由 tent 权重平滑过渡，比直接 N² 个独立 tap 高效得多。</p>
+<h3 id="3-3-滤波尺寸传递"><a href="#3-3-滤波尺寸传递" class="headerlink" title="3.3 滤波尺寸传递"></a>3.3 滤波尺寸传递</h3><p>Filter kernel 越大，需要的 normal bias 也越大（防止大核 PCF 漏出几何自身）。CPU 端按质量等级计算 filter size，写入 cascade data：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> <span class="hljs-title">GetFilterSize</span>(<span class="hljs-params">FilterQuality quality</span>)</span><br>{<br>    <span class="hljs-keyword">return</span> quality <span class="hljs-keyword">switch</span><br>    {<br>        FilterQuality.Low    =&gt; <span class="hljs-number">3</span>,<br>        FilterQuality.Medium =&gt; <span class="hljs-number">5</span>,<br>        FilterQuality.High   =&gt; <span class="hljs-number">7</span>,<br>        _ =&gt; <span class="hljs-number">3</span><br>    };<br>}<br><br><span class="hljs-comment">// CPU 端传递</span><br>cascadeData.x = texelSize * (<span class="hljs-number">1.4142136f</span> * filterSize);  <span class="hljs-comment">// 1.414 = sqrt(2)</span><br></code></pre></td></tr></table></div></figure>
+
+<p><code>sqrt(2) × filterSize × texelSize</code> 是 PCF 核对角线在世界空间的物理尺寸，这是 normal bias 应该至少抵消的位移量。</p>
+<hr>
+<h2 id="4-阴影伪影修复"><a href="#4-阴影伪影修复" class="headerlink" title="4. 阴影伪影修复"></a>4. 阴影伪影修复</h2><p>阴影计算的浮点离散化必然产生伪影。三种常见伪影对应三种修复手段，需要严格区分。</p>
+<h3 id="4-1-Shadow-Acne：自阴影伪影"><a href="#4-1-Shadow-Acne：自阴影伪影" class="headerlink" title="4.1 Shadow Acne：自阴影伪影"></a>4.1 Shadow Acne：自阴影伪影</h3><p><strong>现象</strong>：表面在自身阴影下出现条纹斑驳，特别是在表面法线接近垂直于光线方向时。</p>
+<p><strong>成因</strong>：Shadow Map 存储的是离散深度采样，相邻 texel 之间是阶梯状跳变。表面在两个 texel 之间的位置时，深度比较可能错判自身被自身遮挡。</p>
+<p><strong>修复</strong>：Depth Bias，在写入 Shadow Map 时把投射体推向远离光源的方向：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs csharp">cmd.SetGlobalDepthBias(constantBias: <span class="hljs-number">0f</span>, slopeScaleBias: light.slopeScaleBias);<br></code></pre></td></tr></table></div></figure>
+
+<p><strong>Slope Scale Bias</strong> 是关键——固定 bias 在表面法线接近垂直光线时不够（acne 严重），垂直时又过度（造成 Peter-Panning）。Slope Scale Bias 的标准表达式：</p>
+
+<mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -2.148ex;" xmlns="http://www.w3.org/2000/svg" width="46.038ex" height="5.428ex" role="img" focusable="false" viewBox="0 -1449.5 20348.8 2399"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mtext"><path data-c="42" d="M131 622Q124 629 120 631T104 634T61 637H28V683H229H267H346Q423 683 459 678T531 651Q574 627 599 590T624 512Q624 461 583 419T476 360L466 357Q539 348 595 302T651 187Q651 119 600 67T469 3Q456 1 242 0H28V46H61Q103 47 112 49T131 61V622ZM511 513Q511 560 485 594T416 636Q415 636 403 636T371 636T333 637Q266 637 251 636T232 628Q229 624 229 499V374H312L396 375L406 377Q410 378 417 380T442 393T474 417T499 456T511 513ZM537 188Q537 239 509 282T430 336L329 337H229V200V116Q229 57 234 52Q240 47 334 47H383Q425 47 443 53Q486 67 511 104T537 188Z"></path><path data-c="69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z" transform="translate(708,0)"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(986,0)"></path><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z" transform="translate(1486,0)"></path></g><g data-mml-node="mo" transform="translate(2157.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mtext" transform="translate(3213.6,0)"><path data-c="43" d="M56 342Q56 428 89 500T174 615T283 681T391 705Q394 705 400 705T408 704Q499 704 569 636L582 624L612 663Q639 700 643 704Q644 704 647 704T653 705H657Q660 705 666 699V419L660 413H626Q620 419 619 430Q610 512 571 572T476 651Q457 658 426 658Q322 658 252 588Q173 509 173 342Q173 221 211 151Q232 111 263 84T328 45T384 29T428 24Q517 24 571 93T626 244Q626 251 632 257H660L666 251V236Q661 133 590 56T403 -21Q262 -21 159 83T56 342Z"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(722,0)"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(1222,0)"></path><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z" transform="translate(1778,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(2172,0)"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(2561,0)"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(3061,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(3617,0)"></path></g><g data-mml-node="mo" transform="translate(7441.8,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mtext" transform="translate(8442,0)"><path data-c="53" d="M55 507Q55 590 112 647T243 704H257Q342 704 405 641L426 672Q431 679 436 687T446 700L449 704Q450 704 453 704T459 705H463Q466 705 472 699V462L466 456H448Q437 456 435 459T430 479Q413 605 329 646Q292 662 254 662Q201 662 168 626T135 542Q135 508 152 480T200 435Q210 431 286 412T370 389Q427 367 463 314T500 191Q500 110 448 45T301 -21Q245 -21 201 -4T140 27L122 41Q118 36 107 21T87 -7T78 -21Q76 -22 68 -22H64Q61 -22 55 -16V101Q55 220 56 222Q58 227 76 227H89Q95 221 95 214Q95 182 105 151T139 90T205 42T305 24Q352 24 386 62T420 155Q420 198 398 233T340 281Q284 295 266 300Q261 301 239 306T206 314T174 325T141 343T112 367T85 402Q55 451 55 507Z"></path><path data-c="6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z" transform="translate(556,0)"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(834,0)"></path><path data-c="70" d="M36 -148H50Q89 -148 97 -134V-126Q97 -119 97 -107T97 -77T98 -38T98 6T98 55T98 106Q98 140 98 177T98 243T98 296T97 335T97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 61 434T98 436Q115 437 135 438T165 441T176 442H179V416L180 390L188 397Q247 441 326 441Q407 441 464 377T522 216Q522 115 457 52T310 -11Q242 -11 190 33L182 40V-45V-101Q182 -128 184 -134T195 -145Q216 -148 244 -148H260V-194H252L228 -193Q205 -192 178 -192T140 -191Q37 -191 28 -194H20V-148H36ZM424 218Q424 292 390 347T305 402Q234 402 182 337V98Q222 26 294 26Q345 26 384 80T424 218Z" transform="translate(1334,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(1890,0)"></path></g><g data-mml-node="mo" transform="translate(10998.2,0)"><path data-c="D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></g><g data-mml-node="mo" transform="translate(11998.4,0)"><path data-c="6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(833,0)"></path><path data-c="78" d="M201 0Q189 3 102 3Q26 3 17 0H11V46H25Q48 47 67 52T96 61T121 78T139 96T160 122T180 150L226 210L168 288Q159 301 149 315T133 336T122 351T113 363T107 370T100 376T94 379T88 381T80 383Q74 383 44 385H16V431H23Q59 429 126 429Q219 429 229 431H237V385Q201 381 201 369Q201 367 211 353T239 315T268 274L272 270L297 304Q329 345 329 358Q329 364 327 369T322 376T317 380T310 384L307 385H302V431H309Q324 428 408 428Q487 428 493 431H499V385H492Q443 385 411 368Q394 360 377 341T312 257L296 236L358 151Q424 61 429 57T446 50Q464 46 499 46H516V0H510H502Q494 1 482 1T457 2T432 2T414 3Q403 3 377 3T327 1L304 0H295V46H298Q309 46 320 51T331 63Q331 65 291 120L250 175Q249 174 219 133T185 88Q181 83 181 74Q181 63 188 55T206 46Q208 46 208 23V0H201Z" transform="translate(1333,0)"></path></g><g data-mml-node="mrow" transform="translate(14026.1,0)"><g data-mml-node="mo" transform="translate(0 -0.5)"><path data-c="28" d="M701 -940Q701 -943 695 -949H664Q662 -947 636 -922T591 -879T537 -818T475 -737T412 -636T350 -511T295 -362T250 -186T221 17T209 251Q209 962 573 1361Q596 1386 616 1405T649 1437T664 1450H695Q701 1444 701 1441Q701 1436 681 1415T629 1356T557 1261T476 1118T400 927T340 675T308 359Q306 321 306 250Q306 -139 400 -430T690 -924Q701 -936 701 -940Z"></path></g><g data-mml-node="mrow" transform="translate(736,0)"><g data-mml-node="mo"><svg width="278" height="2282" y="-891" x="27.5" viewBox="0 -282.7 278 2282"><path data-c="2223" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z" transform="scale(1,3.426)"></path></svg></g><g data-mml-node="mfrac" transform="translate(333,0)"><g data-mml-node="mrow" transform="translate(273.5,676)"><g data-mml-node="mi"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"></path></g><g data-mml-node="mi" transform="translate(566,0)"><path data-c="1D467" d="M347 338Q337 338 294 349T231 360Q211 360 197 356T174 346T162 335T155 324L153 320Q150 317 138 317Q117 317 117 325Q117 330 120 339Q133 378 163 406T229 440Q241 442 246 442Q271 442 291 425T329 392T367 375Q389 375 411 408T434 441Q435 442 449 442H462Q468 436 468 434Q468 430 463 420T449 399T432 377T418 358L411 349Q368 298 275 214T160 106L148 94L163 93Q185 93 227 82T290 71Q328 71 360 90T402 140Q406 149 409 151T424 153Q443 153 443 143Q443 138 442 134Q425 72 376 31T278 -11Q252 -11 232 6T193 40T155 57Q111 57 76 -3Q70 -11 59 -11H54H41Q35 -5 35 -2Q35 13 93 84Q132 129 225 214T340 322Q352 338 347 338Z"></path></g></g><g data-mml-node="mrow" transform="translate(220,-686)"><g data-mml-node="mi"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"></path></g><g data-mml-node="mi" transform="translate(566,0)"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g></g><rect width="1338" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(1911,0)"><svg width="278" height="2282" y="-891" x="27.5" viewBox="0 -282.7 278 2282"><path data-c="2223" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z" transform="scale(1,3.426)"></path></svg></g></g><g data-mml-node="mo" transform="translate(2980,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path></g><g data-mml-node="mrow" transform="translate(3424.7,0)"><g data-mml-node="mo"><svg width="278" height="2282" y="-891" x="27.5" viewBox="0 -282.7 278 2282"><path data-c="2223" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z" transform="scale(1,3.426)"></path></svg></g><g data-mml-node="mfrac" transform="translate(333,0)"><g data-mml-node="mrow" transform="translate(232.5,676)"><g data-mml-node="mi"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"></path></g><g data-mml-node="mi" transform="translate(566,0)"><path data-c="1D467" d="M347 338Q337 338 294 349T231 360Q211 360 197 356T174 346T162 335T155 324L153 320Q150 317 138 317Q117 317 117 325Q117 330 120 339Q133 378 163 406T229 440Q241 442 246 442Q271 442 291 425T329 392T367 375Q389 375 411 408T434 441Q435 442 449 442H462Q468 436 468 434Q468 430 463 420T449 399T432 377T418 358L411 349Q368 298 275 214T160 106L148 94L163 93Q185 93 227 82T290 71Q328 71 360 90T402 140Q406 149 409 151T424 153Q443 153 443 143Q443 138 442 134Q425 72 376 31T278 -11Q252 -11 232 6T193 40T155 57Q111 57 76 -3Q70 -11 59 -11H54H41Q35 -5 35 -2Q35 13 93 84Q132 129 225 214T340 322Q352 338 347 338Z"></path></g></g><g data-mml-node="mrow" transform="translate(220,-686)"><g data-mml-node="mi"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"></path></g><g data-mml-node="mi" transform="translate(566,0)"><path data-c="1D466" d="M21 287Q21 301 36 335T84 406T158 442Q199 442 224 419T250 355Q248 336 247 334Q247 331 231 288T198 191T182 105Q182 62 196 45T238 27Q261 27 281 38T312 61T339 94Q339 95 344 114T358 173T377 247Q415 397 419 404Q432 431 462 431Q475 431 483 424T494 412T496 403Q496 390 447 193T391 -23Q363 -106 294 -155T156 -205Q111 -205 77 -183T43 -117Q43 -95 50 -80T69 -58T89 -48T106 -45Q150 -45 150 -87Q150 -107 138 -122T115 -142T102 -147L99 -148Q101 -153 118 -160T152 -167H160Q177 -167 186 -165Q219 -156 247 -127T290 -65T313 -9T321 21L315 17Q309 13 296 6T270 -6Q250 -11 231 -11Q185 -11 150 11T104 82Q103 89 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g></g><rect width="1256" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(1829,0)"><svg width="278" height="2282" y="-891" x="27.5" viewBox="0 -282.7 278 2282"><path data-c="2223" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z" transform="scale(1,3.426)"></path></svg></g></g><g data-mml-node="mo" transform="translate(5586.7,0) translate(0 -0.5)"><path data-c="29" d="M34 1438Q34 1446 37 1448T50 1450H56H71Q73 1448 99 1423T144 1380T198 1319T260 1238T323 1137T385 1013T440 864T485 688T514 485T526 251Q526 134 519 53Q472 -519 162 -860Q139 -885 119 -904T86 -936T71 -949H56Q43 -949 39 -947T34 -937Q88 -883 140 -813Q428 -430 428 251Q428 453 402 628T338 922T245 1146T145 1309T46 1425Q44 1427 42 1429T39 1433T36 1436L34 1438Z"></path></g></g></g></g></svg></mjx-container>
+
+
+<p>底层逻辑非常优雅——<strong>通过深度在屏幕空间的偏导数</strong>（<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="6.038ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2669 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"></path></g><g data-mml-node="mi" transform="translate(566,0)"><path data-c="1D467" d="M347 338Q337 338 294 349T231 360Q211 360 197 356T174 346T162 335T155 324L153 320Q150 317 138 317Q117 317 117 325Q117 330 120 339Q133 378 163 406T229 440Q241 442 246 442Q271 442 291 425T329 392T367 375Q389 375 411 408T434 441Q435 442 449 442H462Q468 436 468 434Q468 430 463 420T449 399T432 377T418 358L411 349Q368 298 275 214T160 106L148 94L163 93Q185 93 227 82T290 71Q328 71 360 90T402 140Q406 149 409 151T424 153Q443 153 443 143Q443 138 442 134Q425 72 376 31T278 -11Q252 -11 232 6T193 40T155 57Q111 57 76 -3Q70 -11 59 -11H54H41Q35 -5 35 -2Q35 13 93 84Q132 129 225 214T340 322Q352 338 347 338Z"></path></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(1031,0)"><g data-mml-node="mo"><path data-c="2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path></g></g><g data-mml-node="mi" transform="translate(1531,0)"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"></path></g><g data-mml-node="mi" transform="translate(2097,0)"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g></g></g></svg></mjx-container>、<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="5.853ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2587 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"></path></g><g data-mml-node="mi" transform="translate(566,0)"><path data-c="1D467" d="M347 338Q337 338 294 349T231 360Q211 360 197 356T174 346T162 335T155 324L153 320Q150 317 138 317Q117 317 117 325Q117 330 120 339Q133 378 163 406T229 440Q241 442 246 442Q271 442 291 425T329 392T367 375Q389 375 411 408T434 441Q435 442 449 442H462Q468 436 468 434Q468 430 463 420T449 399T432 377T418 358L411 349Q368 298 275 214T160 106L148 94L163 93Q185 93 227 82T290 71Q328 71 360 90T402 140Q406 149 409 151T424 153Q443 153 443 143Q443 138 442 134Q425 72 376 31T278 -11Q252 -11 232 6T193 40T155 57Q111 57 76 -3Q70 -11 59 -11H54H41Q35 -5 35 -2Q35 13 93 84Q132 129 225 214T340 322Q352 338 347 338Z"></path></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(1031,0)"><g data-mml-node="mo"><path data-c="2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path></g></g><g data-mml-node="mi" transform="translate(1531,0)"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"></path></g><g data-mml-node="mi" transform="translate(2097,0)"><path data-c="1D466" d="M21 287Q21 301 36 335T84 406T158 442Q199 442 224 419T250 355Q248 336 247 334Q247 331 231 288T198 191T182 105Q182 62 196 45T238 27Q261 27 281 38T312 61T339 94Q339 95 344 114T358 173T377 247Q415 397 419 404Q432 431 462 431Q475 431 483 424T494 412T496 403Q496 390 447 193T391 -23Q363 -106 294 -155T156 -205Q111 -205 77 -183T43 -117Q43 -95 50 -80T69 -58T89 -48T106 -45Q150 -45 150 -87Q150 -107 138 -122T115 -142T102 -147L99 -148Q101 -153 118 -160T152 -167H160Q177 -167 186 -165Q219 -156 247 -127T290 -65T313 -9T321 21L315 17Q309 13 296 6T270 -6Q250 -11 231 -11Q185 -11 150 11T104 82Q103 89 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g></g></g></svg></mjx-container>，本质上反映了 Shadow Map 当前像素与相邻像素的深度差），<strong>完美实现了”表面越倾斜（偏导数越大），推离的深度偏移就越多”的自适应效果</strong>。GPU 硬件在光栅化阶段会自动计算这两个偏导数（同一 quad 内的相邻像素深度差），驱动直接消费这些偏导数生成最终 bias。开发者只需要给定 Constant 与 Slope 两个标量。</p>
+<p>Catlike 实现把 Slope Scale Bias 暴露为光源属性 <code>light.shadowBias</code>，每个光源独立配置。典型值 0.5-2.0。</p>
+<h3 id="4-2-Peter-Panning：阴影漂浮"><a href="#4-2-Peter-Panning：阴影漂浮" class="headerlink" title="4.2 Peter-Panning：阴影漂浮"></a>4.2 Peter-Panning：阴影漂浮</h3><p><strong>现象</strong>：阴影从投射体的脚下”漂离”，看起来像物体悬空。</p>
+<p><strong>成因</strong>：Depth Bias 过大，把投射体在 Shadow Map 中推得太远，离地面接触点被错误地判定为不在阴影中。</p>
+<p><strong>修复</strong>：减小 Depth Bias。但减小到不漂浮时往往又出现 Acne——这是经典的 trade-off。</p>
+<p>更好的解决方法是 <strong>Normal Bias</strong>：不在 Shadow Map 写入时调整，而是<strong>在采样时把表面位置沿法线推向光源</strong>。这等价于”假装表面比实际位置离光近一点点”，避免了 Acne 又不会让阴影漂浮。</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float3 normalBias = surfaceWS.interpolatedNormal * (info.normalBias * cascadeData.x);<br>float3 positionShadow = surfaceWS.position + normalBias;<br>float4 positionShadowAtlas = mul(matrix, float4(positionShadow, 1.0));<br></code></pre></td></tr></table></div></figure>
+
+<p><code>cascadeData.x = texelSize × sqrt(2) × filterSize</code> 已经计算好，每 cascade 不同——大 cascade 用更大 normalBias 抵消其更粗的 texel。</p>
+<h3 id="4-3-Light-Bleeding：光泄漏"><a href="#4-3-Light-Bleeding：光泄漏" class="headerlink" title="4.3 Light Bleeding：光泄漏"></a>4.3 Light Bleeding：光泄漏</h3><p><strong>现象</strong>：阴影投射体被薄表面挡住时，阴影”穿透”出来，特别在 PCF 大核时。</p>
+<p><strong>成因</strong>：PCF 在投射体边缘做权重混合，如果接收面贴近投射体边缘，平均深度可能弱于实际阴影深度。</p>
+<p><strong>修复</strong>：本质上无法完美解决，缓解手段包括：</p>
+<ul>
+<li>使用 VSM/EVSM 等高级阴影技术（Catlike 实现未涉及）</li>
+<li>限制 PCF 核大小（High quality 的 7×7 在薄物体场景慎用）</li>
+<li>美术层面避免极端薄结构与近距离阴影投射</li>
+</ul>
+<h3 id="4-4-三种-Bias-的工程总结"><a href="#4-4-三种-Bias-的工程总结" class="headerlink" title="4.4 三种 Bias 的工程总结"></a>4.4 三种 Bias 的工程总结</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Bias 类型</th>
+<th>应用阶段</th>
+<th>调控参数</th>
+<th>主治伪影</th>
+<th>副作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Constant Depth Bias</td>
+<td>写入</td>
+<td>全局</td>
+<td>Shadow Acne</td>
+<td>Peter-Panning</td>
+</tr>
+<tr>
+<td>Slope Scale Bias</td>
+<td>写入</td>
+<td>每光源</td>
+<td>Acne 倾角问题</td>
+<td>极倾斜面仍可能 Peter-Panning</td>
+</tr>
+<tr>
+<td>Normal Bias</td>
+<td>采样</td>
+<td>每 cascade</td>
+<td>Acne 不引起 Peter-Panning</td>
+<td>阴影边缘略微外扩</td>
+</tr>
+</tbody></table></div>
+<p>工程实践：Slope Scale Bias 0.5-1.5 + Normal Bias 1.0-2.0 是大多数场景的安全初值，Constant Depth Bias 设为 0 让 Slope Scale 自适应工作。</p>
+<hr>
+<h2 id="5-聚光灯与点光源阴影"><a href="#5-聚光灯与点光源阴影" class="headerlink" title="5. 聚光灯与点光源阴影"></a>5. 聚光灯与点光源阴影</h2><h3 id="5-1-聚光灯：单-Tile-透视投影"><a href="#5-1-聚光灯：单-Tile-透视投影" class="headerlink" title="5.1 聚光灯：单 Tile 透视投影"></a>5.1 聚光灯：单 Tile 透视投影</h3><p>聚光灯阴影最简单——锥形覆盖范围天然适合单张透视 Shadow Map。Atlas 中每个聚光占一个 Tile：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">RenderSpotShadows</span>(<span class="hljs-params"><span class="hljs-built_in">int</span> index, <span class="hljs-built_in">int</span> split, <span class="hljs-built_in">int</span> tileSize</span>)</span><br>{<br>    ShadowedOtherLight light = shadowedOtherLights[index];<br>    <span class="hljs-keyword">var</span> settings = <span class="hljs-keyword">new</span> ShadowDrawingSettings(cullingResults, light.visibleLightIndex);<br><br>    cullingResults.ComputeSpotShadowMatricesAndCullingPrimitives(<br>        light.visibleLightIndex,<br>        <span class="hljs-keyword">out</span> Matrix4x4 view, <span class="hljs-keyword">out</span> Matrix4x4 proj, <span class="hljs-keyword">out</span> ShadowSplitData splitData);<br><br>    <span class="hljs-built_in">int</span> tileIndex = light.atlasOffset;     <span class="hljs-comment">// 在 OtherShadowAtlas 中的位置</span><br>    Vector2 offset = SetTileViewport(tileIndex, split, tileSize);<br><br>    <span class="hljs-comment">// tile data：Atlas 范围 + bias</span><br>    SetOtherTileData(tileIndex, offset, <span class="hljs-number">1f</span> / split, normalBias);<br><br>    otherShadowMatrices[tileIndex] = ConvertToAtlasMatrix(<br>        proj * view, offset, split);<br><br>    cmd.SetViewProjectionMatrices(view, proj);<br>    cmd.SetGlobalDepthBias(<span class="hljs-number">0f</span>, light.slopeScaleBias);<br>    cmd.DrawRendererList(rendererList);<br>    cmd.SetGlobalDepthBias(<span class="hljs-number">0f</span>, <span class="hljs-number">0f</span>);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>聚光灯阴影的特殊点：<strong>透视投影下，texel 的世界空间尺寸随距离变化</strong>。这意味着 normal bias 不能用单一标量——离光近的位置 texel 小、bias 应该小；离光远的位置 texel 大、bias 应该大。</p>
+<p>CPU 端预计算”距离 1 处的 normal bias”传给 Shader，Shader 端按实际深度缩放：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// CPU 端：聚光灯距离 1 处的世界空间 tile 尺寸</span><br><span class="hljs-built_in">float</span> texelSize = <span class="hljs-number">2f</span> * Mathf.Tan(light.spotAngle * <span class="hljs-number">0.5f</span> * Mathf.Deg2Rad) / tileSize;<br><span class="hljs-built_in">float</span> filterSize = texelSize * filterSizeMultiplier;<br><span class="hljs-built_in">float</span> bias = light.normalBias * filterSize * <span class="hljs-number">1.4142136f</span>;<br>SetOtherTileData(tileIndex, offset, <span class="hljs-number">1f</span> / split, bias);<br></code></pre></td></tr></table></div></figure>
+
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// Shader 端<br>float distanceToLight = dot(surfaceWS.position - lightPos, lightDirection);<br>float scaledNormalBias = otherShadowData.normalBias * distanceToLight;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="5-2-点光源：Cubemap-与-Atlas-6-面布局"><a href="#5-2-点光源：Cubemap-与-Atlas-6-面布局" class="headerlink" title="5.2 点光源：Cubemap 与 Atlas 6 面布局"></a>5.2 点光源：Cubemap 与 Atlas 6 面布局</h3><p>点光源向所有方向辐射，阴影需要覆盖 6 个面——本质上是一个 cubemap。但为了与 Atlas 架构兼容，Custom SRP 把 cubemap 6 个面平铺为 Atlas 中的 6 个独立 Tile。</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">const</span> <span class="hljs-built_in">int</span> maxTilesPerLight = <span class="hljs-number">6</span>;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">ReserveOtherShadows</span>(<span class="hljs-params">Light light, <span class="hljs-built_in">int</span> visibleLightIndex</span>)</span><br>{<br>    <span class="hljs-built_in">bool</span> isPoint = light.type == LightType.Point;<br>    <span class="hljs-built_in">int</span> newLightCount = shadowedOtherLightCount + (isPoint ? <span class="hljs-number">6</span> : <span class="hljs-number">1</span>);<br><br>    <span class="hljs-keyword">if</span> (newLightCount &gt; maxShadowedOtherLightCount)<br>        <span class="hljs-keyword">return</span>;   <span class="hljs-comment">// Atlas 不够，本光源放弃实时阴影</span><br><br>    shadowedOtherLights[shadowedOtherLightCount] = <span class="hljs-keyword">new</span> ShadowedOtherLight {<br>        visibleLightIndex = visibleLightIndex,<br>        slopeScaleBias = light.shadowBias,<br>        normalBias = light.shadowNormalBias,<br>        isPoint = isPoint<br>    };<br><br>    shadowedOtherLightCount = newLightCount;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>绘制时遍历 6 面：</p>
+<details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">RenderPointShadows</span>(<span class="hljs-params"><span class="hljs-built_in">int</span> index, <span class="hljs-built_in">int</span> split, <span class="hljs-built_in">int</span> tileSize</span>)</span><br>{<br>    ShadowedOtherLight light = shadowedOtherLights[index];<br><br>    <span class="hljs-comment">// 点光的 fov 永远是 90° → distance 1 处 tile 尺寸永远是 2</span><br>    <span class="hljs-built_in">float</span> texelSize = <span class="hljs-number">2f</span> / tileSize;<br>    <span class="hljs-built_in">float</span> filterSize = texelSize * filterSizeMultiplier;<br>    <span class="hljs-built_in">float</span> bias = light.normalBias * filterSize * <span class="hljs-number">1.4142136f</span>;<br>    <span class="hljs-built_in">float</span> tileScale = <span class="hljs-number">1f</span> / split;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> face = <span class="hljs-number">0</span>; face &lt; <span class="hljs-number">6</span>; face++)<br>    {<br>        cullingResults.ComputePointShadowMatricesAndCullingPrimitives(<br>            light.visibleLightIndex,<br>            (CubemapFace)face,<br>            fovBias: <span class="hljs-number">0f</span>,<br>            <span class="hljs-keyword">out</span> Matrix4x4 view, <span class="hljs-keyword">out</span> Matrix4x4 proj, <span class="hljs-keyword">out</span> ShadowSplitData splitData);<br><br>        view.m11 = -view.m11; view.m12 = -view.m12; view.m13 = -view.m13;<br>        <span class="hljs-comment">// 翻转 Y 轴：Cubemap 在 Unity 中 Y 与世界相反</span><br><br>        <span class="hljs-built_in">int</span> tileIndex = light.atlasOffset + face;<br>        Vector2 offset = SetTileViewport(tileIndex, split, tileSize);<br>        SetOtherTileData(tileIndex, offset, tileScale, bias);<br>        otherShadowMatrices[tileIndex] = ConvertToAtlasMatrix(proj * view, offset, split);<br><br>        cmd.SetViewProjectionMatrices(view, proj);<br>        cmd.SetGlobalDepthBias(<span class="hljs-number">0f</span>, light.slopeScaleBias);<br>        cmd.DrawRendererList(rendererListPerFace[face]);<br>    }<br>    cmd.SetGlobalDepthBias(<span class="hljs-number">0f</span>, <span class="hljs-number">0f</span>);<br>}<br></code></pre></td></tr></table></div></figure></details>
+
+<p><strong>6 个面对应 6 个独立的 RendererList</strong>——这是 Note 1 中”RendererList 不可复用”的最直接体现。即使 6 个 List 的 ShadowDrawingSettings 几乎相同，必须分别创建。</p>
+<h3 id="5-3-Shader-端面选择"><a href="#5-3-Shader-端面选择" class="headerlink" title="5.3 Shader 端面选择"></a>5.3 Shader 端面选择</h3><p>点光源采样时需要根据表面到光源的方向选择正确的面。Cubemap 标准的”abs 最大轴”算法：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">static const float3 pointShadowPlanes[6] = {<br>    float3( -1.0,  0.0,  0.0),   // +X face uses -X plane<br>    float3(  1.0,  0.0,  0.0),   // -X face uses +X plane<br>    float3(  0.0, -1.0,  0.0),<br>    float3(  0.0,  1.0,  0.0),<br>    float3(  0.0,  0.0, -1.0),<br>    float3(  0.0,  0.0,  1.0)<br>};<br><br>float GetPointShadow(OtherShadowData other, ShadowData global, Surface surfaceWS,<br>                     float3 lightDirectionWS)<br>{<br>    // 选择面：abs 最大的轴<br>    float3 lightVecAbs = abs(lightDirectionWS);<br>    float maxAbs = max(lightVecAbs.x, max(lightVecAbs.y, lightVecAbs.z));<br>    int faceOffset = 0;<br><br>    if (maxAbs == lightVecAbs.x) faceOffset = lightDirectionWS.x &gt; 0 ? 0 : 1;<br>    else if (maxAbs == lightVecAbs.y) faceOffset = lightDirectionWS.y &gt; 0 ? 2 : 3;<br>    else faceOffset = lightDirectionWS.z &gt; 0 ? 4 : 5;<br><br>    int tileIndex = other.tileIndex + faceOffset;<br>    float3 normalBias = surfaceWS.interpolatedNormal *<br>                        pointShadowPlanes[faceOffset] * other.normalBias;<br><br>    return SampleOtherShadow(tileIndex, other, surfaceWS.position + normalBias);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>Normal bias 的方向用面法线（pointShadowPlanes[face]）而不是表面法线——因为我们要把表面”推离”该 cubemap 面。</p>
+<h3 id="5-4-Atlas-容量与-fallback"><a href="#5-4-Atlas-容量与-fallback" class="headerlink" title="5.4 Atlas 容量与 fallback"></a>5.4 Atlas 容量与 fallback</h3><p><code>maxShadowedOtherLightCount = 16</code> 意味着 Atlas 最多容纳 16 个 Tile。但点光每个吃 6 Tile，所以实际能容纳的”光源数”动态变化：纯聚光最多 16 个，纯点光最多 2 个，混合则按 1 + 6 + 1 + 6 + … 累加。</p>
+<p>容量不足时，多出来的光源不分配 Tile，回退到只用 baked shadow（如果有）或不投阴影。<code>ReserveOtherShadows</code> 中处理 fallback：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">if</span> (newLightCount &gt; maxShadowedOtherLightCount ||<br>    !cullingResults.GetShadowCasterBounds(visibleLightIndex, <span class="hljs-keyword">out</span> _))<br>{<br>    <span class="hljs-comment">// Atlas 不够 或 没有阴影投射体：给一个"只用 shadow mask"的标记</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Vector4(-light.shadowStrength, <span class="hljs-number">0f</span>, <span class="hljs-number">0f</span>, maskChannel);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>shadowStrength</code> 取负值是 fallback 信号，Shader 端 <code>if (strength &lt;= 0)</code> 会绕过实时采样直接用 shadowmask。这种”在数据本身编码状态”的 trick 比额外开 keyword 便宜得多。</p>
+<hr>
+<h2 id="6-Shadow-Mask：烘焙与实时混合"><a href="#6-Shadow-Mask：烘焙与实时混合" class="headerlink" title="6. Shadow Mask：烘焙与实时混合"></a>6. Shadow Mask：烘焙与实时混合</h2><h3 id="6-1-设计动机"><a href="#6-1-设计动机" class="headerlink" title="6.1 设计动机"></a>6.1 设计动机</h3><p>完全实时阴影的代价：每帧重渲染所有投射体到 Atlas、所有像素采样 Shadow Map。对静态对象这是浪费——它们的阴影本来就不变。</p>
+<p>完全烘焙阴影的代价：动态对象（角色、可移动物体）无法接收阴影；光源不能动。</p>
+<p><strong>Mixed Lighting</strong> 是中间方案：静态对象的阴影烘焙，动态对象的阴影实时计算，<strong>两者在 Shader 端融合</strong>。Shadowmask 是 Mixed Lighting 的核心数据载体。</p>
+<h3 id="6-2-Shadowmask-数据结构"><a href="#6-2-Shadowmask-数据结构" class="headerlink" title="6.2 Shadowmask 数据结构"></a>6.2 Shadowmask 数据结构</h3><p>Shadowmask 是一张和 Lightmap 共享 UV 布局的额外贴图，每 texel 4 通道（RGBA），每通道存储一个光源对该 texel 的烘焙遮挡值（0 = 全黑、1 = 全亮）。</p>
+<p>每光源被烘焙器分配一个 channel，最多 4 个光源可以同时占用同一区域。超过 4 重叠的光源被强制 fallback 到完全 baked 模式（不能再实时切换）。</p>
+<p>烘焙器的分配策略：尽可能让不重叠的光源共享 channel。比如室内场景里几十个非重叠的吊灯可能全部使用 R 通道。</p>
+<h3 id="6-3-两种-Shadowmask-模式"><a href="#6-3-两种-Shadowmask-模式" class="headerlink" title="6.3 两种 Shadowmask 模式"></a>6.3 两种 Shadowmask 模式</h3><p><strong>Distance Shadowmask</strong>（推荐默认）：</p>
+<ul>
+<li>在 shadow distance 之内，全部使用实时阴影（包括静态对象）</li>
+<li>在 shadow distance 之外，静态对象使用 shadowmask、动态对象使用 occlusion probe</li>
+</ul>
+<p><strong>Shadowmask</strong>（性能优化）：</p>
+<ul>
+<li>静态对象始终使用 shadowmask（不投射实时阴影）</li>
+<li>动态对象使用实时阴影</li>
+<li>静态对象自身永远没有实时阴影投射</li>
+</ul>
+<p>两者的 trade-off：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>静态对象阴影</th>
+<th>Shadow Atlas 工作量</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Distance Shadowmask</td>
+<td>近端实时（高质量）</td>
+<td>大（静态对象也要画）</td>
+<td>主流游戏</td>
+</tr>
+<tr>
+<td>Shadowmask</td>
+<td>始终烘焙（廉价）</td>
+<td>小（只画动态）</td>
+<td>性能极限优化</td>
+</tr>
+</tbody></table></div>
+<h3 id="6-4-Shader-端融合"><a href="#6-4-Shader-端融合" class="headerlink" title="6.4 Shader 端融合"></a>6.4 Shader 端融合</h3><p><code>PerObjectData.ShadowMask</code> 让引擎把 <code>unity_ShadowMask</code> 自动绑定到当前对象的 Shadowmask 贴图。<code>PerObjectData.OcclusionProbe</code> 把动态对象的 <code>unity_ProbesOcclusion</code> 填充为光照探针烘焙的遮挡值。</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float MixBakedAndRealtimeShadows(<br>    ShadowData global, float shadow, int shadowMaskChannel, float strength)<br>{<br>    float baked = GetBakedShadow(global.shadowMask, shadowMaskChannel);<br><br>    if (global.shadowMask.always)<br>    {<br>        // Shadowmask 模式：实时 × 静态烘焙取最小<br>        shadow = lerp(1.0, shadow, strength);<br>        shadow = min(baked, shadow);<br>        return shadow;<br>    }<br><br>    if (global.shadowMask.distance)<br>    {<br>        // Distance Shadowmask 模式：在 cascade 边界淡入烘焙<br>        shadow = lerp(baked, shadow, strength);<br>        return shadow;<br>    }<br><br>    return lerp(1.0, shadow, strength);  // 无 shadowmask<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>min(baked, shadow)</code> 的语义：两者都说”被遮挡”才是被遮挡——这是正确的物理融合（最暗值优先）。</p>
+<h3 id="6-5-GPU-Instancing-兼容性"><a href="#6-5-GPU-Instancing-兼容性" class="headerlink" title="6.5 GPU Instancing 兼容性"></a>6.5 GPU Instancing 兼容性</h3><p><code>unity_ProbesOcclusion</code>（动态对象的 occlusion 数据）在 GPU Instancing 路径下需要被打包到 instance buffer。Unity 的 <code>UnityInstancing</code> 库只在 <code>SHADOWS_SHADOWMASK</code> 宏定义时才处理这个字段：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// 在 include UnityInstancing 之前必须定义<br>#if defined(_SHADOW_MASK_DISTANCE) || defined(_SHADOW_MASK_ALWAYS)<br>    #define SHADOWS_SHADOWMASK<br>#endif<br><br>#include "UnityInstancing.hlsl"<br></code></pre></td></tr></table></div></figure>
+
+<p>漏掉这个宏定义会让 Shadowmask 模式下的实例化对象出现错乱（每实例读到错误的 occlusion 值）。这是个非常隐蔽的 bug——只有在”Shadowmask + Instancing + 动态对象”三者同时出现时才暴露。</p>
+<hr>
+<h2 id="7-Unity-6-阴影剔除并行化"><a href="#7-Unity-6-阴影剔除并行化" class="headerlink" title="7. Unity 6 阴影剔除并行化"></a>7. Unity 6 阴影剔除并行化</h2><h3 id="7-1-老路径：cull-draw-串行"><a href="#7-1-老路径：cull-draw-串行" class="headerlink" title="7.1 老路径：cull-draw 串行"></a>7.1 老路径：cull-draw 串行</h3><p>Unity 6 之前，每个阴影 Tile 的渲染是串行的：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Light0 cascade0 cull → Light0 cascade0 draw<br>                    → Light0 cascade1 cull → Light0 cascade1 draw<br>                    → Light0 cascade2 cull → ...<br>                    → Light1 cull → Light1 draw<br>                    → Point0 face0 cull → Point0 face0 draw<br>                    → ...<br></code></pre></td></tr></table></div></figure>
+
+<p>每个 cull 操作是单线程的 CPU 工作。多光源场景下这是个明显的串行瓶颈——10 个聚光 + 2 个点光就有 10 + 2×6 = 22 次串行 cull。</p>
+<h3 id="7-2-新路径：cull-并行化"><a href="#7-2-新路径：cull-并行化" class="headerlink" title="7.2 新路径：cull 并行化"></a>7.2 新路径：cull 并行化</h3><p>Unity 6 引入 <code>LightShadowCasterCullingInfo</code> API，支持把所有 cull 工作打包提交、底层并行调度：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br><span class="hljs-keyword">struct</span> LightShadowCasterCullingInfo<br>{<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> visibleLightIndex;<br>    <span class="hljs-keyword">public</span> RangeInt splitRange;     <span class="hljs-comment">// 该光源的 cascade/face 在 splitData 数组中的范围</span><br>    <span class="hljs-keyword">public</span> BatchCullingProjectionType projectionType;<br>}<br><br>NativeArray&lt;LightShadowCasterCullingInfo&gt; cullingInfos = <span class="hljs-keyword">new</span>(...);<br>NativeArray&lt;ShadowSplitData&gt; splitData = <span class="hljs-keyword">new</span>(...);<br><br><span class="hljs-comment">// CPU 端填充 cullingInfos 与 splitData</span><br><br>cullingResults.ScheduleLightShadowCasterCulling(cullingInfos, splitData)<br>              .Complete();<br></code></pre></td></tr></table></div></figure>
+
+<p>引擎内部把 cull 工作提交到 Job System，多核 CPU 并行处理。绘制阶段才依次发出 DrawRendererList。</p>
+<p>新流程的时序：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">[All culls in parallel: Light0c0, Light0c1, Light0c2, Light1, Point0f0, ...]<br>                                    ↓<br>[All draws sequential: Light0c0, Light0c1, ..., Point0f0, ...]<br></code></pre></td></tr></table></div></figure>
+
+<p>Cull 阶段在 <code>ScheduleLightShadowCasterCulling().Complete()</code> 调用处合流，之后绘制按顺序执行（受限于 Atlas Tile 写入的顺序依赖）。</p>
+<h3 id="7-3-工程收益"><a href="#7-3-工程收益" class="headerlink" title="7.3 工程收益"></a>7.3 工程收益</h3><p>测试场景 8 方向光 cascade × 4 + 16 聚光的极端配置：</p>
+<ul>
+<li>老串行路径 cull 总耗时约 4-6ms（CPU 单核）</li>
+<li>新并行路径 cull 总耗时约 1-2ms（4-8 核并行）</li>
+</ul>
+<p>对于阴影密集的场景这是 60→90 FPS 的差距。Unity 6 项目应该默认启用此路径，无需开发者额外配置——只要把 ShadowsPass 重构为”先 BuildList 阶段集中提交 cull、再 Render 阶段集中绘制”即可享受收益。</p>
+<hr>
+<h2 id="8-TA-Takeaway"><a href="#8-TA-Takeaway" class="headerlink" title="8. TA Takeaway"></a>8. TA Takeaway</h2><h3 id="8-1-阴影系统的总成本图谱"><a href="#8-1-阴影系统的总成本图谱" class="headerlink" title="8.1 阴影系统的总成本图谱"></a>8.1 阴影系统的总成本图谱</h3><p>阴影是渲染中最容易吃掉性能预算的子系统之一。完整成本图谱包含：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">CPU 端（每帧）:<br>├─ ReserveShadows: 遍历光源、分配 Atlas Tile          (&lt; 0.1ms)<br>├─ ComputeMatrices: cascade/spot/point 矩阵计算       (&lt; 0.5ms)<br>└─ ShadowCasterCulling: 多 List 并行剔除             (1-3ms)<br><br>GPU 端（每帧）:<br>├─ Atlas 写入: 每 Tile 一次 ShadowCaster Pass         (5-20ms 主要瓶颈)<br>│   └─ 投射体顶点数 × Tile 数 × 阴影投射 Shader<br>└─ Shader 端采样: PCF Tap × 像素数                  (1-5ms)<br>    ├─ Cascade 选择<br>    ├─ Cascade Blend (Soft 模式翻倍采样)<br>    ├─ PCF kernel (3×3=4tap / 5×5=9tap / 7×7=16tap)<br>    └─ Shadowmask 融合<br></code></pre></td></tr></table></div></figure>
+
+<p>最大变量是 <strong>Atlas 写入阶段</strong>——它取决于场景中投射体的复杂度与数量。一个有 1 万个投射体的森林场景，仅阴影写入就可能吃掉 30ms+。这是为什么 Shadowmask 模式（不画静态投射体）在性能极限场景中是必备技术。</p>
+<h3 id="8-2-配置优先级"><a href="#8-2-配置优先级" class="headerlink" title="8.2 配置优先级"></a>8.2 配置优先级</h3><p>调试阴影性能时按以下顺序检查：</p>
+<ol>
+<li><strong>Atlas 尺寸</strong>：默认 1024 在桌面端常常不够，2048 是甜区，4096 仅用于高端 PC</li>
+<li><strong>Cascade 数量</strong>：4 是最高质量但最贵；2-3 cascade 配合稍紧的 max distance 通常视觉无差</li>
+<li><strong>Shadow Distance</strong>：远端 fade 区设短一点（典型 0.1 of distance），节省远 cascade 工作量</li>
+<li><strong>Filter Quality</strong>：Medium 是性价比甜区；High 仅在镜头特写时启用</li>
+<li><strong>Cascade Blend</strong>：移动端用 Dither，桌面端用 Soft</li>
+<li><strong>Shadowmask 模式</strong>：静态光源密集的室内/城市场景必启 Distance Shadowmask</li>
+<li><strong>Other Lights 数量</strong>：每个点光吃 6 Tile，控制总数；非重要点光关闭实时阴影</li>
+<li><strong>深度缓冲精度（移动端关键）</strong>：默认 <code>DepthBits.Depth32</code> 在桌面端无忧，但<strong>在移动端 TBR 架构下，分配 32-bit 深度图意味着片上内存占用与回写带宽双重翻倍</strong>——对一张 2048² Atlas 是 16MB → 8MB 的真实差异。移动端项目通常将 Shadow Atlas 的深度精度从 32-bit 降至 <code>DepthBits.Depth16</code>，<strong>直接省下一半的显存带宽与片上内存占用</strong>。代价是 16-bit 深度的离散步长变大（在远 cascade 处尤其明显），需要更精细地调节 Slope Scale Bias 与 Normal Bias 抵消精度下降带来的 Acne。这种”用调参换带宽”的取舍在移动端是默认操作；DepthBits.Depth24 是介于两者之间的折中选择，在某些 Mali GPU 上反而比 Depth16 更稳定（驱动实现差异）。</li>
+</ol>
+<h3 id="8-3-Atlas-容量的-Tile-预算思维"><a href="#8-3-Atlas-容量的-Tile-预算思维" class="headerlink" title="8.3 Atlas 容量的 Tile 预算思维"></a>8.3 Atlas 容量的 Tile 预算思维</h3><p>把 Atlas 视为”Tile 预算”管理：</p>
+<ul>
+<li>DirectionalAtlas Tile 数 = <code>cascadeCount × maxDirectionalLights</code>，典型 16</li>
+<li>OtherAtlas Tile 数 = <code>maxShadowedOtherLightCount</code>，典型 16</li>
+</ul>
+<p>每多一个点光阴影 = 减少 6 个其他光源阴影预算。这意味着场景设计时：</p>
+<ul>
+<li>主光（关键光源）独占足够 cascade</li>
+<li>点光阴影是稀缺资源——只给关键点光（角色火把、英雄技能特效）</li>
+<li>大量装饰性光源用 baked shadow + shadowmask 不占 Atlas</li>
+</ul>
+<h3 id="8-4-Shader-关键字爆炸的教训"><a href="#8-4-Shader-关键字爆炸的教训" class="headerlink" title="8.4 Shader 关键字爆炸的教训"></a>8.4 Shader 关键字爆炸的教训</h3><p>阴影系统是 Shader 关键字最容易爆炸的子系统：方向光 PCF（4 模式）× 其他光 PCF（4 模式）× Cascade Blend（3 模式）× Shadowmask（3 模式）= <strong>144 种排列</strong>。</p>
+<p>3.2.0 简化后变成 PCF（3 模式）× Blend（2 模式）× Shadowmask（3 模式）= <strong>18 种排列</strong>。</p>
+<p>每个排列都是独立编译的 Shader Variant，影响：</p>
+<ul>
+<li>编译时间（首次 build 与 Shader 修改后重编）</li>
+<li>Player 包体（所有 Variant 都打包）</li>
+<li>运行时 Shader 加载（首次切换 Variant 卡顿）</li>
+</ul>
+<p><strong>关键字数量与项目质量正相关、与构建效率负相关</strong>——找到收敛点是 TA 的核心工作。Note 8 会展开通用的关键字管理策略。</p>
+<h3 id="8-5-实践原则"><a href="#8-5-实践原则" class="headerlink" title="8.5 实践原则"></a>8.5 实践原则</h3><ul>
+<li><strong>永远启用 Slope Scale Bias</strong>：Constant Bias 留 0，Slope Scale 起步 1.0</li>
+<li><strong>Normal Bias 配合 Filter Quality 调校</strong>：Filter 越大、Normal Bias 越大</li>
+<li><strong>Shadow Distance 是性能/质量天平</strong>：每减半距离，cascade 精度翻倍但远端无阴影</li>
+<li><strong>Distance Shadowmask 几乎总是好选择</strong>：除非项目极度性能敏感</li>
+<li><strong>点光阴影是奢侈品</strong>：默认关闭，只在叙事关键光源开启</li>
+<li><strong>Render Graph Viewer 看 Atlas 利用率</strong>：调试 Tile 浪费、未对齐</li>
+<li><strong>不要混用旧/新阴影 API</strong>：Unity 6 项目全面迁移到 ShadowCasterCullingInfo + Renderer Lists 路径</li>
+</ul>
+<hr>
+<h2 id="关键-API-速查"><a href="#关键-API-速查" class="headerlink" title="关键 API 速查"></a>关键 API 速查</h2><details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// CPU 端：阴影数据结构</span><br>[<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> DirectionalShadowCascade { Vector4 cullingSphere, data; }<br><br>[<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> OtherShadowData { Vector4 tileData; }<br><br><span class="hljs-comment">// CullingResults 阴影矩阵接口</span><br>cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives(<br>    visibleLightIndex, cascadeIndex, cascadeCount, ratios, tileSize, nearPlane,<br>    <span class="hljs-keyword">out</span> viewMatrix, <span class="hljs-keyword">out</span> projectionMatrix, <span class="hljs-keyword">out</span> splitData);<br><br>cullingResults.ComputeSpotShadowMatricesAndCullingPrimitives(<br>    visibleLightIndex, <span class="hljs-keyword">out</span> viewMatrix, <span class="hljs-keyword">out</span> projectionMatrix, <span class="hljs-keyword">out</span> splitData);<br><br>cullingResults.ComputePointShadowMatricesAndCullingPrimitives(<br>    visibleLightIndex, cubemapFace, fovBias,<br>    <span class="hljs-keyword">out</span> viewMatrix, <span class="hljs-keyword">out</span> projectionMatrix, <span class="hljs-keyword">out</span> splitData);<br><br><span class="hljs-comment">// Unity 6 并行剔除</span><br>cullingResults.ScheduleLightShadowCasterCulling(cullingInfos, splitData).Complete();<br><br><span class="hljs-comment">// Render Graph 阴影 RT 创建</span><br><span class="hljs-keyword">new</span> TextureDesc(atlasSize, atlasSize)<br>{<br>    depthBufferBits = DepthBits.Depth32,<br>    isShadowMap = <span class="hljs-literal">true</span>,                  <span class="hljs-comment">// 跳过 stencil 分配</span><br>    name = <span class="hljs-string">"Shadow Atlas"</span><br>};<br><br><span class="hljs-comment">// fallback shadow texture</span><br>renderGraph.defaultResources.defaultShadowTexture;<br><br><span class="hljs-comment">// 全局 Bias</span><br>cmd.SetGlobalDepthBias(constantBias: <span class="hljs-number">0f</span>, slopeScaleBias: <span class="hljs-number">1.0f</span>);<br></code></pre></td></tr></table></div></figure></details>
+
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// Shader 端：纹理与采样器声明<br>TEXTURE2D_SHADOW(_DirectionalShadowAtlas);<br>TEXTURE2D_SHADOW(_OtherShadowAtlas);<br>SAMPLER_CMP(SHADOW_SAMPLER);<br><br>StructuredBuffer&lt;DirectionalShadowCascade&gt; _DirectionalShadowCascades;<br>StructuredBuffer&lt;float4x4&gt; _DirectionalShadowMatrices;<br>StructuredBuffer&lt;OtherShadowData&gt; _OtherShadowData;<br>StructuredBuffer&lt;float4x4&gt; _OtherShadowMatrices;<br><br>// PCF 采样宏（RP Core Library）<br>SampleShadow_PCF_Tent_3x3(...);<br>SampleShadow_PCF_Tent_5x5(...);<br>SampleShadow_PCF_Tent_7x7(...);<br><br>// 关键字<br>#pragma multi_compile _ _SHADOW_FILTER_MEDIUM _SHADOW_FILTER_HIGH<br>#pragma multi_compile _ _CASCADE_BLEND_SOFT _CASCADE_BLEND_DITHER<br>#pragma multi_compile _ _SHADOW_MASK_ALWAYS _SHADOW_MASK_DISTANCE<br><br>// Shadowmask 关键字必须在 UnityInstancing 之前定义<br>#if defined(_SHADOW_MASK_DISTANCE) || defined(_SHADOW_MASK_ALWAYS)<br>    #define SHADOWS_SHADOWMASK<br>#endif<br>#include "UnityInstancing.hlsl"<br></code></pre></td></tr></table></div></figure>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/posts/7a3b251c9e25/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>「Custom SRP」：全局光照与环境</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/e962819a878a/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      「Custom SRP」：直接光照与 Tiled Forward+
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/CSM/" class="post-tag">#CSM</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/Shadow-Mask/" class="post-tag">#Shadow Mask</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e962819a878a/" title="「Custom SRP」：直接光照与 Tiled Forward+" rel="bookmark">「Custom SRP」：直接光照与 Tiled Forward+</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>

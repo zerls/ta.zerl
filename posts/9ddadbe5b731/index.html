@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        「Custom SRP」：几何可见性与批次优化 | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+          <div class="post-banner">
+            <img src="https://catlikecoding.com/unity/tutorials/custom-srp/draw-calls/tutorial-image.jpg" alt="Banner">
+          </div>
+        
+        
+        <div class="post-title">「Custom SRP」：几何可见性与批次优化</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2024-06-10 · 更新于2026-05-01
+            
+            
+          </div>
+          
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP-Batcher/" class="post-tag">#SRP Batcher</a><a href="/tags/GPU-Instancing/" class="post-tag">#GPU Instancing</a><a href="/tags/Draw-Call/" class="post-tag">#Draw Call</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#TL-DR"><span class="post-toc-text">TL;DR</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-可见性裁剪"><span class="post-toc-text">1. 可见性裁剪</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-RendererListDesc：渲染配置的现代封装"><span class="post-toc-text">2. RendererListDesc：渲染配置的现代封装</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-1-ShaderTagId：Pass-白名单"><span class="post-toc-text">2.1 ShaderTagId：Pass 白名单</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-2-SortingCriteria：排序的语义"><span class="post-toc-text">2.2 SortingCriteria：排序的语义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-3-RenderQueueRange：队列分区"><span class="post-toc-text">2.3 RenderQueueRange：队列分区</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-4-PerObjectData：每对象数据需求声明"><span class="post-toc-text">2.4 PerObjectData：每对象数据需求声明</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-批次系统：现代实现的两条主线"><span class="post-toc-text">3. 批次系统：现代实现的两条主线</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-SRP-Batcher：CBUFFER-持久化"><span class="post-toc-text">3.1 SRP Batcher：CBUFFER 持久化</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-GPU-Instancing：减少-Draw-Call-总数"><span class="post-toc-text">3.2 GPU Instancing：减少 Draw Call 总数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-3-RendererList-模式下的强制配置"><span class="post-toc-text">3.3 RendererList 模式下的强制配置</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-4-Static-Batching：构建期的另一种存在"><span class="post-toc-text">3.4 Static Batching：构建期的另一种存在</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-Shader-端的批次兼容性"><span class="post-toc-text">4. Shader 端的批次兼容性</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-1-SRP-Batcher-兼容性"><span class="post-toc-text">4.1 SRP Batcher 兼容性</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-2-GPU-Instancing-兼容性"><span class="post-toc-text">4.2 GPU Instancing 兼容性</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-3-两条路径的优先级"><span class="post-toc-text">4.3 两条路径的优先级</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-4-兼容性常见破坏源"><span class="post-toc-text">4.4 兼容性常见破坏源</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-LOD-Group"><span class="post-toc-text">5. LOD Group</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-1-LOD-选择机制"><span class="post-toc-text">5.1 LOD 选择机制</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-2-Cross-fade-Dithering"><span class="post-toc-text">5.2 Cross-fade Dithering</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-3-LOD-与批次的协作"><span class="post-toc-text">5.3 LOD 与批次的协作</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#6-调试与性能验证"><span class="post-toc-text">6. 调试与性能验证</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-1-Frame-Debugger-中的批次识别"><span class="post-toc-text">6.1 Frame Debugger 中的批次识别</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-2-Stats-面板分解"><span class="post-toc-text">6.2 Stats 面板分解</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#7-TA-Takeaway：批次优化的本质是减少状态切换"><span class="post-toc-text">7. TA Takeaway：批次优化的本质是减少状态切换</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-1-状态切换才是-CPU-杀手"><span class="post-toc-text">7.1 状态切换才是 CPU 杀手</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-2-SRP-Batcher-vs-GPU-Instancing-收益模型对比"><span class="post-toc-text">7.2 SRP Batcher vs GPU Instancing 收益模型对比</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-3-实践原则"><span class="post-toc-text">7.3 实践原则</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#关键-API-速查"><span class="post-toc-text">关键 API 速查</span></a></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <blockquote>
+<p>系列第 2 篇。本篇承接 Note 1 中对 <code>RendererListHandle</code> 的接口定义，深入到几何可见性与批次合并的具体机制——回答”哪些对象会被画”和”GPU 提交效率如何被压榨”两个核心问题。</p>
+</blockquote>
+<h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h2><ul>
+<li><strong>三段式数据流</strong>：<code>CullingResults</code> → <code>RendererListDesc</code> → 引擎调度的批次提交。开发者只声明渲染意图，剔除与批次决策由引擎完成。</li>
+<li><strong>现代批次仅两条主线</strong>：SRP Batcher（材质数据 CBUFFER 持久化）与 GPU Instancing（同 Mesh+Material 实例合并）。Dynamic Batching 在 RendererList 模式下被强制禁用，GPU Instancing 被强制启用——开发者已无配置权限。</li>
+<li><strong>SRP Batcher 不减少 Draw Call 数量</strong>，减少的是 SetPass 与材质状态切换的 CPU 成本。GPU Instancing 才真正减少 Draw Call 总数。两者收益模型不同，覆盖场景互补。</li>
+<li><strong>Shader 兼容性是底线</strong>：<code>UnityPerMaterial</code> 与 <code>UnityPerDraw</code> CBUFFER 布局必须严格遵守，违反任何一条都会让该 Shader 退回到逐对象的慢路径。</li>
+</ul>
+<hr>
+<h2 id="1-可见性裁剪"><a href="#1-可见性裁剪" class="headerlink" title="1. 可见性裁剪"></a>1. 可见性裁剪</h2><p>每个 Camera 渲染开始时，先通过 <code>ScriptableRenderContext.Cull</code> 拿到本帧的可见性快照：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">if</span> (!camera.TryGetCullingParameters(<span class="hljs-keyword">out</span> <span class="hljs-keyword">var</span> cullingParameters)) <span class="hljs-keyword">return</span>;<br>cullingParameters.shadowDistance = Mathf.Min(<br>    settings.shadows.maxDistance, camera.farClipPlane);<br><span class="hljs-keyword">var</span> cullingResults = context.Cull(<span class="hljs-keyword">ref</span> cullingParameters);<br></code></pre></td></tr></table></div></figure>
+
+<p><code>CullingParameters</code> 暴露的关键参数：</p>
+<ul>
+<li><code>shadowDistance</code> — 决定哪些 Renderer 进入阴影投射列表。这个值往往比 <code>farClipPlane</code> 小得多，这样可以避免远处对象产生不必要的阴影开销。</li>
+<li><code>cullingMask</code> — Layer 位掩码。</li>
+<li><code>lodBias</code> — LOD 选择的全局缩放（配合 LOD Group）。</li>
+<li><code>isOrthographic</code> — 影响视锥剔除的几何形态。</li>
+</ul>
+<p><code>CullingResults</code> 是一个值类型（struct），包含可见 Renderer 列表、可见光源列表、可见 Reflection Probe 列表等。它在整个 Render Graph 录制阶段被多次引用——所有 <code>RendererList</code> 的创建都以它为输入。</p>
+<p>需要强调一点：剔除是<strong>视锥与遮挡级别</strong>的，不是材质级别的。同一个 <code>CullingResults</code> 会被光照、阴影、几何 Pass 各自消费一次，但每次消费的”过滤条件”由 <code>RendererListDesc</code> 的另外几个字段决定。</p>
+<hr>
+<h2 id="2-RendererListDesc：渲染配置的现代封装"><a href="#2-RendererListDesc：渲染配置的现代封装" class="headerlink" title="2. RendererListDesc：渲染配置的现代封装"></a>2. RendererListDesc：渲染配置的现代封装</h2><p><code>RendererListDesc</code> 是从 <code>CullingResults</code> 到具体 Pass 之间的过滤与配置层。一个典型的不透明几何描述：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">var</span> desc = <span class="hljs-keyword">new</span> RendererListDesc(shaderTagIds, cullingResults, camera)<br>{<br>    sortingCriteria = SortingCriteria.CommonOpaque,<br>    renderQueueRange = RenderQueueRange.opaque,<br>    rendererConfiguration =<br>        PerObjectData.ReflectionProbes |<br>        PerObjectData.Lightmaps |<br>        PerObjectData.ShadowMask |<br>        PerObjectData.LightProbe |<br>        PerObjectData.OcclusionProbe |<br>        PerObjectData.LightProbeProxyVolume |<br>        PerObjectData.OcclusionProbeProxyVolume,<br>    renderingLayerMask = (<span class="hljs-built_in">uint</span>)cameraSettings.renderingLayerMask,<br>};<br>RendererListHandle list = renderGraph.CreateRendererList(desc);<br></code></pre></td></tr></table></div></figure>
+
+<p>四个字段决定了”画什么、按什么顺序画、需要哪些每对象数据”:</p>
+<h3 id="2-1-ShaderTagId：Pass-白名单"><a href="#2-1-ShaderTagId：Pass-白名单" class="headerlink" title="2.1 ShaderTagId：Pass 白名单"></a>2.1 ShaderTagId：Pass 白名单</h3><p><code>ShaderTagId</code> 是 Shader 中 <code>LightMode</code> 标签的封装。<code>RendererListDesc</code> 接受一个或多个 ShaderTagId——只有 Shader Pass 的 <code>LightMode</code> 命中其中之一，该对象才会被渲染。</p>
+<p>Custom SRP 中常用的 LightMode 标识：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ShaderTagId</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SRPDefaultUnlit</code></td>
+<td>不参与光照计算的默认 Pass</td>
+</tr>
+<tr>
+<td><code>CustomLit</code></td>
+<td>自定义 PBR 主光照 Pass</td>
+</tr>
+<tr>
+<td><code>ShadowCaster</code></td>
+<td>阴影 Atlas 渲染</td>
+</tr>
+<tr>
+<td><code>Meta</code></td>
+<td>GI 烘焙时的 albedo/emission 贡献</td>
+</tr>
+</tbody></table></div>
+<p>调试用的 Unsupported Shaders Pass 会传入一组 Built-in 时代的 LightMode 数组（<code>Always</code>、<code>ForwardBase</code>、<code>PrepassBase</code> 等），让那些非自定义 Shader 的对象也能以 magenta 形式显示出来。</p>
+<h3 id="2-2-SortingCriteria：排序的语义"><a href="#2-2-SortingCriteria：排序的语义" class="headerlink" title="2.2 SortingCriteria：排序的语义"></a>2.2 SortingCriteria：排序的语义</h3><p><code>SortingCriteria</code> 决定 Renderer 的提交顺序，对性能与正确性都有影响：</p>
+<ul>
+<li><strong><code>CommonOpaque</code></strong> 不透明几何标准排序：先按 <code>RenderType</code> 分组、再按 Material、Mesh 排序，最后按相机距离从前到后。前向排序最大化 Early-Z 剔除；按 Material/Mesh 排序最大化 SRP Batcher 与 Instancing 命中率。</li>
+<li><strong><code>CommonTransparent</code></strong> 半透明几何标准排序：从后到前（远到近）。这是 alpha blend 正确性的硬性要求，性能上无法避免破坏 batch。</li>
+<li>其他细粒度选项（<code>OptimizeStateChanges</code> / <code>BackToFront</code> / <code>RenderQueue</code> 等）在特殊场景下用，比如纯 UI 渲染或自定义透明度排序。</li>
+</ul>
+<h3 id="2-3-RenderQueueRange：队列分区"><a href="#2-3-RenderQueueRange：队列分区" class="headerlink" title="2.3 RenderQueueRange：队列分区"></a>2.3 RenderQueueRange：队列分区</h3><p><code>RenderQueueRange</code> 用于按 Material 的 <code>RenderQueue</code> 值切分对象集合：</p>
+<ul>
+<li><code>RenderQueueRange.opaque</code> ≈ <code>[0, 2500]</code>，对应 Background / Geometry / AlphaTest 队列。</li>
+<li><code>RenderQueueRange.transparent</code> ≈ <code>[2501, 5000]</code>，对应 Transparent 及之后的队列。</li>
+</ul>
+<p>不透明几何 Pass 与半透明几何 Pass 通过这个字段在同一份 <code>CullingResults</code> 上做不重叠切片。Cutout（AlphaTest）虽然有透明度概念，但由于支持 Early-Z，仍归入 opaque 区间。</p>
+<h3 id="2-4-PerObjectData：每对象数据需求声明"><a href="#2-4-PerObjectData：每对象数据需求声明" class="headerlink" title="2.4 PerObjectData：每对象数据需求声明"></a>2.4 PerObjectData：每对象数据需求声明</h3><p><code>PerObjectData</code> 是位掩码，告诉引擎本次渲染需要为每个对象准备哪些”附加数据”。最常用的几个：</p>
+<ul>
+<li><code>ReflectionProbes</code> — 自动选择最近的两个 Reflection Probe 并写入 <code>unity_SpecCube0/1</code></li>
+<li><code>Lightmaps</code> — 写入 <code>unity_LightmapST</code></li>
+<li><code>ShadowMask</code> — 写入 <code>unity_ShadowMask</code> 相关变量</li>
+<li><code>LightProbe</code> / <code>OcclusionProbe</code> — 写入球谐系数</li>
+<li><code>LightProbeProxyVolume</code> / <code>OcclusionProbeProxyVolume</code> — 用于 LPPV 的体积探针</li>
+</ul>
+<p>Custom SRP 在 Forward+ 时代之后，原本通过 <code>LightData</code> 和 <code>LightIndices</code> 传递的 per-object 光源索引已被 Tile-based 光源分配替代，所以这两个 flag 不再使用。这种简化在 Note 4（直接光照与 Tiled Forward+）会展开。</p>
+<p>声明哪些 <code>PerObjectData</code> 直接关系到 Shader 端能读到哪些 <code>unity_*</code> 变量。漏声明会导致 Shader 读到默认值，画面错误难以定位——这是 Custom SRP 中最典型的”Shader 没坏但渲染错”的来源。</p>
+<hr>
+<h2 id="3-批次系统：现代实现的两条主线"><a href="#3-批次系统：现代实现的两条主线" class="headerlink" title="3. 批次系统：现代实现的两条主线"></a>3. 批次系统：现代实现的两条主线</h2><p>Render Graph + RendererList 模式下，批次决策已经从”开发者勾选选项”退化为引擎自动判定。每个 Renderer 走以下决策路径：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[Renderer 进入 RendererList] --&gt; B{使用了&lt;br/&gt;MaterialPropertyBlock?}<br>    B --&gt;|是| D{Shader 启用了&lt;br/&gt;GPU Instancing?}<br>    B --&gt;|否| C{Shader 兼容&lt;br/&gt;SRP Batcher?}<br>    <br>    C --&gt;|是| E[SRP Batcher 路径&lt;br/&gt;持久化 CBUFFER]<br>    C --&gt;|否| D<br>    <br>    D --&gt;|是 + 同 Mesh+Material| F[GPU Instancing 路径&lt;br/&gt;合并为单次 Draw]<br>    D --&gt;|否| G[标准 SetPass + Draw&lt;br/&gt;慢路径]<br>    <br>    style E fill:#e8f5e9,stroke:#388e3c,stroke-width:2px<br>    style F fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br>    style G fill:#ffebee,stroke:#c62828<br></code></pre></td></tr></table></div></figure>
+
+<p>两条快路径覆盖了现代项目几乎全部场景。慢路径只在 Shader 不兼容 SRP Batcher 且未启用 Instancing 的情况下出现——这通常是写错了，不是设计选择。</p>
+<h3 id="3-1-SRP-Batcher：CBUFFER-持久化"><a href="#3-1-SRP-Batcher：CBUFFER-持久化" class="headerlink" title="3.1 SRP Batcher：CBUFFER 持久化"></a>3.1 SRP Batcher：CBUFFER 持久化</h3><p>SRP Batcher 的核心机制不是”合并 Draw Call”，而是”消除 Draw Call 之间的状态切换开销”。</p>
+<p>工作流程：</p>
+<ol>
+<li>第一次绘制某 Material 时，CPU 把材质属性打包成 CBUFFER 上传到 GPU 显存</li>
+<li>CBUFFER 在 GPU 端<strong>持久存在</strong>——只要材质数据不变就不需要重新上传</li>
+<li>后续绘制相同 Shader 的对象时，CPU 只发出”切换 CBUFFER offset + Draw”两条指令</li>
+<li>GPU 端跳过 Material binding 的全部 fixed-function 状态准备</li>
+</ol>
+<p>收益的根源在 CPU 端：传统模式下，每次切换 Material 都要触发 driver 重新组织 RenderState、绑定 texture、更新 uniform buffer——这些都是几百到上千个 ns 的开销。SRP Batcher 把它压到几十 ns。</p>
+<p>观察 Frame Debugger，多个走 SRP Batcher 的对象会被聚合为一个 <strong>“SRP Batch”</strong> 节点，下方列出参与的 Mesh 与对应的 Material。<strong>Draw Call 数量本身没变</strong>——单个 SRP Batch 节点可能展开为几十次 DrawMesh，但 SetPass 调用只计一次。</p>
+<p>启用方式只有一行：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs csharp">GraphicsSettings.useScriptableRenderPipelineBatching = <span class="hljs-literal">true</span>;<br></code></pre></td></tr></table></div></figure>
+
+<p>绝大多数现代项目都在 <code>RenderPipelineAsset</code> 的构造路径里默认开启。</p>
+<h3 id="3-2-GPU-Instancing：减少-Draw-Call-总数"><a href="#3-2-GPU-Instancing：减少-Draw-Call-总数" class="headerlink" title="3.2 GPU Instancing：减少 Draw Call 总数"></a>3.2 GPU Instancing：减少 Draw Call 总数</h3><p>GPU Instancing 的逻辑与 SRP Batcher 正交：当多个 Renderer 使用<strong>完全相同的 Mesh + Material</strong>时，引擎可以发出单个 <code>DrawMeshInstanced</code> 指令，让 GPU 在一次 Draw 中绘制 N 个实例。</p>
+<p>每实例的差异通过两种方式注入：</p>
+<ul>
+<li><strong><code>MaterialPropertyBlock</code></strong>：CPU 端为每个对象设置不同属性（颜色、自定义参数），引擎把它们打包成 instance buffer 一次上传</li>
+<li><strong><code>unity_ObjectToWorld</code></strong>：每实例的世界变换矩阵自动写入 instance buffer</li>
+</ul>
+<p>GPU Instancing 真正减少了 Draw Call 数量——这对 GPU 命令处理器和 driver 都有收益。但它的适用面比 SRP Batcher 窄：必须同 Mesh 同 Material。典型场景是植被、子弹、UI 元素、粒子。</p>
+<h3 id="3-3-RendererList-模式下的强制配置"><a href="#3-3-RendererList-模式下的强制配置" class="headerlink" title="3.3 RendererList 模式下的强制配置"></a>3.3 RendererList 模式下的强制配置</h3><p>这是 Render Graph 时代的关键变化：<code>RendererListDesc</code> 不暴露 <code>enableDynamicBatching</code> 和 <code>enableInstancing</code> 字段。引擎默认：</p>
+<ul>
+<li><strong>Dynamic Batching 永远禁用</strong></li>
+<li><strong>GPU Instancing 永远启用</strong></li>
+</ul>
+<p>理由直白：Dynamic Batching 是为低端 GPU 时代设计的，把多个小 Mesh 在 CPU 端合并到一个 Vertex Buffer 再提交。在 SRP Batcher 与 GPU Instancing 都可用的现代环境下，它的 CPU 合并开销已超过收益。GPU Instancing 没有任何禁用的理由——不兼容的 Shader 不会受影响，兼容的 Shader 默认获益。</p>
+<p>这条简化让上层代码消失了一对配置项，开发者只需关心 Shader 写得对不对。</p>
+<h3 id="3-4-Static-Batching：构建期的另一种存在"><a href="#3-4-Static-Batching：构建期的另一种存在" class="headerlink" title="3.4 Static Batching：构建期的另一种存在"></a>3.4 Static Batching：构建期的另一种存在</h3><p><code>Static</code> 标记的物体在场景构建时被合并为大 Mesh，运行时作为一整个对象提交。它不在 RendererList 的决策路径上——本质是”一个超大 Renderer”。</p>
+<p>代价是构建期内存翻倍（原 Mesh + 合并 Mesh 都要保留）和运行时缺乏剔除粒度（合并后的大 Mesh 整体进出视锥）。在大场景中需要谨慎使用，通常配合 OcclusionCulling 才能避免反向劣化。</p>
+<blockquote>
+<p>📱 <strong>移动端的态度更激进</strong>：目前重度手游项目几乎全面废弃大范围的 Static Batching。合并出的超大 Mesh 会让<strong>包体与运行时峰值显存双双激增</strong>，且在 TBR 架构下失去了细粒度的 Tile 级剔除收益——超大 Mesh 即使大部分顶点不可见，整体也会被塞入 binning 阶段，浪费几何处理预算和片上内存带宽。移动端的现代实践是让 SRP Batcher + GPU Instancing 覆盖绝大多数批次需求，Static Batching 严格限制在”小尺寸、强相邻”的物体集合（同一房间的固定家具、单一建筑的固定装饰），并配合 Occlusion Culling 才考虑启用。</p>
+</blockquote>
+<hr>
+<h2 id="4-Shader-端的批次兼容性"><a href="#4-Shader-端的批次兼容性" class="headerlink" title="4. Shader 端的批次兼容性"></a>4. Shader 端的批次兼容性</h2><p>Shader 是否走 SRP Batcher / GPU Instancing 完全由其 HLSL 代码结构决定。两种快路径有不同的代码契约。</p>
+<h3 id="4-1-SRP-Batcher-兼容性"><a href="#4-1-SRP-Batcher-兼容性" class="headerlink" title="4.1 SRP Batcher 兼容性"></a>4.1 SRP Batcher 兼容性</h3><p>两条硬性要求：</p>
+<p><strong>所有材质属性必须放入唯一的 <code>UnityPerMaterial</code> CBUFFER</strong></p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">CBUFFER_START(UnityPerMaterial)<br>    float4 _BaseMap_ST;<br>    float4 _BaseColor;<br>    float _Metallic;<br>    float _Smoothness;<br>    float _Cutoff;<br>CBUFFER_END<br></code></pre></td></tr></table></div></figure>
+
+<blockquote>
+<p>⚠️ <strong>HLSL 常量缓冲区的 16 字节（4 个 float）对齐潜规则</strong>：CBUFFER 中每个变量都不能跨越 16 字节边界。当连续声明 <code>float3</code> 紧跟 <code>float2</code>、或 <code>float</code> 紧跟 <code>float3</code> 时，编译器会在前者后面<strong>自动插入 padding</strong>，把后者推到下一个 16 字节边界。这种隐式 padding 不仅会让 CPU 端通过 memcpy 写入数据时产生显存错位，在某些 Unity 版本上还会直接导致 SRP Batcher 兼容性检测失败（因为编译器看到的实际 buffer 布局与代码声明不一致）。安全做法是按 <code>float4 → float3 → float2 → float</code> 的尺寸递减顺序声明字段，或显式用 <code>float4</code> 把零散小字段打包合并。</p>
+</blockquote>
+<p>材质属性散落在 CBUFFER 之外，或分布在多个 CBUFFER 中，都会让该 Shader 在 Inspector 中显示 “Not compatible with SRP Batcher”。</p>
+<p><strong>所有 per-object 引擎变量必须放入 <code>UnityPerDraw</code> CBUFFER，且必须包含特定的固定字段</strong></p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">CBUFFER_START(UnityPerDraw)<br>    float4x4 unity_ObjectToWorld;<br>    float4x4 unity_WorldToObject;<br>    float4 unity_LODFade;<br>    real4 unity_WorldTransformParams;<br><br>    real4 unity_RenderingLayer;<br><br>    float4 unity_LightData;<br>    real4 unity_LightIndices[2];<br><br>    float4 unity_ProbesOcclusion;<br><br>    real4 unity_SHAr;<br>    real4 unity_SHAg;<br>    real4 unity_SHAb;<br>    real4 unity_SHBr;<br>    real4 unity_SHBg;<br>    real4 unity_SHBb;<br>    real4 unity_SHC;<br><br>    float4 unity_ProbeVolumeParams;<br>    float4x4 unity_ProbeVolumeWorldToObject;<br>    float4 unity_ProbeVolumeSizeInv;<br>    float4 unity_ProbeVolumeMin;<br><br>    float2 unity_LightmapST;<br>    float4 unity_DynamicLightmapST;<br>CBUFFER_END<br></code></pre></td></tr></table></div></figure>
+
+<p>注意 <code>unity_LODFade</code>：即使 Shader 不支持 LOD Cross-fade，这个字段也必须声明——它是 <code>UnityPerDraw</code> 的固定布局成员。漏声明会让整个 buffer offset 错位。</p>
+<p>字段顺序在 Catlike Coding 教程中按 Unity 官方约定排列。理论上顺序不严格要求，但与官方一致能避免未来 Unity 升级带来的微妙问题。</p>
+<h3 id="4-2-GPU-Instancing-兼容性"><a href="#4-2-GPU-Instancing-兼容性" class="headerlink" title="4.2 GPU Instancing 兼容性"></a>4.2 GPU Instancing 兼容性</h3><p>启用 Instancing 需要在 Shader 中加入 <code>#pragma multi_compile_instancing</code>，并把材质属性改为 instanced 形式：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)<br>    UNITY_DEFINE_INSTANCED_PROP(float4, _BaseColor)<br>UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)<br></code></pre></td></tr></table></div></figure>
+
+<p>Vertex 与 Fragment 中需要传递 instance ID：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">struct Attributes<br>{<br>    float3 positionOS : POSITION;<br>    UNITY_VERTEX_INPUT_INSTANCE_ID<br>};<br><br>struct Varyings<br>{<br>    float4 positionCS : SV_POSITION;<br>    UNITY_VERTEX_INPUT_INSTANCE_ID<br>};<br><br>Varyings Vertex(Attributes input)<br>{<br>    Varyings output;<br>    UNITY_SETUP_INSTANCE_ID(input);<br>    UNITY_TRANSFER_INSTANCE_ID(input, output);<br>    // ... 正常变换<br>    return output;<br>}<br><br>float4 Fragment(Varyings input) : SV_TARGET<br>{<br>    UNITY_SETUP_INSTANCE_ID(input);<br>    float4 baseColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _BaseColor);<br>    // ...<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>UNITY_SETUP_INSTANCE_ID</code> 必须在每个 Shader 函数入口调用，否则 <code>UNITY_ACCESS_INSTANCED_PROP</code> 会读到错误数据。这是初学者最常踩的坑。</p>
+<h3 id="4-3-两条路径的优先级"><a href="#4-3-两条路径的优先级" class="headerlink" title="4.3 两条路径的优先级"></a>4.3 两条路径的优先级</h3><p>SRP Batcher 优先于 GPU Instancing。如果一个对象同时满足两个条件，引擎走 SRP Batcher。原因是 SRP Batcher 不要求 Mesh 相同——覆盖面更广。</p>
+<p>但有一个例外：使用 <code>MaterialPropertyBlock</code> 的对象会<strong>自动从 SRP Batcher 路径退出</strong>。底层原因值得说透——SRP Batcher 的核心前提是”材质数据在 GPU 端持久化、跨对象共享”，而 <code>MaterialPropertyBlock</code> 强行在 per-object 粒度注入差异化属性，这直接打破了数据共享假设，迫使引擎回退到逐对象更新 CBUFFER 的慢路径。为了避免这种性能塌方，引擎自动把这类对象<strong>移交给 GPU Instancing 路径</strong>：MPB 中的属性被打包成 instance buffer，反而成为 Instancing 的天然驱动力。这是为什么”用 MPB 替代 Material 修改”在性能上几乎无损——不是 MPB 没有代价，而是引擎为它准备了另一条同样高效的路径。</p>
+<p>实践推论：</p>
+<ul>
+<li>普通对象走 SRP Batcher——这是默认路径，只要 Shader 写对了就生效</li>
+<li>大量同款实例（草、植被、子弹）显式用 <code>MaterialPropertyBlock</code> 触发 Instancing</li>
+<li>不要用 <code>Material.Lerp</code> 或运行时改 <code>Material</code> 属性——这会无差别破坏 batch；改用 <code>MaterialPropertyBlock</code></li>
+</ul>
+<h3 id="4-4-兼容性常见破坏源"><a href="#4-4-兼容性常见破坏源" class="headerlink" title="4.4 兼容性常见破坏源"></a>4.4 兼容性常见破坏源</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>后果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>材质属性写在 <code>UnityPerMaterial</code> 之外</td>
+<td>Shader 不兼容 SRP Batcher</td>
+</tr>
+<tr>
+<td><code>UnityPerDraw</code> 漏掉 <code>unity_LODFade</code> 等固定字段</td>
+<td>Shader 不兼容 SRP Batcher</td>
+</tr>
+<tr>
+<td>运行时调用 <code>material.SetColor</code></td>
+<td>该 Renderer 退出 SRP Batcher</td>
+</tr>
+<tr>
+<td>使用 Shader Graph 后手动加属性但未重编</td>
+<td>兼容性状态错位</td>
+</tr>
+<tr>
+<td>同 Material 不同 keyword 变体</td>
+<td>各变体单独 batch，无法跨变体合并</td>
+</tr>
+</tbody></table></div>
+<p>每条都可以在 Inspector 中通过 “Not compatible with SRP Batcher” 提示验证。开发期养成查看这个状态的习惯。</p>
+<hr>
+<h2 id="5-LOD-Group"><a href="#5-LOD-Group" class="headerlink" title="5. LOD Group"></a>5. LOD Group</h2><p>LOD（Level of Detail）系统通过屏幕占比自动选择 Mesh 精度。它与批次系统的协作关系是 Note 中容易被忽略但很关键的部分。</p>
+<h3 id="5-1-LOD-选择机制"><a href="#5-1-LOD-选择机制" class="headerlink" title="5.1 LOD 选择机制"></a>5.1 LOD 选择机制</h3><p>每个 <code>LODGroup</code> 组件持有多个 LOD 级别，每级关联一个或多个 Renderer 与一个屏幕高度阈值：</p>
+<ul>
+<li>对象在屏幕上的相对高度大于阈值 → 当前级别可见</li>
+<li>低于最低级别阈值 → Culled（完全不渲染）</li>
+</ul>
+<p>实际计算受两个全局参数影响：</p>
+<ul>
+<li><strong><code>QualitySettings.lodBias</code></strong> — 全局乘数。值越大越倾向于使用高精度 LOD（更”清晰”），值越小越激进降级（更”省”）</li>
+<li><strong><code>QualitySettings.maximumLODLevel</code></strong> — 强制的最高级别上限，比如设为 1 让所有对象至少跳过 LOD0</li>
+</ul>
+<p>LOD 的选择在 Cull 阶段完成，结果直接体现在 <code>CullingResults</code> 中——LOD 没被选中的 Renderer 不会出现在 RendererList 里，等同于被剔除。</p>
+<h3 id="5-2-Cross-fade-Dithering"><a href="#5-2-Cross-fade-Dithering" class="headerlink" title="5.2 Cross-fade Dithering"></a>5.2 Cross-fade Dithering</h3><p>LOD 切换时直接跳变会很扎眼，Cross-fade 模式让相邻级别在过渡区间共存渲染，通过 dithered 透明度做平滑切换。</p>
+<p>启用 Cross-fade 后，过渡区间内同时绘制 LOD<sub>n</sub> 和 LOD<sub>n+1</sub>。每个对象通过 <code>unity_LODFade.x</code>（取值 -1 到 1）拿到当前 fade 因子，在 Shader 中通过 dither 做 alpha test：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">void ClipLOD(float2 positionCS, float fade)<br>{<br>    #if defined(LOD_FADE_CROSSFADE)<br>        float dither = InterleavedGradientNoise(positionCS, 0);<br>        clip(fade + (fade &lt; 0.0 ? dither : -dither));<br>    #endif<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>InterleavedGradientNoise</code> 是 Jorge Jimenez 提出的稳定屏幕空间 dither 函数——同一像素位置每帧给出相同噪声值，避免动态闪烁。<code>fade &gt; 0</code> 时正向 clip（淡入新 LOD），<code>fade &lt; 0</code> 时反向 clip（淡出旧 LOD）。</p>
+<p>Shader 端启用方式：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">#pragma multi_compile _ LOD_FADE_CROSSFADE<br></code></pre></td></tr></table></div></figure>
+
+<p>LOD Group 在 inspector 里把 Fade Mode 设为 Cross-Fade 即可触发。</p>
+<h3 id="5-3-LOD-与批次的协作"><a href="#5-3-LOD-与批次的协作" class="headerlink" title="5.3 LOD 与批次的协作"></a>5.3 LOD 与批次的协作</h3><p>dithered cross-fade 相对其他 fade 模式（如 animated）的关键优势：<strong>它不破坏 GPU Instancing</strong>。</p>
+<p>原因是同一 LOD 级别内所有对象的 <code>unity_LODFade.x</code> 值相同——它们仍然可以合并为单个 instance batch。如果用 animated fade（每对象不同 fade 因子），instance buffer 中每个实例需要独立的 fade 数据，会破坏 batching 假设。</p>
+<p>实践：</p>
+<ul>
+<li>植被、石头等密集对象：LOD Group + Cross-Fade Dithered + GPU Instancing 三件套</li>
+<li>主角、关键道具：可以用 SpeedTree 风格的 vertex animation fade，但代价是每对象单独绘制</li>
+</ul>
+<hr>
+<h2 id="6-调试与性能验证"><a href="#6-调试与性能验证" class="headerlink" title="6. 调试与性能验证"></a>6. 调试与性能验证</h2><h3 id="6-1-Frame-Debugger-中的批次识别"><a href="#6-1-Frame-Debugger-中的批次识别" class="headerlink" title="6.1 Frame Debugger 中的批次识别"></a>6.1 Frame Debugger 中的批次识别</h3><p>打开 Frame Debugger（<code>Window / Analysis / Frame Debugger</code>），可以直观看到批次合并情况：</p>
+<ul>
+<li><strong><code>SRP Batch</code></strong> 节点：多个对象被合并为一个 SRP Batcher 段。展开可看包含的 Mesh 列表与统一使用的 Shader Variant。</li>
+<li><strong><code>Draw Mesh (instanced)</code></strong> 节点：GPU Instancing 命中。详情面板显示实例数量。</li>
+<li><strong>单独的 <code>Draw Mesh</code></strong> 节点：未命中任何快路径。需要排查 Shader 兼容性或 MaterialPropertyBlock 使用。</li>
+</ul>
+<p>每个节点会显示”Why this draw call can’t be batched with the previous one”——这是最直接的诊断工具。常见原因包括 keyword 不同、Material 不同、MaterialPropertyBlock 内容不同等。</p>
+<h3 id="6-2-Stats-面板分解"><a href="#6-2-Stats-面板分解" class="headerlink" title="6.2 Stats 面板分解"></a>6.2 Stats 面板分解</h3><p>Game 视图右上角的 Stats 面板提供宏观批次数据：</p>
+<ul>
+<li><strong>Batches</strong> — 本帧的总 batch 数。SRP Batch 计为单个，但内部包含多个 DrawMesh。</li>
+<li><strong>Saved by batching</strong> — 因 batch 节省的 Draw Call 数量。这个数字真正反映批次系统的收益。</li>
+<li><strong>SetPass calls</strong> — Pipeline 状态切换次数。SRP Batcher 的核心收益就是降低这个数字。</li>
+</ul>
+<p>诊断节奏：先看 SetPass calls 是否合理（典型移动端目标 &lt; 50），再看 Batches，最后看具体节点。</p>
+<hr>
+<h2 id="7-TA-Takeaway：批次优化的本质是减少状态切换"><a href="#7-TA-Takeaway：批次优化的本质是减少状态切换" class="headerlink" title="7. TA Takeaway：批次优化的本质是减少状态切换"></a>7. TA Takeaway：批次优化的本质是减少状态切换</h2><p>批次系统经常被误解为”减少 Draw Call 数量”。实际上现代 GPU 单帧能轻松处理上万次 Draw Call——<strong>真正的瓶颈是 CPU 端 driver 准备命令的开销和 GPU 端 Pipeline State Object 切换的开销</strong>。</p>
+<h3 id="7-1-状态切换才是-CPU-杀手"><a href="#7-1-状态切换才是-CPU-杀手" class="headerlink" title="7.1 状态切换才是 CPU 杀手"></a>7.1 状态切换才是 CPU 杀手</h3><p>每次 <code>SetPass</code> 都隐含 driver 层面的复杂工作：</p>
+<ul>
+<li>解析 Material 的 RenderState（混合方程、深度测试、剔除模式）</li>
+<li>绑定 Shader 程序（VS + PS + 可能的 GS/HS/DS）</li>
+<li>上传或更新 Material 的 uniform buffer</li>
+<li>重绑定纹理、采样器</li>
+<li>在 D3D12/Vulkan 后端，可能触发 PSO（Pipeline State Object）查找或创建</li>
+</ul>
+<p>这些操作是几百 ns 到几 μs 量级。一帧 1000 个不同 Material 的 SetPass 就可能吃掉 1-3 ms 的 CPU 时间——这在 60 FPS 预算（16.7 ms）和 120 FPS 预算（8.3 ms）下是不可接受的。</p>
+<p>SRP Batcher 把”切换 Material”压缩为”切换 CBUFFER offset”——CBUFFER 已在 GPU 端持久化，CPU 只需提交一个轻量指令。这是为什么相同 Shader、不同 Material 的对象数量级再大都不会成为 CPU 瓶颈。</p>
+<h3 id="7-2-SRP-Batcher-vs-GPU-Instancing-收益模型对比"><a href="#7-2-SRP-Batcher-vs-GPU-Instancing-收益模型对比" class="headerlink" title="7.2 SRP Batcher vs GPU Instancing 收益模型对比"></a>7.2 SRP Batcher vs GPU Instancing 收益模型对比</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>SRP Batcher</th>
+<th>GPU Instancing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>减少 Draw Call 数量</strong></td>
+<td>不减少</td>
+<td>大幅减少（N→1）</td>
+</tr>
+<tr>
+<td><strong>减少 SetPass 数量</strong></td>
+<td>大幅减少</td>
+<td>部分减少</td>
+</tr>
+<tr>
+<td><strong>减少 CPU driver 开销</strong></td>
+<td>主要收益</td>
+<td>次要收益</td>
+</tr>
+<tr>
+<td><strong>减少 GPU 命令处理开销</strong></td>
+<td>轻微</td>
+<td>主要收益</td>
+</tr>
+<tr>
+<td><strong>Mesh 必须相同</strong></td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td><strong>Material 必须相同</strong></td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td><strong>Shader Variant 必须相同</strong></td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td><strong>典型适用场景</strong></td>
+<td>多样的中量级对象</td>
+<td>大量同款实例</td>
+</tr>
+</tbody></table></div>
+<p>这两个系统不是替代关系——一个项目通常 SRP Batcher 覆盖 80% 的对象，GPU Instancing 处理剩余的密集实例（草、子弹、UI、特效）。</p>
+<h3 id="7-3-实践原则"><a href="#7-3-实践原则" class="headerlink" title="7.3 实践原则"></a>7.3 实践原则</h3><ul>
+<li><strong>第一原则：保证所有自定义 Shader 兼容 SRP Batcher</strong>。这是免费的性能。Inspector 中的兼容性状态应该是开发期 daily check。</li>
+<li><strong>不要运行时改 Material 属性</strong>。需要动态变化时一律用 <code>MaterialPropertyBlock</code>——它会让对象退出 SRP Batcher 但进入 GPU Instancing 路径，性能不会塌方。</li>
+<li><strong>大量实例对象（&gt;50 个同款）显式启用 GPU Instancing</strong>。植被系统、粒子系统、UI 列表都属于这一类。</li>
+<li><strong>LOD Cross-Fade 永远用 dithered 模式</strong>——保留 instancing 能力。</li>
+<li><strong>Stats 面板的 SetPass calls 是项目体检指标</strong>。移动端目标 &lt; 50，主机端 &lt; 200。超出阈值优先排查 Shader 变体爆炸或 MaterialPropertyBlock 滥用。</li>
+<li><strong>SRP Batcher 不是银弹</strong>。Shader Variant 数量爆炸（过多 multi_compile）会让 batch 在 variant 边界断裂——这一点会在 Note 8（工程架构）展开讨论 keyword 收敛策略。</li>
+</ul>
+<p>后续每篇笔记的 Pass 实现都默认遵循上述原则。当某个 Shader 看似简单但渲染慢时，第一反应应该是：检查它的 SRP Batcher 兼容性。</p>
+<hr>
+<h2 id="关键-API-速查"><a href="#关键-API-速查" class="headerlink" title="关键 API 速查"></a>关键 API 速查</h2><details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// 剔除</span><br>camera.TryGetCullingParameters(<span class="hljs-keyword">out</span> <span class="hljs-keyword">var</span> cullingParameters);<br>cullingParameters.shadowDistance = ...;<br><span class="hljs-keyword">var</span> cullingResults = context.Cull(<span class="hljs-keyword">ref</span> cullingParameters);<br><br><span class="hljs-comment">// RendererList 创建</span><br><span class="hljs-keyword">new</span> RendererListDesc(shaderTagId, cullingResults, camera)<br>{<br>    sortingCriteria = SortingCriteria.CommonOpaque,<br>    renderQueueRange = RenderQueueRange.opaque,<br>    rendererConfiguration = PerObjectData.ReflectionProbes | ...,<br>    renderingLayerMask = <span class="hljs-built_in">uint</span>,<br>    excludeObjectMotionVectors = <span class="hljs-built_in">bool</span>,<br>    overrideMaterial = Material,<br>    overrideMaterialPassIndex = <span class="hljs-built_in">int</span>,<br>};<br>RendererListHandle list = renderGraph.CreateRendererList(desc);<br><br><span class="hljs-comment">// SRP Batcher 全局开关</span><br>GraphicsSettings.useScriptableRenderPipelineBatching = <span class="hljs-literal">true</span>;<br><br><span class="hljs-comment">// 常用 ShaderTagId</span><br><span class="hljs-keyword">new</span> ShaderTagId(<span class="hljs-string">"SRPDefaultUnlit"</span>);<br><span class="hljs-keyword">new</span> ShaderTagId(<span class="hljs-string">"CustomLit"</span>);<br><span class="hljs-keyword">new</span> ShaderTagId(<span class="hljs-string">"ShadowCaster"</span>);<br><span class="hljs-keyword">new</span> ShaderTagId(<span class="hljs-string">"Meta"</span>);<br><br><span class="hljs-comment">// 常用 SortingCriteria</span><br>SortingCriteria.CommonOpaque;<br>SortingCriteria.CommonTransparent;<br><br><span class="hljs-comment">// 常用 RenderQueueRange</span><br>RenderQueueRange.opaque;       <span class="hljs-comment">// [0, 2500]</span><br>RenderQueueRange.transparent;  <span class="hljs-comment">// [2501, 5000]</span><br>RenderQueueRange.all;          <span class="hljs-comment">// [0, 5000]</span><br></code></pre></td></tr></table></div></figure></details>
+
+<details class="md-code-fold"><summary>HLSL</summary><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// SRP Batcher 兼容的 CBUFFER 模板<br>CBUFFER_START(UnityPerMaterial)<br>    float4 _BaseMap_ST;<br>    float4 _BaseColor;<br>    // ... 所有材质属性<br>CBUFFER_END<br><br>CBUFFER_START(UnityPerDraw)<br>    float4x4 unity_ObjectToWorld;<br>    float4x4 unity_WorldToObject;<br>    float4 unity_LODFade;          // 必须包含<br>    real4 unity_WorldTransformParams;<br>    // ... 其他 unity_ 变量<br>CBUFFER_END<br><br>// GPU Instancing 兼容<br>#pragma multi_compile_instancing<br><br>UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)<br>    UNITY_DEFINE_INSTANCED_PROP(float4, _BaseColor)<br>UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)<br><br>// Vertex/Fragment 入口模板<br>UNITY_VERTEX_INPUT_INSTANCE_ID<br>UNITY_SETUP_INSTANCE_ID(input);<br>UNITY_TRANSFER_INSTANCE_ID(input, output);<br>UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _BaseColor);<br><br>// LOD Cross-fade<br>#pragma multi_compile _ LOD_FADE_CROSSFADE<br>ClipLOD(positionCS.xy, unity_LODFade.x);<br></code></pre></td></tr></table></div></figure></details>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/posts/e49fd3648422/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>「Custom SRP」：表面着色器与 BRDF</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/382feac0d5ef/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      「Custom SRP」：渲染管线架构与 Render Graph
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP-Batcher/" class="post-tag">#SRP Batcher</a><a href="/tags/GPU-Instancing/" class="post-tag">#GPU Instancing</a><a href="/tags/Draw-Call/" class="post-tag">#Draw Call</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e962819a878a/" title="「Custom SRP」：直接光照与 Tiled Forward+" rel="bookmark">「Custom SRP」：直接光照与 Tiled Forward+</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>

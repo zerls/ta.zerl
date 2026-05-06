@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        「Custom SRP」：直接光照与 Tiled Forward+ | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+          <div class="post-banner">
+            <img src="https://catlikecoding.com/unity/custom-srp/3-0-0/tutorial-image.jpg" alt="Banner">
+          </div>
+        
+        
+        <div class="post-title">「Custom SRP」：直接光照与 Tiled Forward+</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2024-06-24 · 更新于2026-05-01
+            
+            
+          </div>
+          
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Forward/" class="post-tag">#Forward+</a><a href="/tags/%E5%85%89%E7%85%A7/" class="post-tag">#光照</a><a href="/tags/Burst-Job/" class="post-tag">#Burst Job</a><a href="/tags/StructuredBuffer/" class="post-tag">#StructuredBuffer</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#TL-DR"><span class="post-toc-text">TL;DR</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-光源数据：从-CullingResults-到-StructuredBuffer"><span class="post-toc-text">1. 光源数据：从 CullingResults 到 StructuredBuffer</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-1-数据结构定义"><span class="post-toc-text">1.1 数据结构定义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-2-LightingPass-数据收集"><span class="post-toc-text">1.2 LightingPass 数据收集</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-3-StructuredBuffer-上传"><span class="post-toc-text">1.3 StructuredBuffer 上传</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-方向光照模型"><span class="post-toc-text">2. 方向光照模型</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-1-简单遍历策略"><span class="post-toc-text">2.1 简单遍历策略</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-2-单光源贡献计算"><span class="post-toc-text">2.2 单光源贡献计算</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-3-物理光度学单位"><span class="post-toc-text">2.3 物理光度学单位</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-点光与聚光：衰减模型"><span class="post-toc-text">3. 点光与聚光：衰减模型</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-距离平方反比-Range-Attenuation"><span class="post-toc-text">3.1 距离平方反比 + Range Attenuation</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-聚光灯锥角衰减"><span class="post-toc-text">3.2 聚光灯锥角衰减</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-Tiled-Forward-：屏幕空间光源剔除"><span class="post-toc-text">4. Tiled Forward+：屏幕空间光源剔除</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-1-设计动机"><span class="post-toc-text">4.1 设计动机</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-2-整体数据流"><span class="post-toc-text">4.2 整体数据流</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-3-Tile-划分参数"><span class="post-toc-text">4.3 Tile 划分参数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-4-ForwardPlusTilesJob：CPU-端-Burst-剔除"><span class="post-toc-text">4.4 ForwardPlusTilesJob：CPU 端 Burst 剔除</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-5-Tile-Data-Buffer-结构"><span class="post-toc-text">4.5 Tile Data Buffer 结构</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-6-Shader-端的查询路径"><span class="post-toc-text">4.6 Shader 端的查询路径</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-7-调试可视化：Heat-Map"><span class="post-toc-text">4.7 调试可视化：Heat Map</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-8-实现路线对比：CPU-Job-vs-Compute-Shader"><span class="post-toc-text">4.8 实现路线对比：CPU Job vs Compute Shader</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-RenderingLayer-与光源遮罩"><span class="post-toc-text">5. RenderingLayer 与光源遮罩</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#6-TA-Takeaway"><span class="post-toc-text">6. TA Takeaway</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-1-Forward-的复杂度模型"><span class="post-toc-text">6.1 Forward+ 的复杂度模型</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-2-方向光与点光分而治之的工程意义"><span class="post-toc-text">6.2 方向光与点光分而治之的工程意义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-3-数据传递的现代化收益"><span class="post-toc-text">6.3 数据传递的现代化收益</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-4-实践原则"><span class="post-toc-text">6.4 实践原则</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#关键-API-速查"><span class="post-toc-text">关键 API 速查</span></a></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <blockquote>
+<p>系列第 4 篇。承接 Note 1 的 Pass 框架与 Note 2 的几何提交链路。本篇关注的是”几何已经被画了，但着色器是怎么知道哪些光照亮它的”——从 CullingResults 到 StructuredBuffer 的 CPU→GPU 数据链路，以及现代 Forward+ 在屏幕空间分块剔除光源的完整机制。BRDF 的具体公式留给 Note 3，本篇只关心”光源信息如何到达 BRDF 输入端”。</p>
+</blockquote>
+<h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h2><ul>
+<li><strong>数据链路</strong>：<code>CullingResults.visibleLights</code> → <code>DirectionalLightData[]</code> / <code>OtherLightData[]</code> StructuredBuffer → Shader 按需读取。光源数量不再被 CBUFFER 数组上限制约——结构化缓冲打破了这条历史限制。</li>
+<li><strong>方向光走简单路径</strong>：数量少（典型 1-4 个），无需空间分块，Shader 端直接 for 循环遍历。</li>
+<li><strong>点光与聚光走 Forward+</strong>：屏幕分 Tile，每 Tile 预计算覆盖光源的索引列表。Shader 按像素的 Tile 坐标查表，只对命中光源做 BRDF 计算——把 <code>O(像素 × 总光源数)</code> 降到 <code>O(像素 × 每 Tile 光源数)</code>。</li>
+<li><strong>现代实现的工程选择</strong>：Catlike SRP 的 tile 剔除用 <strong>Burst Job + NativeArray</strong> 在 CPU 端完成，不是 Compute Shader。对于中等光源密度这是更简单、可调试、无 GPU 同步开销的路径。HDRP 与商业项目则采用 Compute Shader 以应对高密度场景。</li>
+<li><strong>物理光度学单位无感接入</strong>：Unity Physical Light Units 模式下，Directional 用 Lux、Point 用 Lumen、Spot 用 Lumen + Candela。引擎在 <code>VisibleLight.finalColor</code> 完成转换，Shader 端只见到线性辐射度。</li>
+</ul>
+<hr>
+<h2 id="1-光源数据：从-CullingResults-到-StructuredBuffer"><a href="#1-光源数据：从-CullingResults-到-StructuredBuffer" class="headerlink" title="1. 光源数据：从 CullingResults 到 StructuredBuffer"></a>1. 光源数据：从 CullingResults 到 StructuredBuffer</h2><h3 id="1-1-数据结构定义"><a href="#1-1-数据结构定义" class="headerlink" title="1.1 数据结构定义"></a>1.1 数据结构定义</h3><p>光源数据通过两个显式内存布局的 struct 传递到 GPU。结构必须 <code>[StructLayout(LayoutKind.Sequential)]</code>，因为它们将被原样上传到 StructuredBuffer，C# 编译器不允许重排字段。</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> DirectionalLightData<br>{<br>    <span class="hljs-keyword">public</span> Vector4 color;             <span class="hljs-comment">// RGB: linear color * intensity, W: 未使用</span><br>    <span class="hljs-keyword">public</span> Vector4 directionAndMask;  <span class="hljs-comment">// XYZ: 世界空间反向光方向, W: rendering layer mask</span><br>    <span class="hljs-keyword">public</span> Vector4 shadowData;        <span class="hljs-comment">// XYZW: 阴影强度、Atlas 索引、normalBias、shadowMaskChannel</span><br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> stride =&gt; <span class="hljs-number">4</span> * <span class="hljs-number">4</span> * <span class="hljs-number">3</span>;  <span class="hljs-comment">// 48 bytes</span><br>}<br><br>[<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> OtherLightData<br>{<br>    <span class="hljs-keyword">public</span> Vector4 color;             <span class="hljs-comment">// RGB: linear color * intensity, W: 未使用</span><br>    <span class="hljs-keyword">public</span> Vector4 position;          <span class="hljs-comment">// XYZ: 世界空间位置, W: 1 / range²（衰减用）</span><br>    <span class="hljs-keyword">public</span> Vector4 directionAndMask;  <span class="hljs-comment">// XYZ: 聚光灯方向（点光源未使用）, W: rendering layer mask</span><br>    <span class="hljs-keyword">public</span> Vector4 spotAngles;        <span class="hljs-comment">// X: 1/(cosInner - cosOuter), Y: -cosOuter * X, ZW: 未使用</span><br>    <span class="hljs-keyword">public</span> Vector4 shadowData;        <span class="hljs-comment">// 见 Note 5</span><br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> stride =&gt; <span class="hljs-number">4</span> * <span class="hljs-number">4</span> * <span class="hljs-number">5</span>;  <span class="hljs-comment">// 80 bytes</span><br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>directionAndMask.w</code> 中的 rendering layer mask 是一个 <code>uint</code> 位掩码，但 StructuredBuffer 只能存浮点。技巧是用 <code>asuint(mask)</code> 在 Shader 端反读位模式——这样 32 位整数可以”借用”float 的存储槽。</p>
+<h3 id="1-2-LightingPass-数据收集"><a href="#1-2-LightingPass-数据收集" class="headerlink" title="1.2 LightingPass 数据收集"></a>1.2 LightingPass 数据收集</h3><p><code>LightingPass.SetupLights</code> 遍历可见光源，分类填充两个数组：</p>
+<details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">SetupLights</span>(<span class="hljs-params"><span class="hljs-built_in">int</span> renderingLayerMask</span>)</span><br>{<br>    NativeArray&lt;VisibleLight&gt; visibleLights = cullingResults.visibleLights;<br><br>    <span class="hljs-built_in">int</span> directionalCount = <span class="hljs-number">0</span>;<br>    <span class="hljs-built_in">int</span> otherCount = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; visibleLights.Length; i++)<br>    {<br>        VisibleLight visibleLight = visibleLights[i];<br>        Light light = visibleLight.light;<br><br>        <span class="hljs-comment">// RenderingLayer 过滤：相机配置可以掩掉某些光源</span><br>        <span class="hljs-keyword">if</span> ((light.renderingLayerMask &amp; renderingLayerMask) == <span class="hljs-number">0</span>) <span class="hljs-keyword">continue</span>;<br><br>        <span class="hljs-keyword">switch</span> (visibleLight.lightType)<br>        {<br>            <span class="hljs-keyword">case</span> LightType.Directional:<br>                <span class="hljs-keyword">if</span> (directionalCount &lt; maxDirectionalLightCount)<br>                    SetupDirectionalLight(directionalCount++, i, <span class="hljs-keyword">ref</span> visibleLight, light);<br>                <span class="hljs-keyword">break</span>;<br><br>            <span class="hljs-keyword">case</span> LightType.Point:<br>                <span class="hljs-keyword">if</span> (otherCount &lt; maxOtherLightCount)<br>                    SetupPointLight(otherCount, i, <span class="hljs-keyword">ref</span> visibleLight, light);<br>                <span class="hljs-keyword">if</span> (otherCount &lt; maxOtherLightCount)<br>                    SetupLightBounds(otherCount, <span class="hljs-keyword">ref</span> visibleLight);<br>                otherCount++;<br>                <span class="hljs-keyword">break</span>;<br><br>            <span class="hljs-keyword">case</span> LightType.Spot:<br>                <span class="hljs-keyword">if</span> (otherCount &lt; maxOtherLightCount)<br>                    SetupSpotLight(otherCount, i, <span class="hljs-keyword">ref</span> visibleLight, light);<br>                <span class="hljs-keyword">if</span> (otherCount &lt; maxOtherLightCount)<br>                    SetupLightBounds(otherCount, <span class="hljs-keyword">ref</span> visibleLight);<br>                otherCount++;<br>                <span class="hljs-keyword">break</span>;<br>        }<br>    }<br><br>    directionalLightCount = directionalCount;<br>    otherLightCount = otherCount;<br>}<br></code></pre></td></tr></table></div></figure></details>
+
+<p>要点：</p>
+<ul>
+<li><code>VisibleLight.finalColor</code> 已经包含 intensity 与物理单位转换的结果——直接是线性 RGB 辐射度。</li>
+<li>同时为每个 point / spot 计算屏幕空间 light bounds，喂给后续的 ForwardPlusTilesJob。</li>
+<li>Rendering Layer 掩码在 CPU 阶段做粗筛，Shader 端再做精细比对（见 §5）。</li>
+</ul>
+<h3 id="1-3-StructuredBuffer-上传"><a href="#1-3-StructuredBuffer-上传" class="headerlink" title="1.3 StructuredBuffer 上传"></a>1.3 StructuredBuffer 上传</h3><p>光源数据在 LightingPass 中作为 Render Graph 资源声明：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs csharp">pass.directionalLightDataBuffer = renderGraph.CreateBuffer(<span class="hljs-keyword">new</span> BufferDesc(<br>    maxDirectionalLightCount, DirectionalLightData.stride)<br>{<br>    name = <span class="hljs-string">"Directional Light Data"</span><br>});<br><br>pass.otherLightDataBuffer = renderGraph.CreateBuffer(<span class="hljs-keyword">new</span> BufferDesc(<br>    maxOtherLightCount, OtherLightData.stride)<br>{<br>    name = <span class="hljs-string">"Other Light Data"</span><br>});<br></code></pre></td></tr></table></div></figure>
+
+<p>执行阶段通过 <code>cmd.SetBufferData</code> 把 NativeArray 内容上传：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs csharp">context.cmd.SetBufferData(<br>    directionalLightDataBuffer,<br>    directionalLightData,<br>    <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, directionalLightCount);<br></code></pre></td></tr></table></div></figure>
+
+<p>Shader 端通过 <code>StructuredBuffer&lt;DirectionalLightData&gt; _DirectionalLightData</code> 读取。声明和 C# 端必须严格一致：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">struct DirectionalLightData<br>{<br>    float4 color;<br>    float4 directionAndMask;<br>    float4 shadowData;<br>};<br>StructuredBuffer&lt;DirectionalLightData&gt; _DirectionalLightData;<br></code></pre></td></tr></table></div></figure>
+
+<blockquote>
+<p>⚠️ <strong>平台兼容性</strong>：StructuredBuffer 在 WebGL 1/2 上不支持。这意味着采用此架构的 Custom SRP 不能构建 WebGL 平台。WebGPU 支持但目前仍在演进。如果项目需要 WebGL 兼容，需要保留 CBUFFER 数组的旧式实现作为分支。</p>
+</blockquote>
+<hr>
+<h2 id="2-方向光照模型"><a href="#2-方向光照模型" class="headerlink" title="2. 方向光照模型"></a>2. 方向光照模型</h2><h3 id="2-1-简单遍历策略"><a href="#2-1-简单遍历策略" class="headerlink" title="2.1 简单遍历策略"></a>2.1 简单遍历策略</h3><p>方向光的特点：作用范围无穷大（覆盖所有几何），但数量极少。一个标准游戏场景通常有 1 个主方向光（太阳/月亮）和 0-2 个辅助方向光（地面反射模拟、舞台灯效）。这个数量级远低于其他光源，没有必要做空间分块。</p>
+<p>Shader 端直接遍历：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float3 GetLighting(Fragment fragment, Surface surfaceWS, BRDF brdf, GI gi)<br>{<br>    ShadowData shadowData = GetShadowData(surfaceWS);<br>    float3 color = gi.diffuse * brdf.diffuse;  // 间接光（Note 6）<br><br>    // 方向光：直接遍历<br>    for (int i = 0; i &lt; _DirectionalLightCount; i++)<br>    {<br>        Light light = GetDirectionalLight(i, surfaceWS, shadowData);<br>        if (RenderingLayersOverlap(surfaceWS, light))<br>            color += GetLighting(surfaceWS, brdf, light);<br>    }<br><br>    // 点光与聚光：Forward+ 路径（§4）<br>    ForwardPlusTile tile = GetForwardPlusTile(fragment.screenUV);<br>    int last = tile.GetLastLightIndexInTile();<br>    for (int j = tile.GetFirstLightIndexInTile(); j &lt;= last; j++)<br>    {<br>        Light light = GetOtherLight(tile.GetLightIndex(j), surfaceWS, shadowData);<br>        if (RenderingLayersOverlap(surfaceWS, light))<br>            color += GetLighting(surfaceWS, brdf, light);<br>    }<br><br>    return color;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>_DirectionalLightCount</code> 是个普通的 int CBUFFER 变量，配合循环上限 <code>MAX_DIRECTIONAL_LIGHT_COUNT</code>（典型为 4）让编译器知道循环边界，便于优化。</p>
+<h3 id="2-2-单光源贡献计算"><a href="#2-2-单光源贡献计算" class="headerlink" title="2.2 单光源贡献计算"></a>2.2 单光源贡献计算</h3><p><code>GetLighting(surface, brdf, light)</code> 是直接光照公式的统一入口，独立于光源类型：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float3 GetLighting(Surface surface, BRDF brdf, Light light)<br>{<br>    return IncomingLight(surface, light) * DirectBRDF(surface, brdf, light);<br>}<br><br>float3 IncomingLight(Surface surface, Light light)<br>{<br>    return saturate(dot(surface.normal, light.direction) * light.attenuation) * light.color;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>Light</code> 是 Shader 端的统一抽象——无论原始光源是 directional / point / spot，到达 BRDF 时都被规约为这五个字段：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">struct Light<br>{<br>    float3 color;          // 已经包含强度与物理单位转换<br>    float3 direction;      // 表面 → 光源的方向（Shader 中常约定的方向）<br>    float attenuation;     // 距离衰减 × 锥角衰减 × 阴影衰减<br>    uint renderingLayerMask;<br>};<br></code></pre></td></tr></table></div></figure>
+
+<p><code>light.attenuation</code> 是关键的统一抽象——它把所有衰减因子（距离、角度、阴影、cookie）合并为一个标量乘子。Note 5 会展开 attenuation 中阴影部分的来源。</p>
+<h3 id="2-3-物理光度学单位"><a href="#2-3-物理光度学单位" class="headerlink" title="2.3 物理光度学单位"></a>2.3 物理光度学单位</h3><p>Unity 的 Player Settings 中的 <strong>Physical Light Units</strong> 开关决定光源强度的解释方式：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>光源类型</th>
+<th>默认单位</th>
+<th>物理单位</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Directional</td>
+<td>任意线性强度</td>
+<td>Lux（lm/m²）</td>
+</tr>
+<tr>
+<td>Point</td>
+<td>任意线性强度</td>
+<td>Lumen（lm，全方向辐射通量）</td>
+</tr>
+<tr>
+<td>Spot</td>
+<td>任意线性强度</td>
+<td>Lumen 或 Candela（lm/sr）</td>
+</tr>
+<tr>
+<td>Area</td>
+<td>任意线性强度</td>
+<td>Nits（cd/m²）</td>
+</tr>
+</tbody></table></div>
+<p>启用物理单位后，引擎在内部把 <code>Light.intensity</code> 与单位类型一起打包，最终输出到 <code>VisibleLight.finalColor</code> 时已经是统一的线性 RGB 辐射度。<strong>Shader 端不需要任何额外转换代码</strong>——这是物理单位接入的优雅之处。</p>
+<p>实践建议：项目一旦启用 HDR + Tone Mapping（Note 7），就应该启用物理单位。这能让 PBR 材质的反射结果与现实参考照片直接可比，降低美术调校的试错成本。</p>
+<hr>
+<h2 id="3-点光与聚光：衰减模型"><a href="#3-点光与聚光：衰减模型" class="headerlink" title="3. 点光与聚光：衰减模型"></a>3. 点光与聚光：衰减模型</h2><h3 id="3-1-距离平方反比-Range-Attenuation"><a href="#3-1-距离平方反比-Range-Attenuation" class="headerlink" title="3.1 距离平方反比 + Range Attenuation"></a>3.1 距离平方反比 + Range Attenuation</h3><p>点光源的物理衰减遵循反平方定律 <code>1/d²</code>，但游戏渲染需要在 Light 的 Range 处把贡献平滑归零（否则会有突兀的边界）。Catlike 实现采用以下复合衰减形式：</p>
+
+<mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -2.194ex;" xmlns="http://www.w3.org/2000/svg" width="44.188ex" height="6.058ex" role="img" focusable="false" viewBox="0 -1707.9 19531.1 2677.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D453" d="M118 -162Q120 -162 124 -164T135 -167T147 -168Q160 -168 171 -155T187 -126Q197 -99 221 27T267 267T289 382V385H242Q195 385 192 387Q188 390 188 397L195 425Q197 430 203 430T250 431Q298 431 298 432Q298 434 307 482T319 540Q356 705 465 705Q502 703 526 683T550 630Q550 594 529 578T487 561Q443 561 443 603Q443 622 454 636T478 657L487 662Q471 668 457 668Q445 668 434 658T419 630Q412 601 403 552T387 469T380 433Q380 431 435 431Q480 431 487 430T498 424Q499 420 496 407T491 391Q489 386 482 386T428 385H372L349 263Q301 15 282 -47Q255 -132 212 -173Q175 -205 139 -205Q107 -205 81 -186T55 -132Q55 -95 76 -78T118 -61Q162 -61 162 -103Q162 -122 151 -136T127 -157L118 -162Z"></path></g><g data-mml-node="TeXAtom" transform="translate(523,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mtext"><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(500,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(889,0)"></path></g></g></g><g data-mml-node="mo" transform="translate(1476.7,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(1865.7,0)"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mo" transform="translate(2385.7,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mo" transform="translate(3052.5,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mfrac" transform="translate(4108.2,0)"><g data-mml-node="mn" transform="translate(2193.1,676)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mrow" transform="translate(220,-719.9)"><g data-mml-node="mo"><path data-c="6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(833,0)"></path><path data-c="78" d="M201 0Q189 3 102 3Q26 3 17 0H11V46H25Q48 47 67 52T96 61T121 78T139 96T160 122T180 150L226 210L168 288Q159 301 149 315T133 336T122 351T113 363T107 370T100 376T94 379T88 381T80 383Q74 383 44 385H16V431H23Q59 429 126 429Q219 429 229 431H237V385Q201 381 201 369Q201 367 211 353T239 315T268 274L272 270L297 304Q329 345 329 358Q329 364 327 369T322 376T317 380T310 384L307 385H302V431H309Q324 428 408 428Q487 428 493 431H499V385H492Q443 385 411 368Q394 360 377 341T312 257L296 236L358 151Q424 61 429 57T446 50Q464 46 499 46H516V0H510H502Q494 1 482 1T457 2T432 2T414 3Q403 3 377 3T327 1L304 0H295V46H298Q309 46 320 51T331 63Q331 65 291 120L250 175Q249 174 219 133T185 88Q181 83 181 74Q181 63 188 55T206 46Q208 46 208 23V0H201Z" transform="translate(1333,0)"></path></g><g data-mml-node="mo" transform="translate(1861,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="msup" transform="translate(2250,0)"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mn" transform="translate(553,289) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(3206.6,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path></g><g data-mml-node="mi" transform="translate(3651.2,0)"><path data-c="1D716" d="M227 -11Q149 -11 95 41T40 174Q40 262 87 322Q121 367 173 396T287 430Q289 431 329 431H367Q382 426 382 411Q382 385 341 385H325H312Q191 385 154 277L150 265H327Q340 256 340 246Q340 228 320 219H138V217Q128 187 128 143Q128 77 160 52T231 26Q258 26 284 36T326 57T343 68Q350 68 354 58T358 39Q358 36 357 35Q354 31 337 21T289 0T227 -11Z"></path></g><g data-mml-node="mo" transform="translate(4057.2,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g><rect width="4646.2" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(9216.7,0)"><path data-c="22C5" d="M78 250Q78 274 95 292T138 310Q162 310 180 294T199 251Q199 226 182 208T139 190T96 207T78 250Z"></path></g><g data-mml-node="msup" transform="translate(9716.9,0)"><g data-mml-node="mrow"><g data-mml-node="mo" transform="translate(0 -0.5)"><path data-c="5B" d="M247 -949V1450H516V1388H309V-887H516V-949H247Z"></path></g><g data-mml-node="mtext" transform="translate(528,0)"><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(394,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(894,0)"></path><path data-c="75" d="M383 58Q327 -10 256 -10H249Q124 -10 105 89Q104 96 103 226Q102 335 102 348T96 369Q86 385 36 385H25V408Q25 431 27 431L38 432Q48 433 67 434T105 436Q122 437 142 438T172 441T184 442H187V261Q188 77 190 64Q193 49 204 40Q224 26 264 26Q290 26 311 35T343 58T363 90T375 120T379 144Q379 145 379 161T380 201T380 248V315Q380 361 370 372T320 385H302V431Q304 431 378 436T457 442H464V264Q464 84 465 81Q468 61 479 55T524 46H542V0Q540 0 467 -5T390 -11H383V58Z" transform="translate(1283,0)"></path><path data-c="72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z" transform="translate(1839,0)"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(2231,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(2731,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(3120,0)"></path></g><g data-mml-node="mrow" transform="translate(4258.7,0)"><g data-mml-node="mo" transform="translate(0 -0.5)"><path data-c="28" d="M701 -940Q701 -943 695 -949H664Q662 -947 636 -922T591 -879T537 -818T475 -737T412 -636T350 -511T295 -362T250 -186T221 17T209 251Q209 962 573 1361Q596 1386 616 1405T649 1437T664 1450H695Q701 1444 701 1441Q701 1436 681 1415T629 1356T557 1261T476 1118T400 927T340 675T308 359Q306 321 306 250Q306 -139 400 -430T690 -924Q701 -936 701 -940Z"></path></g><g data-mml-node="mn" transform="translate(736,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mo" transform="translate(1458.2,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mfrac" transform="translate(2458.4,0)"><g data-mml-node="msup" transform="translate(220,676)"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mn" transform="translate(553,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="msup" transform="translate(254.5,-719.9)"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mn" transform="translate(484,289) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><rect width="1156.6" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(3855,0) translate(0 -0.5)"><path data-c="29" d="M34 1438Q34 1446 37 1448T50 1450H56H71Q73 1448 99 1423T144 1380T198 1319T260 1238T323 1137T385 1013T440 864T485 688T514 485T526 251Q526 134 519 53Q472 -519 162 -860Q139 -885 119 -904T86 -936T71 -949H56Q43 -949 39 -947T34 -937Q88 -883 140 -813Q428 -430 428 251Q428 453 402 628T338 922T245 1146T145 1309T46 1425Q44 1427 42 1429T39 1433T36 1436L34 1438Z"></path></g></g><g data-mml-node="mo" transform="translate(8849.7,0) translate(0 -0.5)"><path data-c="5D" d="M11 1388V1450H280V-949H11V-887H218V1388H11Z"></path></g></g><g data-mml-node="mn" transform="translate(9410.7,1237) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g></g></g></svg></mjx-container>
+
+
+<p>其中 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.023ex;" xmlns="http://www.w3.org/2000/svg" width="1.176ex" height="1.593ex" role="img" focusable="false" viewBox="0 -694 520 704"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g></g></g></svg></mjx-container> 为表面到光源距离、<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.02ex" height="1.025ex" role="img" focusable="false" viewBox="0 -442 451 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g></g></g></svg></mjx-container> 为 Light Range、<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="0.919ex" height="1ex" role="img" focusable="false" viewBox="0 -431 406 442"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D716" d="M227 -11Q149 -11 95 41T40 174Q40 262 87 322Q121 367 173 396T287 430Q289 431 329 431H367Q382 426 382 411Q382 385 341 385H325H312Q191 385 154 277L150 265H327Q340 256 340 246Q340 228 320 219H138V217Q128 187 128 143Q128 77 160 52T231 26Q258 26 284 36T326 57T343 68Q350 68 354 58T358 39Q358 36 357 35Q354 31 337 21T289 0T227 -11Z"></path></g></g></g></svg></mjx-container> 为防除零小量。物理项 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.87ex;" xmlns="http://www.w3.org/2000/svg" width="2.526ex" height="2.827ex" role="img" focusable="false" viewBox="0 -864.9 1116.4 1249.4"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mfrac"><g data-mml-node="mn" transform="translate(381.4,394) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="msup" transform="translate(220,-377.4) scale(0.707)"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mn" transform="translate(553,289) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><rect width="876.4" height="60" x="120" y="220"></rect></g></g></g></svg></mjx-container> 保证近场行为符合真实辐射衰减；窗口项 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.791ex;" xmlns="http://www.w3.org/2000/svg" width="21.898ex" height="3.161ex" role="img" focusable="false" viewBox="0 -1047.5 9679.1 1397"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mrow"><g data-mml-node="mo" transform="translate(0 -0.5)"><path data-c="5B" d="M202 -349V850H394V810H242V-309H394V-349H202Z"></path></g><g data-mml-node="mtext" transform="translate(417,0)"><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(394,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(894,0)"></path><path data-c="75" d="M383 58Q327 -10 256 -10H249Q124 -10 105 89Q104 96 103 226Q102 335 102 348T96 369Q86 385 36 385H25V408Q25 431 27 431L38 432Q48 433 67 434T105 436Q122 437 142 438T172 441T184 442H187V261Q188 77 190 64Q193 49 204 40Q224 26 264 26Q290 26 311 35T343 58T363 90T375 120T379 144Q379 145 379 161T380 201T380 248V315Q380 361 370 372T320 385H302V431Q304 431 378 436T457 442H464V264Q464 84 465 81Q468 61 479 55T524 46H542V0Q540 0 467 -5T390 -11H383V58Z" transform="translate(1283,0)"></path><path data-c="72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z" transform="translate(1839,0)"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(2231,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(2731,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(3120,0)"></path></g><g data-mml-node="mo" transform="translate(3981,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mn" transform="translate(4370,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mo" transform="translate(5092.2,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="msup" transform="translate(6092.4,0)"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mn" transform="translate(553,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(7049,0)"><g data-mml-node="mo"><path data-c="2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path></g></g><g data-mml-node="msup" transform="translate(7549,0)"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mn" transform="translate(484,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(8436.6,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mo" transform="translate(8825.6,0) translate(0 -0.5)"><path data-c="5D" d="M22 810V850H214V-349H22V-309H174V810H22Z"></path></g></g><g data-mml-node="mn" transform="translate(9275.6,576.6) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g></g></g></svg></mjx-container> 在 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.312ex;" xmlns="http://www.w3.org/2000/svg" width="5.214ex" height="1.882ex" role="img" focusable="false" viewBox="0 -694 2304.6 832"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mo" transform="translate(797.8,0)"><path data-c="2265" d="M83 616Q83 624 89 630T99 636Q107 636 253 568T543 431T687 361Q694 356 694 346T687 331Q685 329 395 192L107 56H101Q83 58 83 76Q83 77 83 79Q82 86 98 95Q117 105 248 167Q326 204 378 228L626 346L360 472Q291 505 200 548Q112 589 98 597T83 616ZM84 -118Q84 -108 99 -98H678Q694 -104 694 -118Q694 -130 679 -138H98Q84 -131 84 -118Z"></path></g><g data-mml-node="mi" transform="translate(1853.6,0)"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g></g></g></svg></mjx-container> 处归零，且其一阶导数在边界处也为零（C¹ 连续），避免了硬截断造成的 Mach Band 视觉伪影。</p>
+<p>HLSL 实现：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float DistanceAttenuation(float3 lightVec, float invSquareRange)<br>{<br>    float distanceSqr = dot(lightVec, lightVec);<br>    float rangeAttenuation = saturate(1.0 - distanceSqr * invSquareRange);<br>    rangeAttenuation *= rangeAttenuation;<br>    return rangeAttenuation / max(distanceSqr, 0.00001);<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>代码与公式的映射：</p>
+<ul>
+<li><code>1 / max(distanceSqr, 0.00001)</code> ↔ <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -1.254ex;" xmlns="http://www.w3.org/2000/svg" width="7.842ex" height="3.211ex" role="img" focusable="false" viewBox="0 -864.9 3466.1 1419.1"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mfrac"><g data-mml-node="mn" transform="translate(1556.3,394) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mrow" transform="translate(220,-377.4) scale(0.707)"><g data-mml-node="mo"><path data-c="6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(833,0)"></path><path data-c="78" d="M201 0Q189 3 102 3Q26 3 17 0H11V46H25Q48 47 67 52T96 61T121 78T139 96T160 122T180 150L226 210L168 288Q159 301 149 315T133 336T122 351T113 363T107 370T100 376T94 379T88 381T80 383Q74 383 44 385H16V431H23Q59 429 126 429Q219 429 229 431H237V385Q201 381 201 369Q201 367 211 353T239 315T268 274L272 270L297 304Q329 345 329 358Q329 364 327 369T322 376T317 380T310 384L307 385H302V431H309Q324 428 408 428Q487 428 493 431H499V385H492Q443 385 411 368Q394 360 377 341T312 257L296 236L358 151Q424 61 429 57T446 50Q464 46 499 46H516V0H510H502Q494 1 482 1T457 2T432 2T414 3Q403 3 377 3T327 1L304 0H295V46H298Q309 46 320 51T331 63Q331 65 291 120L250 175Q249 174 219 133T185 88Q181 83 181 74Q181 63 188 55T206 46Q208 46 208 23V0H201Z" transform="translate(1333,0)"></path></g><g data-mml-node="mo" transform="translate(1861,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="msup" transform="translate(2250,0)"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mn" transform="translate(553,289) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(3206.6,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path></g><g data-mml-node="mi" transform="translate(3484.6,0)"><path data-c="1D716" d="M227 -11Q149 -11 95 41T40 174Q40 262 87 322Q121 367 173 396T287 430Q289 431 329 431H367Q382 426 382 411Q382 385 341 385H325H312Q191 385 154 277L150 265H327Q340 256 340 246Q340 228 320 219H138V217Q128 187 128 143Q128 77 160 52T231 26Q258 26 284 36T326 57T343 68Q350 68 354 58T358 39Q358 36 357 35Q354 31 337 21T289 0T227 -11Z"></path></g><g data-mml-node="mo" transform="translate(3890.6,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g><rect width="3226.1" height="60" x="120" y="220"></rect></g></g></g></svg></mjx-container>，物理反平方衰减带防除零下限</li>
+<li><code>saturate(1 - d² × invSquareRange)</code> ↔ <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="19.024ex" height="2.452ex" role="img" focusable="false" viewBox="0 -833.9 8408.6 1083.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mtext"><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(394,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(894,0)"></path><path data-c="75" d="M383 58Q327 -10 256 -10H249Q124 -10 105 89Q104 96 103 226Q102 335 102 348T96 369Q86 385 36 385H25V408Q25 431 27 431L38 432Q48 433 67 434T105 436Q122 437 142 438T172 441T184 442H187V261Q188 77 190 64Q193 49 204 40Q224 26 264 26Q290 26 311 35T343 58T363 90T375 120T379 144Q379 145 379 161T380 201T380 248V315Q380 361 370 372T320 385H302V431Q304 431 378 436T457 442H464V264Q464 84 465 81Q468 61 479 55T524 46H542V0Q540 0 467 -5T390 -11H383V58Z" transform="translate(1283,0)"></path><path data-c="72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z" transform="translate(1839,0)"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(2231,0)"></path><path data-c="74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z" transform="translate(2731,0)"></path><path data-c="65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z" transform="translate(3120,0)"></path></g><g data-mml-node="mo" transform="translate(3564,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mn" transform="translate(3953,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mo" transform="translate(4675.2,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="msup" transform="translate(5675.4,0)"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mn" transform="translate(553,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(6632,0)"><g data-mml-node="mo"><path data-c="2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path></g></g><g data-mml-node="msup" transform="translate(7132,0)"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mn" transform="translate(484,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(8019.6,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container>，Range 边界软截断</li>
+<li>末尾的 <code>rangeAttenuation *= rangeAttenuation</code> ↔ 平方因子，确保边界处一阶导数也为零</li>
+</ul>
+<p><code>invSquareRange</code> 是 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="4.27ex" height="2.452ex" role="img" focusable="false" viewBox="0 -833.9 1887.6 1083.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(500,0)"><g data-mml-node="mo"><path data-c="2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path></g></g><g data-mml-node="msup" transform="translate(1000,0)"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mn" transform="translate(484,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g></g></g></svg></mjx-container>，CPU 端预计算后存入 <code>OtherLightData.position.w</code>，Shader 省一次除法。整个衰减只需 1 次 <code>dot</code>、1 次 <code>saturate</code>、3 次乘法、1 次 <code>max</code> 和 1 次除法——是 BRDF 内循环的常驻热点路径，每一条指令都被精打细算。</p>
+<h3 id="3-2-聚光灯锥角衰减"><a href="#3-2-聚光灯锥角衰减" class="headerlink" title="3.2 聚光灯锥角衰减"></a>3.2 聚光灯锥角衰减</h3><p>聚光灯有内外两个锥角：内锥之内全亮、外锥之外全黑、之间平滑过渡。这通过两个预计算系数高效实现：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// CPU 端预计算</span><br><span class="hljs-built_in">float</span> cosInner = Mathf.Cos(light.innerSpotAngle * <span class="hljs-number">0.5f</span> * Mathf.Deg2Rad);<br><span class="hljs-built_in">float</span> cosOuter = Mathf.Cos(light.spotAngle * <span class="hljs-number">0.5f</span> * Mathf.Deg2Rad);<br><span class="hljs-built_in">float</span> invDelta = <span class="hljs-number">1f</span> / Mathf.Max(cosInner - cosOuter, <span class="hljs-number">1e-4</span>f);<br><br>spotAngles = <span class="hljs-keyword">new</span> Vector4(invDelta, -cosOuter * invDelta, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></div></figure>
+
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// Shader 端<br>float cosTheta = dot(spotDirection, lightDirection);<br>float spotAttenuation = saturate(cosTheta * spotAngles.x + spotAngles.y);<br>spotAttenuation *= spotAttenuation;<br></code></pre></td></tr></table></div></figure>
+
+<p>数学等价于 <code>smoothstep(cosOuter, cosInner, cosTheta)</code>，但用线性插值 + 平方代替 smoothstep 的三次曲线，省两次乘加。</p>
+<p>最终的总衰减是三者相乘：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float attenuation = distanceAttenuation * spotAttenuation * shadowAttenuation;<br></code></pre></td></tr></table></div></figure>
+
+<p>点光源没有锥角，<code>spotAttenuation</code> 设为 1 即可。</p>
+<hr>
+<h2 id="4-Tiled-Forward-：屏幕空间光源剔除"><a href="#4-Tiled-Forward-：屏幕空间光源剔除" class="headerlink" title="4. Tiled Forward+：屏幕空间光源剔除"></a>4. Tiled Forward+：屏幕空间光源剔除</h2><h3 id="4-1-设计动机"><a href="#4-1-设计动机" class="headerlink" title="4.1 设计动机"></a>4.1 设计动机</h3><p>朴素 Forward 渲染的复杂度是 <code>O(像素数 × 总光源数)</code>。一个 1080p 屏幕配 64 个动态点光源，单帧着色器要执行 64 × 2M ≈ <strong>1.3 亿次光照计算</strong>——绝大多数像素离绝大多数光源很远，贡献几乎为零，但 BRDF 仍然被完整计算并被距离衰减为 0。这是典型的”为不存在的贡献付出全额成本”。</p>
+<p>Forward+ 的解决思路：先以屏幕 Tile 为粒度做一次粗剔除，每个 Tile 只保留实际覆盖它的光源索引。Shader 端遍历的不再是全部光源，而是当前像素所在 Tile 的命中列表——通常每 Tile 只有几个光源。复杂度从 <code>O(像素 × 总光源)</code> 降到 <code>O(像素 × 每 Tile 平均光源)</code>，光源密度越高、收益越大。</p>
+<h3 id="4-2-整体数据流"><a href="#4-2-整体数据流" class="headerlink" title="4.2 整体数据流"></a>4.2 整体数据流</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs mermaid">flowchart TD<br>    A[CullingResults.visibleLights] --&gt; B[SetupLights&lt;br/&gt;遍历分类 + 预计算]<br><br>    B --&gt; C[DirectionalLightData[]&lt;br/&gt;NativeArray]<br>    B --&gt; D[OtherLightData[]&lt;br/&gt;NativeArray]<br>    B --&gt; E[Light Screen Bounds[]&lt;br/&gt;NativeArray]<br><br>    E --&gt; F[ForwardPlusTilesJob&lt;br/&gt;Burst 并行&lt;br/&gt;每 Tile 测试覆盖]<br>    F --&gt; G[TileData[]&lt;br/&gt;NativeArray of int]<br><br>    C --&gt; H[Directional Buffer]<br>    D --&gt; I[Other Buffer]<br>    G --&gt; J[Tiles Buffer]<br><br>    H --&gt; K[Shader · 直接 for 循环]<br>    I --&gt; L[Shader · Tile Lookup&lt;br/&gt;+ 命中光源 for 循环]<br>    J --&gt; L<br><br>    K --&gt; M[BRDF 累加输出]<br>    L --&gt; M<br><br>    style F fill:#fff3e0,stroke:#f57c00,stroke-width:2px<br>    style L fill:#e3f2fd,stroke:#1976d2,stroke-width:2px<br>    style M fill:#e8f5e9,stroke:#388e3c,stroke-width:2px<br></code></pre></td></tr></table></div></figure>
+
+<p>整个链路有三处资源同步点：</p>
+<ul>
+<li><code>forwardPlusJobHandle.Complete()</code> — Burst Job 必须在 SetBufferData 之前完成</li>
+<li><code>cmd.SetBufferData</code> × 3 — 三个 buffer 上传时机</li>
+<li>Shader 中 <code>StructuredBuffer</code> 读取 — 实际消费</li>
+</ul>
+<h3 id="4-3-Tile-划分参数"><a href="#4-3-Tile-划分参数" class="headerlink" title="4.3 Tile 划分参数"></a>4.3 Tile 划分参数</h3><p>Forward+ 的核心配置是 Tile 尺寸。Catlike 实现支持 16/32/64/128/256 像素的方形 Tile：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Tile Size</th>
+<th>1080p 总 Tile 数</th>
+<th>每 Tile 测试成本</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>16×16</td>
+<td>~8100</td>
+<td>低</td>
+<td>高密度光源、桌面端</td>
+</tr>
+<tr>
+<td>32×32</td>
+<td>~2025</td>
+<td>中低</td>
+<td>平衡选择</td>
+</tr>
+<tr>
+<td>64×64</td>
+<td>~510</td>
+<td>中</td>
+<td><strong>默认</strong>，移动端推荐</td>
+</tr>
+<tr>
+<td>128×128</td>
+<td>~128</td>
+<td>高</td>
+<td>低密度光源</td>
+</tr>
+<tr>
+<td>256×256</td>
+<td>~32</td>
+<td>极高</td>
+<td>极少光源、调试用</td>
+</tr>
+</tbody></table></div>
+<p>权衡是 Tile 数 × 每 Tile 光源数的乘积。Tile 越小：剔除越精准（每 Tile 平均光源数低），但 Tile 总数多、CPU 端 Job 开销高、Shader 端 Tile lookup buffer 内存大。Tile 越大：Tile 数少，但每 Tile 命中率高，剔除粒度变粗。</p>
+<p>64×64 是经验上的甜区——Job 工作量与剔除质量平衡得最好。如果项目光源密度极高（200+ 同屏），可以下调到 32×32。</p>
+<h3 id="4-4-ForwardPlusTilesJob：CPU-端-Burst-剔除"><a href="#4-4-ForwardPlusTilesJob：CPU-端-Burst-剔除" class="headerlink" title="4.4 ForwardPlusTilesJob：CPU 端 Burst 剔除"></a>4.4 ForwardPlusTilesJob：CPU 端 Burst 剔除</h3><p>Catlike 实现的关键工程选择：tile 剔除用 <strong>Burst Job</strong> 在 CPU 端完成，不是 Compute Shader。</p>
+<details class="md-code-fold"><summary>CSHARP</summary><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">BurstCompile(FloatPrecision.Standard, FloatMode.Fast)</span>]<br><span class="hljs-keyword">struct</span> ForwardPlusTilesJob : IJobFor<br>{<br>    [<span class="hljs-meta">ReadOnly</span>] <span class="hljs-keyword">public</span> NativeArray&lt;float4&gt; lightBounds;<br><br>    [<span class="hljs-meta">NativeDisableParallelForRestriction</span>]<br>    <span class="hljs-keyword">public</span> NativeArray&lt;<span class="hljs-built_in">int</span>&gt; tileData;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> otherLightCount;<br>    <span class="hljs-keyword">public</span> float2 tileScreenUVSize;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> maxLightsPerTile;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> tilesPerRow;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> tileDataSize;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Execute</span>(<span class="hljs-params"><span class="hljs-built_in">int</span> tileIndex</span>)</span><br>    {<br>        <span class="hljs-built_in">int</span> y = tileIndex / tilesPerRow;<br>        <span class="hljs-built_in">int</span> x = tileIndex - y * tilesPerRow;<br><br>        <span class="hljs-keyword">var</span> tileBounds = float4(<br>            x * tileScreenUVSize.x,<br>            y * tileScreenUVSize.y,<br>            (x + <span class="hljs-number">1</span>) * tileScreenUVSize.x,<br>            (y + <span class="hljs-number">1</span>) * tileScreenUVSize.y);<br><br>        <span class="hljs-built_in">int</span> headerIndex = tileIndex * tileDataSize;<br>        <span class="hljs-built_in">int</span> dataIndex = headerIndex + <span class="hljs-number">1</span>;<br>        <span class="hljs-built_in">int</span> lightsInTile = <span class="hljs-number">0</span>;<br><br>        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; otherLightCount &amp;&amp; lightsInTile &lt; maxLightsPerTile; i++)<br>        {<br>            float4 b = lightBounds[i];<br>            <span class="hljs-comment">// 屏幕空间 AABB 重叠测试</span><br>            <span class="hljs-keyword">if</span> (b.x &lt; tileBounds.z &amp;&amp; b.z &gt; tileBounds.x &amp;&amp;<br>                b.y &lt; tileBounds.w &amp;&amp; b.w &gt; tileBounds.y)<br>            {<br>                tileData[dataIndex++] = i;<br>                lightsInTile++;<br>            }<br>        }<br>        tileData[headerIndex] = lightsInTile;<br>    }<br>}<br></code></pre></td></tr></table></div></figure></details>
+
+<p>并行调度：</p>
+<figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs csharp">forwardPlusJobHandle = <span class="hljs-keyword">new</span> ForwardPlusTilesJob<br>{<br>    lightBounds = lightBounds,<br>    tileData = tileData,<br>    otherLightCount = otherLightCount,<br>    tileScreenUVSize = tileScreenUVSize,<br>    maxLightsPerTile = maxLightsPerTile,<br>    tilesPerRow = tileCount.x,<br>    tileDataSize = tileDataSize<br>}.ScheduleParallel(TileCount, tileCount.x, <span class="hljs-literal">default</span>);<br></code></pre></td></tr></table></div></figure>
+
+<p><code>ScheduleParallel</code> 把 Tile 按行分组并行处理，每组 <code>tileCount.x</code> 个 Tile。Burst 编译后的吞吐对几千个 Tile × 几十光源的工作量绰绰有余。</p>
+<blockquote>
+<p>⚠️ <strong>Native 内存生命周期管理</strong>：通过 <code>NativeArray</code> 在 CPU 端构建的光源数据数组（<code>directionalLightData</code>、<code>otherLightData</code>）、屏幕空间包围盒数组（<code>lightBounds</code>）、Tile 数据数组（<code>tileData</code>）都使用了 <code>Allocator.TempJob</code> 或 <code>Allocator.Persistent</code> 分配——它们<strong>不在 GC 管理范围内</strong>。LightingPass 必须在 Render Graph 执行完毕、Buffer 上传完成后正确调用 <code>Dispose()</code> 释放，且释放时机要等 Job 真正完成（<code>forwardPlusJobHandle.Complete()</code> 之后）。在自定义渲染管线中，<strong>Native 内存泄漏是引发 Editor 崩溃与 Player 内存耗尽的最常见元凶</strong>。Job 在执行中 Dispose 会立即触发 <code>InvalidOperationException</code>；忘记 Dispose 则在 Editor 退出 Play Mode 时泄漏告警，多次累积后可能直接 crash。安全 pattern 是把 Dispose 与 Buffer 上传打包在 Pass 的执行函数末尾，确保两者绑定。</p>
+</blockquote>
+<p>剔除测试只是简单的 2D AABB 重叠——这是简化路线带来的精度损失：</p>
+<ul>
+<li>点光源的世界空间球形包围盒投影到屏幕后是椭圆，但被简化为外接 AABB</li>
+<li>聚光灯的锥形包围盒同样简化为屏幕 AABB</li>
+</ul>
+<p>简化导致少量误判（Tile 被认为命中但实际光源贡献为零），但不会漏判（true positive 率 100%）——所以渲染结果<strong>永远正确</strong>，只是有少量冗余光照计算。这种”宁可多算不可少算”是剔除算法的安全设计。</p>
+<h3 id="4-5-Tile-Data-Buffer-结构"><a href="#4-5-Tile-Data-Buffer-结构" class="headerlink" title="4.5 Tile Data Buffer 结构"></a>4.5 Tile Data Buffer 结构</h3><p>每个 Tile 在 buffer 中占 <code>tileDataSize</code> 个 int，第一个 int 是命中光源数 N，后面 N 个 int 是光源索引：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Tile 0: [count, idx0, idx1, ..., idx(N-1), unused, ..., unused]<br>Tile 1: [count, idx0, idx1, ...                                 ]<br>Tile 2: [count, ...                                              ]<br>...<br></code></pre></td></tr></table></div></figure>
+
+<p><code>tileDataSize = maxLightsPerTile + 1</code>。Buffer 总大小 = <code>tileCount × tileDataSize × 4 byte</code>。1080p × 64 Tile × maxLight 32 大约是 65 KB——完全可以接受。</p>
+<p><code>maxLightsPerTile</code> 是配置项。Catlike 实现还有一个动态优化：每帧根据实际可见光源数量收缩 <code>requiredMaxLightsPerTile = min(maxLightsPerTile, otherLightCount)</code>，减少 Job 工作量与上传带宽。</p>
+<h3 id="4-6-Shader-端的查询路径"><a href="#4-6-Shader-端的查询路径" class="headerlink" title="4.6 Shader 端的查询路径"></a>4.6 Shader 端的查询路径</h3><p>Shader 端通过像素的 screen UV 反查 Tile，再读 Tile 命中列表：</p>
+<details class="md-code-fold"><summary>HLSL</summary><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">struct ForwardPlusTile<br>{<br>    int2 coordinates;<br>    int index;<br>};<br><br>ForwardPlusTile GetForwardPlusTile(float2 screenUV)<br>{<br>    ForwardPlusTile tile;<br>    tile.coordinates = int2(screenUV * _ForwardPlusTileScreenUVToTileCoordinates.xy);<br>    tile.index = tile.coordinates.y * _ForwardPlusTileScreenUVToTileCoordinates.z<br>               + tile.coordinates.x;<br>    return tile;<br>}<br><br>int GetLastLightIndexInTile(ForwardPlusTile tile)<br>{<br>    int header = tile.index * _ForwardPlusTileDataSize;<br>    int count = _ForwardPlusTiles[header];<br>    return header + count;<br>}<br><br>int GetFirstLightIndexInTile(ForwardPlusTile tile)<br>{<br>    return tile.index * _ForwardPlusTileDataSize + 1;<br>}<br><br>int GetLightIndex(ForwardPlusTile tile, int slot)<br>{<br>    return _ForwardPlusTiles[slot];<br>}<br></code></pre></td></tr></table></div></figure></details>
+
+<p><code>_ForwardPlusTiles</code> 是 <code>StructuredBuffer&lt;int&gt;</code>，Shader 端按 1D 索引访问。这种紧凑布局的好处：相邻 Tile 的数据在内存中也相邻，多个相邻像素并行访问时缓存命中率高。</p>
+<h3 id="4-7-调试可视化：Heat-Map"><a href="#4-7-调试可视化：Heat-Map" class="headerlink" title="4.7 调试可视化：Heat Map"></a>4.7 调试可视化：Heat Map</h3><p>理解 Forward+ 收益的最直观方式是看 Tile 命中光源数的热力图。Catlike 实现一个独立的 <code>ForwardPlusTilesPass</code>，使用 RP Core Library 的 <code>OverlayHeatMap</code> 函数：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">float4 ForwardPlusTilesPassFragment(Varyings input) : SV_TARGET<br>{<br>    ForwardPlusTile tile = GetForwardPlusTile(input.screenUV);<br>    int header = tile.index * _ForwardPlusTileDataSize;<br>    int count = _ForwardPlusTiles[header];<br><br>    return OverlayHeatMap(<br>        int2(input.positionCS.xy),    // 像素坐标<br>        _ForwardPlusTileSize,          // Tile 像素尺寸<br>        count,                         // 当前 Tile 光源数<br>        _ForwardPlusMaxLightsPerTile,  // 最大上限<br>        0.5);                          // 透明度<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p>输出叠加在主渲染上，Tile 边界清晰可见，颜色从蓝（少光源）到红（高密度）渐变，每个 Tile 中央显示具体数字。开启此调试 Pass 后能立刻发现：</p>
+<ul>
+<li>哪些区域是光源密集热点（需要美术介入分散光源）</li>
+<li>是否触及 <code>maxLightsPerTile</code> 上限（红色饱和的 Tile 暗示有光源被丢弃）</li>
+<li>摄像机移动时 Tile 命中分布的稳定性</li>
+</ul>
+<h3 id="4-8-实现路线对比：CPU-Job-vs-Compute-Shader"><a href="#4-8-实现路线对比：CPU-Job-vs-Compute-Shader" class="headerlink" title="4.8 实现路线对比：CPU Job vs Compute Shader"></a>4.8 实现路线对比：CPU Job vs Compute Shader</h3><p>Catlike 选 CPU Job 路径，HDRP 与商业项目（Frostbite、UE5）选 Compute Shader 路径。两者权衡如下：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>CPU Burst Job（Catlike）</th>
+<th>Compute Shader（HDRP）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>实现复杂度</td>
+<td>低（单 Job 文件 ~50 行）</td>
+<td>高（多 kernel + 数据结构对齐）</td>
+</tr>
+<tr>
+<td>调试可见性</td>
+<td>高（C# 断点 + Profiler）</td>
+<td>低（需 RenderDoc / GPU 调试器）</td>
+</tr>
+<tr>
+<td>同步开销</td>
+<td>Job complete + Buffer 上传</td>
+<td>GPU 内部同步，无 CPU↔GPU 往返</td>
+</tr>
+<tr>
+<td>光源数量上限</td>
+<td>~256 是舒适区</td>
+<td>几千光源仍流畅</td>
+</tr>
+<tr>
+<td>复杂剔除（截锥锥相交）</td>
+<td>难以扩展</td>
+<td>天然支持</td>
+</tr>
+<tr>
+<td>平台覆盖</td>
+<td>全平台（包含 GLES2）</td>
+<td>需 Compute Shader 支持</td>
+</tr>
+<tr>
+<td><strong>适用项目</strong></td>
+<td>教学、独立、中等密度场景</td>
+<td>3A、高密度光源、HDRP 类型</td>
+</tr>
+</tbody></table></div>
+<p>CPU 路径在中等密度（&lt; 100 光源）下完全够用且可控性强。Compute Shader 路径只在光源密度超过 CPU 处理上限时才有必要——但项目一旦切到 Compute Shader，整个 Lighting Pass 的复杂度会显著上升（buffer barrier、indirect dispatch、light list 的两阶段构造等）。Custom SRP 选 CPU 路径是教学友好与运行时简洁的合理折中。</p>
+<blockquote>
+<p>📱 <strong>移动端的隐藏决定权</strong>：除了实现复杂度，<strong>中低端移动端设备对 Compute Shader 的支持一直是个雷区</strong>。OpenGL ES 3.1 才正式引入 Compute，而东南亚、印度、南美等关键市场仍有大量 GLES 3.0 设备在服役；即使是支持 Compute 的设备，不同厂商驱动对 SSBO 写入屏障、原子操作、shared memory 大小的实现差异常导致同一份 shader 在 A 设备跑得飞快、B 设备直接花屏甚至 GPU 死锁。Vulkan 在移动端的覆盖虽逐年提升，但驱动 bug 与厂商定制层依然是稳定性盲区。采用 Burst 编译的 CPU Job 配合 NativeArray，<strong>不仅避开了 GPU 端复杂的 Barrier 同步，更彻底免疫了移动端 Compute Shader 的硬件兼容性问题</strong>——CPU 端的并行调度是图形 API 无关的，Burst 后端会自动针对 ARM NEON 或 x86 SSE 生成最优代码。对于面向广覆盖移动市场的项目，这是极具性价比的工程折中方案。</p>
+</blockquote>
+<hr>
+<h2 id="5-RenderingLayer-与光源遮罩"><a href="#5-RenderingLayer-与光源遮罩" class="headerlink" title="5. RenderingLayer 与光源遮罩"></a>5. RenderingLayer 与光源遮罩</h2><p><code>RenderingLayer</code> 是 Unity 6 引入的 32 位光源-对象交互过滤机制。每个 Renderer 和每个 Light 都有 <code>renderingLayerMask</code> 字段，只有两者按位与不为零时该光源才贡献到该对象。</p>
+<p>应用场景：</p>
+<ul>
+<li><strong>Per-Camera 光源屏蔽</strong>：UI 相机不接受场景光源，第一人称武器只接受专属补光。</li>
+<li><strong>多角色独立打光</strong>：剧情过场中，主角接收聚光灯但 NPC 接收常规环境光。</li>
+<li><strong>动态/静态分组</strong>：动态对象只用实时光，静态对象用 Lightmap，避免双重计算。</li>
+</ul>
+<p>数据流：</p>
+<ul>
+<li>C# 端：<code>OtherLightData.directionAndMask.w = asfloat(light.renderingLayerMask)</code></li>
+<li>Shader 端：<code>asuint(directionAndMask.w) &amp; surface.renderingLayerMask</code></li>
+</ul>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">bool RenderingLayersOverlap(Surface surface, Light light)<br>{<br>    return (surface.renderingLayerMask &amp; light.renderingLayerMask) != 0;<br>}<br></code></pre></td></tr></table></div></figure>
+
+<p><code>surface.renderingLayerMask</code> 来自 <code>unity_RenderingLayer.x</code>（在 <code>UnityPerDraw</code> CBUFFER 中），由引擎为每个 Renderer 自动填充。</p>
+<hr>
+<h2 id="6-TA-Takeaway"><a href="#6-TA-Takeaway" class="headerlink" title="6. TA Takeaway"></a>6. TA Takeaway</h2><h3 id="6-1-Forward-的复杂度模型"><a href="#6-1-Forward-的复杂度模型" class="headerlink" title="6.1 Forward+ 的复杂度模型"></a>6.1 Forward+ 的复杂度模型</h3><p>Forward+ 的核心 trade-off 是<strong>用 CPU/GPU 预处理换 Shader 内循环减少</strong>。两端的成本必须放在一起计算：</p>
+<ul>
+<li><strong>CPU 预处理成本</strong>：<code>O(Tile 数 × 光源数)</code> 的 AABB 重叠测试</li>
+<li><strong>Shader 端节省</strong>：每像素从 <code>O(总光源数)</code> 降到 <code>O(每 Tile 光源数)</code></li>
+<li><strong>总收益</strong>：与每 Tile 平均命中数 / 总光源数的比例成正比</li>
+</ul>
+<p>只有在光源数足够多（&gt; 16 个 point/spot）时收益才显著。光源极少时（&lt; 8 个）Forward+ 反而是负优化——Tile 准备开销超过遍历节省。这也是为什么 Catlike 实现仍保留方向光的简单遍历路径——方向光数量天然少，分块没意义。</p>
+<h3 id="6-2-方向光与点光分而治之的工程意义"><a href="#6-2-方向光与点光分而治之的工程意义" class="headerlink" title="6.2 方向光与点光分而治之的工程意义"></a>6.2 方向光与点光分而治之的工程意义</h3><p>把方向光从 Forward+ 系统中剥离是一个常被忽视但收益巨大的工程决策：</p>
+<ul>
+<li>方向光覆盖整个场景，Tile 剔除对它没有收益（每个 Tile 都命中）</li>
+<li>方向光数量少（≤ 4），简单数组遍历 + CBUFFER 数据是最优形态</li>
+<li>强行让方向光走 Forward+ 路径会让 Tile Buffer 浪费 N 倍存储（每个 Tile 都列入所有方向光）</li>
+</ul>
+<p>这种”按光源类型分而治之”的架构在 HDRP 与 URP 中也是同样选择。Forward+ 只解决”局部光源”的剔除问题，”全局光源”自有更直接的处理方式。</p>
+<h3 id="6-3-数据传递的现代化收益"><a href="#6-3-数据传递的现代化收益" class="headerlink" title="6.3 数据传递的现代化收益"></a>6.3 数据传递的现代化收益</h3><p>把光源数据从 CBUFFER 数组迁移到 StructuredBuffer 看似只是 API 变化，实际上消除了三个工程痛点：</p>
+<ul>
+<li><strong>打破固定数量上限</strong>：不再有 <code>MAX_OTHER_LIGHT_COUNT = 64</code> 这类硬编码常量</li>
+<li><strong>结构化访问</strong>：<code>_OtherLightData[i].position</code> 比 <code>_OtherLightPositions[i]</code> 更易读、更易扩展</li>
+<li><strong>Shader 关键字爆炸抑制</strong>：原本可能为不同光源数量编译多个 variant，现在统一一套代码</li>
+</ul>
+<p>代价是 WebGL 1/2 不支持。这个权衡在现代项目中容易选——WebGL 在重度图形项目里本就罕用。</p>
+<h3 id="6-4-实践原则"><a href="#6-4-实践原则" class="headerlink" title="6.4 实践原则"></a>6.4 实践原则</h3><ul>
+<li><strong>光源密度上限做规划</strong>：在项目早期就确定每场景动态光源上限（典型 32-64），并作为美术约束写入设计文档。Forward+ 的 <code>maxOtherLightCount</code> 应略高于此值留余量。</li>
+<li><strong>Heat Map 是日常工具</strong>：在调试场景里默认开启 Tile heat map，光照美术调灯时能立刻看到光源溢出风险。</li>
+<li><strong>优先优化光源 Range</strong>：缩小光源 Range 比增加 Tile 细分更直接——每光源覆盖 Tile 数减半，剔除收益翻倍。</li>
+<li><strong>方向光数量严守 ≤ 4</strong>：超出会让 <code>MAX_DIRECTIONAL_LIGHT_COUNT</code> 编译期循环失效，shader 性能急剧下降。</li>
+<li><strong>不要混用 Forward+ 与 per-object 光源索引</strong>：Custom SRP 在 3.2.0 版本已移除 lights-per-object 路径——历史遗留的双路径只会让 Pass 复杂度翻倍而无收益。</li>
+</ul>
+<hr>
+<h2 id="关键-API-速查"><a href="#关键-API-速查" class="headerlink" title="关键 API 速查"></a>关键 API 速查</h2><figure class="highlight csharp"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">// CPU 端：光源数据结构</span><br>[<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> DirectionalLightData { ... }<br><br>[<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> OtherLightData { ... }<br><br><span class="hljs-comment">// Render Graph 中的 Buffer 资源</span><br>renderGraph.CreateBuffer(<span class="hljs-keyword">new</span> BufferDesc(count, stride) { name = <span class="hljs-string">"..."</span> });<br><br><span class="hljs-comment">// 上传到 GPU</span><br>context.cmd.SetBufferData(bufferHandle, nativeArray, srcOffset, dstOffset, count);<br><br><span class="hljs-comment">// Burst Job 调度</span><br>forwardPlusJobHandle = <span class="hljs-keyword">new</span> ForwardPlusTilesJob { ... }<br>    .ScheduleParallel(TileCount, batchSize, dependsOn);<br>forwardPlusJobHandle.Complete();  <span class="hljs-comment">// 必须在 SetBufferData 之前</span><br><br><span class="hljs-comment">// 关键 ForwardPlusSettings</span><br><span class="hljs-keyword">public</span> <span class="hljs-built_in">enum</span> TileSize { _16 = <span class="hljs-number">16</span>, _32 = <span class="hljs-number">32</span>, _64 = <span class="hljs-number">64</span>, _128 = <span class="hljs-number">128</span>, _256 = <span class="hljs-number">256</span> }<br><span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> maxLightsPerTile;  <span class="hljs-comment">// 典型 16-32</span><br></code></pre></td></tr></table></div></figure>
+
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs hlsl">// Shader 端：光源数据声明<br>struct DirectionalLightData { float4 color; float4 directionAndMask; float4 shadowData; };<br>StructuredBuffer&lt;DirectionalLightData&gt; _DirectionalLightData;<br>StructuredBuffer&lt;OtherLightData&gt; _OtherLightData;<br>StructuredBuffer&lt;int&gt; _ForwardPlusTiles;<br><br>// Forward+ Tile 查询<br>ForwardPlusTile tile = GetForwardPlusTile(fragment.screenUV);<br>int last = tile.GetLastLightIndexInTile();<br>for (int j = tile.GetFirstLightIndexInTile(); j &lt;= last; j++) {<br>    int lightIndex = tile.GetLightIndex(j);<br>    Light light = GetOtherLight(lightIndex, surfaceWS, shadowData);<br>    if (RenderingLayersOverlap(surfaceWS, light))<br>        color += GetLighting(surfaceWS, brdf, light);<br>}<br><br>// 方向光遍历（直接，不分块）<br>for (int i = 0; i &lt; _DirectionalLightCount; i++) { ... }<br><br>// Light 统一抽象<br>struct Light {<br>    float3 color;<br>    float3 direction;<br>    float attenuation;<br>    uint renderingLayerMask;<br>};<br><br>// RenderingLayer 测试<br>bool RenderingLayersOverlap(Surface surface, Light light);<br></code></pre></td></tr></table></div></figure>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/posts/18aafd1ae8a9/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>「Custom SRP」：阴影系统</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/e49fd3648422/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      「Custom SRP」：表面着色器与 BRDF
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Forward/" class="post-tag">#Forward+</a><a href="/tags/%E5%85%89%E7%85%A7/" class="post-tag">#光照</a><a href="/tags/Burst-Job/" class="post-tag">#Burst Job</a><a href="/tags/StructuredBuffer/" class="post-tag">#StructuredBuffer</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/e49fd3648422/" title="「Custom SRP」：表面着色器与 BRDF" rel="bookmark">「Custom SRP」：表面着色器与 BRDF</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/382feac0d5ef/" title="「Custom SRP」：渲染管线架构与 Render Graph" rel="bookmark">「Custom SRP」：渲染管线架构与 Render Graph</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/9ddadbe5b731/" title="「Custom SRP」：几何可见性与批次优化" rel="bookmark">「Custom SRP」：几何可见性与批次优化</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>

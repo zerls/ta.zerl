@@ -113,19 +113,19 @@
   
   <div class="post-card">
     
-      <a href="/2025/12/07/SH_Spherical_Harmonics_Lighting/"
+      <a href="/posts/7dbd5de8d511/"
          class="post-cover"
          style="background-image: url(https://lianera.github.io/post/2016/sh-lighting-exp/shbasis-vis.png)"></a>
     
     <div class="post-content">
       <div class="post__head">
-        <a href="/2025/12/07/SH_Spherical_Harmonics_Lighting/" class="post-title hover-line">深入理解球谐光照 (Spherical Harmonics)：从数学理论到工业级代码实践</a>
+        <a href="/posts/7dbd5de8d511/" class="post-title hover-line">深入理解球谐光照 (Spherical Harmonics)：从数学理论到工业级代码实践</a>
         
       </div>
       <div class="post-excerpt"><p>球谐光照 (SH) 是实时渲染里”压缩光照”的经典手段：把一张几 MB 的 HDR 环境图，浓缩为 <strong>27 个浮点数 (9 系数 × RGB)</strong>，运行时只需几个 <code>dot</code> 指令就能还原漫反射环境光。这篇笔记主要讲述了数学推导、工程实现、约定差异「最容易踩坑的部分」。</p></div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/IBL/" class="post-tag">#IBL</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/Graphics/" class="post-tag">#Graphics</a><a href="/tags/Spherical-Harmonics/" class="post-tag">#Spherical Harmonics</a>
+  <a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/Graphics/" class="post-tag">#Graphics</a><a href="/tags/IBL/" class="post-tag">#IBL</a><a href="/tags/Spherical-Harmonics/" class="post-tag">#Spherical Harmonics</a>
 
 </div>
       </div>
@@ -135,15 +135,19 @@
   
   <div class="post-card">
     
+      <a href="/posts/20d352033ce9/"
+         class="post-cover"
+         style="background-image: url(https://google.github.io/filament/images/screenshot_ball_ibl.png)"></a>
+    
     <div class="post-content">
       <div class="post__head">
-        <a href="/2024/11/20/03-engine-practice/" class="post-title hover-line">「PBR 系列」第三篇 · 实时化工程实践：IBL、Filament 与 URP 源码</a>
+        <a href="/posts/20d352033ce9/" class="post-title hover-line">「PBR 系列」第三篇 · 实时化工程实践：IBL、Filament 与 URP 源码</a>
         
       </div>
       <div class="post-excerpt">Disney 的数学要在每帧 16ms 内跑完 100 万像素，靠的不是更快的 GPU，而是 Karis 在 UE4 引入的 **Split Sum 近似**——把 IBL 卷积积分拆成「预滤波 cubemap × BRDF LUT」两次纹理采样。本篇详解这套工程化方案，对照 Filament 标准模型和 Unity URP 源码，最后给出移动端的 ALU 与带宽妥协指南</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/PBR/" class="post-tag">#PBR</a><a href="/tags/IBL/" class="post-tag">#IBL</a><a href="/tags/Split-Sum/" class="post-tag">#Split Sum</a><a href="/tags/Filament/" class="post-tag">#Filament</a><a href="/tags/URP/" class="post-tag">#URP</a><a href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%BC%98%E5%8C%96/" class="post-tag">#移动端优化</a>
+  <a href="/tags/IBL/" class="post-tag">#IBL</a><a href="/tags/PBR/" class="post-tag">#PBR</a><a href="/tags/Split-Sum/" class="post-tag">#Split Sum</a><a href="/tags/Filament/" class="post-tag">#Filament</a><a href="/tags/URP/" class="post-tag">#URP</a><a href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%BC%98%E5%8C%96/" class="post-tag">#移动端优化</a>
 
 </div>
       </div>

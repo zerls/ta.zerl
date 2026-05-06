@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        Golang中的面对对象编程 | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+        
+        <div class="post-title">Golang中的面对对象编程</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2026-04-27 · 更新于2026-04-27
+            
+            
+          </div>
+          
+  <a href="/tags/Golang/" class="post-tag">#Golang</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-封装（Encapsulation）"><span class="post-toc-text">1. 封装（Encapsulation）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-继承（Inheritance）"><span class="post-toc-text">2. 继承（Inheritance）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-1-结构体嵌入"><span class="post-toc-text">2.1 结构体嵌入</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-2-方法重写（Override）"><span class="post-toc-text">2.2 方法重写（Override）</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-多态（Polymorphism）"><span class="post-toc-text">3. 多态（Polymorphism）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-抽象（Abstraction）"><span class="post-toc-text">4. 抽象（Abstraction）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结语"><span class="post-toc-text">结语</span></a></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>在 Go 语言中，传统面向对象编程（OOP）的核心概念——类、继承——被重新诠释，以更简洁、更符合 Go 哲学的方式实现。本文详细介绍如何在 Go 中实现<strong>封装、继承、多态与抽象</strong>四大特性。</p>
+<span id="more"></span>
+<hr>
+<h2 id="1-封装（Encapsulation）"><a href="#1-封装（Encapsulation）" class="headerlink" title="1. 封装（Encapsulation）"></a>1. 封装（Encapsulation）</h2><p>Go 通过<strong>命名规则</strong>与<strong>方法绑定</strong>实现封装，而非依赖 <code>public</code>&#x2F;<code>private</code> 关键字：</p>
+<ul>
+<li><strong>访问控制</strong>：标识符首字母大写（<code>PublicField</code>）表示包外可见，小写（<code>privateField</code>）则仅包内可用。</li>
+<li><strong>方法绑定</strong>：通过为结构体定义方法，将数据与行为统一封装。</li>
+</ul>
+<figure class="highlight go"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> BankAccount <span class="hljs-keyword">struct</span> &#123;<br>    owner   <span class="hljs-type">string</span>  <span class="hljs-comment">// 私有字段</span><br>    balance <span class="hljs-type">float64</span> <span class="hljs-comment">// 私有字段</span><br>&#125;<br><br><span class="hljs-comment">// 公开方法</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(b *BankAccount)</span></span> Deposit(amount <span class="hljs-type">float64</span>) &#123;<br>    <span class="hljs-keyword">if</span> b.validateAmount(amount) &#123;<br>        b.balance += amount<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 私有方法（仅包内可用）</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(b *BankAccount)</span></span> validateAmount(amount <span class="hljs-type">float64</span>) <span class="hljs-type">bool</span> &#123;<br>    <span class="hljs-keyword">return</span> amount &gt; <span class="hljs-number">0</span><br>&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h2 id="2-继承（Inheritance）"><a href="#2-继承（Inheritance）" class="headerlink" title="2. 继承（Inheritance）"></a>2. 继承（Inheritance）</h2><p>  Go 不支持传统的类继承，而是以**结构体组合（Composition）**替代，体现了”组合优于继承”的设计哲学。</p>
+<h3 id="2-1-结构体嵌入"><a href="#2-1-结构体嵌入" class="headerlink" title="2.1 结构体嵌入"></a>2.1 结构体嵌入</h3><p>  通过匿名嵌入，子结构体可以直接复用父结构体的字段与方法：</p>
+<figure class="highlight go"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Animal <span class="hljs-keyword">struct</span> &#123;<br>    Name <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(a *Animal)</span></span> Speak() &#123;<br>    fmt.Println(<span class="hljs-string">&quot;Animal sound&quot;</span>)<br>&#125;<br><br><span class="hljs-keyword">type</span> Dog <span class="hljs-keyword">struct</span> &#123;<br>    Animal <span class="hljs-comment">// 匿名嵌入，复用 Animal 的字段和方法</span><br>    Breed  <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    d := Dog&#123;Animal: Animal&#123;Name: <span class="hljs-string">&quot;Buddy&quot;</span>&#125;, Breed: <span class="hljs-string">&quot;Labrador&quot;</span>&#125;<br>    d.Speak() <span class="hljs-comment">// 输出: Animal sound</span><br>&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="2-2-方法重写（Override）"><a href="#2-2-方法重写（Override）" class="headerlink" title="2.2 方法重写（Override）"></a>2.2 方法重写（Override）</h3><p>为子结构体定义同名方法即可覆盖嵌入类型的实现，原方法仍可通过显式路径调用：</p>
+<figure class="highlight go"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(d *Dog)</span></span> Speak() &#123;<br>    fmt.Println(<span class="hljs-string">&quot;Woof!&quot;</span>)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    d := Dog&#123;Animal: Animal&#123;Name: <span class="hljs-string">&quot;Buddy&quot;</span>&#125;, Breed: <span class="hljs-string">&quot;Labrador&quot;</span>&#125;<br>    d.Speak()        <span class="hljs-comment">// 输出: Woof!（重写方法）</span><br>    d.Animal.Speak() <span class="hljs-comment">// 输出: Animal sound（调用嵌入结构体的原方法）</span><br>&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h2 id="3-多态（Polymorphism）"><a href="#3-多态（Polymorphism）" class="headerlink" title="3. 多态（Polymorphism）"></a>3. 多态（Polymorphism）</h2><p>  Go 通过接口（Interface）实现多态，其最大特点是隐式实现——任何类型只要实现了接口定义的所有方法，便自动满足该接口，无需显式声明。</p>
+<details class="md-code-fold"><summary>GO</summary><figure class="highlight go"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Shape <span class="hljs-keyword">interface</span> &#123;<br>    Area() <span class="hljs-type">float64</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Circle <span class="hljs-keyword">struct</span> &#123;<br>    Radius <span class="hljs-type">float64</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c Circle)</span></span> Area() <span class="hljs-type">float64</span> &#123;<br>    <span class="hljs-keyword">return</span> math.Pi * c.Radius * c.Radius<br>&#125;<br><br><span class="hljs-keyword">type</span> Rectangle <span class="hljs-keyword">struct</span> &#123;<br>    Width, Height <span class="hljs-type">float64</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Rectangle)</span></span> Area() <span class="hljs-type">float64</span> &#123;<br>    <span class="hljs-keyword">return</span> r.Width * r.Height<br>&#125;<br><br><span class="hljs-comment">// 统一处理不同类型</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">PrintArea</span><span class="hljs-params">(s Shape)</span></span> &#123;<br>    fmt.Printf(<span class="hljs-string">&quot;Area: %.2f\n&quot;</span>, s.Area())<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    shapes := []Shape&#123;<br>        Circle&#123;Radius: <span class="hljs-number">5</span>&#125;,<br>        Rectangle&#123;Width: <span class="hljs-number">3</span>, Height: <span class="hljs-number">4</span>&#125;,<br>    &#125;<br>    <span class="hljs-keyword">for</span> _, s := <span class="hljs-keyword">range</span> shapes &#123;<br>        PrintArea(s)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></div></figure></details>
+
+<p>相较于 Java&#x2F;C# 需要显式声明 implements，Go 的隐式接口实现大幅降低了类型之间的耦合度。</p>
+<h2 id="4-抽象（Abstraction）"><a href="#4-抽象（Abstraction）" class="headerlink" title="4. 抽象（Abstraction）"></a>4. 抽象（Abstraction）</h2><p>  Go 通过接口与未导出类型的组合实现抽象：接口暴露行为契约，具体实现细节则对外隐藏。配合工厂函数模式，调用方只需依赖接口，无需关心底层实现。</p>
+<details class="md-code-fold"><summary>GO</summary><figure class="highlight go"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 定义抽象行为</span><br><span class="hljs-keyword">type</span> Database <span class="hljs-keyword">interface</span> &#123;<br>    Connect() <span class="hljs-type">error</span><br>    Query(sql <span class="hljs-type">string</span>) ([]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>)<br>&#125;<br><br><span class="hljs-comment">// 隐藏具体实现（未导出类型）</span><br><span class="hljs-keyword">type</span> mysqlDatabase <span class="hljs-keyword">struct</span> &#123;<br>    connStr <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *mysqlDatabase)</span></span> Connect() <span class="hljs-type">error</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *mysqlDatabase)</span></span> Query(sql <span class="hljs-type">string</span>) ([]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) &#123;<br>    <span class="hljs-keyword">return</span> []<span class="hljs-type">string</span>&#123;<span class="hljs-string">&quot;result1&quot;</span>, <span class="hljs-string">&quot;result2&quot;</span>&#125;, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-comment">// 工厂函数：返回接口类型，隐藏实现细节</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewMySQLDatabase</span><span class="hljs-params">(connStr <span class="hljs-type">string</span>)</span></span> Database &#123;<br>    <span class="hljs-keyword">return</span> &amp;mysqlDatabase&#123;connStr: connStr&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    db := NewMySQLDatabase(<span class="hljs-string">&quot;user:password@tcp(localhost:3306)/db&quot;</span>)<br>    db.Connect()<br>    results, _ := db.Query(<span class="hljs-string">&quot;SELECT * FROM users&quot;</span>)<br>    fmt.Println(results)<br>&#125;<br></code></pre></td></tr></table></div></figure></details>
+
+<hr>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>Go 与传统 OOP 语言的关键区别如下：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Go</th>
+<th>Java &#x2F; C#</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>封装</td>
+<td>首字母大小写命名规则</td>
+<td><code>public</code> &#x2F; <code>private</code> 关键字</td>
+</tr>
+<tr>
+<td>继承</td>
+<td>结构体组合（嵌入）</td>
+<td><code>extends</code> 关键字</td>
+</tr>
+<tr>
+<td>多态</td>
+<td>接口隐式实现</td>
+<td>显式 <code>implements</code></td>
+</tr>
+<tr>
+<td>抽象</td>
+<td>接口 + 工厂函数</td>
+<td>抽象类 &#x2F; 接口</td>
+</tr>
+</tbody></table></div>
+<p>最佳实践<br>	1.	优先组合而非继承：Go 的结构体嵌入天然鼓励组合，避免深层继承链带来的耦合问题。<br>	2.	保持接口小而专一：遵循单一职责原则，一个接口只描述一类行为（参考标准库中的 io.Reader、io.Writer）。<br>	3.	面向接口编程：函数参数和返回值尽量使用接口类型，而非具体类型，以提升代码的灵活性与可测试性。</p>
+<p>Go 以这套轻量级的机制，在保持语言简洁性的同时，从容应对复杂系统的设计需求——这正是其在工程实践中广受青睐的重要原因之一。</p>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <div class="post-nav-item-left"></div>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/870fc14fd303/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      博客扩展语法指南 (MD-Plus)
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/Golang/" class="post-tag">#Golang</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/7fa2d90099c3/" title="Hello World" rel="bookmark">Hello World</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/870fc14fd303/" title="博客扩展语法指南 (MD-Plus)" rel="bookmark">博客扩展语法指南 (MD-Plus)</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>

@@ -17,8 +17,8 @@
     </author>
     <category term="Note" scheme="https://ta.zerl.top/categories/Note/"/>
     <category term="Golang" scheme="https://ta.zerl.top/tags/Golang/"/>
-    <id>https://ta.zerl.top/2026/04/27/Golang%E4%B8%AD%E7%9A%84%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/</id>
-    <link href="https://ta.zerl.top/2026/04/27/Golang%E4%B8%AD%E7%9A%84%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/"/>
+    <id>https://ta.zerl.top/posts/72f76782efd8/</id>
+    <link href="https://ta.zerl.top/posts/72f76782efd8/"/>
     <published>2026-04-26T17:19:19.420Z</published>
     <summary>
       <![CDATA[<p>在 Go 语言中，传统面向对象编程（OOP）的核心概念——类、继承——被重新诠释，以更简洁、更符合 Go 哲学的方式实现。本文详细介绍如何在 Go 中实现<strong>封装、继承、多态与抽象</strong>四大特性。</p>]]>
@@ -32,8 +32,8 @@
     </author>
     <category term="Note" scheme="https://ta.zerl.top/categories/Note/"/>
     <category term="md" scheme="https://ta.zerl.top/tags/md/"/>
-    <id>https://ta.zerl.top/2026/04/23/md-plus-docs/</id>
-    <link href="https://ta.zerl.top/2026/04/23/md-plus-docs/"/>
+    <id>https://ta.zerl.top/posts/870fc14fd303/</id>
+    <link href="https://ta.zerl.top/posts/870fc14fd303/"/>
     <published>2026-04-22T16:00:00.000Z</published>
     <summary>
       <![CDATA[<p>为了更好地呈现博客相关的图文、代码与节点逻辑，笔者深度定制了一套基于 Hexo 的 Markdown 扩展语法（MD-Plus）。</p>]]>
@@ -47,8 +47,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="水体" scheme="https://ta.zerl.top/tags/%E6%B0%B4%E4%BD%93/"/>
-    <id>https://ta.zerl.top/2026/04/18/%E6%B0%B4%E4%BD%93%E4%BA%A4%E4%BA%92/</id>
-    <link href="https://ta.zerl.top/2026/04/18/%E6%B0%B4%E4%BD%93%E4%BA%A4%E4%BA%92/"/>
+    <id>https://ta.zerl.top/posts/12100649263c/</id>
+    <link href="https://ta.zerl.top/posts/12100649263c/"/>
     <published>2026-04-17T16:00:00.000Z</published>
     <summary>
       <![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>水体交互是游戏与实时渲染中极具表现力的视觉效果之一，也是流体模拟领域长期研究的核心课题。从技术实现的角度看，它横跨<strong>物理建模<]]>
@@ -66,8 +66,8 @@
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="四叉树" scheme="https://ta.zerl.top/tags/%E5%9B%9B%E5%8F%89%E6%A0%91/"/>
     <category term="剔除" scheme="https://ta.zerl.top/tags/%E5%89%94%E9%99%A4/"/>
-    <id>https://ta.zerl.top/2026/03/20/GPUDrivenTerrain/</id>
-    <link href="https://ta.zerl.top/2026/03/20/GPUDrivenTerrain/"/>
+    <id>https://ta.zerl.top/posts/01ba4d5836c0/</id>
+    <link href="https://ta.zerl.top/posts/01ba4d5836c0/"/>
     <published>2026-03-19T16:00:00.000Z</published>
     <summary>
       <![CDATA[<h2 id="一、背景与摘要"><a href="#一、背景与摘要" class="headerlink" title="一、背景与摘要"></a>一、背景与摘要</h2><p>在现代 3D 游戏引擎（如虚幻 5 的 Nanite 早期思想、各种开放世界引擎）中，<strong]]>
@@ -82,8 +82,8 @@
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="体积渲染" scheme="https://ta.zerl.top/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/"/>
     <category term="RayMarching" scheme="https://ta.zerl.top/tags/RayMarching/"/>
-    <id>https://ta.zerl.top/2026/03/15/%E4%BD%93%E7%A7%AF%E4%BA%91%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93%E8%A7%A3%E6%9E%90/</id>
-    <link href="https://ta.zerl.top/2026/03/15/%E4%BD%93%E7%A7%AF%E4%BA%91%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93%E8%A7%A3%E6%9E%90/"/>
+    <id>https://ta.zerl.top/posts/419ab8c29e57/</id>
+    <link href="https://ta.zerl.top/posts/419ab8c29e57/"/>
     <published>2026-03-14T16:00:00.000Z</published>
     <summary>
       <![CDATA[<p>笔者 3 月份参考不同体积云项目和各种论文实现了一套基于物理的体积云 Unity URP渲染系统，现在就一些核心实现进行梳理。</p>]]>
@@ -96,15 +96,15 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
+    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="UE5 Lumen" scheme="https://ta.zerl.top/tags/UE5-Lumen/"/>
     <category term="Unity APV" scheme="https://ta.zerl.top/tags/Unity-APV/"/>
-    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="渲染管线" scheme="https://ta.zerl.top/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/"/>
-    <id>https://ta.zerl.top/2026/01/08/modern-gi-techniques/</id>
-    <link href="https://ta.zerl.top/2026/01/08/modern-gi-techniques/"/>
+    <id>https://ta.zerl.top/posts/32d75595feff/</id>
+    <link href="https://ta.zerl.top/posts/32d75595feff/"/>
     <published>2026-01-07T16:00:00.000Z</published>
     <summary>
       <![CDATA[<blockquote>
@@ -121,12 +121,12 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
-    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
-    <id>https://ta.zerl.top/2025/12/13/ReSTIR_Notes/</id>
-    <link href="https://ta.zerl.top/2025/12/13/ReSTIR_Notes/"/>
+    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
+    <id>https://ta.zerl.top/posts/5e9b6c3e8043/</id>
+    <link href="https://ta.zerl.top/posts/5e9b6c3e8043/"/>
     <published>2025-12-12T16:00:00.000Z</published>
     <summary>
       <![CDATA[<h2 id="引-为什么要学-ReSTIR？"><a href="#引-为什么要学-ReSTIR？" class="headerlink" title="引:为什么要学 ReSTIR？"></a>引:为什么要学 ReSTIR？</h2><blockquote>
@@ -141,12 +141,12 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="探针" scheme="https://ta.zerl.top/tags/%E6%8E%A2%E9%92%88/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
-    <id>https://ta.zerl.top/2025/12/11/DDGI_Notes/</id>
-    <link href="https://ta.zerl.top/2025/12/11/DDGI_Notes/"/>
+    <id>https://ta.zerl.top/posts/16400eceeb11/</id>
+    <link href="https://ta.zerl.top/posts/16400eceeb11/"/>
     <published>2025-12-10T16:00:00.000Z</published>
     <summary>
       <![CDATA[<span id="more"></span>
@@ -161,13 +161,13 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="IBL" scheme="https://ta.zerl.top/tags/IBL/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
+    <category term="IBL" scheme="https://ta.zerl.top/tags/IBL/"/>
     <category term="Spherical Harmonics" scheme="https://ta.zerl.top/tags/Spherical-Harmonics/"/>
-    <id>https://ta.zerl.top/2025/12/07/SH_Spherical_Harmonics_Lighting/</id>
-    <link href="https://ta.zerl.top/2025/12/07/SH_Spherical_Harmonics_Lighting/"/>
+    <id>https://ta.zerl.top/posts/7dbd5de8d511/</id>
+    <link href="https://ta.zerl.top/posts/7dbd5de8d511/"/>
     <published>2025-12-06T16:00:00.000Z</published>
     <summary>
       <![CDATA[<p>球谐光照 (SH) 是实时渲染里”压缩光照”的经典手段：把一张几 MB 的 HDR 环境图，浓缩为 <strong>27 个浮点数 (9 系数 × RGB)</strong>，运行时只需几个 <code>dot</code> 指令就能还原漫反射环境光。这篇笔记主要讲述了数学推导、工程实现、约定差异「最容易踩坑的部分」。</p>]]>
@@ -180,11 +180,11 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="SH" scheme="https://ta.zerl.top/tags/SH/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
-    <id>https://ta.zerl.top/2025/12/06/PRTGI/</id>
-    <link href="https://ta.zerl.top/2025/12/06/PRTGI/"/>
+    <id>https://ta.zerl.top/posts/9dcb8ea1fef2/</id>
+    <link href="https://ta.zerl.top/posts/9dcb8ea1fef2/"/>
     <published>2025-12-05T16:00:00.000Z</published>
     <summary>
       <![CDATA[<style>
@@ -201,12 +201,12 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="Area Light" scheme="https://ta.zerl.top/tags/Area-Light/"/>
     <category term="LTC" scheme="https://ta.zerl.top/tags/LTC/"/>
-    <id>https://ta.zerl.top/2025/11/26/LTC-note/</id>
-    <link href="https://ta.zerl.top/2025/11/26/LTC-note/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
+    <id>https://ta.zerl.top/posts/80970d0a10c2/</id>
+    <link href="https://ta.zerl.top/posts/80970d0a10c2/"/>
     <published>2025-11-25T16:00:00.000Z</published>
     <summary>
       <![CDATA[<div class="md-note md-note-success"><p class="md-note-title">💡核心思路</p><p>把昂贵的「BRDF 在球面多边形上的二维积分」，先用一个 <mjx-container class="MathJax" jax="]]>
@@ -220,8 +220,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="Denoise" scheme="https://ta.zerl.top/tags/Denoise/"/>
-    <id>https://ta.zerl.top/2025/11/19/%E9%99%8D%E5%99%AA/</id>
-    <link href="https://ta.zerl.top/2025/11/19/%E9%99%8D%E5%99%AA/"/>
+    <id>https://ta.zerl.top/posts/e03656215947/</id>
+    <link href="https://ta.zerl.top/posts/e03656215947/"/>
     <published>2025-11-18T16:00:00.000Z</published>
     <summary>
       <![CDATA[<blockquote>
@@ -241,8 +241,8 @@
     <category term="体积渲染" scheme="https://ta.zerl.top/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/"/>
     <category term="RayMarching" scheme="https://ta.zerl.top/tags/RayMarching/"/>
     <category term="Compute" scheme="https://ta.zerl.top/tags/Compute/"/>
-    <id>https://ta.zerl.top/2025/10/25/%E5%A4%A7%E6%B0%94%E6%95%A3%E5%B0%84%E6%B8%B2%E6%9F%93%E5%AE%9E%E6%88%98/</id>
-    <link href="https://ta.zerl.top/2025/10/25/%E5%A4%A7%E6%B0%94%E6%95%A3%E5%B0%84%E6%B8%B2%E6%9F%93%E5%AE%9E%E6%88%98/"/>
+    <id>https://ta.zerl.top/posts/00da9f16bfa9/</id>
+    <link href="https://ta.zerl.top/posts/00da9f16bfa9/"/>
     <published>2025-10-24T16:00:00.000Z</published>
     <summary>
       <![CDATA[<h2 id="一-、综述"><a href="#一-、综述" class="headerlink" title="一 、综述"></a>一 、综述</h2><p>大气散射是对现实世界大气现象的描述，其影响包括不限于白天和傍晚天际线的大气颜色变化，丁达尔现象的产生，人眼对于地球大]]>
@@ -257,8 +257,8 @@
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
     <category term="Field" scheme="https://ta.zerl.top/tags/Field/"/>
-    <id>https://ta.zerl.top/2025/10/19/%E9%A3%8E%E5%9C%BA/</id>
-    <link href="https://ta.zerl.top/2025/10/19/%E9%A3%8E%E5%9C%BA/"/>
+    <id>https://ta.zerl.top/posts/e250a6a5ae31/</id>
+    <link href="https://ta.zerl.top/posts/e250a6a5ae31/"/>
     <published>2025-10-18T16:00:00.000Z</published>
     <summary>
       <![CDATA[<p> 参考战神的风场设计思路在 URP 管线下实现了一套风场系统,并依据现在的 Compute 管线特点进行了设计调整，同时增加了对流体涡旋的模拟，下面就这套系统进行具体的介绍。</p>
@@ -275,8 +275,8 @@
     <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
     <category term="Mesh" scheme="https://ta.zerl.top/tags/Mesh/"/>
     <category term="Grass" scheme="https://ta.zerl.top/tags/Grass/"/>
-    <id>https://ta.zerl.top/2025/09/20/%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93/</id>
-    <link href="https://ta.zerl.top/2025/09/20/%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93/"/>
+    <id>https://ta.zerl.top/posts/627b3a262a42/</id>
+    <link href="https://ta.zerl.top/posts/627b3a262a42/"/>
     <published>2025-09-19T16:00:00.000Z</published>
     <summary>
       <![CDATA[<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>运行一个计算着色器：计算着色器的每个线程计算一片草叶。首先，计算一个位置：叶片均匀分布在地形上，略有抖动。我们通过对该位置进行截锥体和距离剔]]>
@@ -290,8 +290,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="半透明对象渲染" scheme="https://ta.zerl.top/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E5%AF%B9%E8%B1%A1%E6%B8%B2%E6%9F%93/"/>
-    <id>https://ta.zerl.top/2025/08/18/WBOIT/</id>
-    <link href="https://ta.zerl.top/2025/08/18/WBOIT/"/>
+    <id>https://ta.zerl.top/posts/b7985f35b028/</id>
+    <link href="https://ta.zerl.top/posts/b7985f35b028/"/>
     <published>2025-08-17T16:00:00.000Z</published>
     <summary>
       <![CDATA[<h2 id="一、研究背景与核心问题"><a href="#一、研究背景与核心问题" class="headerlink" title="一、研究背景与核心问题"></a>一、研究背景与核心问题</h2><p>在计算机图形学里，<strong>半透明对象渲染</strong>一]]>
@@ -305,8 +305,8 @@
     </author>
     <category term="Note" scheme="https://ta.zerl.top/categories/Note/"/>
     <category term="md" scheme="https://ta.zerl.top/tags/md/"/>
-    <id>https://ta.zerl.top/2025/08/01/hello-world/</id>
-    <link href="https://ta.zerl.top/2025/08/01/hello-world/"/>
+    <id>https://ta.zerl.top/posts/7fa2d90099c3/</id>
+    <link href="https://ta.zerl.top/posts/7fa2d90099c3/"/>
     <published>2025-08-01T15:56:41.829Z</published>
     <summary>
       <![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>]]>
@@ -320,8 +320,8 @@
     </author>
     <category term="Note" scheme="https://ta.zerl.top/categories/Note/"/>
     <category term="摄影" scheme="https://ta.zerl.top/tags/%E6%91%84%E5%BD%B1/"/>
-    <id>https://ta.zerl.top/2025/07/11/%E6%91%84%E5%BD%B1%E7%9A%84%E5%AE%9E%E7%94%A8%E6%80%A7%E4%B8%8E%E8%89%BA%E6%9C%AF%E6%80%A7%E6%BC%AB%E8%B0%88_%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0%E3%80%8C%E5%8C%97%E4%BA%AC%E5%B7%A5%E4%B8%9A%E5%A4%A7%E5%AD%A6%E3%80%8D/</id>
-    <link href="https://ta.zerl.top/2025/07/11/%E6%91%84%E5%BD%B1%E7%9A%84%E5%AE%9E%E7%94%A8%E6%80%A7%E4%B8%8E%E8%89%BA%E6%9C%AF%E6%80%A7%E6%BC%AB%E8%B0%88_%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0%E3%80%8C%E5%8C%97%E4%BA%AC%E5%B7%A5%E4%B8%9A%E5%A4%A7%E5%AD%A6%E3%80%8D/"/>
+    <id>https://ta.zerl.top/posts/ad07e615dba4/</id>
+    <link href="https://ta.zerl.top/posts/ad07e615dba4/"/>
     <published>2025-07-10T16:00:00.000Z</published>
     <summary>
       <![CDATA[<h1 id="1-摄影的视觉意义"><a href="#1-摄影的视觉意义" class="headerlink" title="1. 摄影的视觉意义"></a>1. 摄影的视觉意义</h1><h2 id="摄影的定义："><a href="#摄影的定义：" class="he]]>
@@ -339,8 +339,8 @@
     <category term="工程方法论" scheme="https://ta.zerl.top/tags/%E5%B7%A5%E7%A8%8B%E6%96%B9%E6%B3%95%E8%AE%BA/"/>
     <category term="Prompt Engineering" scheme="https://ta.zerl.top/tags/Prompt-Engineering/"/>
     <category term="AI生成" scheme="https://ta.zerl.top/tags/AI%E7%94%9F%E6%88%90/"/>
-    <id>https://ta.zerl.top/2025/05/01/ai-vibe-coding-guide/</id>
-    <link href="https://ta.zerl.top/2025/05/01/ai-vibe-coding-guide/"/>
+    <id>https://ta.zerl.top/posts/9ee2eb98a136/</id>
+    <link href="https://ta.zerl.top/posts/9ee2eb98a136/"/>
     <published>2025-04-30T16:00:00.000Z</published>
     <summary>
       <![CDATA[<div class="md-glk md-glk-yellow"><p>🚧 AI生成内容，全文构建中 ing。AI 风明显</p>
@@ -358,8 +358,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="水体" scheme="https://ta.zerl.top/tags/%E6%B0%B4%E4%BD%93/"/>
-    <id>https://ta.zerl.top/2025/03/15/%E6%B0%B4%E4%BD%93%E6%B8%B2%E6%9F%93/</id>
-    <link href="https://ta.zerl.top/2025/03/15/%E6%B0%B4%E4%BD%93%E6%B8%B2%E6%9F%93/"/>
+    <id>https://ta.zerl.top/posts/88306f74a406/</id>
+    <link href="https://ta.zerl.top/posts/88306f74a406/"/>
     <published>2025-03-14T16:00:00.000Z</published>
     <summary>
       <![CDATA[<!-- > TODO 细节编码有待完善 -->
@@ -376,8 +376,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="RenderPipline" scheme="https://ta.zerl.top/tags/RenderPipline/"/>
-    <id>https://ta.zerl.top/2025/01/15/%E7%8E%B0%E4%BB%A3%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%9E%B6%E6%9E%84/</id>
-    <link href="https://ta.zerl.top/2025/01/15/%E7%8E%B0%E4%BB%A3%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%9E%B6%E6%9E%84/"/>
+    <id>https://ta.zerl.top/posts/39b731327004/</id>
+    <link href="https://ta.zerl.top/posts/39b731327004/"/>
     <published>2025-01-14T16:00:00.000Z</published>
     <summary>
       <![CDATA[<p>在现代 GPU 架构下，渲染管线的演进本质上是 <strong>“权衡顶点处理（Draw Call / 几何提交）、片元算力（ALU）与显存带宽（Bandwidth）三者关系”</strong> 的历史。</p>]]>
@@ -390,13 +390,13 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="SSS" scheme="https://ta.zerl.top/tags/SSS/"/>
     <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
+    <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
+    <category term="SSS" scheme="https://ta.zerl.top/tags/SSS/"/>
     <category term="Skin" scheme="https://ta.zerl.top/tags/Skin/"/>
-    <id>https://ta.zerl.top/2024/12/01/skin_rendering_survey/</id>
-    <link href="https://ta.zerl.top/2024/12/01/skin_rendering_survey/"/>
+    <id>https://ta.zerl.top/posts/e3b3084f0a0a/</id>
+    <link href="https://ta.zerl.top/posts/e3b3084f0a0a/"/>
     <published>2024-11-30T16:00:00.000Z</published>
     <summary>
       <![CDATA[<p>皮肤是数字人渲染中最具挑战、也是最值得深挖的材质之一。  本文按照「提出问题 → 物理建模 → 实时近似的演进 → 工程落地 → 横向对比」的脉络，系统梳理近 20 年实时皮肤渲染的主流方案，重点解析 <strong>Pre-Integrated</strong>、<strong>Separable SSS (4S)</strong>、<strong>Spherical Gaussian (SG)</strong> 三大里程碑技术。</p>]]>
@@ -410,21 +410,24 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="次表面散射" scheme="https://ta.zerl.top/tags/%E6%AC%A1%E8%A1%A8%E9%9D%A2%E6%95%A3%E5%B0%84/"/>
     <category term="SSS" scheme="https://ta.zerl.top/tags/SSS/"/>
+    <category term="次表面散射" scheme="https://ta.zerl.top/tags/%E6%AC%A1%E8%A1%A8%E9%9D%A2%E6%95%A3%E5%B0%84/"/>
     <category term="BSSRDF" scheme="https://ta.zerl.top/tags/BSSRDF/"/>
     <category term="Kulla-Conty" scheme="https://ta.zerl.top/tags/Kulla-Conty/"/>
     <category term="多次散射" scheme="https://ta.zerl.top/tags/%E5%A4%9A%E6%AC%A1%E6%95%A3%E5%B0%84/"/>
-    <id>https://ta.zerl.top/2024/11/24/05-sss-energy-compensation/</id>
-    <link href="https://ta.zerl.top/2024/11/24/05-sss-energy-compensation/"/>
+    <id>https://ta.zerl.top/posts/11bf4606ec72/</id>
+    <link href="https://ta.zerl.top/posts/11bf4606ec72/"/>
     <published>2024-11-24T04:00:00.000Z</published>
     <summary>
-      <![CDATA[<blockquote>
+      <![CDATA[<!-- cover: https://google.github.io/filament/images/material_furnace_energy_preservation.png -->
+<!-- banner: https://google.github.io/filament/images/material_furnace_energy_preservation.png -->
+
+<blockquote>
 <p><strong>核心结论</strong>：PBR 的最后两块拼图是高维次表面散射（皮肤、玉石）和单次散射的能量找回（Kulla-Conty）。前者把 4D 的 BRDF 推广到 8D 的 BSSRDF，靠扩散剖面 + Gaussian Sum 在屏幕空间或纹理空间近似；后者通过预积分 LUT 把单次散射 Cook-Torrance 丢失的能量加回，让粗糙金属在白炉测试中真正达到能量守恒。本篇收尾整个 PBR 系列。</p>
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第五篇 · 次表面散射与能量补偿：从 BSSRDF 到 Kulla-Conty</title>
-    <updated>2026-05-05T10:30:50.813Z</updated>
+    <updated>2026-05-06T02:13:47.462Z</updated>
   </entry>
   <entry>
     <author>
@@ -432,35 +435,38 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="布料渲染" scheme="https://ta.zerl.top/tags/%E5%B8%83%E6%96%99%E6%B8%B2%E6%9F%93/"/>
     <category term="Cloth BRDF" scheme="https://ta.zerl.top/tags/Cloth-BRDF/"/>
     <category term="Charlie" scheme="https://ta.zerl.top/tags/Charlie/"/>
     <category term="Ashikhmin" scheme="https://ta.zerl.top/tags/Ashikhmin/"/>
-    <id>https://ta.zerl.top/2024/11/22/04-cloth-sheen/</id>
-    <link href="https://ta.zerl.top/2024/11/22/04-cloth-sheen/"/>
+    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
+    <id>https://ta.zerl.top/posts/363319b4d35b/</id>
+    <link href="https://ta.zerl.top/posts/363319b4d35b/"/>
     <published>2024-11-22T04:00:00.000Z</published>
     <summary>
-      <![CDATA[<blockquote>
+      <![CDATA[<!-- cover: https://google.github.io/filament/images/screenshot_cloth.png -->
+<!-- banner: https://google.github.io/filament/images/screenshot_cloth.png -->
+
+<blockquote>
 <p><strong>核心结论</strong>：布料是 GGX 微表面框架的第一个真正”破例”——纤维的环形反射和绒毛感无法用传统 NDF 表达。Charlie 与 Ashikhmin Velvet 是两个工业候选 NDF，配合 V_Charlie / V_Ashikhmin / V_Neubelt 几何项，再加上 sheen color、subsurface color 两参数，就能用同一个模型架构覆盖从棉麻到丝绸到天鹅绒的全谱系。本篇详解布料 BRDF 的物理动机、数学选型、以及 UE4、Filament、Unity SRP 的工程实践。</p>
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第四篇 · 布料与 Sheen 渲染：从 Charlie 到丝绸天鹅绒之辨</title>
-    <updated>2026-05-05T10:30:48.654Z</updated>
+    <updated>2026-05-06T02:12:51.483Z</updated>
   </entry>
   <entry>
     <author>
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
     <category term="IBL" scheme="https://ta.zerl.top/tags/IBL/"/>
+    <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
     <category term="Split Sum" scheme="https://ta.zerl.top/tags/Split-Sum/"/>
     <category term="Filament" scheme="https://ta.zerl.top/tags/Filament/"/>
     <category term="URP" scheme="https://ta.zerl.top/tags/URP/"/>
     <category term="移动端优化" scheme="https://ta.zerl.top/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%BC%98%E5%8C%96/"/>
-    <id>https://ta.zerl.top/2024/11/20/03-engine-practice/</id>
-    <link href="https://ta.zerl.top/2024/11/20/03-engine-practice/"/>
+    <id>https://ta.zerl.top/posts/20d352033ce9/</id>
+    <link href="https://ta.zerl.top/posts/20d352033ce9/"/>
     <published>2024-11-20T04:00:00.000Z</published>
     <summary>
       <![CDATA[<blockquote>
@@ -468,7 +474,7 @@
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第三篇 · 实时化工程实践：IBL、Filament 与 URP 源码</title>
-    <updated>2026-05-05T10:30:47.364Z</updated>
+    <updated>2026-05-06T02:10:50.082Z</updated>
   </entry>
   <entry>
     <author>
@@ -476,13 +482,13 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
+    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="Disney BRDF" scheme="https://ta.zerl.top/tags/Disney-BRDF/"/>
     <category term="Disney BSDF" scheme="https://ta.zerl.top/tags/Disney-BSDF/"/>
     <category term="各向异性" scheme="https://ta.zerl.top/tags/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7/"/>
-    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="Clearcoat" scheme="https://ta.zerl.top/tags/Clearcoat/"/>
-    <id>https://ta.zerl.top/2024/11/18/02-disney-principled-brdf/</id>
-    <link href="https://ta.zerl.top/2024/11/18/02-disney-principled-brdf/"/>
+    <id>https://ta.zerl.top/posts/8fa5222817d3/</id>
+    <link href="https://ta.zerl.top/posts/8fa5222817d3/"/>
     <published>2024-11-18T04:00:00.000Z</published>
     <summary>
       <![CDATA[<blockquote>
@@ -490,20 +496,20 @@
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第二篇 · Disney Principled BRDF 全解析：从十一参数到 BSDF 扩展</title>
-    <updated>2026-05-05T07:33:28.642Z</updated>
+    <updated>2026-05-06T02:10:37.441Z</updated>
   </entry>
   <entry>
     <author>
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
     <category term="BRDF" scheme="https://ta.zerl.top/tags/BRDF/"/>
     <category term="微表面理论" scheme="https://ta.zerl.top/tags/%E5%BE%AE%E8%A1%A8%E9%9D%A2%E7%90%86%E8%AE%BA/"/>
     <category term="Cook-Torrance" scheme="https://ta.zerl.top/tags/Cook-Torrance/"/>
-    <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
-    <id>https://ta.zerl.top/2024/11/16/01-pbr-foundations/</id>
-    <link href="https://ta.zerl.top/2024/11/16/01-pbr-foundations/"/>
+    <id>https://ta.zerl.top/posts/db873891e07d/</id>
+    <link href="https://ta.zerl.top/posts/db873891e07d/"/>
     <published>2024-11-16T04:00:00.000Z</published>
     <summary>
       <![CDATA[<blockquote>
@@ -511,19 +517,19 @@
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第一篇 · 理论基石：从渲染方程到 Cook-Torrance 框架</title>
-    <updated>2026-05-05T12:05:41.923Z</updated>
+    <updated>2026-05-06T02:10:22.620Z</updated>
   </entry>
   <entry>
     <author>
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
     <category term="BRDF" scheme="https://ta.zerl.top/tags/BRDF/"/>
     <category term="实时渲染" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
-    <id>https://ta.zerl.top/2024/11/14/00-pbr-series-index/</id>
-    <link href="https://ta.zerl.top/2024/11/14/00-pbr-series-index/"/>
+    <id>https://ta.zerl.top/posts/bb49e33ef41f/</id>
+    <link href="https://ta.zerl.top/posts/bb49e33ef41f/"/>
     <published>2024-11-14T04:00:00.000Z</published>
     <summary>
       <![CDATA[<blockquote>
@@ -532,5 +538,169 @@
     </summary>
     <title>「PBR 系列」总览：基于物理的渲染从理论到引擎落地</title>
     <updated>2026-05-05T07:04:44.992Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <category term="多相机" scheme="https://ta.zerl.top/tags/%E5%A4%9A%E7%9B%B8%E6%9C%BA/"/>
+    <category term="Shader 关键字" scheme="https://ta.zerl.top/tags/Shader-%E5%85%B3%E9%94%AE%E5%AD%97/"/>
+    <category term="工程架构" scheme="https://ta.zerl.top/tags/%E5%B7%A5%E7%A8%8B%E6%9E%B6%E6%9E%84/"/>
+    <id>https://ta.zerl.top/posts/ec8bca77f552/</id>
+    <link href="https://ta.zerl.top/posts/ec8bca77f552/"/>
+    <published>2024-07-22T04:00:00.000Z</published>
+    <summary>
+      <![CDATA[<blockquote>
+<p>系列收束篇。前七篇笔记从管线骨架一路走到后处理输出——这些都是单相机内部的故事。本篇拉远视角，关注更宏观的工程层：多相机如何编排、相机级配置如何注入、Shader 关键字如何收敛、调试工具如何串联。这些不是某个具体的渲染技术，但<strong>它们]]>
+    </summary>
+    <title>「Custom SRP」：相机系统与工程架构</title>
+    <updated>2026-04-30T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <category term="后处理" scheme="https://ta.zerl.top/tags/%E5%90%8E%E5%A4%84%E7%90%86/"/>
+    <category term="Bloom" scheme="https://ta.zerl.top/tags/Bloom/"/>
+    <category term="Color Grading" scheme="https://ta.zerl.top/tags/Color-Grading/"/>
+    <category term="FXAA" scheme="https://ta.zerl.top/tags/FXAA/"/>
+    <category term="Tone Mapping" scheme="https://ta.zerl.top/tags/Tone-Mapping/"/>
+    <id>https://ta.zerl.top/posts/fdbf8f97bbc1/</id>
+    <link href="https://ta.zerl.top/posts/fdbf8f97bbc1/"/>
+    <published>2024-07-15T04:00:00.000Z</published>
+    <summary>
+      <![CDATA[<blockquote>
+<p>系列第 7 篇。前六篇笔记把场景从几何提交一路走到 GI 接入——到这一步，相机的 color attachment 中存储的是一张<strong>线性空间的 HDR 图像</strong>：物理光度学单位下的真实辐射度，可能远超 [0, 1]，包]]>
+    </summary>
+    <title>「Custom SRP」：后处理栈</title>
+    <updated>2026-04-30T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
+    <category term="Light Probe" scheme="https://ta.zerl.top/tags/Light-Probe/"/>
+    <category term="Reflection Probe" scheme="https://ta.zerl.top/tags/Reflection-Probe/"/>
+    <id>https://ta.zerl.top/posts/7a3b251c9e25/</id>
+    <link href="https://ta.zerl.top/posts/7a3b251c9e25/"/>
+    <published>2024-07-08T04:00:00.000Z</published>
+    <summary>
+      <![CDATA[<blockquote>
+<p>系列第 6 篇。Note 4 与 Note 5 处理的是直接光照与遮挡——这是光从光源直接到达表面的部分。本篇关注<strong>间接光照</strong>：光在场景中反弹后到达表面的能量、来自天空的环境光、来自周围表面的反射。这部分能量在真实世界]]>
+    </summary>
+    <title>「Custom SRP」：全局光照与环境</title>
+    <updated>2026-04-30T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <category term="Shadow Map" scheme="https://ta.zerl.top/tags/Shadow-Map/"/>
+    <category term="CSM" scheme="https://ta.zerl.top/tags/CSM/"/>
+    <category term="PCF" scheme="https://ta.zerl.top/tags/PCF/"/>
+    <category term="Shadow Mask" scheme="https://ta.zerl.top/tags/Shadow-Mask/"/>
+    <id>https://ta.zerl.top/posts/18aafd1ae8a9/</id>
+    <link href="https://ta.zerl.top/posts/18aafd1ae8a9/"/>
+    <published>2024-07-01T04:00:00.000Z</published>
+    <summary>
+      <![CDATA[<blockquote>
+<p>系列第 5 篇。承接 Note 4 的光照框架——光源的 <code>light.attenuation</code> 字段中的阴影分量正是本篇要回答的”光是如何被遮挡的”。本篇是整个系列技术密度最高的一篇：CSM、PCF、点光阴影、Shadowm]]>
+    </summary>
+    <title>「Custom SRP」：阴影系统</title>
+    <updated>2026-04-30T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="Forward+" scheme="https://ta.zerl.top/tags/Forward/"/>
+    <category term="光照" scheme="https://ta.zerl.top/tags/%E5%85%89%E7%85%A7/"/>
+    <category term="Burst Job" scheme="https://ta.zerl.top/tags/Burst-Job/"/>
+    <category term="StructuredBuffer" scheme="https://ta.zerl.top/tags/StructuredBuffer/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <id>https://ta.zerl.top/posts/e962819a878a/</id>
+    <link href="https://ta.zerl.top/posts/e962819a878a/"/>
+    <published>2024-06-24T04:00:00.000Z</published>
+    <summary>
+      <![CDATA[<blockquote>
+<p>系列第 4 篇。承接 Note 1 的 Pass 框架与 Note 2 的几何提交链路。本篇关注的是”几何已经被画了，但着色器是怎么知道哪些光照亮它的”——从 CullingResults 到 StructuredBuffer 的 CPU→GPU]]>
+    </summary>
+    <title>「Custom SRP」：直接光照与 Tiled Forward+</title>
+    <updated>2026-04-30T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
+    <category term="BRDF" scheme="https://ta.zerl.top/tags/BRDF/"/>
+    <category term="HLSL" scheme="https://ta.zerl.top/tags/HLSL/"/>
+    <id>https://ta.zerl.top/posts/e49fd3648422/</id>
+    <link href="https://ta.zerl.top/posts/e49fd3648422/"/>
+    <published>2024-06-17T04:00:00.000Z</published>
+    <summary>
+      <![CDATA[<blockquote>
+<p>系列第 3 篇。承接 Note 4 的光照框架——<code>light.attenuation × DirectBRDF(surface, brdf, light)</code> 中的后半部分正是本篇要展开的”表面接收到光线后如何反射”。本篇关注]]>
+    </summary>
+    <title>「Custom SRP」：表面着色器与 BRDF</title>
+    <updated>2026-04-30T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <category term="SRP Batcher" scheme="https://ta.zerl.top/tags/SRP-Batcher/"/>
+    <category term="GPU Instancing" scheme="https://ta.zerl.top/tags/GPU-Instancing/"/>
+    <category term="Draw Call" scheme="https://ta.zerl.top/tags/Draw-Call/"/>
+    <id>https://ta.zerl.top/posts/9ddadbe5b731/</id>
+    <link href="https://ta.zerl.top/posts/9ddadbe5b731/"/>
+    <published>2024-06-10T04:00:00.000Z</published>
+    <summary>
+      <![CDATA[<blockquote>
+<p>系列第 2 篇。本篇承接 Note 1 中对 <code>RendererListHandle</code> 的接口定义，深入到几何可见性与批次合并的具体机制——回答”哪些对象会被画”和”GPU 提交效率如何被压榨”两个核心问题。</p>
+</bl]]>
+    </summary>
+    <title>「Custom SRP」：几何可见性与批次优化</title>
+    <updated>2026-04-30T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="渲染管线" scheme="https://ta.zerl.top/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/"/>
+    <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <category term="Render Graph" scheme="https://ta.zerl.top/tags/Render-Graph/"/>
+    <id>https://ta.zerl.top/posts/382feac0d5ef/</id>
+    <link href="https://ta.zerl.top/posts/382feac0d5ef/"/>
+    <published>2024-06-03T04:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h1 id="Note-1-·-渲染管线架构与-Render-Graph"><a href="#Note-1-·-渲染管线架构与-Render-Graph" class="headerlink" title="Note 1 · 渲染管线架构与 Render Graph"></a]]>
+    </summary>
+    <title>「Custom SRP」：渲染管线架构与 Render Graph</title>
+    <updated>2026-04-30T16:00:00.000Z</updated>
   </entry>
 </feed>

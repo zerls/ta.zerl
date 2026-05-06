@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        博客扩展语法指南 (MD-Plus) | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+        
+        <div class="post-title">博客扩展语法指南 (MD-Plus)</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2026-04-23 · 更新于2026-04-30
+            
+            
+          </div>
+          
+  <a href="/tags/md/" class="post-tag">#md</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-高亮块-Highlight-Block"><span class="post-toc-text">1. 高亮块 (Highlight Block)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-状态提示栏-Note"><span class="post-toc-text">2. 状态提示栏 (Note)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-1"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-1"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-代码折叠-Code-Fold"><span class="post-toc-text">3. 代码折叠 (Code Fold)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-2"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-2"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-分栏对比-Split-View"><span class="post-toc-text">4. 分栏对比 (Split View)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-3"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-3"><span class="post-toc-text">效果预览</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#噪声生成算法"><span class="post-toc-text">噪声生成算法</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-无缝图片网格-Grid-Gallery"><span class="post-toc-text">5. 无缝图片网格 (Grid Gallery)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-4"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-4"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#6-交互式图片对比-Compare-Slider"><span class="post-toc-text">6. 交互式图片对比 (Compare Slider)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-5"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-5"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#7-资源链接卡片-Card"><span class="post-toc-text">7. 资源链接卡片 (Card)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-6"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-6"><span class="post-toc-text">效果预览</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#方式-A：使用-Emoji-图标"><span class="post-toc-text">方式 A：使用 Emoji 图标</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#方式-B：使用图片预览-自动识别-URL"><span class="post-toc-text">方式 B：使用图片预览 (自动识别 URL)</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#8-引用注脚与附录"><span class="post-toc-text">8. 引用注脚与附录</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#体积云的-Raymarching-优化"><span class="post-toc-text">体积云的 Raymarching 优化</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#9-图片说明-Figure-Caption"><span class="post-toc-text">9. 图片说明 (Figure Caption)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-7"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-7"><span class="post-toc-text">效果预览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#10-表格底部注释-Table-Footnote"><span class="post-toc-text">10. 表格底部注释 (Table Footnote)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#语法-8"><span class="post-toc-text">语法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果预览-8"><span class="post-toc-text">效果预览</span></a></li></ol></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>为了更好地呈现博客相关的图文、代码与节点逻辑，笔者深度定制了一套基于 Hexo 的 Markdown 扩展语法（MD-Plus）。</p>
+<span id="more"></span>
+
+<p>以下是所有可用组件的视觉预览与语法说明。</p>
+<hr>
+<h2 id="1-高亮块-Highlight-Block"><a href="#1-高亮块-Highlight-Block" class="headerlink" title="1. 高亮块 (Highlight Block)"></a>1. 高亮块 (Highlight Block)</h2><p><strong>用途</strong>：用于段落、公式或列表的柔和背景强调，区别于正式的 Note 提示，提供 10 种 Notion 风格的色彩。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% glk 颜色英文名 %&#125;<br>支持内部嵌套 Markdown 语法<br>&#123;% endglk %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览"><a href="#效果预览" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-glk md-glk-default"><p>这是 <code>default</code> 默认色高亮块。适合做普通的背景承托。</p>
+</div>
+<div class="md-glk md-glk-gray"><p>这是 <code>gray</code> 灰色高亮块。</p>
+</div>
+<div class="md-glk md-glk-brown"><p>这是 <code>brown</code> 棕色高亮块。</p>
+</div>
+<div class="md-glk md-glk-orange"><p>这是 <code>orange</code> 橙色高亮块。</p>
+</div>
+<div class="md-glk md-glk-yellow"><p>这是 <code>yellow</code> 黄色高亮块，非常适合标记待处理事项。</p>
+</div>
+<div class="md-glk md-glk-green"><p>这是 <code>green</code> 绿色高亮块。</p>
+</div>
+<div class="md-glk md-glk-blue"><p>这是 <code>blue</code> 蓝色高亮块。</p>
+</div>
+<div class="md-glk md-glk-purple"><p>这是 <code>purple</code> 紫色高亮块。</p>
+</div>
+<div class="md-glk md-glk-pink"><p>这是 <code>pink</code> 粉色高亮块。</p>
+</div>
+<div class="md-glk md-glk-red"><p>这是 <code>red</code> 红色高亮块，适合用来标记严重的问题或被废弃的节点。</p>
+</div>
+
+<hr>
+<h2 id="2-状态提示栏-Note"><a href="#2-状态提示栏-Note" class="headerlink" title="2. 状态提示栏 (Note)"></a>2. 状态提示栏 (Note)</h2><p><strong>用途</strong>：正式的说明、警告和危险提示组件。</p>
+<h3 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% note 类型 标题名称 %&#125;<br>详细的提示内容...<br>&#123;% endnote %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-1"><a href="#效果预览-1" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-note md-note-info"><p class="md-note-title">架构说明</p><p>本文主要探讨 Unity URP 下的渲染管线拓展方法。</p>
+</div>
+
+<div class="md-note md-note-warning"><p class="md-note-title">性能提示</p><p>在大规模草地渲染时，请务必开启 GPU Culling 以减少 DrawCall 压力，否则会导致帧率暴降。</p>
+</div>
+
+<hr>
+<h2 id="3-代码折叠-Code-Fold"><a href="#3-代码折叠-Code-Fold" class="headerlink" title="3. 代码折叠 (Code Fold)"></a>3. 代码折叠 (Code Fold)</h2><p><strong>用途</strong>：收纳过长的源文件代码，保持文章主线阅读的整洁，带有拟真 Mac 风格。</p>
+<h3 id="语法-2"><a href="#语法-2" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% fold 📝 ComputeShader.hlsl %&#125;<br>\```hlsl<br>// 你的代码<br>\```<br>&#123;% endfold %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-2"><a href="#效果预览-2" class="headerlink" title="效果预览"></a>效果预览</h3><details class="md-code-fold"><summary>📝 ComputeShader.hlsl</summary><figure class="highlight c"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">[numthreads(<span class="hljs-number">8</span>,<span class="hljs-number">8</span>,<span class="hljs-number">1</span>)]<br><span class="hljs-type">void</span> <span class="hljs-title function_">CSMain</span> <span class="hljs-params">(uint3 id : SV_DispatchThreadID)</span> &#123;<br>    <span class="hljs-comment">// 渲染逻辑</span><br>&#125;<br></code></pre></td></tr></table></div></figure></details>
+
+<hr>
+<h2 id="4-分栏对比-Split-View"><a href="#4-分栏对比-Split-View" class="headerlink" title="4. 分栏对比 (Split View)"></a>4. 分栏对比 (Split View)</h2><p><strong>用途</strong>：左文右图，或者左代码右效果。支持自定义宽度比例（如 <code>4:6</code>, <code>1:1</code>）。在手机端会自动转为上下堆叠。</p>
+<h3 id="语法-3"><a href="#语法-3" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% split 4:6 %&#125;<br>左侧文本<br>|||<br>右侧图片<br>&#123;% endsplit %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-3"><a href="#效果预览-3" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-split">
+            <div class="md-split-left" style="flex: 4"><h4 id="噪声生成算法"><a href="#噪声生成算法" class="headerlink" title="噪声生成算法"></a>噪声生成算法</h4><p>这里我们可以详细解释右侧图中展现的各种噪声（Perlin, Voronoi）是如何通过公式混合到一起的。</p>
+<ul>
+<li>支持所有的 MD 语法</li>
+<li>极佳的空间利用率</li>
+</ul>
+</div>
+            <div class="md-split-right" style="flex: 6"><p><img src="https://bu.dusays.com/2026/04/23/69e9f5af1695e.png" alt="渲染预览"></p>
+</div>
+          </div>
+
+<hr>
+<h2 id="5-无缝图片网格-Grid-Gallery"><a href="#5-无缝图片网格-Grid-Gallery" class="headerlink" title="5. 无缝图片网格 (Grid Gallery)"></a>5. 无缝图片网格 (Grid Gallery)</h2><p><strong>用途</strong>：用于展示材质贴图集（如 Albedo、Normal 等）或多图并排。</p>
+<h3 id="语法-4"><a href="#语法-4" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% grid 4 %&#125;<br>![图1](url)<br>![图2](url)<br>![图3](url)<br>![图4](url)<br>&#123;% endgrid %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-4"><a href="#效果预览-4" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-grid" style="grid-template-columns: repeat(4, 1fr)"><p><img src="https://bu.dusays.com/2026/04/23/69e9c1ce146fa.png" alt="Albedo"><img src="https://bu.dusays.com/2026/04/23/69e9c1d009910.png" alt="Normal"><img src="https://bu.dusays.com/2026/04/23/69e9c1cf07ff4.png" alt="Roughness"><img src="https://bu.dusays.com/2026/04/23/69e9c1d2e7230.png" alt="Metallic"></p>
+</div>
+
+<hr>
+<h2 id="6-交互式图片对比-Compare-Slider"><a href="#6-交互式图片对比-Compare-Slider" class="headerlink" title="6. 交互式图片对比 (Compare Slider)"></a>6. 交互式图片对比 (Compare Slider)</h2><p><strong>用途</strong>：UE 官方文档风格的图像拉杆组件，用于直观地展示技术开启前&#x2F;后的画质差异。</p>
+<h3 id="语法-5"><a href="#语法-5" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;% compare BEFORE | AFTER %&#125;<br>![优化前](url)<br>![优化后](url)<br>&#123;% endcompare %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-5"><a href="#效果预览-5" class="headerlink" title="效果预览"></a>效果预览</h3><div class="md-compare" onmousemove="this.style.setProperty('--pos', (event.offsetX / this.offsetWidth * 100) + '%')">
+            <img src="/img/02-screen-space-enabled.png" class="md-compare-after" />
+            <img src="/img/01-screen-space-disabled.png" class="md-compare-before" />
+            <div class="md-compare-slider"><div class="md-compare-handle"></div></div>
+            <div class="md-compare-label before">开启前 </div>
+            <div class="md-compare-label after"> 开启后</div>
+          </div>
+
+<hr>
+<h2 id="7-资源链接卡片-Card"><a href="#7-资源链接卡片-Card" class="headerlink" title="7. 资源链接卡片 (Card)"></a>7. 资源链接卡片 (Card)</h2><p><strong>用途</strong>：提供明确且美观的外部资源、GitHub 仓库或项目工程下载链接。</p>
+<h3 id="语法-6"><a href="#语法-6" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext"><br>&#123;% card 标题 | 描述 | 链接URL | 🎈(Emoji图标) %&#125;<br><br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-6"><a href="#效果预览-6" class="headerlink" title="效果预览"></a>效果预览</h3><h4 id="方式-A：使用-Emoji-图标"><a href="#方式-A：使用-Emoji-图标" class="headerlink" title="方式 A：使用 Emoji 图标"></a>方式 A：使用 Emoji 图标</h4><a href="https://github.com" class="md-card" target="_blank" rel="noopener noreferrer">
+            <div class="md-card-icon">📦</div>
+            <div class="md-card-info">
+              <div class="md-card-title">GitHub</div>
+              <div class="md-card-desc">这是一个带图标的项目地址</div>
+            </div>
+          </a>
+<a href="#" class="md-card" target="_blank" rel="noopener noreferrer">
+            <div class="md-card-icon">📄</div>
+            <div class="md-card-info">
+              <div class="md-card-title">参考文献</div>
+              <div class="md-card-desc">SIGGRAPH 2023: Global Illumination in Real-time</div>
+            </div>
+          </a>
+
+<h4 id="方式-B：使用图片预览-自动识别-URL"><a href="#方式-B：使用图片预览-自动识别-URL" class="headerlink" title="方式 B：使用图片预览 (自动识别 URL)"></a>方式 B：使用图片预览 (自动识别 URL)</h4><a href="https://your-site.com" class="md-card" target="_blank" rel="noopener noreferrer">
+            <div class="md-card-media"><img src="https://bu.dusays.com/2026/04/23/69e9f5af1695e.png" alt="效果演示"></div>
+            <div class="md-card-info">
+              <div class="md-card-title">效果演示</div>
+              <div class="md-card-desc">点击查看高清渲染大图预览</div>
+            </div>
+          </a>
+
+
+<h2 id="8-引用注脚与附录"><a href="#8-引用注脚与附录" class="headerlink" title="8. 引用注脚与附录"></a>8. 引用注脚与附录</h2><h3 id="体积云的-Raymarching-优化"><a href="#体积云的-Raymarching-优化" class="headerlink" title="体积云的 Raymarching 优化"></a>体积云的 Raymarching 优化</h3><p>在实现基于 Compute Shader 的 Procedural Volumetric Cloud 时，传统的全分辨率 Raymarching 会带来极大的性能开销。为了保证时域上的稳定性，我们通常会引入 Reprojection 技术<sup class="md-cite"><a href="#ref-1" title="查看参考文献 [1]">[1]</a></sup>，并通过低分辨率的交错采样（Interleaved Sampling）配合 Temporal Reconstruction 来还原细节<sup class="md-cite"><a href="#ref-2" title="查看参考文献 [2]">[2]</a></sup>。</p>
+<p>… （正文其他内容）…</p>
+<hr>
+<div class="md-ref">
+            <div class="md-ref-title">
+              <span class="md-ref-icon">📚</span> 参考文献与延伸阅读
+            </div>
+            <div class="md-ref-content"><div id="ref-1" class="md-ref-item">
+            <span class="md-ref-id">[1]</span>
+            <div class="md-ref-text"><p>[SIGGRAPH 2015] <em>The Real-time Volumetric Cloudscapes of Horizon Zero Dawn</em> - Guerrilla Games</p>
+</div>
+          </div>
+<div id="ref-2" class="md-ref-item">
+            <span class="md-ref-id">[2]</span>
+            <div class="md-ref-text"><p>关于时域重建的详细探讨，可以参考这篇经典的实现分析：<a target="_blank" rel="noopener" href="https://github.com/">Temporal Reprojection Anti-Aliasing</a>，本文的重投影矩阵推导部分也参考了其中的思路。</p>
+</div>
+          </div>
+
+<ol>
+<li><a target="_blank" rel="noopener" href="https://pbrt.org/">Physically Based Rendering: From Theory to Implementation (PBRT)</a></li>
+<li>SIGGRAPH 2021 Course: <em>Advances in Real-Time Rendering in Games</em></li>
+<li><a target="_blank" rel="noopener" href="https://docs.unity3d.com/">Unity URP 官方文档 - GPU Instancing 最佳实践</a></li>
+<li>本文涉及的完整 Houdini HDA 测试工程已上传至 <a href="#">GitHub</a>。</li>
+</ol></div>
+          </div>
+
+<hr>
+<h2 id="9-图片说明-Figure-Caption"><a href="#9-图片说明-Figure-Caption" class="headerlink" title="9. 图片说明 (Figure Caption)"></a>9. 图片说明 (Figure Caption)</h2><p><strong>用途</strong>：为图片&#x2F;图表添加学术期刊风格的底部说明，支持编号、斜体、代码等 Markdown 语法。</p>
+<h3 id="语法-7"><a href="#语法-7" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">![图片](url)<br>&#123;% figcap 1 %&#125;<br>球谐函数（Spherical Harmonics）前三阶基函数的空间分布可视化。<br>&#123;% endfigcap %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-7"><a href="#效果预览-7" class="headerlink" title="效果预览"></a>效果预览</h3><p><img style="max-width: 800px;" src="https://bu.dusays.com/2026/04/23/69e9f5af1695e.png"></p>
+<figure class="md-figcap">
+            <figcaption class="md-figcap-content">
+              <strong>Fig 1.</strong> <p>球谐函数（Spherical Harmonics）前三阶基函数的空间分布可视化。</p>
+
+            </figcaption>
+          </figure>
+
+<hr>
+<h2 id="10-表格底部注释-Table-Footnote"><a href="#10-表格底部注释-Table-Footnote" class="headerlink" title="10. 表格底部注释 (Table Footnote)"></a>10. 表格底部注释 (Table Footnote)</h2><p><strong>用途</strong>：为表格添加 IEEE 风格的底部说明，支持上标引用、换行、斜体等格式。</p>
+<h3 id="语法-8"><a href="#语法-8" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">| GPU | RT&lt;sup&gt;a&lt;/sup&gt; | FPS&lt;sup&gt;b&lt;/sup&gt; |<br>|-----|----------------|-----------------|<br>| A17 Pro | ✓ | 58 |<br>| Snapdragon 8 Gen 3 | ✓ | 62 |<br><br>&#123;% tablefn %&#125;<br>*Note:* 本表数据基于 2024 年移动端芯片性能测试基准。<br>&lt;sup&gt;a&lt;/sup&gt; RT (Ray Tracing) 指硬件光线追踪；&lt;sup&gt;b&lt;/sup&gt; 帧率数据为开启全局光照后的平均表现。<br>&#123;% endtablefn %&#125;<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="效果预览-8"><a href="#效果预览-8" class="headerlink" title="效果预览"></a>效果预览</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>GPU</th>
+<th>RT<sup>a</sup></th>
+<th>FPS<sup>b</sup></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A17 Pro</td>
+<td>✓</td>
+<td>58</td>
+</tr>
+<tr>
+<td>Snapdragon 8 Gen 3</td>
+<td>✓</td>
+<td>62</td>
+</tr>
+</tbody></table></div>
+<div class="md-tablefn">
+            <div class="md-tablefn-content"><p><em>Note:</em> 本表数据基于 2024 年移动端芯片性能测试基准。<br><sup>a</sup> RT (Ray Tracing) 指硬件光线追踪；<sup>b</sup> 帧率数据为开启全局光照后的平均表现。</p>
+</div>
+          </div>
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@latest/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/posts/72f76782efd8/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>Golang中的面对对象编程</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/12100649263c/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      水体交互
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/md/" class="post-tag">#md</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/7fa2d90099c3/" title="Hello World" rel="bookmark">Hello World</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/72f76782efd8/" title="Golang中的面对对象编程" rel="bookmark">Golang中的面对对象编程</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/ad07e615dba4/" title="摄影的实用性与艺术性漫谈" rel="bookmark">摄影的实用性与艺术性漫谈</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>
