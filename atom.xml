@@ -96,12 +96,12 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
-    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="UE5 Lumen" scheme="https://ta.zerl.top/tags/UE5-Lumen/"/>
     <category term="Unity APV" scheme="https://ta.zerl.top/tags/Unity-APV/"/>
+    <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="渲染管线" scheme="https://ta.zerl.top/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/"/>
     <id>https://ta.zerl.top/posts/32d75595feff/</id>
     <link href="https://ta.zerl.top/posts/32d75595feff/"/>
@@ -120,11 +120,11 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
-    <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
     <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
+    <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
     <id>https://ta.zerl.top/posts/5e9b6c3e8043/</id>
     <link href="https://ta.zerl.top/posts/5e9b6c3e8043/"/>
     <published>2025-12-12T16:00:00.000Z</published>
@@ -140,8 +140,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="探针" scheme="https://ta.zerl.top/tags/%E6%8E%A2%E9%92%88/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
     <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
@@ -161,8 +161,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
     <category term="IBL" scheme="https://ta.zerl.top/tags/IBL/"/>
     <category term="Spherical Harmonics" scheme="https://ta.zerl.top/tags/Spherical-Harmonics/"/>
@@ -180,8 +180,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="SH" scheme="https://ta.zerl.top/tags/SH/"/>
     <id>https://ta.zerl.top/posts/9dcb8ea1fef2/</id>
     <link href="https://ta.zerl.top/posts/9dcb8ea1fef2/"/>
@@ -431,7 +431,7 @@
     <link href="https://ta.zerl.top/posts/39b731327004/"/>
     <published>2025-01-14T16:00:00.000Z</published>
     <summary>
-      <![CDATA[<p>在现代 GPU 架构下，渲染管线的演进本质上是 <strong>“权衡顶点处理（Draw Call &#x2F; 几何提交）、片元算力（ALU）与显存带宽（Bandwidth）三者关系”</strong> 的历史。</p>]]>
+      <![CDATA[<p>在现代 GPU 架构下，渲染管线的演进本质上是 <strong>“权衡顶点处理（Draw Call / 几何提交）、片元算力（ALU）与显存带宽（Bandwidth）三者关系”</strong> 的历史。</p>]]>
     </summary>
     <title>现代渲染管线架构</title>
     <updated>2025-03-09T16:00:00.000Z</updated>
@@ -499,7 +499,7 @@
 <!-- banner: https://google.github.io/filament/images/screenshot_cloth.png -->
 
 <blockquote>
-<p><strong>核心结论</strong>：布料是 GGX 微表面框架的第一个真正”破例”——纤维的环形反射和绒毛感无法用传统 NDF 表达。Charlie 与 Ashikhmin Velvet 是两个工业候选 NDF，配合 V_Charlie &#x2F; V_Ashikhmin &#x2F; V_Neubelt 几何项，再加上 sheen color、subsurface color 两参数，就能用同一个模型架构覆盖从棉麻到丝绸到天鹅绒的全谱系。本篇详解布料 BRDF 的物理动机、数学选型、以及 UE4、Filament、Unity SRP 的工程实践。</p>
+<p><strong>核心结论</strong>：布料是 GGX 微表面框架的第一个真正”破例”——纤维的环形反射和绒毛感无法用传统 NDF 表达。Charlie 与 Ashikhmin Velvet 是两个工业候选 NDF，配合 V_Charlie / V_Ashikhmin / V_Neubelt 几何项，再加上 sheen color、subsurface color 两参数，就能用同一个模型架构覆盖从棉麻到丝绸到天鹅绒的全谱系。本篇详解布料 BRDF 的物理动机、数学选型、以及 UE4、Filament、Unity SRP 的工程实践。</p>
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第四篇 · 布料与 Sheen 渲染：从 Charlie 到丝绸天鹅绒之辨</title>
@@ -564,7 +564,7 @@
     <published>2024-11-16T04:00:00.000Z</published>
     <summary>
       <![CDATA[<blockquote>
-<p><strong>核心结论</strong>：PBR 不是某一个公式，而是一个由「渲染方程 + 微表面理论 + 能量守恒 + 互易性」构成的框架。Cook-Torrance 把镜面 BRDF 拆成 D &#x2F; G &#x2F; F 三项，于是后续四十年的工作都可以归类到对这三项的精修——以及对 Lambert 漫反射的扩展。</p>
+<p><strong>核心结论</strong>：PBR 不是某一个公式，而是一个由「渲染方程 + 微表面理论 + 能量守恒 + 互易性」构成的框架。Cook-Torrance 把镜面 BRDF 拆成 D / G / F 三项，于是后续四十年的工作都可以归类到对这三项的精修——以及对 Lambert 漫反射的扩展。</p>
 </blockquote>]]>
     </summary>
     <title>「PBR 系列」第一篇 · 理论基石：从渲染方程到 Cook-Torrance 框架</title>
@@ -576,9 +576,9 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="BRDF" scheme="https://ta.zerl.top/tags/BRDF/"/>
     <category term="实时渲染" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <id>https://ta.zerl.top/posts/bb49e33ef41f/</id>
     <link href="https://ta.zerl.top/posts/bb49e33ef41f/"/>
     <published>2024-11-14T04:00:00.000Z</published>
@@ -595,8 +595,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="多相机" scheme="https://ta.zerl.top/tags/%E5%A4%9A%E7%9B%B8%E6%9C%BA/"/>
     <category term="Shader 关键字" scheme="https://ta.zerl.top/tags/Shader-%E5%85%B3%E9%94%AE%E5%AD%97/"/>
     <category term="工程架构" scheme="https://ta.zerl.top/tags/%E5%B7%A5%E7%A8%8B%E6%9E%B6%E6%9E%84/"/>
@@ -615,8 +615,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="后处理" scheme="https://ta.zerl.top/tags/%E5%90%8E%E5%A4%84%E7%90%86/"/>
     <category term="Bloom" scheme="https://ta.zerl.top/tags/Bloom/"/>
     <category term="Color Grading" scheme="https://ta.zerl.top/tags/Color-Grading/"/>
@@ -638,8 +638,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="全局光照" scheme="https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
     <category term="Light Probe" scheme="https://ta.zerl.top/tags/Light-Probe/"/>
     <category term="Reflection Probe" scheme="https://ta.zerl.top/tags/Reflection-Probe/"/>
@@ -660,8 +660,8 @@
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="Shadow Map" scheme="https://ta.zerl.top/tags/Shadow-Map/"/>
     <category term="PCF" scheme="https://ta.zerl.top/tags/PCF/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="CSM" scheme="https://ta.zerl.top/tags/CSM/"/>
     <category term="Shadow Mask" scheme="https://ta.zerl.top/tags/Shadow-Mask/"/>
     <id>https://ta.zerl.top/posts/18aafd1ae8a9/</id>
@@ -679,12 +679,12 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
     <category term="Forward+" scheme="https://ta.zerl.top/tags/Forward/"/>
     <category term="光照" scheme="https://ta.zerl.top/tags/%E5%85%89%E7%85%A7/"/>
     <category term="Burst Job" scheme="https://ta.zerl.top/tags/Burst-Job/"/>
     <category term="StructuredBuffer" scheme="https://ta.zerl.top/tags/StructuredBuffer/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <id>https://ta.zerl.top/posts/e962819a878a/</id>
     <link href="https://ta.zerl.top/posts/e962819a878a/"/>
     <published>2024-06-24T04:00:00.000Z</published>
@@ -701,9 +701,9 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="BRDF" scheme="https://ta.zerl.top/tags/BRDF/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <category term="BRDF" scheme="https://ta.zerl.top/tags/BRDF/"/>
     <category term="HLSL" scheme="https://ta.zerl.top/tags/HLSL/"/>
     <id>https://ta.zerl.top/posts/e49fd3648422/</id>
     <link href="https://ta.zerl.top/posts/e49fd3648422/"/>
@@ -720,8 +720,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP Batcher" scheme="https://ta.zerl.top/tags/SRP-Batcher/"/>
     <category term="GPU Instancing" scheme="https://ta.zerl.top/tags/GPU-Instancing/"/>
     <category term="Draw Call" scheme="https://ta.zerl.top/tags/Draw-Call/"/>
@@ -742,8 +742,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="渲染管线" scheme="https://ta.zerl.top/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="Render Graph" scheme="https://ta.zerl.top/tags/Render-Graph/"/>
     <id>https://ta.zerl.top/posts/382feac0d5ef/</id>
     <link href="https://ta.zerl.top/posts/382feac0d5ef/"/>
