@@ -125,7 +125,7 @@
       <div class="post-excerpt"><p>球谐光照 (SH) 是实时渲染里”压缩光照”的经典手段：把一张几 MB 的 HDR 环境图，浓缩为 <strong>27 个浮点数 (9 系数 × RGB)</strong>，运行时只需几个 <code>dot</code> 指令就能还原漫反射环境光。这篇笔记主要讲述了数学推导、工程实现、约定差异「最容易踩坑的部分」。</p></div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/Graphics/" class="post-tag">#Graphics</a><a href="/tags/IBL/" class="post-tag">#IBL</a><a href="/tags/Spherical-Harmonics/" class="post-tag">#Spherical Harmonics</a>
+  <a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/Graphics/" class="post-tag">#Graphics</a><a href="/tags/IBL/" class="post-tag">#IBL</a><a href="/tags/Spherical-Harmonics/" class="post-tag">#Spherical Harmonics</a>
 
 </div>
       </div>
@@ -147,7 +147,7 @@
       <div class="post-excerpt">PRTGI 把光线追踪中"光线与场景求交"这一性能瓶颈下放到离线烘焙，运行时只做光照重建（Relight），从而让动态光源也能享受到"看似光追"的全局光照。本文从渲染方程切入，讲清楚 SH 球谐编码、探针布置、运行时插值，以及工业界绕不开的漏光与性能问题。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/SH/" class="post-tag">#SH</a>
+  <a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/SH/" class="post-tag">#SH</a>
 
 </div>
       </div>
@@ -170,6 +170,24 @@
       <div class="post__foot">
         <div class="post-tags">
   <a href="/tags/Area-Light/" class="post-tag">#Area Light</a><a href="/tags/LTC/" class="post-tag">#LTC</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/GGX/" class="post-tag">#GGX</a>
+
+</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="post-card">
+    
+    <div class="post-content">
+      <div class="post__head">
+        <a href="/posts/bdeb27834ae9/" class="post-title hover-line">实时阴影技术演进与 URP 自定义阴影管线</a>
+        
+      </div>
+      <div class="post-excerpt">阴影是构建场景空间感与画面真实感的决定性因素。一个没有正确接地阴影的物体永远像悬在空中的纸片，PBR 再炫的金属高光也救不回来。但实时渲染中的阴影，本质是**画质需求**与**硬件预算（ALU、显存带宽、内存）**之间的极限平衡</div>
+      <div class="post__foot">
+        <div class="post-tags">
+  <a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/PCSS/" class="post-tag">#PCSS</a><a href="/tags/VSM/" class="post-tag">#VSM</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/%E5%B1%8F%E5%B9%95%E7%A9%BA%E9%97%B4%E9%98%B4%E5%BD%B1/" class="post-tag">#屏幕空间阴影</a><a href="/tags/%E6%8E%A5%E8%A7%A6%E9%98%B4%E5%BD%B1/" class="post-tag">#接触阴影</a><a href="/tags/%E7%BA%A7%E8%81%94%E9%98%B4%E5%BD%B1/" class="post-tag">#级联阴影</a><a href="/tags/RenderFeature/" class="post-tag">#RenderFeature</a>
 
 </div>
       </div>
