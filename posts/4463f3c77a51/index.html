@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        半透明渲染优化 | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+        
+        <div class="post-title">半透明渲染优化</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2025-08-06 · 更新于2025-11-30
+          </div>
+          
+  <a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E6%B8%B2%E6%9F%93/" class="post-tag">#半透明渲染</a><a href="/tags/GPU-%E4%BC%98%E5%8C%96/" class="post-tag">#GPU 优化</a><a href="/tags/Overdraw/" class="post-tag">#Overdraw</a><a href="/tags/OIT/" class="post-tag">#OIT</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一、减少-Overdraw（过度绘制）"><span class="post-toc-text">一、减少 Overdraw（过度绘制）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-1-Mesh-Tightening（紧致化网格）"><span class="post-toc-text">1.1 Mesh Tightening（紧致化网格）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-2-控制粒子层级与重叠"><span class="post-toc-text">1.2 控制粒子层级与重叠</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二、降分辨率渲染与上采样"><span class="post-toc-text">二、降分辨率渲染与上采样</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-1-半分辨率-四分之一分辨率渲染"><span class="post-toc-text">2.1 半分辨率 / 四分之一分辨率渲染</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三、Alpha-Blend-vs-Alpha-Test-的硬件权衡"><span class="post-toc-text">三、Alpha Blend vs Alpha Test 的硬件权衡</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-移动端（TBDR-架构）"><span class="post-toc-text">3.1 移动端（TBDR 架构）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-PC-主机端（IMR-架构）"><span class="post-toc-text">3.2 PC / 主机端（IMR 架构）</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#四、渲染队列与合批优化"><span class="post-toc-text">四、渲染队列与合批优化</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-1-减少材质与-Blend-State-切换"><span class="post-toc-text">4.1 减少材质与 Blend State 切换</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-2-GPU-驱动的排序"><span class="post-toc-text">4.2 GPU 驱动的排序</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#五、算法层面的替代方案"><span class="post-toc-text">五、算法层面的替代方案</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-1-抖动半透明（Stochastic-Dithered-Transparency）"><span class="post-toc-text">5.1 抖动半透明（Stochastic / Dithered Transparency）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-2-加权顺序无关半透明（WBOIT）与-A-Buffer"><span class="post-toc-text">5.2 加权顺序无关半透明（WBOIT）与 A-Buffer</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-text">总结</span></a></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>半透明渲染一直是实时渲染管线中最头疼的性能瓶颈之一。半透明物体无法写入深度（Z-Write Off），既享受不到硬件 Early-Z 剔除的红利，又会带来大量 Overdraw（过度绘制）和复杂的排序开销。</p>
+<p>本文从五个维度系统梳理一套半透明渲染的优化思路：减少 Overdraw、降分辨率渲染、Alpha Blend 与 Alpha Test 的硬件取舍、渲染队列与合批、以及算法层面的替代方案。</p>
+<hr>
+<h2 id="一、减少-Overdraw（过度绘制）"><a href="#一、减少-Overdraw（过度绘制）" class="headerlink" title="一、减少 Overdraw（过度绘制）"></a>一、减少 Overdraw（过度绘制）</h2><p>Overdraw 是半透明渲染最大的性能杀手。一个像素若被多层半透明物体覆盖，就会执行多次 Fragment Shader，导致极高的 Fillrate（填充率）压力。</p>
+<h3 id="1-1-Mesh-Tightening（紧致化网格）"><a href="#1-1-Mesh-Tightening（紧致化网格）" class="headerlink" title="1.1 Mesh Tightening（紧致化网格）"></a>1.1 Mesh Tightening（紧致化网格）</h3><p>对于 UI、2D 贴图或大片面片粒子，<strong>不要使用简单的 Quad</strong>。通过增加少量顶点，把全透明（Alpha = 0）区域从 Mesh 边界裁剪掉，让网格紧贴实际有颜色的区域。</p>
+<blockquote>
+<p>用一点顶点处理开销，换取大量像素填充率开销，是非常划算的交易。</p>
+</blockquote>
+<p>Unity 中可以使用 Sprite Editor 的 Tight Mesh 模式，或者通过 <code>SpritePacker</code> / <code>TextMeshPro</code> 自动生成紧致网格；对于粒子系统，TextureSheet 配合自定义网格也能显著降低 Fillrate。</p>
+<h3 id="1-2-控制粒子层级与重叠"><a href="#1-2-控制粒子层级与重叠" class="headerlink" title="1.2 控制粒子层级与重叠"></a>1.2 控制粒子层级与重叠</h3><p>制作浓烟、爆炸等特效时：</p>
+<ul>
+<li>严格限制发射器的生成数量与粒子生命周期；</li>
+<li>优先使用<strong>少量高质量、带法线和光照的 Sprite</strong>，而不是堆叠成百上千个简单的半透明面片；</li>
+<li>利用 Soft Particle、Distortion 等手段提升单片质量，减少层数。</li>
+</ul>
+<hr>
+<h2 id="二、降分辨率渲染与上采样"><a href="#二、降分辨率渲染与上采样" class="headerlink" title="二、降分辨率渲染与上采样"></a>二、降分辨率渲染与上采样</h2><p>这是现代引擎处理体积云、体积雾、大规模粒子系统时的标配技术。</p>
+<h3 id="2-1-半分辨率-四分之一分辨率渲染"><a href="#2-1-半分辨率-四分之一分辨率渲染" class="headerlink" title="2.1 半分辨率 / 四分之一分辨率渲染"></a>2.1 半分辨率 / 四分之一分辨率渲染</h3><p>在独立的 Pass 中，将半透明对象（或体积效果）渲染到尺寸为屏幕 1/2 或 1/4 的 Render Target 上：</p>
+<figure class="highlight c#"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-comment">// 简化示意：在 URP 中创建低分辨率 RT</span><br><span class="hljs-keyword">var</span> desc = renderingData.cameraData.cameraTargetDescriptor;<br>desc.width  &gt;&gt;= <span class="hljs-number">1</span>;   <span class="hljs-comment">// 1/2 分辨率</span><br>desc.height &gt;&gt;= <span class="hljs-number">1</span>;<br>desc.depthBufferBits = <span class="hljs-number">0</span>;<br>cmd.GetTemporaryRT(_LowResTransparentRT, desc, FilterMode.Bilinear);<br></code></pre></td></tr></table></div></figure>
+
+<p>2.2 双边滤波上采样（Bilateral Upsampling）</p>
+<p>直接 Bilinear 放大会在物体边缘产生光晕和锯齿。正确的做法是结合全分辨率深度图做边缘保留滤波：当邻居像素的深度差异过大时降低其权重，从而在交界处保持锐利。</p>
+<figure class="highlight c"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 双边权重示意</span><br><span class="hljs-type">float</span> depthDiff = <span class="hljs-built_in">abs</span>(centerDepth - sampleDepth);<br><span class="hljs-type">float</span> weight    = <span class="hljs-built_in">exp</span>(-depthDiff * _BilateralSharpness) * gaussianWeight;<br></code></pre></td></tr></table></div></figure>
+
+<h2 id="三、Alpha-Blend-vs-Alpha-Test-的硬件权衡"><a href="#三、Alpha-Blend-vs-Alpha-Test-的硬件权衡" class="headerlink" title="三、Alpha Blend vs Alpha Test 的硬件权衡"></a>三、Alpha Blend vs Alpha Test 的硬件权衡</h2><p>处理树叶、草丛、铁丝网等边缘半透明时，常需要在 Alpha Blend 和 Alpha Test（clip / discard）之间做选择。结论与硬件架构强相关：</p>
+<h3 id="3-1-移动端（TBDR-架构）"><a href="#3-1-移动端（TBDR-架构）" class="headerlink" title="3.1 移动端（TBDR 架构）"></a>3.1 移动端（TBDR 架构）</h3><p>移动端 GPU 高度依赖 HSR（Hidden Surface Removal）。在 Fragment Shader 中使用 clip() / discard 会破坏硬件 Early-Z，甚至导致整条流水线停滞。</p>
+<p>对密集植被，有时牺牲一点排序正确性，改用 Alpha Blend，反而比 Alpha Test 更快。</p>
+<h3 id="3-2-PC-主机端（IMR-架构）"><a href="#3-2-PC-主机端（IMR-架构）" class="headerlink" title="3.2 PC / 主机端（IMR 架构）"></a>3.2 PC / 主机端（IMR 架构）</h3><p>IMR 对 clip() 的惩罚没有移动端那么致命。配合 Z-Prepass（先用 Alpha Test 写入深度，再做光照计算）能有效剔除被遮挡像素：</p>
+<figure class="highlight c"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">Pass <span class="hljs-number">1</span>（Z-Prepass）: ColorMask <span class="hljs-number">0</span>, ZWrite On, Alpha Test<br>Pass <span class="hljs-number">2</span>（Lighting） : ZWrite Off, ZTest Equal, 完整光照<br></code></pre></td></tr></table></div></figure>
+
+<h2 id="四、渲染队列与合批优化"><a href="#四、渲染队列与合批优化" class="headerlink" title="四、渲染队列与合批优化"></a>四、渲染队列与合批优化</h2><p>半透明物体的排序和状态切换会给 CPU 带来显著压力。</p>
+<h3 id="4-1-减少材质与-Blend-State-切换"><a href="#4-1-减少材质与-Blend-State-切换" class="headerlink" title="4.1 减少材质与 Blend State 切换"></a>4.1 减少材质与 Blend State 切换</h3><p>将表现相近的半透明物体合并到同一材质和渲染队列。在 URP 中要充分利用 SRP Batcher，前提是 Shader 的 CBUFFER 结构设计规范、所有材质属性都放在 UnityPerMaterial 中。</p>
+<h3 id="4-2-GPU-驱动的排序"><a href="#4-2-GPU-驱动的排序" class="headerlink" title="4.2 GPU 驱动的排序"></a>4.2 GPU 驱动的排序</h3><p>传统 CPU 从后向前排序，在面对海量半透明实例（GPU 粒子、草海）时性能极差。可在 Compute Shader 中：</p>
+<ol>
+<li>计算每个实例到相机的距离；</li>
+<li>使用 Bitonic Sort（双调排序）或 Radix Sort（基数排序）完成 GPU 排序；</li>
+<li>通过 DrawMeshInstancedIndirect 发起一次性绘制。</li>
+</ol>
+<p>这样既消除了 CPU 排序瓶颈，也避免了 SetPassCall 爆炸。</p>
+<h2 id="五、算法层面的替代方案"><a href="#五、算法层面的替代方案" class="headerlink" title="五、算法层面的替代方案"></a>五、算法层面的替代方案</h2><h3 id="5-1-抖动半透明（Stochastic-Dithered-Transparency）"><a href="#5-1-抖动半透明（Stochastic-Dithered-Transparency）" class="headerlink" title="5.1 抖动半透明（Stochastic / Dithered Transparency）"></a>5.1 抖动半透明（Stochastic / Dithered Transparency）</h3><p>使用 Bayer Matrix 之类的噪波贴图，根据 Alpha 在屏幕空间随机 clip 掉一部分像素。本质上是把半透明转换为不透明（Alpha Test），再配合 TAA 在多帧间平滑噪点。</p>
+<figure class="highlight c"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">float</span> dither = tex2D(_BayerNoise, screenUV * _NoiseScale).r;<br>clip(alpha - dither);<br></code></pre></td></tr></table></div></figure>
+
+<p>适用场景：</p>
+<ul>
+<li>头发、密集草丛；</li>
+<li>LOD 切换时的渐变（Cross-fade）；</li>
+<li>彻底回避半透明排序问题。</li>
+</ul>
+<h3 id="5-2-加权顺序无关半透明（WBOIT）与-A-Buffer"><a href="#5-2-加权顺序无关半透明（WBOIT）与-A-Buffer" class="headerlink" title="5.2 加权顺序无关半透明（WBOIT）与 A-Buffer"></a>5.2 加权顺序无关半透明（WBOIT）与 A-Buffer</h3><p>WBOIT（Weighted Blended OIT）在像素级别避免了排序，但视觉精度有限；更高精度的 A-Buffer / Per-Pixel Linked List 可在 Compute Shader 中维护每像素的片元链表。在显存压力大时：</p>
+<p>限制最大记录层数（如只保留前 4 层），直接丢弃贡献度极低的深层像素。</p>
+<p>这是性能与质量之间一个非常实用的折中。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>优化方向</th>
+<th>核心收益</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Mesh Tightening</td>
+<td>降低 Fillrate</td>
+<td>UI、Sprite、粒子面片</td>
+</tr>
+<tr>
+<td>降分辨率 + Bilateral Upsample</td>
+<td>大幅降低 Shader 开销</td>
+<td>体积云、体积雾</td>
+</tr>
+<tr>
+<td>Alpha Blend / Test 取舍</td>
+<td>适配硬件架构</td>
+<td>植被、铁丝网</td>
+</tr>
+<tr>
+<td>SRP Batcher + GPU Sort</td>
+<td>降低 CPU / DrawCall 压力</td>
+<td>海量粒子、草海</td>
+</tr>
+<tr>
+<td>Dithered Transparency / OIT</td>
+<td>消除排序问题</td>
+<td>头发、LOD 渐变、复杂叠加</td>
+</tr>
+</tbody></table></div>
+<p>实际项目中，往往需要根据视觉需求 + 目标硬件 + 内容类型组合多种技术。下次遇到半透明性能瓶颈时，可以先定位是 Fillrate 瓶颈、排序瓶颈还是 DrawCall 瓶颈，再对症下药。</p>
+<hr>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@11.14.0/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/posts/b7985f35b028/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>WBOIT</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/7fa2d90099c3/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      Hello World
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E6%B8%B2%E6%9F%93/" class="post-tag">#半透明渲染</a><a href="/tags/GPU-%E4%BC%98%E5%8C%96/" class="post-tag">#GPU 优化</a><a href="/tags/Overdraw/" class="post-tag">#Overdraw</a><a href="/tags/OIT/" class="post-tag">#OIT</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/9dcb8ea1fef2/" title="PRTGI「预计算辐照度全局光照」：从理论到工程实践" rel="bookmark">PRTGI「预计算辐照度全局光照」：从理论到工程实践</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/7dbd5de8d511/" title="深入理解球谐光照 (Spherical Harmonics)：从数学理论到工业级代码实践" rel="bookmark">深入理解球谐光照 (Spherical Harmonics)：从数学理论到工业级代码实践</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/16400eceeb11/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark">DDGI「动态漫反射全局光照」：架构与工程概览</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>

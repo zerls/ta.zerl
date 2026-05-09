@@ -2,7 +2,7 @@
   height: auto;
   width: auto;
   display: block;
-  max-width: 1300px;
+  max-width: clamp(800px, 70vw, 1300px);
   padding: 0 20px;
   margin-top: 40px;
 }
@@ -54,7 +54,7 @@
   background: #fafaf9;
 }
 .post-list {
-  max-width: 1300px;
+  max-width: clamp(800px, 70vw, 1300px);
   margin: 20px auto;
 }
 .post-tags {
