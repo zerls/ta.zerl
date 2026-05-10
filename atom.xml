@@ -89,7 +89,7 @@ svg{
       <![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>水体交互是游戏与实时渲染中极具表现力的视觉效果之一，也是流体模拟领域长期研究的核心课题。从技术实现的角度看，它横跨<strong>物理建模<]]>
     </summary>
     <title>水体交互</title>
-    <updated>2026-04-20T16:00:00.000Z</updated>
+    <updated>2026-05-09T16:00:00.000Z</updated>
   </entry>
   <entry>
     <author>
@@ -196,8 +196,8 @@ svg{
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
     <category term="IBL" scheme="https://ta.zerl.top/tags/IBL/"/>
     <category term="Spherical Harmonics" scheme="https://ta.zerl.top/tags/Spherical-Harmonics/"/>
@@ -215,9 +215,9 @@ svg{
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="SH" scheme="https://ta.zerl.top/tags/SH/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <id>https://ta.zerl.top/posts/9dcb8ea1fef2/</id>
     <link href="https://ta.zerl.top/posts/9dcb8ea1fef2/"/>
     <published>2025-12-05T16:00:00.000Z</published>
@@ -236,9 +236,9 @@ svg{
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="Area Light" scheme="https://ta.zerl.top/tags/Area-Light/"/>
     <category term="LTC" scheme="https://ta.zerl.top/tags/LTC/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
     <id>https://ta.zerl.top/posts/80970d0a10c2/</id>
     <link href="https://ta.zerl.top/posts/80970d0a10c2/"/>
@@ -483,13 +483,10 @@ svg{
     <link href="https://ta.zerl.top/posts/88306f74a406/"/>
     <published>2025-03-14T16:00:00.000Z</published>
     <summary>
-      <![CDATA[<!-- > TODO 细节编码有待完善 -->
-
-
-<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>真实感水体的渲染是一个跨越几何学与光学的复合系统，而卡通化的水体则是在真实感水体基础进]]>
+      <![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>真实感水体的渲染是一个跨越几何学与光学的复合系统，而卡通化的水体则是在真实感水体基础进行简化与风格化处理。一个完整的水面体材质，通常需要解决]]>
     </summary>
     <title>水体渲染</title>
-    <updated>2026-04-10T16:00:00.000Z</updated>
+    <updated>2026-05-09T16:00:00.000Z</updated>
   </entry>
   <entry>
     <author>
