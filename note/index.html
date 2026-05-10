@@ -70,7 +70,41 @@
 </head>
   <body>
     
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+      <div id="search-mask" style="display:none">
+  <div class="search-main" id="search-main">
+    <div class="search__head">
+      <div class="search-form">
+        <svg t="1706347533072"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="7828"
+             width="20"
+             height="20">
+          <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" stroke="#000000" stroke-width="24" p-id="7829">
+          </path>
+        </svg>
+        <input id="search-input" placeholder="搜索文章">
+        <svg t="1706361500528"
+             id="search-clear"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="4351"
+             width="20"
+             height="20">
+          <path d="M512 562.688l-264.2944 264.2944-50.688-50.688L461.312 512 197.0176 247.7056l50.688-50.688L512 461.312l264.2944-264.2944 50.688 50.688L562.688 512l264.2944 264.2944-50.688 50.688L512 562.688z" fill="#00" p-id="4352">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <div class="search__body" id="search-result"></div>
+    <div class="search__foot"></div>
+  </div>
+</div>
+
     
     
     <div class=head>
@@ -81,12 +115,27 @@
         <input id="navBtn" type="checkbox"/>
         <div class="nav-right">
           
-            <div class="search-outer" id="algolia-search"></div>
+            <div class="search-outer"><div class="search" id="search-btn">
+  <svg t="1706347533072"
+       class="icon"
+       viewBox="0 0 1024 1024"
+       version="1.1"
+       xmlns="http://www.w3.org/2000/svg"
+       p-id="7828"
+       width="20"
+       height="20">
+    <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" stroke="#000000" stroke-width="24" p-id="7829"></path>
+  </svg>
+  <span>搜索</span>
+  <span class="search-shortcut-key">Ctrl K</span>
+</div></div>
           
           <div class="nav-menu">
             
               
                 <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aes">美学</a>
               
                 <a class="nav-menu-item" href="/aigc">AIGC</a>
               
@@ -114,7 +163,7 @@
       </div>
       <div class="wall-category-description">念念碎～</div>
       <div class="wall-category-tags">
-        <div id="tags-outer" style="line-height:1.4;"><a href="/tags/Golang/" style="font-size: 0.75em;">Golang</a> <a href="/tags/md/" style="font-size: 1em;">md</a> <a href="/tags/%E6%91%84%E5%BD%B1/" style="font-size: 0.75em;">摄影</a></div>
+        <div id="tags-outer" style="line-height:1.4;"><a href="/tags/Golang/" style="font-size: 0.75em;">Golang</a> <a href="/tags/md/" style="font-size: 1em;">md</a></div>
       </div>
     </div>
   </div>
@@ -187,28 +236,6 @@
     </div>
   </div>
 
-  
-  <div class="post-card">
-    
-      <a href="/posts/ad07e615dba4/"
-         class="post-cover"
-         style="background-image: url(https://pic1.zhimg.com/v2-56733da40e6c07c6a2e9bfd55247deab_720w.jpg)"></a>
-    
-    <div class="post-content">
-      <div class="post__head">
-        <a href="/posts/ad07e615dba4/" class="post-title hover-line">摄影的实用性与艺术性漫谈</a>
-        
-      </div>
-      <div class="post-excerpt">是利用以光学原理制造出来的设备（相机），通过控制光线（曝光），将现实世界中的影像记录在感光媒介（胶片或数字传感器）上，并最终完成影像显现的创作行为。本文是「北京工业大学」摄影课的课堂笔记</div>
-      <div class="post__foot">
-        <div class="post-tags">
-  <a href="/tags/%E6%91%84%E5%BD%B1/" class="post-tag">#摄影</a>
-
-</div>
-      </div>
-    </div>
-  </div>
-
 
     
     
@@ -245,16 +272,9 @@
 
     
     
-      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
-      <script type="text/javascript">
-        docsearch({
-          appId: 'appId',
-          apiKey: 'apiKey',
-          indexName: 'indexName',
-          insights: 'true',
-          container: 'div#algolia-search',
-          debug: 'false'
-        });
+      <script src="/js/search.js"></script>
+      <script>
+        searchInitialize("/search.json")
       </script>
     
     <script src="/js/copy-code.js"></script>

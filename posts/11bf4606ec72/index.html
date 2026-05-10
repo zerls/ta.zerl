@@ -185,7 +185,41 @@ mjx-container[display="true"] + br {
 </head>
   <body>
     
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+      <div id="search-mask" style="display:none">
+  <div class="search-main" id="search-main">
+    <div class="search__head">
+      <div class="search-form">
+        <svg t="1706347533072"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="7828"
+             width="20"
+             height="20">
+          <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" stroke="#000000" stroke-width="24" p-id="7829">
+          </path>
+        </svg>
+        <input id="search-input" placeholder="搜索文章">
+        <svg t="1706361500528"
+             id="search-clear"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="4351"
+             width="20"
+             height="20">
+          <path d="M512 562.688l-264.2944 264.2944-50.688-50.688L461.312 512 197.0176 247.7056l50.688-50.688L512 461.312l264.2944-264.2944 50.688 50.688L562.688 512l264.2944 264.2944-50.688 50.688L512 562.688z" fill="#00" p-id="4352">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <div class="search__body" id="search-result"></div>
+    <div class="search__foot"></div>
+  </div>
+</div>
+
     
     
     <div class=head>
@@ -196,12 +230,27 @@ mjx-container[display="true"] + br {
         <input id="navBtn" type="checkbox"/>
         <div class="nav-right">
           
-            <div class="search-outer" id="algolia-search"></div>
+            <div class="search-outer"><div class="search" id="search-btn">
+  <svg t="1706347533072"
+       class="icon"
+       viewBox="0 0 1024 1024"
+       version="1.1"
+       xmlns="http://www.w3.org/2000/svg"
+       p-id="7828"
+       width="20"
+       height="20">
+    <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" stroke="#000000" stroke-width="24" p-id="7829"></path>
+  </svg>
+  <span>搜索</span>
+  <span class="search-shortcut-key">Ctrl K</span>
+</div></div>
           
           <div class="nav-menu">
             
               
                 <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aes">美学</a>
               
                 <a class="nav-menu-item" href="/aigc">AIGC</a>
               
@@ -1042,7 +1091,7 @@ mjx-container[display="true"] + br {
 </div>
   <div class="realated__body">
     
-      <ul><li><a href="/posts/e3b3084f0a0a/" title="真实感皮肤渲染综述 — 从 BSSRDF 到屏幕空间可分离 SSS" rel="bookmark"><div class="related-post-title">真实感皮肤渲染综述 — 从 BSSRDF 到屏幕空间可分离 SSS</div></a></li><li><a href="/posts/db873891e07d/" title="「PBR 系列」第一篇 · 理论基石：从渲染方程到 Cook-Torrance 框架" rel="bookmark"><div class="related-post-title">「PBR 系列」第一篇 · 理论基石：从渲染方程到 Cook-Torrance 框架</div></a></li><li><a href="/posts/20d352033ce9/" title="「PBR 系列」第三篇 · 实时化工程实践：IBL、Filament 与 URP 源码" rel="bookmark"><div class="related-post-title">「PBR 系列」第三篇 · 实时化工程实践：IBL、Filament 与 URP 源码</div></a></li><li><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark"><div class="related-post-title">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</div></a></li><li><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark"><div class="related-post-title">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</div></a></li></ul>
+      <ul><li><a href="/posts/e3b3084f0a0a/" title="真实感皮肤渲染综述 — 从 BSSRDF 到屏幕空间可分离 SSS" rel="bookmark"><div class="related-post-title">真实感皮肤渲染综述 — 从 BSSRDF 到屏幕空间可分离 SSS</div></a></li><li><a href="/posts/bb49e33ef41f/" title="「PBR 系列」总览：基于物理的渲染从理论到引擎落地" rel="bookmark"><div class="related-post-title">「PBR 系列」总览：基于物理的渲染从理论到引擎落地</div></a></li><li><a href="/posts/8fa5222817d3/" title="「PBR 系列」第二篇 · Disney Principled BRDF 全解析：从十一参数到 BSDF 扩展" rel="bookmark"><div class="related-post-title">「PBR 系列」第二篇 · Disney Principled BRDF 全解析：从十一参数到 BSDF 扩展</div></a></li><li><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark"><div class="related-post-title">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</div></a></li><li><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark"><div class="related-post-title">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</div></a></li></ul>
     
   </div>
 </div>
@@ -1085,16 +1134,9 @@ mjx-container[display="true"] + br {
 
     
     
-      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
-      <script type="text/javascript">
-        docsearch({
-          appId: 'appId',
-          apiKey: 'apiKey',
-          indexName: 'indexName',
-          insights: 'true',
-          container: 'div#algolia-search',
-          debug: 'false'
-        });
+      <script src="/js/search.js"></script>
+      <script>
+        searchInitialize("/search.json")
       </script>
     
     <script src="/js/copy-code.js"></script>

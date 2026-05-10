@@ -70,7 +70,41 @@
 </head>
   <body>
     
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+      <div id="search-mask" style="display:none">
+  <div class="search-main" id="search-main">
+    <div class="search__head">
+      <div class="search-form">
+        <svg t="1706347533072"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="7828"
+             width="20"
+             height="20">
+          <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" stroke="#000000" stroke-width="24" p-id="7829">
+          </path>
+        </svg>
+        <input id="search-input" placeholder="搜索文章">
+        <svg t="1706361500528"
+             id="search-clear"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="4351"
+             width="20"
+             height="20">
+          <path d="M512 562.688l-264.2944 264.2944-50.688-50.688L461.312 512 197.0176 247.7056l50.688-50.688L512 461.312l264.2944-264.2944 50.688 50.688L562.688 512l264.2944 264.2944-50.688 50.688L512 562.688z" fill="#00" p-id="4352">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <div class="search__body" id="search-result"></div>
+    <div class="search__foot"></div>
+  </div>
+</div>
+
     
     
     <div class=head>
@@ -81,12 +115,27 @@
         <input id="navBtn" type="checkbox"/>
         <div class="nav-right">
           
-            <div class="search-outer" id="algolia-search"></div>
+            <div class="search-outer"><div class="search" id="search-btn">
+  <svg t="1706347533072"
+       class="icon"
+       viewBox="0 0 1024 1024"
+       version="1.1"
+       xmlns="http://www.w3.org/2000/svg"
+       p-id="7828"
+       width="20"
+       height="20">
+    <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" stroke="#000000" stroke-width="24" p-id="7829"></path>
+  </svg>
+  <span>搜索</span>
+  <span class="search-shortcut-key">Ctrl K</span>
+</div></div>
           
           <div class="nav-menu">
             
               
                 <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aes">美学</a>
               
                 <a class="nav-menu-item" href="/aigc">AIGC</a>
               
@@ -136,7 +185,7 @@
       <div class="post-excerpt">静态对象用 Lightmap、动态对象用 Light Probe 球谐函数（SH Ringing 的吉布斯现象溯源）、镜面反射统一走 Reflection Probe（Box Projection 的 AABB 前提与视差校正局限）。从 Meta Pass 作为 GI 烘焙源头，到 LPPV 在移动端 3D 纹理 Cache Miss 的带宽警告。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" class="post-tag">#全局光照</a><a href="/tags/Light-Probe/" class="post-tag">#Light Probe</a><a href="/tags/Reflection-Probe/" class="post-tag">#Reflection Probe</a>
+  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" class="post-tag">#全局光照</a><a href="/tags/Light-Probe/" class="post-tag">#Light Probe</a><a href="/tags/Reflection-Probe/" class="post-tag">#Reflection Probe</a>
 
 </div>
       </div>
@@ -158,7 +207,7 @@
       <div class="post-excerpt">系列技术密度最高的篇章。双 Atlas 架构、CSM 级联原理与 Cascade Blend 策略、PCF 三档质量统一（Tent Filter 的采样魔法）、Shadow Acne/Peter-Panning/Shadow Pancaking 的成因与修复三件套，再到 Shadowmask 烘焙混合的双模式与 Unity 6 阴影剔除并行化。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/CSM/" class="post-tag">#CSM</a><a href="/tags/Shadow-Mask/" class="post-tag">#Shadow Mask</a>
+  <a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/CSM/" class="post-tag">#CSM</a><a href="/tags/Shadow-Mask/" class="post-tag">#Shadow Mask</a>
 
 </div>
       </div>
@@ -180,7 +229,7 @@
       <div class="post-excerpt">从 CullingResults 到 StructuredBuffer 的 CPU→GPU 光源数据链路，到屏幕空间 Tile 分块的 Burst Job 并行剔除实现。深入 Forward+ 的复杂度模型与移动端带宽权衡，剖析"方向光简单遍历 + 点光/聚光 Tile 查表"分而治之架构背后的工程理性。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/Forward/" class="post-tag">#Forward+</a><a href="/tags/%E5%85%89%E7%85%A7/" class="post-tag">#光照</a><a href="/tags/Burst-Job/" class="post-tag">#Burst Job</a><a href="/tags/StructuredBuffer/" class="post-tag">#StructuredBuffer</a>
+  <a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Forward/" class="post-tag">#Forward+</a><a href="/tags/%E5%85%89%E7%85%A7/" class="post-tag">#光照</a><a href="/tags/Burst-Job/" class="post-tag">#Burst Job</a><a href="/tags/StructuredBuffer/" class="post-tag">#StructuredBuffer</a>
 
 </div>
       </div>
@@ -202,7 +251,7 @@
       <div class="post-excerpt">完整的 Lit Shader 物理基础。从六层无环 HLSL 库架构，到 Cook-Torrance BRDF（GGX · Smith · Schlick）的标准数学推导；从 Mask Map 的四通道打包策略，到 Premultiplied Alpha 的物理语义，再到移动端 FP16 寄存器优化与 Alpha To Coverage 的工程权衡。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/PBR/" class="post-tag">#PBR</a><a href="/tags/BRDF/" class="post-tag">#BRDF</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/HLSL/" class="post-tag">#HLSL</a>
+  <a href="/tags/PBR/" class="post-tag">#PBR</a><a href="/tags/BRDF/" class="post-tag">#BRDF</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/HLSL/" class="post-tag">#HLSL</a>
 
 </div>
       </div>
@@ -224,7 +273,7 @@
       <div class="post-excerpt">深入 GPU 提交效率的全链路。从 CullingResults 到 RendererListHandle 的现代封装，到 SRP Batcher 与 GPU Instancing 的精确收益模型对比，再到 LOD Cross-fade 与 Dithering 的底层实现——回答"哪些对象会被画"与"如何把提交成本压到极限"两个核心问题。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP-Batcher/" class="post-tag">#SRP Batcher</a><a href="/tags/GPU-Instancing/" class="post-tag">#GPU Instancing</a><a href="/tags/Draw-Call/" class="post-tag">#Draw Call</a>
+  <a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/SRP-Batcher/" class="post-tag">#SRP Batcher</a><a href="/tags/GPU-Instancing/" class="post-tag">#GPU Instancing</a><a href="/tags/Draw-Call/" class="post-tag">#Draw Call</a>
 
 </div>
       </div>
@@ -246,7 +295,7 @@
       <div class="post-excerpt">系列首篇。本篇定位是引擎的"执行骨架"——定义了所有其他系统（光照、阴影、后处理、相机管理）的宿主形态。以 Unity 6.3 的现代范式为基准，深入剖析 Render Graph 的声明式资源模型、Raster Pass 合并机制与 TBR 架构下的片上内存带宽收益。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/" class="post-tag">#渲染管线</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Render-Graph/" class="post-tag">#Render Graph</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a>
+  <a href="/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/" class="post-tag">#渲染管线</a><a href="/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-tag">#系列文章</a><a href="/tags/SRP/" class="post-tag">#SRP</a><a href="/tags/Render-Graph/" class="post-tag">#Render Graph</a>
 
 </div>
       </div>
@@ -289,16 +338,9 @@
 
     
     
-      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
-      <script type="text/javascript">
-        docsearch({
-          appId: 'appId',
-          apiKey: 'apiKey',
-          indexName: 'indexName',
-          insights: 'true',
-          container: 'div#algolia-search',
-          debug: 'false'
-        });
+      <script src="/js/search.js"></script>
+      <script>
+        searchInitialize("/search.json")
       </script>
     
     <script src="/js/copy-code.js"></script>
