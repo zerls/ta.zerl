@@ -1126,6 +1126,24 @@ body {
 @media screen and (max-width: 768px) {
   .realated__body ul {
     grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .realated__body li {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .realated__body li:hover {
+    background-color: transparent;
+    box-shadow: none;
+    transform: none;
+    border: none;
+    border-bottom: 1px dashed #e03636;
+  }
+  .realated__body a {
+    padding: 10px 0;
+    border-bottom: none;
   }
   .related-post {
     margin: 40px 0 30px;

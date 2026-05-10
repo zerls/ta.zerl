@@ -140,7 +140,7 @@ p img,
 figure img {
   display: block;
   margin: 0 auto;
-  max-width: 800px;
+  max-width: Min(800px, 100%);
 }
 iframe,
 img,

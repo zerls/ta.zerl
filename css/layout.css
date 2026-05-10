@@ -136,7 +136,7 @@ p img,
 figure img {
   display: block;
   margin: 0 auto;
-  max-width: 800px;
+  max-width: Min(800px, 100%);
 }
 iframe,
 img,
@@ -624,7 +624,7 @@ mjx-container:not([display="true"]) {
 #search-main {
   position: absolute;
   margin: 60px auto 0;
-  width: 520px;
+  width: clamp(300px, 60vw, 600px);
   left: 0;
   right: 0;
   font-size: clamp(15px, 1.4375rem, 18px);
@@ -636,10 +636,11 @@ mjx-container:not([display="true"]) {
 }
 @media (max-width: 760px) {
   #search-main {
-    margin: 0;
-    width: 100%;
-    height: 100%;
+    width: 90vw;
+    height: auto;
+    max-height: calc(100vh - 60px);
     border-radius: 0;
+    padding: 20px;
   }
 }
 .search-form {
