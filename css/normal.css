@@ -168,3 +168,7 @@ figure figcaption {
   font-size: 0.85em;
   color: $blak-lighter;
 }
+svg {
+  display: block;
+  margin: auto;
+}

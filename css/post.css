@@ -881,7 +881,7 @@ figure.md-img-figcap figcaption.md-figcap-content {
   background-color: currentColor;
   border-radius: 50%;
 }
-@media screen and (min-width: 1301px) {
+@media screen and (min-width: 1651px) {
   #toc-toggle:checked ~ * .toc-outer,
   #toc-toggle:checked ~ .toc-outer {
     opacity: 0;
@@ -889,15 +889,16 @@ figure.md-img-figcap figcaption.md-figcap-content {
     transform: translateX(20px); /* 向右侧淡出 */
   }
 }
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: 1650px) {
   .toc-outer {
     position: fixed;
     top: 0;
     right: 0;
     height: 100vh;
     max-height: 100vh;
-/* 【流式优化】防止极窄屏幕（如 320px）被 280px 的 TOC 完全铺满，保留 15% 可点击关闭的空白区 */
-    width: 70vw;
+/* 【流式优化】防止极窄屏幕（如 320px）被 280px 的 TOC 完全铺满，保留 30% 可点击关闭的空白区 */
+    width: 280px;
+    max-width: 70vw;
     margin: 0;
     border-radius: 0;
     border-left: 1px solid rgba(227,227,224,0.5);

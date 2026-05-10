@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        从零实现软光栅渲染器：架构分析、核心技术与重构路线 | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+  <body>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer" id="algolia-search"></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+        
+        <div class="post-title">从零实现软光栅渲染器：架构分析、核心技术与重构路线</div>
+        
+        <div class="post-info">
+          <div class="post-date">发布于2025-05-10 · 更新于2025-10-03
+          </div>
+          
+  <a href="/tags/RenderPipline/" class="post-tag">#RenderPipline</a><a href="/tags/C/" class="post-tag">#C++</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+        <input type="checkbox" id="toc-toggle">
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+          <label for="toc-toggle" class="tool-btn" title="Toggle TOC">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h10"></path>
+              <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </label>
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+        <aside class="toc-outer">
+          <div class="toc-title">目录</div>
+          <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一、项目整体架构"><span class="post-toc-text">一、项目整体架构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#各层职责一览"><span class="post-toc-text">各层职责一览</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二、渲染管线全流程"><span class="post-toc-text">二、渲染管线全流程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三、核心技术知识点"><span class="post-toc-text">三、核心技术知识点</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-坐标变换链"><span class="post-toc-text">3.1 坐标变换链</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-重心坐标-与-EdgeFunction-优化"><span class="post-toc-text">3.2 重心坐标 与 EdgeFunction 优化</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-3-透视正确插值"><span class="post-toc-text">3.3 透视正确插值</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-4-深度测试与-Z-Buffer"><span class="post-toc-text">3.4 深度测试与 Z-Buffer</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-5-MSAA-多重采样抗锯齿"><span class="post-toc-text">3.5 MSAA 多重采样抗锯齿</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-6-Blinn-Phong-光照模型"><span class="post-toc-text">3.6 Blinn-Phong 光照模型</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-7-法线贴图-与-TBN-矩阵"><span class="post-toc-text">3.7 法线贴图 与 TBN 矩阵</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-8-阴影映射（Shadow-Map-PCF）"><span class="post-toc-text">3.8 阴影映射（Shadow Map + PCF）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-9-纹理采样系统"><span class="post-toc-text">3.9 纹理采样系统</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-10-并行化策略"><span class="post-toc-text">3.10 并行化策略</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#四、已实现功能-现存问题"><span class="post-toc-text">四、已实现功能 / 现存问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#五、后续重构方向"><span class="post-toc-text">五、后续重构方向</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-1-正确性优先：近平面裁剪"><span class="post-toc-text">5.1 正确性优先：近平面裁剪</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-2-性能：Tile-based-并行"><span class="post-toc-text">5.2 性能：Tile-based 并行</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-3-功能：PBR-材质"><span class="post-toc-text">5.3 功能：PBR 材质</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-4-功能：延迟渲染（Deferred-Rendering）"><span class="post-toc-text">5.4 功能：延迟渲染（Deferred Rendering）</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#六、总结"><span class="post-toc-text">六、总结</span></a></li></ol></li></ol>
+        </aside>
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>本文是对 <a target="_blank" rel="noopener" href="https://github.com/zerls/SimpleRenderer">SimpleRenderer</a> 项目的全面复盘。该项目是一个基于 CPU 的软件光栅化渲染引擎，不依赖任何图形 API，从零实现了完整的渲染管线。本文将从项目架构、核心技术、关键实现细节三个维度进行分析，并给出后续的重构方向。</p>
+<span id="more"></span>
+
+<hr>
+<h2 id="一、项目整体架构"><a href="#一、项目整体架构" class="headerlink" title="一、项目整体架构"></a>一、项目整体架构</h2>
+<svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:monospace,sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#6c8ebf"></path>
+    </marker>
+  </defs>
+  <!-- App Layer -->
+  <rect x="20" y="14" width="680" height="52" rx="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"></rect>
+  <text x="36" y="34" fill="#1a3a5c" font-size="11" font-weight="bold">App Layer</text>
+  <rect x="120" y="22" width="140" height="36" rx="4" fill="#fff" stroke="#6c8ebf" stroke-width="1"></rect>
+  <text x="190" y="37" text-anchor="middle" fill="#1a3a5c" font-size="10">main.cpp</text>
+  <text x="190" y="50" text-anchor="middle" fill="#555" font-size="9">主循环 / 命令行解析</text>
+  <rect x="278" y="22" width="140" height="36" rx="4" fill="#fff" stroke="#6c8ebf" stroke-width="1"></rect>
+  <text x="348" y="37" text-anchor="middle" fill="#1a3a5c" font-size="10">SceneManager</text>
+  <text x="348" y="50" text-anchor="middle" fill="#555" font-size="9">场景类型初始化</text>
+  <rect x="436" y="22" width="140" height="36" rx="4" fill="#fff" stroke="#6c8ebf" stroke-width="1"></rect>
+  <text x="506" y="37" text-anchor="middle" fill="#1a3a5c" font-size="10">CameraController</text>
+  <text x="506" y="50" text-anchor="middle" fill="#555" font-size="9">WASD / 鼠标 / 滚轮</text>
+  <!-- Core Layer -->
+  <rect x="20" y="82" width="680" height="52" rx="6" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"></rect>
+  <text x="36" y="102" fill="#1a3c1a" font-size="11" font-weight="bold">Core Layer</text>
+  <rect x="120" y="90" width="110" height="36" rx="4" fill="#fff" stroke="#82b366" stroke-width="1"></rect>
+  <text x="175" y="105" text-anchor="middle" fill="#1a3c1a" font-size="10">Scene</text>
+  <text x="175" y="118" text-anchor="middle" fill="#555" font-size="9">对象 / 光源 / 资源</text>
+  <rect x="248" y="90" width="110" height="36" rx="4" fill="#fff" stroke="#82b366" stroke-width="1"></rect>
+  <text x="303" y="105" text-anchor="middle" fill="#1a3c1a" font-size="10">Renderer</text>
+  <text x="303" y="118" text-anchor="middle" fill="#555" font-size="9">矩阵 / 着色器状态</text>
+  <rect x="376" y="90" width="110" height="36" rx="4" fill="#fff" stroke="#82b366" stroke-width="1"></rect>
+  <text x="431" y="105" text-anchor="middle" fill="#1a3c1a" font-size="10">FrameBuffer</text>
+  <text x="431" y="118" text-anchor="middle" fill="#555" font-size="9">Color / Depth / MSAA</text>
+  <rect x="504" y="90" width="110" height="36" rx="4" fill="#fff" stroke="#82b366" stroke-width="1"></rect>
+  <text x="559" y="105" text-anchor="middle" fill="#1a3c1a" font-size="10">Pipeline</text>
+  <text x="559" y="118" text-anchor="middle" fill="#555" font-size="9">vertex / raster / frag</text>
+  <!-- Graphics Layer -->
+  <rect x="20" y="150" width="420" height="52" rx="6" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"></rect>
+  <text x="36" y="170" fill="#5a4200" font-size="11" font-weight="bold">Graphics Layer</text>
+  <rect x="120" y="158" width="88" height="36" rx="4" fill="#fff" stroke="#d6b656" stroke-width="1"></rect>
+  <text x="164" y="175" text-anchor="middle" fill="#5a4200" font-size="10">Camera</text>
+  <text x="164" y="188" text-anchor="middle" fill="#555" font-size="9">lookAt / perspective</text>
+  <rect x="218" y="158" width="88" height="36" rx="4" fill="#fff" stroke="#d6b656" stroke-width="1"></rect>
+  <text x="262" y="175" text-anchor="middle" fill="#5a4200" font-size="10">Mesh / OBJ</text>
+  <text x="262" y="188" text-anchor="middle" fill="#555" font-size="9">切线 / 三角化</text>
+  <rect x="316" y="158" width="88" height="36" rx="4" fill="#fff" stroke="#d6b656" stroke-width="1"></rect>
+  <text x="360" y="175" text-anchor="middle" fill="#5a4200" font-size="10">Material</text>
+  <text x="360" y="188" text-anchor="middle" fill="#555" font-size="9">Surface / 纹理 GUID</text>
+  <!-- Shader Layer -->
+  <rect x="20" y="218" width="200" height="80" rx="6" fill="#f8cecc" stroke="#b85450" stroke-width="1.5"></rect>
+  <text x="36" y="238" fill="#6a0000" font-size="11" font-weight="bold">Shader Layer</text>
+  <text x="36" y="256" fill="#6a0000" font-size="9">IShader 接口</text>
+  <text x="36" y="270" fill="#555" font-size="9">BasicShader (Unlit)</text>
+  <text x="36" y="282" fill="#555" font-size="9">PhongShader (Blinn-Phong)</text>
+  <text x="36" y="294" fill="#555" font-size="9">ToonShader / ShadowMapShader</text>
+  <!-- Lib Layer -->
+  <rect x="236" y="218" width="204" height="80" rx="6" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5"></rect>
+  <text x="252" y="238" fill="#3d0066" font-size="11" font-weight="bold">Lib Layer</text>
+  <text x="252" y="256" fill="#3d0066" font-size="9">maths.h (Vec2/3/4, Matrix4x4)</text>
+  <text x="252" y="270" fill="#555" font-size="9">IResource / ResourceManager</text>
+  <text x="252" y="282" fill="#555" font-size="9">Texture (Mipmap / Sampler)</text>
+  <text x="252" y="294" fill="#555" font-size="9">TGA IO / texture_utils</text>
+  <!-- Utils Layer -->
+  <rect x="456" y="218" width="244" height="80" rx="6" fill="#f0f0f0" stroke="#aaa" stroke-width="1.5"></rect>
+  <text x="472" y="238" fill="#333" font-size="11" font-weight="bold">Utils</text>
+  <text x="472" y="256" fill="#555" font-size="9">Profiler (RAII 宏, 线程安全)</text>
+  <text x="472" y="270" fill="#555" font-size="9">utils.cpp (copyFrameBuffer / savePPM)</text>
+  <!-- Platform Layer -->
+  <rect x="20" y="314" width="680" height="44" rx="6" fill="#f5f5f5" stroke="#999" stroke-width="1.5"></rect>
+  <text x="36" y="334" fill="#333" font-size="11" font-weight="bold">Platform Layer</text>
+  <text x="200" y="334" fill="#555" font-size="10">platform.h  (C 接口：窗口 / 输入 / 时间)</text>
+  <text x="200" y="350" fill="#555" font-size="10">platform_sdl.cpp  (SDL2 实现)</text>
+  <!-- Arrows -->
+  <line x1="360" y1="66" x2="360" y2="82" stroke="#6c8ebf" stroke-width="1.5" marker-end="url(#arr)"></line>
+  <line x1="360" y1="134" x2="360" y2="150" stroke="#82b366" stroke-width="1.5" marker-end="url(#arr)"></line>
+  <line x1="220" y1="202" x2="120" y2="218" stroke="#b85450" stroke-width="1.5" marker-end="url(#arr)"></line>
+  <line x1="260" y1="202" x2="300" y2="218" stroke="#9673a6" stroke-width="1.5" marker-end="url(#arr)"></line>
+  <line x1="360" y1="298" x2="360" y2="314" stroke="#999" stroke-width="1.5" marker-end="url(#arr)"></line>
+  <text x="20" y="378" fill="#888" font-size="9">依赖方向：上层依赖下层 ↓</text>
+</svg>
+
+
+<h3 id="各层职责一览"><a href="#各层职责一览" class="headerlink" title="各层职责一览"></a>各层职责一览</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>层次</th>
+<th>核心职责</th>
+<th>关键文件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>App</td>
+<td>启动、主循环、事件调度</td>
+<td><code>main.cpp</code>, <code>scene_manager</code>, <code>camera_controller</code></td>
+</tr>
+<tr>
+<td>Core</td>
+<td>渲染器状态机、帧缓冲管理、场景遍历</td>
+<td><code>renderer.h</code>, <code>framebuffer.h</code>, <code>scene.h</code></td>
+</tr>
+<tr>
+<td>Pipeline</td>
+<td>顶点变换、光栅化、插值、片段处理</td>
+<td><code>vertex.cpp</code>, <code>pipeline.cpp</code>, <code>fragment.cpp</code></td>
+</tr>
+<tr>
+<td>Graphics</td>
+<td>相机模型、Mesh 加载与切线计算、材质描述</td>
+<td><code>camera.h</code>, <code>mesh.h</code>, <code>material.h</code></td>
+</tr>
+<tr>
+<td>Shader</td>
+<td>可插拔光照模型</td>
+<td><code>shader.h</code>, <code>phong_shader.cpp</code>, <code>toon_shader.cpp</code></td>
+</tr>
+<tr>
+<td>Lib</td>
+<td>数学、资源管理、纹理完整子系统</td>
+<td><code>maths.h</code>, <code>IResource.h</code>, <code>texture/</code></td>
+</tr>
+<tr>
+<td>Platform</td>
+<td>平台无关 C 接口，SDL2 实现</td>
+<td><code>platform.h</code>, <code>platform_sdl.cpp</code></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="二、渲染管线全流程"><a href="#二、渲染管线全流程" class="headerlink" title="二、渲染管线全流程"></a>二、渲染管线全流程</h2><pre class="mermaid">flowchart TD
+    A[Scene::render] --&gt; B{shadowMappingEnabled?}
+    B -- Yes --&gt; C[shadowPass\n从光源视角渲染深度图]
+    C --&gt; D
+    B -- No --&gt; D[设置 Camera ViewMatrix / ProjMatrix]
+    D --&gt; E[renderer.clear 清屏]
+    E --&gt; F[for each SceneObject\n绑定 ShaderUniforms]
+    F --&gt; G[drawMeshPass\nfor each Triangle]
+    G --&gt; H[setupTriangle]
+
+    subgraph H [setupTriangle]
+        H1[vertexShader × 3\n→ clipPos + Varyings]
+        H2[透视除法 → NDC\nscreenMapping → 屏幕坐标]
+        H3[faceCull 背面剔除]
+        H4[calculateBoundingBox]
+        H5[setupEdgeFunctions]
+        H1 --&gt; H2 --&gt; H3 --&gt; H4 --&gt; H5
+    end
+
+    H --&gt; I{像素数 &gt; 1024?}
+    I -- Yes --&gt; J[OMP 并行 traverseTriangle\nBLOCK_SIZE=16 分块]
+    I -- No --&gt; K[串行扫描线遍历]
+    J --&gt; L
+    K --&gt; L
+
+    subgraph L [per-pixel]
+        L1[EdgeFunction 测试]
+        L2[computeBarycentric2D]
+        L3[透视正确权重\n1/w 插值]
+        L4[calculateFragmentDepth]
+        L5{depthTest Z-Buffer}
+        L6[interpolateVaryings\n位置/法线/UV/切线]
+        L7[fragmentShader\nBlinn-Phong + NormalMap + Shadow]
+        L8[frameBuffer.setPixel]
+        L1 --&gt; L2 --&gt; L3 --&gt; L4 --&gt; L5
+        L5 -- pass --&gt; L6 --&gt; L7 --&gt; L8
+        L5 -- fail --&gt; L9[discard]
+    end
+
+    L --&gt; M[copyToPlatform\nSDL_UpdateTexture → 显示]</pre>
+
+<hr>
+<h2 id="三、核心技术知识点"><a href="#三、核心技术知识点" class="headerlink" title="三、核心技术知识点"></a>三、核心技术知识点</h2><h3 id="3-1-坐标变换链"><a href="#3-1-坐标变换链" class="headerlink" title="3.1 坐标变换链"></a>3.1 坐标变换链</h3>
+<svg viewBox="0 0 700 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:monospace,sans-serif">
+  <defs>
+    <marker id="a2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#555"></path>
+    </marker>
+  </defs>
+  <rect x="4" y="28" width="100" height="44" rx="5" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"></rect>
+  <rect x="144" y="28" width="100" height="44" rx="5" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"></rect>
+  <rect x="284" y="28" width="100" height="44" rx="5" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"></rect>
+  <rect x="424" y="28" width="100" height="44" rx="5" fill="#f8cecc" stroke="#b85450" stroke-width="1.5"></rect>
+  <rect x="564" y="28" width="120" height="44" rx="5" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5"></rect>
+  <text x="54" y="46" text-anchor="middle" fill="#1a3a5c" font-size="11" font-weight="bold">Model Space</text>
+  <text x="54" y="62" text-anchor="middle" fill="#555" font-size="9">模型局部坐标</text>
+  <text x="194" y="46" text-anchor="middle" fill="#1a3c1a" font-size="11" font-weight="bold">World Space</text>
+  <text x="194" y="62" text-anchor="middle" fill="#555" font-size="9">光照计算空间</text>
+  <text x="334" y="46" text-anchor="middle" fill="#5a4200" font-size="11" font-weight="bold">View Space</text>
+  <text x="334" y="62" text-anchor="middle" fill="#555" font-size="9">相机为原点</text>
+  <text x="474" y="46" text-anchor="middle" fill="#6a0000" font-size="11" font-weight="bold">Clip Space</text>
+  <text x="474" y="62" text-anchor="middle" fill="#555" font-size="9">顶点着色器输出</text>
+  <text x="624" y="46" text-anchor="middle" fill="#3d0066" font-size="11" font-weight="bold">NDC → Screen</text>
+  <text x="624" y="62" text-anchor="middle" fill="#555" font-size="9">[-1,1]³ → 像素坐标</text>
+  <line x1="104" y1="50" x2="144" y2="50" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"></line>
+  <line x1="244" y1="50" x2="284" y2="50" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"></line>
+  <line x1="384" y1="50" x2="424" y2="50" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"></line>
+  <line x1="524" y1="50" x2="564" y2="50" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"></line>
+  <text x="124" y="44" text-anchor="middle" fill="#333" font-size="9">× M</text>
+  <text x="264" y="44" text-anchor="middle" fill="#333" font-size="9">× V</text>
+  <text x="404" y="44" text-anchor="middle" fill="#333" font-size="9">× P</text>
+  <text x="544" y="44" text-anchor="middle" fill="#333" font-size="9">÷w / map</text>
+</svg>
+
+
+<p><strong>关键细节</strong>：项目的投影矩阵使用右手坐标系，<code>m32 = -1</code>，这决定了背面剔除时叉积符号的判断方向（<code>reverseFactor</code>）。World Space 是光照计算的基础空间，顶点着色器中同时输出 <code>positionWS</code> 和 <code>clipPos</code>。</p>
+<hr>
+<h3 id="3-2-重心坐标-与-EdgeFunction-优化"><a href="#3-2-重心坐标-与-EdgeFunction-优化" class="headerlink" title="3.2 重心坐标 与 EdgeFunction 优化"></a>3.2 重心坐标 与 EdgeFunction 优化</h3>
+<svg viewBox="0 0 500 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:720px;font-family:monospace,sans-serif">
+  <polygon points="120,180 300,30 450,170" fill="#f0f7ff" stroke="#6c8ebf" stroke-width="2"></polygon>
+  <circle cx="120" cy="180" r="6" fill="#b85450"></circle>
+  <circle cx="300" cy="30" r="6" fill="#b85450"></circle>
+  <circle cx="450" cy="170" r="6" fill="#b85450"></circle>
+  <text x="100" y="196" fill="#b85450" font-size="13" font-weight="bold">v₀</text>
+  <text x="292" y="22" fill="#b85450" font-size="13" font-weight="bold">v₁</text>
+  <text x="454" y="186" fill="#b85450" font-size="13" font-weight="bold">v₂</text>
+  <circle cx="278" cy="130" r="5" fill="#d6b656"></circle>
+  <text x="285" y="126" fill="#d6b656" font-size="12" font-weight="bold">P</text>
+  <line x1="120" y1="180" x2="278" y2="130" stroke="#82b366" stroke-width="1" stroke-dasharray="4,3"></line>
+  <line x1="300" y1="30" x2="278" y2="130" stroke="#82b366" stroke-width="1" stroke-dasharray="4,3"></line>
+  <line x1="450" y1="170" x2="278" y2="130" stroke="#82b366" stroke-width="1" stroke-dasharray="4,3"></line>
+  <text x="248" y="170" fill="#82b366" font-size="10">A₀</text>
+  <text x="218" y="98" fill="#82b366" font-size="10">A₁</text>
+  <text x="355" y="110" fill="#82b366" font-size="10">A₂</text>
+  <!-- Formula box -->
+  <rect x="0" y="0" width="110" height="76" rx="5" fill="#fffbe6" stroke="#d6b656" stroke-width="1"></rect>
+  <text x="8" y="16" fill="#5a4200" font-size="10" font-weight="bold">重心坐标</text>
+  <text x="8" y="32" fill="#333" font-size="10">λ₀ = A₀ / A_total</text>
+  <text x="8" y="46" fill="#333" font-size="10">λ₁ = A₁ / A_total</text>
+  <text x="8" y="60" fill="#333" font-size="10">λ₂ = 1 - λ₀ - λ₁</text>
+  <text x="8" y="74" fill="#888" font-size="9">P在内部 ⟺ λᵢ ≥ 0</text>
+  <!-- EdgeFunction box -->
+  <rect x="0" y="146" width="118" height="82" rx="5" fill="#f0f7ff" stroke="#6c8ebf" stroke-width="1"></rect>
+  <text x="8" y="162" fill="#1a3a5c" font-size="10" font-weight="bold">EdgeFunction</text>
+  <text x="8" y="177" fill="#333" font-size="9">e = dx·y + dy·x + c</text>
+  <text x="8" y="191" fill="#333" font-size="9">dx = y₀ - y₁</text>
+  <text x="8" y="205" fill="#333" font-size="9">dy = x₁ - x₀</text>
+  <text x="8" y="219" fill="#888" font-size="9">沿x步进: Δe = dy</text>
+</svg>
+
+
+<p>项目对大三角形使用分块（<code>BLOCK_SIZE=16</code>）扫描，在块的起始点预计算 EdgeFunction 值，块内通过增量 <code>Δe = dy</code>（沿 x）/ <code>Δe = dx</code>（沿 y）避免重复乘法，这正是 GPU 硬件光栅化器的经典做法。</p>
+<hr>
+<h3 id="3-3-透视正确插值"><a href="#3-3-透视正确插值" class="headerlink" title="3.3 透视正确插值"></a>3.3 透视正确插值</h3><p>直接对屏幕空间属性线性插值会产生透视畸变，必须对 <code>1/w</code> 插值后再还原：</p>
+
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:monospace,sans-serif">
+  <!-- Left: WRONG -->
+  <rect x="10" y="10" width="300" height="180" rx="6" fill="#fff8f8" stroke="#b85450" stroke-width="1.5"></rect>
+  <text x="160" y="30" text-anchor="middle" fill="#b85450" font-size="12" font-weight="bold">❌ 线性插值（错误）</text>
+  <polygon points="40,160 260,160 220,70 90,70" fill="#fce4d6" stroke="#b85450" stroke-width="1.5"></polygon>
+  <line x1="99" y1="70" x2="76" y2="160" stroke="#b85450" stroke-width="1" stroke-dasharray="3,2"></line>
+  <line x1="126" y1="70" x2="112" y2="160" stroke="#b85450" stroke-width="1" stroke-dasharray="3,2"></line>
+  <line x1="153" y1="70" x2="148" y2="160" stroke="#b85450" stroke-width="1" stroke-dasharray="3,2"></line>
+  <line x1="180" y1="70" x2="184" y2="160" stroke="#b85450" stroke-width="1" stroke-dasharray="3,2"></line>
+  <line x1="207" y1="70" x2="220" y2="160" stroke="#b85450" stroke-width="1" stroke-dasharray="3,2"></line>
+  <text x="150" y="180" text-anchor="middle" fill="#888" font-size="9">网格线在屏幕空间均匀 → 透视畸变</text>
+  <!-- Right: CORRECT -->
+  <rect x="330" y="10" width="340" height="180" rx="6" fill="#f6fff6" stroke="#82b366" stroke-width="1.5"></rect>
+  <text x="500" y="30" text-anchor="middle" fill="#1a3c1a" font-size="12" font-weight="bold">✅ 透视正确插值</text>
+  <text x="348" y="60" fill="#333" font-size="10">Step 1: 对 1/w 插值</text>
+  <text x="348" y="76" fill="#555" font-size="10">  interp_invW = Σ λᵢ·(1/wᵢ)</text>
+  <text x="348" y="96" fill="#333" font-size="10">Step 2: 对 attr/w 插值</text>
+  <text x="348" y="112" fill="#555" font-size="10">  interp_attr = Σ λᵢ·(attrᵢ/wᵢ)</text>
+  <text x="348" y="132" fill="#333" font-size="10">Step 3: 还原</text>
+  <text x="348" y="148" fill="#555" font-size="10">  attr_correct = interp_attr / interp_invW</text>
+  <text x="348" y="170" fill="#82b366" font-size="10" font-weight="bold">  correction = 1.0f / interp_invW</text>
+</svg>
+
+
+<p>代码路径：<code>fragment.cpp</code> → <code>calculatePerspectiveWeights()</code> → <code>interpolateVaryings()</code>，所有顶点属性（位置、法线、UV、切线）都经过此校正。</p>
+<hr>
+<h3 id="3-4-深度测试与-Z-Buffer"><a href="#3-4-深度测试与-Z-Buffer" class="headerlink" title="3.4 深度测试与 Z-Buffer"></a>3.4 深度测试与 Z-Buffer</h3>
+<svg viewBox="0 0 620 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:monospace,sans-serif">
+  <defs>
+    <marker id="a3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#555"></path>
+    </marker>
+  </defs>
+  <text x="10" y="18" fill="#333" font-size="11" font-weight="bold">FrameBuffer 内存布局</text>
+  <rect x="10" y="28" width="280" height="40" rx="4" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"></rect>
+  <text x="20" y="44" fill="#1a3a5c" font-size="10" font-weight="bold">colorBuffer[W×H×4]</text>
+  <text x="20" y="60" fill="#555" font-size="9">uint8_t RGBA per pixel  →  SDL ARGB32 输出</text>
+  <rect x="10" y="76" width="280" height="40" rx="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"></rect>
+  <text x="20" y="92" fill="#1a3c1a" font-size="10" font-weight="bold">depthBuffer[W×H]</text>
+  <text x="20" y="108" fill="#555" font-size="9">float NDC-z  初始化 1.0f（最远），通过 depth &lt; stored</text>
+  <rect x="10" y="124" width="280" height="30" rx="4" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"></rect>
+  <text x="20" y="143" fill="#5a4200" font-size="9" font-weight="bold">msaaDepthBuffer[W×H×4]  +  msaaSampleCount[W×H]</text>
+  <!-- Flow -->
+  <rect x="320" y="28" width="290" height="126" rx="6" fill="#f9f9f9" stroke="#aaa" stroke-width="1"></rect>
+  <text x="330" y="46" fill="#333" font-size="10" font-weight="bold">当前执行顺序（存在优化空间）</text>
+  <rect x="330" y="56" width="120" height="22" rx="3" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1"></rect>
+  <text x="390" y="71" text-anchor="middle" fill="#1a3a5c" font-size="9">interpolateVaryings</text>
+  <rect x="330" y="86" width="120" height="22" rx="3" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1"></rect>
+  <text x="390" y="101" text-anchor="middle" fill="#1a3a5c" font-size="9">fragmentShader</text>
+  <rect x="330" y="116" width="120" height="22" rx="3" fill="#d5e8d4" stroke="#82b366" stroke-width="1"></rect>
+  <text x="390" y="131" text-anchor="middle" fill="#1a3c1a" font-size="9">depthTest → setPixel</text>
+  <line x1="390" y1="78" x2="390" y2="86" stroke="#555" stroke-width="1.2" marker-end="url(#a3)"></line>
+  <line x1="390" y1="108" x2="390" y2="116" stroke="#555" stroke-width="1.2" marker-end="url(#a3)"></line>
+  <rect x="460" y="56" width="140" height="82" rx="4" fill="#fff8e1" stroke="#d6b656" stroke-width="1.5" stroke-dasharray="5,3"></rect>
+  <text x="530" y="72" text-anchor="middle" fill="#d6b656" font-size="10" font-weight="bold">⚠ TODO: Early-Z</text>
+  <text x="468" y="90" fill="#888" font-size="9">应在插值前先做</text>
+  <text x="468" y="103" fill="#888" font-size="9">depthTest，避免</text>
+  <text x="468" y="116" fill="#888" font-size="9">昂贵 shader 白跑</text>
+  <text x="468" y="129" fill="#888" font-size="9">（Alpha Test 除外）</text>
+</svg>
+
+
+<hr>
+<h3 id="3-5-MSAA-多重采样抗锯齿"><a href="#3-5-MSAA-多重采样抗锯齿" class="headerlink" title="3.5 MSAA 多重采样抗锯齿"></a>3.5 MSAA 多重采样抗锯齿</h3>
+<svg viewBox="0 0 580 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:monospace,sans-serif">
+  <text x="10" y="18" fill="#333" font-size="11" font-weight="bold">4× MSAA 采样点分布（单像素内）</text>
+  <!-- Pixel squares 2x2 -->
+  <rect x="10" y="26" width="60" height="60" fill="#f5f5f5" stroke="#999" stroke-width="1.5"></rect>
+  <rect x="80" y="26" width="60" height="60" fill="#f5f5f5" stroke="#999" stroke-width="1.5"></rect>
+  <rect x="10" y="96" width="60" height="60" fill="#f5f5f5" stroke="#999" stroke-width="1.5"></rect>
+  <rect x="80" y="96" width="60" height="60" fill="#f5f5f5" stroke="#999" stroke-width="1.5"></rect>
+  <!-- Sample points top-left pixel: all outside -->
+  <circle cx="25" cy="41" r="5" fill="#6c8ebf"></circle>
+  <circle cx="55" cy="41" r="5" fill="#6c8ebf"></circle>
+  <circle cx="25" cy="71" r="5" fill="#6c8ebf"></circle>
+  <circle cx="55" cy="71" r="5" fill="#6c8ebf"></circle>
+  <!-- top-right: mixed -->
+  <circle cx="95" cy="41" r="5" fill="#6c8ebf"></circle>
+  <circle cx="125" cy="41" r="5" fill="#b85450"></circle>
+  <circle cx="95" cy="71" r="5" fill="#b85450"></circle>
+  <circle cx="125" cy="71" r="5" fill="#b85450"></circle>
+  <!-- bottom-left: all outside -->
+  <circle cx="25" cy="111" r="5" fill="#6c8ebf"></circle>
+  <circle cx="55" cy="111" r="5" fill="#6c8ebf"></circle>
+  <circle cx="25" cy="141" r="5" fill="#6c8ebf"></circle>
+  <circle cx="55" cy="141" r="5" fill="#6c8ebf"></circle>
+  <!-- bottom-right: all inside -->
+  <circle cx="95" cy="111" r="5" fill="#b85450"></circle>
+  <circle cx="125" cy="111" r="5" fill="#b85450"></circle>
+  <circle cx="95" cy="141" r="5" fill="#b85450"></circle>
+  <circle cx="125" cy="141" r="5" fill="#b85450"></circle>
+  <!-- Triangle edge -->
+  <line x1="82" y1="26" x2="140" y2="156" stroke="#d6b656" stroke-width="2.5"></line>
+  <text x="144" y="96" fill="#d6b656" font-size="10" font-weight="bold">三角形边缘</text>
+  <!-- Legend -->
+  <circle cx="15" cy="172" r="5" fill="#6c8ebf"></circle>
+  <text x="26" y="176" fill="#555" font-size="10">未覆盖采样点</text>
+  <circle cx="110" cy="172" r="5" fill="#b85450"></circle>
+  <text x="121" y="176" fill="#555" font-size="10">已覆盖采样点</text>
+  <!-- Accumulate logic -->
+  <rect x="220" y="26" width="350" height="148" rx="6" fill="#f9f9f9" stroke="#aaa" stroke-width="1"></rect>
+  <text x="234" y="44" fill="#333" font-size="10" font-weight="bold">accumulateMSAAColor() 混合逻辑</text>
+  <text x="234" y="62" fill="#555" font-size="9">每通过一个采样点的深度测试:</text>
+  <text x="234" y="78" fill="#333" font-size="9">  msaaSampleCount[pixel]++</text>
+  <text x="234" y="93" fill="#333" font-size="9">  blendFactor = 1.0f / sampleCount</text>
+  <text x="234" y="108" fill="#333" font-size="9">  color = old*(1-f) + new*f  (运行平均)</text>
+  <text x="234" y="124" fill="#555" font-size="9">最终像素颜色 = 所有通过样本的平均</text>
+  <rect x="234" y="136" width="322" height="30" rx="3" fill="#fff8e1" stroke="#d6b656" stroke-width="1"></rect>
+  <text x="244" y="150" fill="#d6b656" font-size="9" font-weight="bold">⚠ 并行路径存在竞态：多线程同时写入同一像素</text>
+  <text x="244" y="163" fill="#888" font-size="9">需要原子操作或 Tile-based 分区来规避</text>
+</svg>
+
+
+<hr>
+<h3 id="3-6-Blinn-Phong-光照模型"><a href="#3-6-Blinn-Phong-光照模型" class="headerlink" title="3.6 Blinn-Phong 光照模型"></a>3.6 Blinn-Phong 光照模型</h3><pre class="mermaid">graph LR
+    N["N (法线)"] --&gt; DIFF
+    L["L (光方向)"] --&gt; DIFF
+    L --&gt; H
+    V["V (视线方向)"] --&gt; H
+    H["H = normalize(L+V)\n半角向量"] --&gt; SPEC
+    N --&gt; SPEC
+
+    DIFF["Diffuse\nKd × baseColor × max(N·L, 0)"]
+    SPEC["Specular\nKs × max(N·H, 0)^shininess"]
+    AMB["Ambient\nKa × La × ambientIntensity"]
+
+    DIFF --&gt; SUM
+    SPEC --&gt; SUM
+    AMB  --&gt; SUM
+    SHADOW["Shadow Factor\n0.5 or 1.0"] --&gt; SUM
+    SUM["result = Ambient + (Diffuse+Specular)×Shadow"]
+    SUM --&gt; SRGB["linearToSrgb(result)\n输出到 FrameBuffer"]</pre>
+
+<p><strong>sRGB 正确性</strong>：纹理读取后先 <code>srgbToLinear</code>，光照计算在线性空间进行，输出前 <code>linearToSrgb</code>。忽略这一步会导致高光过曝、暗部偏暗。</p>
+<hr>
+<h3 id="3-7-法线贴图-与-TBN-矩阵"><a href="#3-7-法线贴图-与-TBN-矩阵" class="headerlink" title="3.7 法线贴图 与 TBN 矩阵"></a>3.7 法线贴图 与 TBN 矩阵</h3>
+<svg viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:monospace,sans-serif">
+  <defs>
+    <marker id="a4r" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#b85450"></path>
+    </marker>
+    <marker id="a4y" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#d6b656"></path>
+    </marker>
+    <marker id="a4g" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#82b366"></path>
+    </marker>
+    <marker id="a4k" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#555"></path>
+    </marker>
+  </defs>
+  <!-- Surface -->
+  <ellipse cx="130" cy="150" rx="100" ry="20" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"></ellipse>
+  <text x="130" y="180" text-anchor="middle" fill="#6c8ebf" font-size="9">网格表面</text>
+  <!-- TBN axes -->
+  <line x1="130" y1="150" x2="210" y2="140" stroke="#b85450" stroke-width="2" marker-end="url(#a4r)"></line>
+  <text x="215" y="138" fill="#b85450" font-size="11" font-weight="bold">T</text>
+  <text x="215" y="150" fill="#888" font-size="8">tangentWS</text>
+  <line x1="130" y1="150" x2="170" y2="118" stroke="#d6b656" stroke-width="2" marker-end="url(#a4y)"></line>
+  <text x="175" y="115" fill="#d6b656" font-size="11" font-weight="bold">B</text>
+  <text x="175" y="127" fill="#888" font-size="8">cross(N,T)×w</text>
+  <line x1="130" y1="150" x2="130" y2="70" stroke="#82b366" stroke-width="2" marker-end="url(#a4g)"></line>
+  <text x="136" y="66" fill="#82b366" font-size="11" font-weight="bold">N</text>
+  <text x="136" y="78" fill="#888" font-size="8">normalWS</text>
+  <!-- Normal map texture -->
+  <rect x="270" y="60" width="80" height="80" rx="4" fill="#7fb3d3" stroke="#6c8ebf" stroke-width="1.5"></rect>
+  <circle cx="295" cy="85" r="12" fill="#9ecae1" opacity="0.7"></circle>
+  <circle cx="325" cy="110" r="10" fill="#6baed6" opacity="0.7"></circle>
+  <text x="310" y="154" text-anchor="middle" fill="#6c8ebf" font-size="9">Normal Map</text>
+  <text x="310" y="165" text-anchor="middle" fill="#888" font-size="8">RGB ∈ [0,1]</text>
+  <!-- Arrow: sample -->
+  <line x1="350" y1="100" x2="390" y2="100" stroke="#555" stroke-width="1.5" marker-end="url(#a4k)"></line>
+  <!-- Decode box -->
+  <rect x="395" y="74" width="180" height="52" rx="4" fill="#fff2cc" stroke="#d6b656" stroke-width="1"></rect>
+  <text x="405" y="90" fill="#5a4200" font-size="10" font-weight="bold">切线空间法线 n</text>
+  <text x="405" y="106" fill="#555" font-size="9">n.xyz = RGB × 2 - 1</text>
+  <text x="405" y="120" fill="#555" font-size="9">（映射到 [-1, 1]）</text>
+  <line x1="485" y1="126" x2="485" y2="150" stroke="#555" stroke-width="1.5" marker-end="url(#a4k)"></line>
+  <!-- TBN transform box -->
+  <rect x="395" y="152" width="180" height="40" rx="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"></rect>
+  <text x="485" y="168" text-anchor="middle" fill="#1a3c1a" font-size="10" font-weight="bold">世界空间法线</text>
+  <text x="485" y="182" text-anchor="middle" fill="#555" font-size="9">N = T·n.x + B·n.y + N·n.z</text>
+  <!-- tangent.w note -->
+  <rect x="582" y="60" width="76" height="46" rx="4" fill="#f8cecc" stroke="#b85450" stroke-width="1"></rect>
+  <text x="620" y="76" text-anchor="middle" fill="#6a0000" font-size="9" font-weight="bold">tangent.w</text>
+  <text x="590" y="90" fill="#555" font-size="8">存符号 ±1</text>
+  <text x="590" y="102" fill="#555" font-size="8">处理UV镜像</text>
+</svg>
+
+
+<p><code>tangent.w</code> 的 <code>±1</code> 在 <code>mesh.cpp::calculateTangents()</code> 通过 Gram-Schmidt 正交化后检测手性得到，防止镜像模型的副切线方向翻转。</p>
+<hr>
+<h3 id="3-8-阴影映射（Shadow-Map-PCF）"><a href="#3-8-阴影映射（Shadow-Map-PCF）" class="headerlink" title="3.8 阴影映射（Shadow Map + PCF）"></a>3.8 阴影映射（Shadow Map + PCF）</h3><pre class="mermaid">sequenceDiagram
+    participant S as Scene::render
+    participant R as Renderer
+    participant FB as ShadowFrameBuffer
+    participant SM as shadowMap (R32_FLOAT Texture)
+    participant MFB as MainFrameBuffer
+
+    S-&gt;&gt;R: setViewMatrix(lightView)\nsetProjMatrix(lightProj)
+    S-&gt;&gt;R: shadowPass(casters)
+    R-&gt;&gt;FB: clear(1.0f)
+    loop for each shadow caster
+        R-&gt;&gt;FB: rasterize → 写入 NDC-z
+    end
+    R-&gt;&gt;SM: FB.getDepth(x,y) → SM.write(x,y,depth)
+
+    S-&gt;&gt;R: setViewMatrix(cameraView)
+    S-&gt;&gt;R: uniforms.textures[_ShadowMap] = SM
+
+    loop for each main object
+        note right of MFB: projCoords = lightSpacePos.xyz/w<br>uv = projCoords.xy*0.5+0.5<br>closestDepth = SM.sample(uv)<br>bias = max(0.005*(1-N·L), 0.005)<br>shadow = current-bias &gt; closest ? 0.5 : 1.0
+        R-&gt;&gt;MFB: fragmentShader 写入最终颜色
+    end</pre>
+
+<p><strong>Shadow Acne</strong>（自遮挡条纹）由深度图精度有限导致。动态 Bias 的核心：掠射角（<code>N·L</code> 接近 0）时自遮挡更严重，故 bias 更大。</p>
+<hr>
+<h3 id="3-9-纹理采样系统"><a href="#3-9-纹理采样系统" class="headerlink" title="3.9 纹理采样系统"></a>3.9 纹理采样系统</h3>
+<svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:monospace,sans-serif">
+  <defs>
+    <marker id="a5" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#555"></path>
+    </marker>
+  </defs>
+  <!-- Sample call -->
+  <rect x="10" y="20" width="120" height="36" rx="4" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"></rect>
+  <text x="70" y="35" text-anchor="middle" fill="#1a3a5c" font-size="10" font-weight="bold">texture.sample(uv)</text>
+  <text x="70" y="49" text-anchor="middle" fill="#555" font-size="8">SamplerState 描述</text>
+  <line x1="130" y1="38" x2="150" y2="38" stroke="#555" stroke-width="1.5" marker-end="url(#a5)"></line>
+  <!-- Wrap mode -->
+  <rect x="152" y="20" width="110" height="36" rx="4" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"></rect>
+  <text x="207" y="35" text-anchor="middle" fill="#5a4200" font-size="10" font-weight="bold">applyWrapMode</text>
+  <text x="207" y="49" text-anchor="middle" fill="#555" font-size="8">Clamp / Repeat / Mirror</text>
+  <line x1="262" y1="38" x2="282" y2="38" stroke="#555" stroke-width="1.5" marker-end="url(#a5)"></line>
+  <!-- Filter dispatch -->
+  <rect x="284" y="6" width="100" height="64" rx="4" fill="#f9f9f9" stroke="#aaa" stroke-width="1"></rect>
+  <text x="334" y="22" text-anchor="middle" fill="#333" font-size="9" font-weight="bold">Filter Mode</text>
+  <rect x="290" y="28" width="88" height="16" rx="3" fill="#d5e8d4" stroke="#82b366" stroke-width="1"></rect>
+  <text x="334" y="40" text-anchor="middle" fill="#1a3c1a" font-size="8">POINT → samplePoint</text>
+  <rect x="290" y="46" width="88" height="16" rx="3" fill="#d5e8d4" stroke="#82b366" stroke-width="1"></rect>
+  <text x="334" y="58" text-anchor="middle" fill="#1a3c1a" font-size="8">LINEAR → sampleBilinear</text>
+  <line x1="384" y1="38" x2="404" y2="38" stroke="#555" stroke-width="1.5" marker-end="url(#a5)"></line>
+  <!-- Mipmap -->
+  <rect x="406" y="20" width="110" height="36" rx="4" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5"></rect>
+  <text x="461" y="35" text-anchor="middle" fill="#3d0066" font-size="10" font-weight="bold">Mipmap 选择</text>
+  <text x="461" y="49" text-anchor="middle" fill="#555" font-size="8">TRILINEAR: 插值相邻两级</text>
+  <line x1="516" y1="38" x2="536" y2="38" stroke="#555" stroke-width="1.5" marker-end="url(#a5)"></line>
+  <!-- Output -->
+  <rect x="538" y="20" width="90" height="36" rx="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"></rect>
+  <text x="583" y="38" text-anchor="middle" fill="#1a3c1a" font-size="10" font-weight="bold">float4 color</text>
+  <!-- Bilinear detail -->
+  <rect x="152" y="80" width="380" height="70" rx="5" fill="#f5f5f5" stroke="#aaa" stroke-width="1"></rect>
+  <text x="165" y="97" fill="#333" font-size="10" font-weight="bold">双线性插值（4点采样）</text>
+  <rect x="165" y="104" width="18" height="18" rx="2" fill="#6c8ebf" opacity="0.6"></rect>
+  <rect x="187" y="104" width="18" height="18" rx="2" fill="#6c8ebf" opacity="0.9"></rect>
+  <rect x="165" y="126" width="18" height="18" rx="2" fill="#6c8ebf" opacity="0.4"></rect>
+  <rect x="187" y="126" width="18" height="18" rx="2" fill="#6c8ebf" opacity="0.7"></rect>
+  <circle cx="194" cy="118" r="3" fill="#b85450"></circle>
+  <text x="214" y="114" fill="#555" font-size="9">c00(1-fx)(1-fy) + c10·fx(1-fy)</text>
+  <text x="214" y="128" fill="#555" font-size="9">+ c01(1-fx)fy  + c11·fx·fy</text>
+  <text x="214" y="144" fill="#888" font-size="8">fx, fy = 采样点在像素内的小数偏移</text>
+</svg>
+
+
+<hr>
+<h3 id="3-10-并行化策略"><a href="#3-10-并行化策略" class="headerlink" title="3.10 并行化策略"></a>3.10 并行化策略</h3>
+<svg viewBox="0 0 660 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:monospace,sans-serif">
+  <defs>
+    <marker id="a6" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#555"></path>
+    </marker>
+  </defs>
+  <rect x="10" y="20" width="130" height="40" rx="5" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"></rect>
+  <text x="75" y="36" text-anchor="middle" fill="#5a4200" font-size="10" font-weight="bold">三角形像素数</text>
+  <text x="75" y="52" text-anchor="middle" fill="#555" font-size="9">AABB 内总像素</text>
+  <line x1="140" y1="40" x2="160" y2="40" stroke="#555" stroke-width="1.5"></line>
+  <line x1="160" y1="40" x2="160" y2="20" stroke="#555" stroke-width="1.5"></line>
+  <line x1="160" y1="40" x2="160" y2="60" stroke="#555" stroke-width="1.5"></line>
+  <line x1="160" y1="20" x2="200" y2="20" stroke="#555" stroke-width="1.5"></line>
+  <line x1="160" y1="60" x2="200" y2="60" stroke="#555" stroke-width="1.5"></line>
+  <rect x="200" y="6" width="200" height="28" rx="4" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"></rect>
+  <text x="300" y="18" text-anchor="middle" fill="#1a3a5c" font-size="9" font-weight="bold">&gt; 1024px → OMP 并行块遍历</text>
+  <text x="300" y="28" text-anchor="middle" fill="#555" font-size="8">#pragma omp parallel collapse(2) schedule(guided)</text>
+  <rect x="200" y="46" width="200" height="28" rx="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"></rect>
+  <text x="300" y="58" text-anchor="middle" fill="#1a3c1a" font-size="9" font-weight="bold">≤ 1024px → 串行扫描线</text>
+  <text x="300" y="68" text-anchor="middle" fill="#555" font-size="8">EdgeFunction 增量，无线程调度开销</text>
+  <rect x="408" y="6" width="120" height="28" rx="4" fill="#f8cecc" stroke="#b85450" stroke-width="1"></rect>
+  <text x="468" y="18" text-anchor="middle" fill="#6a0000" font-size="9">BLOCK_SIZE = 16</text>
+  <text x="468" y="28" text-anchor="middle" fill="#888" font-size="8">提升 Cache 命中率</text>
+  <!-- Bottom row -->
+  <rect x="10" y="90" width="200" height="36" rx="5" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5"></rect>
+  <text x="110" y="106" text-anchor="middle" fill="#3d0066" font-size="10" font-weight="bold">copyToPlatform()</text>
+  <text x="110" y="120" text-anchor="middle" fill="#555" font-size="8">std::thread 按行分块 ARGB转换</text>
+  <rect x="224" y="90" width="200" height="36" rx="5" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"></rect>
+  <text x="324" y="106" text-anchor="middle" fill="#5a4200" font-size="10" font-weight="bold">shadowPass 深度复制</text>
+  <text x="324" y="120" text-anchor="middle" fill="#555" font-size="8">#pragma omp parallel collapse(2)</text>
+  <rect x="438" y="90" width="220" height="36" rx="5" fill="#fff8e1" stroke="#d6b656" stroke-width="1.5" stroke-dasharray="5,3"></rect>
+  <text x="548" y="104" text-anchor="middle" fill="#d6b656" font-size="9" font-weight="bold">⚠ FrameBuffer 写入竞态</text>
+  <text x="548" y="118" text-anchor="middle" fill="#888" font-size="8">同一像素可能被多线程同时写入</text>
+</svg>
+
+
+<hr>
+<h2 id="四、已实现功能-现存问题"><a href="#四、已实现功能-现存问题" class="headerlink" title="四、已实现功能 / 现存问题"></a>四、已实现功能 / 现存问题</h2><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>状态</th>
+<th>功能点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>✅</td>
+<td>MVP 变换链、重心坐标、EdgeFunction 增量优化</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>透视正确属性插值</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>Z-Buffer 深度测试、背面剔除</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>Blinn-Phong 光照 + sRGB 正确处理</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>漫反射纹理 + 法线贴图（TBN 矩阵）</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>Shadow Map + 动态 Bias PCF</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>4× MSAA</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>Mipmap 生成 + 三线性过滤</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>OBJ 加载 + 切线空间计算</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>OpenMP 自适应并行（大/小三角形不同策略）</td>
+</tr>
+<tr>
+<td>✅</td>
+<td>可插拔 Shader 接口（Phong / Toon / Basic / ShadowMap）</td>
+</tr>
+<tr>
+<td>⚠️</td>
+<td>MSAA 并行路径存在写入竞态</td>
+</tr>
+<tr>
+<td>❌</td>
+<td><strong>缺少近平面（w=0）裁剪</strong> —— 最影响正确性</td>
+</tr>
+<tr>
+<td>❌</td>
+<td>缺少 Early-Z，昂贵 Shader 在深度测试失败时白跑</td>
+</tr>
+<tr>
+<td>❌</td>
+<td>Shadow Map 仅支持单透视光源，方向光应用正交投影</td>
+</tr>
+<tr>
+<td>❌</td>
+<td>无视锥体剔除（Frustum Culling）</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="五、后续重构方向"><a href="#五、后续重构方向" class="headerlink" title="五、后续重构方向"></a>五、后续重构方向</h2><h3 id="5-1-正确性优先：近平面裁剪"><a href="#5-1-正确性优先：近平面裁剪" class="headerlink" title="5.1 正确性优先：近平面裁剪"></a>5.1 正确性优先：近平面裁剪</h3><p>当三角形顶点位于相机后方时，透视除法 <code>÷w</code> 产生错误结果（w→0 或反转），导致几何扭曲。修复方式是 <strong>Sutherland-Hodgman 裁剪</strong>：</p>
+<pre class="mermaid">flowchart LR
+    A[clipPos × 3] --&gt; B{任意顶点 w &lt; ε?}
+    B -- No  --&gt; C[直接光栅化]
+    B -- Yes --&gt; D[对 w=ε 平面裁剪\n线性插值出新顶点]
+    D --&gt; E[重新三角化\n扇形分解]
+    E --&gt; C</pre>
+
+<h3 id="5-2-性能：Tile-based-并行"><a href="#5-2-性能：Tile-based-并行" class="headerlink" title="5.2 性能：Tile-based 并行"></a>5.2 性能：Tile-based 并行</h3><p>Tile-based 光栅化是同时解决并行竞态和提升缓存局部性的最佳方案：</p>
+
+<svg viewBox="0 0 580 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:monospace,sans-serif">
+  <!-- Screen divided into tiles -->
+  <rect x="10" y="10" width="220" height="160" rx="4" fill="#f9f9f9" stroke="#aaa" stroke-width="1.5"></rect>
+  <text x="120" y="26" text-anchor="middle" fill="#333" font-size="10" font-weight="bold">屏幕分块（Tile 8×8）</text>
+  <!-- Tile grid -->
+  <g stroke="#ccc" stroke-width="0.8">
+    <line x1="10" y1="54" x2="230" y2="54"></line>
+    <line x1="10" y1="98" x2="230" y2="98"></line>
+    <line x1="10" y1="142" x2="230" y2="142"></line>
+    <line x1="53" y1="32" x2="53" y2="170"></line>
+    <line x1="96" y1="32" x2="96" y2="170"></line>
+    <line x1="139" y1="32" x2="139" y2="170"></line>
+    <line x1="182" y1="32" x2="182" y2="170"></line>
+  </g>
+  <!-- Triangle overlay -->
+  <polygon points="30,150 130,38 200,130" fill="#dae8fc" fill-opacity="0.5" stroke="#6c8ebf" stroke-width="2"></polygon>
+  <!-- Highlighted tiles -->
+  <rect x="53" y="54" width="43" height="44" fill="#6c8ebf" fill-opacity="0.3"></rect>
+  <rect x="96" y="54" width="43" height="44" fill="#6c8ebf" fill-opacity="0.3"></rect>
+  <rect x="53" y="98" width="43" height="44" fill="#6c8ebf" fill-opacity="0.3"></rect>
+  <rect x="96" y="98" width="43" height="44" fill="#6c8ebf" fill-opacity="0.3"></rect>
+  <rect x="139" y="98" width="43" height="44" fill="#6c8ebf" fill-opacity="0.2"></rect>
+  <!-- Worker model -->
+  <rect x="250" y="10" width="320" height="160" rx="6" fill="#f9f9f9" stroke="#aaa" stroke-width="1"></rect>
+  <text x="410" y="28" text-anchor="middle" fill="#333" font-size="10" font-weight="bold">Tile Worker 模型</text>
+  <rect x="262" y="38" width="90" height="32" rx="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"></rect>
+  <text x="307" y="52" text-anchor="middle" fill="#1a3c1a" font-size="9" font-weight="bold">Tile Queue</text>
+  <text x="307" y="64" text-anchor="middle" fill="#555" font-size="8">per-tile 三角形列表</text>
+  <rect x="370" y="38" width="90" height="32" rx="4" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"></rect>
+  <text x="415" y="52" text-anchor="middle" fill="#1a3a5c" font-size="9" font-weight="bold">Thread Pool</text>
+  <text x="415" y="64" text-anchor="middle" fill="#555" font-size="8">各 Tile 独立处理</text>
+  <rect x="262" y="90" width="198" height="30" rx="4" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"></rect>
+  <text x="361" y="104" text-anchor="middle" fill="#5a4200" font-size="9" font-weight="bold">✅ 无跨 Tile 写入竞态</text>
+  <text x="361" y="116" text-anchor="middle" fill="#555" font-size="8">每 Thread 独立写入自己 Tile 的 FrameBuffer</text>
+  <rect x="262" y="130" width="198" height="30" rx="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"></rect>
+  <text x="361" y="144" text-anchor="middle" fill="#1a3c1a" font-size="9" font-weight="bold">✅ Cache 局部性大幅提升</text>
+  <text x="361" y="156" text-anchor="middle" fill="#555" font-size="8">每 Tile 数据 fits in L2 Cache</text>
+</svg>
+
+
+<h3 id="5-3-功能：PBR-材质"><a href="#5-3-功能：PBR-材质" class="headerlink" title="5.3 功能：PBR 材质"></a>5.3 功能：PBR 材质</h3><p>从 Blinn-Phong 升级到 Cook-Torrance 微平面 BRDF，引入 Roughness 和 Metallic 两个新参数：</p>
+<figure class="highlight plaintext"><div class="table-wrapper"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">f_specular = D(h) · F(v,h) · G(l,v,h) / (4 · (N·L) · (N·V))<br><br>D: GGX/Trowbridge-Reitz 法线分布函数<br>F: Schlick Fresnel 近似  F₀ + (1-F₀)(1-cosθ)^5<br>G: Smith 遮蔽-阴影函数<br></code></pre></td></tr></table></div></figure>
+
+<h3 id="5-4-功能：延迟渲染（Deferred-Rendering）"><a href="#5-4-功能：延迟渲染（Deferred-Rendering）" class="headerlink" title="5.4 功能：延迟渲染（Deferred Rendering）"></a>5.4 功能：延迟渲染（Deferred Rendering）</h3><p>多光源场景下 Forward Rendering 复杂度 O(物体 × 光源)，延迟渲染将几何 Pass 和光照 Pass 分离：</p>
+<pre class="mermaid">graph TD
+    subgraph GeoPass ["Geometry Pass (写 G-Buffer)"]
+        G1["RT0: Albedo RGB + AO A"]
+        G2["RT1: WorldNormal RGB + Roughness A"]
+        G3["RT2: WorldPos RGB + Metallic A"]
+        G4["DepthBuffer"]
+    end
+    subgraph LightPass ["Lighting Pass (读 G-Buffer)"]
+        L1["for each pixel:\n读取 G-Buffer → 计算所有光源贡献"]
+    end
+    GeoPass --&gt; LightPass --&gt; O["HDR Buffer → Tonemap → sRGB → 显示"]</pre>
+
+<p>软渲染中”多渲染目标”即维护多张 FrameBuffer，Lighting Pass 直接遍历像素坐标而非三角形。</p>
+<hr>
+<h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h2><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>方向</th>
+<th>优先级</th>
+<th>收益</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>近平面裁剪</td>
+<td>🔴 高</td>
+<td>修复大角度视锥下的渲染崩溃</td>
+</tr>
+<tr>
+<td>Early-Z</td>
+<td>🔴 高</td>
+<td>减少 Fragment Shader 白跑</td>
+</tr>
+<tr>
+<td>Tile-based 并行</td>
+<td>🟠 中</td>
+<td>消除竞态 + 提升 Cache 命中</td>
+</tr>
+<tr>
+<td>PBR 材质</td>
+<td>🟡 低</td>
+<td>更真实的光照外观</td>
+</tr>
+<tr>
+<td>延迟渲染</td>
+<td>🟡 低</td>
+<td>支持多光源场景</td>
+</tr>
+</tbody></table></div>
+<p>从零实现软光栅，最大的收获是：<strong>GPU 硬件的每一个设计决策背后，都藏着一个用 CPU 踩坑后才能真正理解的理由</strong>。近平面裁剪、Early-Z、Tile-based 光栅化、透视正确插值——这些都不是”优化”，而是正确性的必要条件。</p>
+<hr>
+<p><em>项目地址：<a target="_blank" rel="noopener" href="https://github.com/zerls/SimpleRenderer">SimpleRenderer on GitHub</a> | License: MIT</em></p>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@11.14.0/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/posts/ad07e615dba4/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>摄影的实用性与艺术性漫谈</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/9ee2eb98a136/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      AI 辅助编程指引
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/RenderPipline/" class="post-tag">#RenderPipline</a><a href="/tags/C/" class="post-tag">#C++</a>
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/posts/39b731327004/" title="现代渲染管线架构" rel="bookmark">现代渲染管线架构</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a></div></div><div class="null-item"><div class="null-title"><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+      <script type="text/javascript">
+        docsearch({
+          appId: 'appId',
+          apiKey: 'apiKey',
+          indexName: 'indexName',
+          insights: 'true',
+          container: 'div#algolia-search',
+          debug: 'false'
+        });
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+<script src="/js/toc.js"></script>
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  </body>
+</html>

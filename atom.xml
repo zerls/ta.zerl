@@ -61,9 +61,9 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="地形" scheme="https://ta.zerl.top/tags/%E5%9C%B0%E5%BD%A2/"/>
     <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="四叉树" scheme="https://ta.zerl.top/tags/%E5%9B%9B%E5%8F%89%E6%A0%91/"/>
     <category term="剔除" scheme="https://ta.zerl.top/tags/%E5%89%94%E9%99%A4/"/>
     <id>https://ta.zerl.top/posts/01ba4d5836c0/</id>
@@ -120,9 +120,9 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
     <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <id>https://ta.zerl.top/posts/5e9b6c3e8043/</id>
@@ -140,11 +140,11 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="探针" scheme="https://ta.zerl.top/tags/%E6%8E%A2%E9%92%88/"/>
     <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <id>https://ta.zerl.top/posts/16400eceeb11/</id>
     <link href="https://ta.zerl.top/posts/16400eceeb11/"/>
     <published>2025-12-10T16:00:00.000Z</published>
@@ -161,8 +161,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="Graphics" scheme="https://ta.zerl.top/tags/Graphics/"/>
     <category term="IBL" scheme="https://ta.zerl.top/tags/IBL/"/>
     <category term="Spherical Harmonics" scheme="https://ta.zerl.top/tags/Spherical-Harmonics/"/>
@@ -180,8 +180,8 @@
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="SH" scheme="https://ta.zerl.top/tags/SH/"/>
     <id>https://ta.zerl.top/posts/9dcb8ea1fef2/</id>
     <link href="https://ta.zerl.top/posts/9dcb8ea1fef2/"/>
@@ -333,7 +333,7 @@
 <p>本文同时给出在 Unity 2022 LTS URP 下手写一套支持 <strong>彩色阴影、半透明阴影、PCSS 软阴影、SRP Batcher 兼]]>
     </summary>
     <title>实时阴影技术演进与 URP 自定义阴影管线</title>
-    <updated>2026-05-06T08:04:53.526Z</updated>
+    <updated>2026-05-10T02:26:21.348Z</updated>
   </entry>
   <entry>
     <author>
@@ -398,6 +398,22 @@
     </summary>
     <title>摄影的实用性与艺术性漫谈</title>
     <updated>2025-07-10T16:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Zerl</name>
+    </author>
+    <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="RenderPipline" scheme="https://ta.zerl.top/tags/RenderPipline/"/>
+    <category term="C++" scheme="https://ta.zerl.top/tags/C/"/>
+    <id>https://ta.zerl.top/posts/c91409cc1fd2/</id>
+    <link href="https://ta.zerl.top/posts/c91409cc1fd2/"/>
+    <published>2025-05-09T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>本文是对 <a href="https://github.com/zerls/SimpleRenderer">SimpleRenderer</a> 项目的全面复盘。该项目是一个基于 CPU 的软件光栅化渲染引擎，不依赖任何图形 API，从零实现了完整的渲染管线。本文将从项目架构、核心技术、关键实现细节三个维度进行分析，并给出后续的重构方向。</p>]]>
+    </summary>
+    <title>从零实现软光栅渲染器：架构分析、核心技术与重构路线</title>
+    <updated>2025-10-02T16:00:00.000Z</updated>
   </entry>
   <entry>
     <author>
@@ -595,8 +611,8 @@
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="BRDF" scheme="https://ta.zerl.top/tags/BRDF/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="实时渲染" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93/"/>
     <id>https://ta.zerl.top/posts/bb49e33ef41f/</id>
     <link href="https://ta.zerl.top/posts/bb49e33ef41f/"/>
@@ -721,9 +737,9 @@
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="BRDF" scheme="https://ta.zerl.top/tags/BRDF/"/>
     <category term="HLSL" scheme="https://ta.zerl.top/tags/HLSL/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <id>https://ta.zerl.top/posts/e49fd3648422/</id>
     <link href="https://ta.zerl.top/posts/e49fd3648422/"/>
     <published>2024-06-17T04:00:00.000Z</published>
@@ -762,8 +778,8 @@
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="渲染管线" scheme="https://ta.zerl.top/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
-    <category term="Render Graph" scheme="https://ta.zerl.top/tags/Render-Graph/"/>
     <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+    <category term="Render Graph" scheme="https://ta.zerl.top/tags/Render-Graph/"/>
     <id>https://ta.zerl.top/posts/382feac0d5ef/</id>
     <link href="https://ta.zerl.top/posts/382feac0d5ef/"/>
     <published>2024-06-03T04:00:00.000Z</published>
