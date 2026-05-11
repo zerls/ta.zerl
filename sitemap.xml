@@ -47,7 +47,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/12100649263c/</loc>
+    <loc>https://ta.zerl.top/posts/88306f74a406/</loc>
     
     <lastmod>2026-05-09</lastmod>
     
@@ -56,7 +56,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/88306f74a406/</loc>
+    <loc>https://ta.zerl.top/posts/12100649263c/</loc>
     
     <lastmod>2026-05-09</lastmod>
     
@@ -164,16 +164,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/382feac0d5ef/</loc>
-    
-    <lastmod>2026-04-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/posts/e962819a878a/</loc>
+    <loc>https://ta.zerl.top/posts/9ddadbe5b731/</loc>
     
     <lastmod>2026-04-30</lastmod>
     
@@ -191,16 +182,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/9ddadbe5b731/</loc>
-    
-    <lastmod>2026-04-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/posts/fdbf8f97bbc1/</loc>
+    <loc>https://ta.zerl.top/posts/382feac0d5ef/</loc>
     
     <lastmod>2026-04-30</lastmod>
     
@@ -218,15 +200,6 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/ec8bca77f552/</loc>
-    
-    <lastmod>2026-04-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://ta.zerl.top/posts/7a3b251c9e25/</loc>
     
     <lastmod>2026-04-30</lastmod>
@@ -236,7 +209,34 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/870fc14fd303/</loc>
+    <loc>https://ta.zerl.top/posts/e962819a878a/</loc>
+    
+    <lastmod>2026-04-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/posts/fdbf8f97bbc1/</loc>
+    
+    <lastmod>2026-04-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/posts/ec8bca77f552/</loc>
+    
+    <lastmod>2026-04-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/posts/5e9b6c3e8043/</loc>
     
     <lastmod>2026-04-29</lastmod>
     
@@ -245,7 +245,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/5e9b6c3e8043/</loc>
+    <loc>https://ta.zerl.top/posts/870fc14fd303/</loc>
     
     <lastmod>2026-04-29</lastmod>
     
@@ -443,6 +443,41 @@
 
   
   <url>
+    <loc>https://ta.zerl.top/tags/%E5%9C%B0%E5%BD%A2/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/GPU/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E5%9B%9B%E5%8F%89%E6%A0%91/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E5%89%94%E9%99%A4/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://ta.zerl.top/tags/Golang/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -478,35 +513,77 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/GPU/</loc>
+    <loc>https://ta.zerl.top/tags/Area-Light/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/%E5%9C%B0%E5%BD%A2/</loc>
+    <loc>https://ta.zerl.top/tags/LTC/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/</loc>
+    <loc>https://ta.zerl.top/tags/Unity-URP/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/%E5%9B%9B%E5%8F%89%E6%A0%91/</loc>
+    <loc>https://ta.zerl.top/tags/GGX/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/%E5%89%94%E9%99%A4/</loc>
+    <loc>https://ta.zerl.top/tags/Graphics/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/IBL/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Spherical-Harmonics/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E5%AF%B9%E8%B1%A1%E6%B8%B2%E6%9F%93/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/ReSTIR/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/md/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -548,48 +625,6 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/SH/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Unity-URP/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/md/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Graphics/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/IBL/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Spherical-Harmonics/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://ta.zerl.top/tags/Physics-Simulation/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -611,35 +646,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/ReSTIR/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/SDFGI/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/SDF/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Godot/</loc>
+    <loc>https://ta.zerl.top/tags/SH/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -702,6 +709,83 @@
   </url>
   
   <url>
+    <loc>https://ta.zerl.top/tags/UE5-Lumen/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Unity-APV/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/RenderPipline/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/SDFGI/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/SDF/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Godot/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/PBR/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/SSS/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Skin/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/RayMarching/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://ta.zerl.top/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E6%B8%B2%E6%9F%93/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -730,76 +814,6 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/UE5-Lumen/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Unity-APV/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/RenderPipline/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/C/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/RayMarching/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/%E6%91%84%E5%BD%B1/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/PBR/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/SSS/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Skin/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://ta.zerl.top/tags/Mesh/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -814,14 +828,14 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/%E6%B0%B4%E4%BD%93/</loc>
+    <loc>https://ta.zerl.top/tags/%E6%91%84%E5%BD%B1/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/%E5%8D%8A%E9%80%8F%E6%98%8E%E5%AF%B9%E8%B1%A1%E6%B8%B2%E6%9F%93/</loc>
+    <loc>https://ta.zerl.top/tags/C/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -835,7 +849,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/Denoise/</loc>
+    <loc>https://ta.zerl.top/tags/%E6%B0%B4%E4%BD%93/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -843,6 +857,55 @@
   
   <url>
     <loc>https://ta.zerl.top/tags/SRP/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/SRP-Batcher/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/GPU-Instancing/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Draw-Call/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Field/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/BRDF/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/HLSL/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -863,7 +926,49 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/</loc>
+    <loc>https://ta.zerl.top/tags/Denoise/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/CSM/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Shadow-Mask/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Light-Probe/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Reflection-Probe/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -898,63 +1003,14 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/Field/</loc>
+    <loc>https://ta.zerl.top/tags/%E5%BE%AE%E8%A1%A8%E9%9D%A2%E7%90%86%E8%AE%BA/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/BRDF/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/HLSL/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/SRP-Batcher/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/GPU-Instancing/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Draw-Call/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Area-Light/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/LTC/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/GGX/</loc>
+    <loc>https://ta.zerl.top/tags/Cook-Torrance/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -996,20 +1052,6 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/tags/CSM/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Shadow-Mask/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://ta.zerl.top/tags/%E5%A4%9A%E7%9B%B8%E6%9C%BA/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -1025,90 +1067,6 @@
   
   <url>
     <loc>https://ta.zerl.top/tags/%E5%B7%A5%E7%A8%8B%E6%9E%B6%E6%9E%84/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/%E5%BE%AE%E8%A1%A8%E9%9D%A2%E7%90%86%E8%AE%BA/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Cook-Torrance/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Split-Sum/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Filament/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/URP/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%BC%98%E5%8C%96/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Disney-BRDF/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Disney-BSDF/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Sheen/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Clearcoat/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1143,6 +1101,69 @@
   </url>
   
   <url>
+    <loc>https://ta.zerl.top/tags/Sheen/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Disney-BRDF/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Disney-BSDF/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Clearcoat/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Split-Sum/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/Filament/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/URP/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%BC%98%E5%8C%96/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://ta.zerl.top/tags/%E6%AC%A1%E8%A1%A8%E9%9D%A2%E6%95%A3%E5%B0%84/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -1170,38 +1191,17 @@
     <priority>0.2</priority>
   </url>
   
-  <url>
-    <loc>https://ta.zerl.top/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Light-Probe/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/tags/Reflection-Probe/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
 
   
   <url>
-    <loc>https://ta.zerl.top/categories/Note/</loc>
+    <loc>https://ta.zerl.top/categories/ComputerGraphic/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/categories/ComputerGraphic/</loc>
+    <loc>https://ta.zerl.top/categories/Note/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
