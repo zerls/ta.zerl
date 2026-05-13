@@ -216,8 +216,8 @@ svg{
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
-    <category term="SH" scheme="https://ta.zerl.top/tags/SH/"/>
     <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
+    <category term="SH" scheme="https://ta.zerl.top/tags/SH/"/>
     <id>https://ta.zerl.top/posts/9dcb8ea1fef2/</id>
     <link href="https://ta.zerl.top/posts/9dcb8ea1fef2/"/>
     <published>2025-12-05T16:00:00.000Z</published>
@@ -236,9 +236,9 @@ svg{
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="Area Light" scheme="https://ta.zerl.top/tags/Area-Light/"/>
     <category term="LTC" scheme="https://ta.zerl.top/tags/LTC/"/>
+    <category term="Unity URP" scheme="https://ta.zerl.top/tags/Unity-URP/"/>
     <category term="GGX" scheme="https://ta.zerl.top/tags/GGX/"/>
     <id>https://ta.zerl.top/posts/80970d0a10c2/</id>
     <link href="https://ta.zerl.top/posts/80970d0a10c2/"/>
@@ -543,11 +543,11 @@ svg{
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
+    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="布料渲染" scheme="https://ta.zerl.top/tags/%E5%B8%83%E6%96%99%E6%B8%B2%E6%9F%93/"/>
     <category term="Cloth BRDF" scheme="https://ta.zerl.top/tags/Cloth-BRDF/"/>
     <category term="Charlie" scheme="https://ta.zerl.top/tags/Charlie/"/>
     <category term="Ashikhmin" scheme="https://ta.zerl.top/tags/Ashikhmin/"/>
-    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <id>https://ta.zerl.top/posts/363319b4d35b/</id>
     <link href="https://ta.zerl.top/posts/363319b4d35b/"/>
     <published>2024-11-22T04:00:00.000Z</published>
@@ -590,10 +590,10 @@ svg{
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="PBR" scheme="https://ta.zerl.top/tags/PBR/"/>
-    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="Disney BRDF" scheme="https://ta.zerl.top/tags/Disney-BRDF/"/>
     <category term="Disney BSDF" scheme="https://ta.zerl.top/tags/Disney-BSDF/"/>
     <category term="各向异性" scheme="https://ta.zerl.top/tags/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7/"/>
+    <category term="Sheen" scheme="https://ta.zerl.top/tags/Sheen/"/>
     <category term="Clearcoat" scheme="https://ta.zerl.top/tags/Clearcoat/"/>
     <id>https://ta.zerl.top/posts/8fa5222817d3/</id>
     <link href="https://ta.zerl.top/posts/8fa5222817d3/"/>
@@ -778,10 +778,10 @@ svg{
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="SRP Batcher" scheme="https://ta.zerl.top/tags/SRP-Batcher/"/>
     <category term="GPU Instancing" scheme="https://ta.zerl.top/tags/GPU-Instancing/"/>
     <category term="Draw Call" scheme="https://ta.zerl.top/tags/Draw-Call/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <id>https://ta.zerl.top/posts/9ddadbe5b731/</id>
     <link href="https://ta.zerl.top/posts/9ddadbe5b731/"/>
     <published>2024-06-10T04:00:00.000Z</published>
@@ -799,9 +799,9 @@ svg{
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="SRP" scheme="https://ta.zerl.top/tags/SRP/"/>
-    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <category term="Render Graph" scheme="https://ta.zerl.top/tags/Render-Graph/"/>
     <category term="渲染管线" scheme="https://ta.zerl.top/tags/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF/"/>
+    <category term="系列文章" scheme="https://ta.zerl.top/tags/%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
     <id>https://ta.zerl.top/posts/382feac0d5ef/</id>
     <link href="https://ta.zerl.top/posts/382feac0d5ef/"/>
     <published>2024-06-03T04:00:00.000Z</published>
