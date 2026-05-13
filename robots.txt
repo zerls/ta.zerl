@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /archives/
+Allow: /categories/
+Allow: /tags/
+Allow: /about/
+Disallow: /vendors/
+Disallow: /css/
+Disallow: /fancybox/
+Sitemap: https://ta.zerl.top/sitemap.xml
+Sitemap: https://ta.zerl.top/baidu_sitemap.xml
