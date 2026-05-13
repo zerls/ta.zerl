@@ -1026,6 +1026,8 @@ body {
   color: #110f0d;
   margin-bottom: 24px;
 /* 标题装饰：左侧靛青色重线 */
+  font-weight: normal;
+  margin-top: 0;
 }
 .post-content__head {
   margin-bottom: 40px 0;
