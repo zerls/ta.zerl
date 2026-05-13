@@ -280,7 +280,7 @@ mjx-container[display="true"] + br {
     <div class="wall-main" id="wall-main">
       <div class="wall-title">ZERL'TA BLOG</div>
       <div class="wall-subtitle">行无界，创无限</div>
-      <div class="wall-description">“行无界，创无限”</div>
+      <div class="wall-description"></div>
     </div>
     <div class="wall-bg">
       <img src="/images/bg3.jpg">
@@ -290,10 +290,10 @@ mjx-container[display="true"] + br {
             <div class="cursor"></div>
           </div>
           <div class="normal-eqt">
-            <img  alt="normal" width="300px" height="" src="/images/normal.svg"/>
+            <img  alt="normal" style="width:300px;" src="/images/normal.svg"/>
           </div>
-          <canvas width="400" height="400" id="heart-curve"></canvas>
-          <div class="motto">长风破浪会有时！</div>
+          
+          
         
           
           
@@ -399,7 +399,7 @@ mjx-container[display="true"] + br {
     
       
   <script type="text/javascript">
-    const timelineData = {"types":["article","app","event"],"posts":[{"title":"体积云实时渲染解析","path":"/posts/419ab8c29e57/","icon":"/images/icon/icon-article.svg","type":"article","date":"2026-03-15"},{"title":"大气散射渲染实战","path":"/posts/00da9f16bfa9/","icon":"/images/icon/icon-article.svg","type":"article","date":"2025-10-25"}]}
+    const timelineData = {"types":["article","app","event"],"posts":[{"title":"体积云实时渲染解析","path":"/posts/419ab8c29e57/","icon":"/","type":"article","date":"2026-03-15"},{"title":"大气散射渲染实战","path":"/posts/00da9f16bfa9/","icon":"/","type":"article","date":"2025-10-25"}]}
     const {types, posts} = timelineData
     listEl = document.querySelector("#timeline-list");
 
@@ -438,10 +438,11 @@ mjx-container[display="true"] + br {
       item.className = `timeline-item-${data.type} timeline-item--hidden`;
       item.innerHTML = `
                           <div class="line-date">
-                          <div class="line-date-tag">${data.date}</div></div>
+                            <div class="line-date-tag">${data.date}</div>
+                          </div>
                           <div class="line-anchor"></div>
                           <div class="line-title">
-                              <img class="text-icon" src="${data.icon}" /><a class="timeline-post" href="${data.path}">${data.title}</a>
+                            <a class="timeline-post" href="${data.path}">${data.title}</a>
                           </div>
                           `;
       return {el: item, type: data.type};
@@ -453,6 +454,31 @@ mjx-container[display="true"] + br {
   </script>
 
     
+
+    <script>
+      // 首页导航栏滚动效果
+      (function() {
+        const body = document.body;
+        const threshold = 100; // 滚动超过100px时改变样式
+
+        function handleScroll() {
+          if (window.scrollY > threshold) {
+            body.classList.add('scrolled');
+          } else {
+            body.classList.remove('scrolled');
+          }
+        }
+
+        // 初始化
+        body.classList.add('index-page');
+
+        // 监听滚动
+        window.addEventListener('scroll', handleScroll);
+
+        // 初始检查
+        handleScroll();
+      })();
+    </script>
   
   </body>
 </html>

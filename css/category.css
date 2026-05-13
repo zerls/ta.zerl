@@ -30,8 +30,22 @@
 .wall-category-title .title-icon {
   height: 50px;
   width: 50px;
-  background: url("/images/icon-code.svg") center center/contain no-repeat;
   margin-right: 10px;
+/* SVG 图标样式（兼容旧配置） */
+/* FontAwesome 图标样式 */
+}
+.wall-category-title .title-icon[style] {
+  background: url("/images/icon-code.svg") center center/contain no-repeat;
+}
+.wall-category-title .title-icon.fa,
+.wall-category-title .title-icon.fas,
+.wall-category-title .title-icon.far,
+.wall-category-title .title-icon.fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  background: none;
 }
 .wall-category-tags {
   width: 100%;

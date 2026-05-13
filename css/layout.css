@@ -623,7 +623,7 @@ mjx-container:not([display="true"]) {
 }
 #search-main {
   position: absolute;
-  margin: 60px auto 0;
+  margin: 90px auto 0;
   width: clamp(300px, 60vw, 600px);
   left: 0;
   right: 0;
@@ -889,7 +889,7 @@ mjx-container:not([display="true"]) {
     bottom: 0;
     height: 0;
     transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: rgba(248,248,246,0.98);
+    background: rgba(248,248,246,0.96);
     backdrop-filter: blur(10px);
     overflow: hidden;
     flex-direction: column;

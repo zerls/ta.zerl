@@ -1,4 +1,59 @@
 /* get timeline color config from __config.yml */
+/* =========================================
+   首页导航栏融合效果
+   ========================================= */
+.index-page .body {
+  padding-top: 0 !important;
+}
+.index-page .head {
+  position: absolute; /* 绝对定位，不跟随滚动 */
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 100;
+  background: transparent;
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.index-page .head--sticky {
+  position: fixed; /* 固定定位，跟随滚动 */
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 100;
+  background: transparent;
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.index-page .nav {
+  background: rgba(255,255,255,0.1);
+  border-bottom: none;
+}
+.index-page .nav-menu-item {
+  color: #110f0d;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.8);
+}
+/* 滚动后导航栏变实（仅对 sticky 模式生效） */
+.index-page.scrolled .head--sticky {
+  background: rgba(248,248,246,0.85);
+  backdrop-filter: blur(15px) saturate(1.2);
+  -webkit-backdrop-filter: blur(15px) saturate(1.2);
+  border-bottom: 1px solid rgba(227,227,224,0.5);
+}
+.index-page.scrolled .nav {
+  background: transparent;
+}
+.index-page.scrolled .nav-menu-item {
+  text-shadow: none;
+}
+/* 首页封面容器 */
+.wall {
+  position: relative;
+  height: 100vh; /* 占满全屏 */
+  overflow: hidden;
+}
 .wall-bg {
   position: absolute;
   top: 0;
@@ -38,7 +93,6 @@
   position: relative;
   z-index: 3;
   text-align: center;
-  margin-top: -15vh;
 }
 /* 标题：中式排版的张力 */
 .wall-title {
@@ -53,7 +107,7 @@
 .wall-subtitle {
   font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
   font-size: 32px;
-  color: #1a4b75; /* 靛青色副标题 */
+  color: #393633; /* 靛青色副标题 */
   font-weight: 400;
   opacity: 0.9;
   letter-spacing: 0.4em; /* 极宽的间距，更有意境 */
@@ -74,7 +128,7 @@
 }
 .hello-world {
   position: absolute;
-  top: calc(50% - 80px);
+  top: calc(50% - 180px);
   right: calc(50% + 230px);
   font-size: 30px;
   display: flex;
@@ -88,6 +142,9 @@
 }
 /* 装饰：古典公式 */
 .normal-eqt {
+  position: absolute;
+  top: calc(50% + 60px);
+  right: calc(50% - 600px);
   opacity: 0.4;
   filter: sepia(0.5) contrast(1.2); /* 使公式看起来像古籍印刷 */
   transition: opacity 0.5s ease;
@@ -246,29 +303,29 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .radio-skin--article::after {
-  border-color: #ee936c;
+  border-color: #e03636;
 }
 #radio-article:checked+.radio-skin--article {
-  background: linear-gradient(to bottom, transparent, #ee936c);
+  background: linear-gradient(to bottom, transparent, #e03636);
 }
 #radio-article:checked+.radio-skin--article::after {
-  background-color: #ee936c;
+  background-color: #e03636;
   top: -2px;
-  box-shadow: 0 2px 12px rgba(238,147,108,0.4);
+  box-shadow: 0 2px 12px rgba(224,54,54,0.4);
 }
 .timeline-item-article .line-anchor::after,
 .timeline-item-article--hidden .line-anchor::after {
-  background-color: #ee936c;
-  box-shadow: 0 0 0 1px #f8f8f6, 0 0 0 2.5px #ee936c, 0 2px 8px rgba(238,147,108,0.15);
+  background-color: #e03636;
+  box-shadow: 0 0 0 1px #f8f8f6, 0 0 0 2.5px #e03636, 0 2px 8px rgba(224,54,54,0.15);
 }
 .timeline-item-article .line-date-tag,
 .timeline-item-article--hidden .line-date-tag {
-  border-color: #ee936c;
-  color: #ee936c;
+  border-color: #e03636;
+  color: #e03636;
 }
 .timeline-item-article:hover .line-date-tag,
 .timeline-item-article--hidden:hover .line-date-tag {
-  background-color: rgba(238,147,108,0.06);
+  background-color: rgba(224,54,54,0.06);
 }
 /*
   .timeline-item-app, .timeline-item-event {
@@ -276,29 +333,29 @@
   }
   */
 .radio-skin--app::after {
-  border-color: #60a465;
+  border-color: #1a4b75;
 }
 #radio-app:checked+.radio-skin--app {
-  background: linear-gradient(to bottom, transparent, #60a465);
+  background: linear-gradient(to bottom, transparent, #1a4b75);
 }
 #radio-app:checked+.radio-skin--app::after {
-  background-color: #60a465;
+  background-color: #1a4b75;
   top: -2px;
-  box-shadow: 0 2px 12px rgba(96,164,101,0.4);
+  box-shadow: 0 2px 12px rgba(26,75,117,0.4);
 }
 .timeline-item-app .line-anchor::after,
 .timeline-item-app--hidden .line-anchor::after {
-  background-color: #60a465;
-  box-shadow: 0 0 0 1px #f8f8f6, 0 0 0 2.5px #60a465, 0 2px 8px rgba(96,164,101,0.15);
+  background-color: #1a4b75;
+  box-shadow: 0 0 0 1px #f8f8f6, 0 0 0 2.5px #1a4b75, 0 2px 8px rgba(26,75,117,0.15);
 }
 .timeline-item-app .line-date-tag,
 .timeline-item-app--hidden .line-date-tag {
-  border-color: #60a465;
-  color: #60a465;
+  border-color: #1a4b75;
+  color: #1a4b75;
 }
 .timeline-item-app:hover .line-date-tag,
 .timeline-item-app--hidden:hover .line-date-tag {
-  background-color: rgba(96,164,101,0.06);
+  background-color: rgba(26,75,117,0.06);
 }
 /*
   .timeline-item-app, .timeline-item-event {
@@ -306,29 +363,29 @@
   }
   */
 .radio-skin--event::after {
-  border-color: #568dc4;
+  border-color: #4b6e50;
 }
 #radio-event:checked+.radio-skin--event {
-  background: linear-gradient(to bottom, transparent, #568dc4);
+  background: linear-gradient(to bottom, transparent, #4b6e50);
 }
 #radio-event:checked+.radio-skin--event::after {
-  background-color: #568dc4;
+  background-color: #4b6e50;
   top: -2px;
-  box-shadow: 0 2px 12px rgba(86,141,196,0.4);
+  box-shadow: 0 2px 12px rgba(75,110,80,0.4);
 }
 .timeline-item-event .line-anchor::after,
 .timeline-item-event--hidden .line-anchor::after {
-  background-color: #568dc4;
-  box-shadow: 0 0 0 1px #f8f8f6, 0 0 0 2.5px #568dc4, 0 2px 8px rgba(86,141,196,0.15);
+  background-color: #4b6e50;
+  box-shadow: 0 0 0 1px #f8f8f6, 0 0 0 2.5px #4b6e50, 0 2px 8px rgba(75,110,80,0.15);
 }
 .timeline-item-event .line-date-tag,
 .timeline-item-event--hidden .line-date-tag {
-  border-color: #568dc4;
-  color: #568dc4;
+  border-color: #4b6e50;
+  color: #4b6e50;
 }
 .timeline-item-event:hover .line-date-tag,
 .timeline-item-event--hidden:hover .line-date-tag {
-  background-color: rgba(86,141,196,0.06);
+  background-color: rgba(75,110,80,0.06);
 }
 /*
   .timeline-item-app, .timeline-item-event {
@@ -520,9 +577,6 @@
   }
 }
 @media screen and (max-width: 1023px) {
-  .wall {
-    height: calc(100vh - 60px);
-  }
   .wall-title {
     font-size: 64px;
   }
