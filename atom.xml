@@ -96,9 +96,9 @@ svg{
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="地形" scheme="https://ta.zerl.top/tags/%E5%9C%B0%E5%BD%A2/"/>
     <category term="场景" scheme="https://ta.zerl.top/tags/%E5%9C%BA%E6%99%AF/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="四叉树" scheme="https://ta.zerl.top/tags/%E5%9B%9B%E5%8F%89%E6%A0%91/"/>
     <category term="剔除" scheme="https://ta.zerl.top/tags/%E5%89%94%E9%99%A4/"/>
     <id>https://ta.zerl.top/posts/01ba4d5836c0/</id>
@@ -133,10 +133,10 @@ svg{
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
     <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <category term="UE5 Lumen" scheme="https://ta.zerl.top/tags/UE5-Lumen/"/>
     <category term="Unity APV" scheme="https://ta.zerl.top/tags/Unity-APV/"/>
-    <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
     <category term="RenderPipline" scheme="https://ta.zerl.top/tags/RenderPipline/"/>
     <id>https://ta.zerl.top/posts/32d75595feff/</id>
     <link href="https://ta.zerl.top/posts/32d75595feff/"/>
@@ -155,9 +155,9 @@ svg{
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="蒙特卡洛" scheme="https://ta.zerl.top/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/"/>
     <category term="ReSTIR" scheme="https://ta.zerl.top/tags/ReSTIR/"/>
     <id>https://ta.zerl.top/posts/5e9b6c3e8043/</id>
@@ -175,11 +175,11 @@ svg{
       <name>Zerl</name>
     </author>
     <category term="ComputerGraphic" scheme="https://ta.zerl.top/categories/ComputerGraphic/"/>
-    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <category term="GI" scheme="https://ta.zerl.top/tags/GI/"/>
     <category term="实时光追" scheme="https://ta.zerl.top/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/"/>
-    <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
     <category term="探针" scheme="https://ta.zerl.top/tags/%E6%8E%A2%E9%92%88/"/>
+    <category term="DDGI" scheme="https://ta.zerl.top/tags/DDGI/"/>
+    <category term="GPU" scheme="https://ta.zerl.top/tags/GPU/"/>
     <id>https://ta.zerl.top/posts/16400eceeb11/</id>
     <link href="https://ta.zerl.top/posts/16400eceeb11/"/>
     <published>2025-12-10T16:00:00.000Z</published>
