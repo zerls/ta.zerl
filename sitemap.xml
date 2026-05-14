@@ -47,7 +47,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/12100649263c/</loc>
+    <loc>https://ta.zerl.top/posts/88306f74a406/</loc>
     
     <lastmod>2026-05-09</lastmod>
     
@@ -56,7 +56,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/88306f74a406/</loc>
+    <loc>https://ta.zerl.top/posts/12100649263c/</loc>
     
     <lastmod>2026-05-09</lastmod>
     
@@ -182,43 +182,7 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/e962819a878a/</loc>
-    
-    <lastmod>2026-04-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://ta.zerl.top/posts/18aafd1ae8a9/</loc>
-    
-    <lastmod>2026-04-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/posts/fdbf8f97bbc1/</loc>
-    
-    <lastmod>2026-04-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/posts/7a3b251c9e25/</loc>
-    
-    <lastmod>2026-04-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ta.zerl.top/posts/ec8bca77f552/</loc>
     
     <lastmod>2026-04-30</lastmod>
     
@@ -236,9 +200,36 @@
   </url>
   
   <url>
-    <loc>https://ta.zerl.top/posts/5e9b6c3e8043/</loc>
+    <loc>https://ta.zerl.top/posts/7a3b251c9e25/</loc>
     
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-04-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/posts/fdbf8f97bbc1/</loc>
+    
+    <lastmod>2026-04-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/posts/ec8bca77f552/</loc>
+    
+    <lastmod>2026-04-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/posts/e962819a878a/</loc>
+    
+    <lastmod>2026-04-30</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -255,6 +246,15 @@
   
   <url>
     <loc>https://ta.zerl.top/posts/32d75595feff/</loc>
+    
+    <lastmod>2026-04-29</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ta.zerl.top/posts/5e9b6c3e8043/</loc>
     
     <lastmod>2026-04-29</lastmod>
     
@@ -407,6 +407,15 @@
   </url>
   
   <url>
+    <loc>https://ta.zerl.top/posts/6b2e5562a7a5/</loc>
+    
+    <lastmod>2025-10-07</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://ta.zerl.top/posts/c91409cc1fd2/</loc>
     
     <lastmod>2025-10-02</lastmod>
@@ -436,7 +445,7 @@
 
   <url>
     <loc>https://ta.zerl.top/</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
