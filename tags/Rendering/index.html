@@ -6,7 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
     <title>
       
-        Cloth BRDF | Zerl'TA Blog
+        Rendering | Zerl'TA Blog
       
     </title>
     <meta name="description" content="Hello World~ 欢迎来到 Zerl'TA Blog。作为一名拥有多年3D美术底蕴的 Technical Artist，我在这里专注分享图形学算法、实时渲染前沿技术、Shader 开发与 AIGC 工作流实践，持续探索感性美学与理性代码的完美交融。"/>
@@ -165,25 +165,25 @@
     </div>
     <div class="body">
       
-  <div class="tag-page-title">#Cloth BRDF</div>
+  <div class="tag-page-title">#Rendering</div>
   <div class="post-list">
     
   
   <div class="post-card">
     
-      <a href="/posts/363319b4d35b/"
+      <a href="/posts/7d2a4ec6e9a6/"
          class="post-cover"
-         style="background-image: url(https://google.github.io/filament/images/screenshot_cloth_velvet.png)"></a>
+         style="background-image: url(https://img.cdn1.vip/i/6a0c3359d98ca_1779184473.webp)"></a>
     
     <div class="post-content">
       <div class="post__head">
-        <a href="/posts/363319b4d35b/" class="post-title hover-line">「PBR 系列」第四篇 · 布料与 Sheen 渲染：从 Charlie 到丝绸天鹅绒之辨</a>
+        <a href="/posts/7d2a4ec6e9a6/" class="post-title hover-line">FFT 海洋模拟：从频谱推导到 GPU 实时渲染</a>
         
       </div>
-      <div class="post-excerpt">布料是 GGX 微表面框架的第一个真正"破例"——纤维的环形反射和绒毛感无法用传统 NDF 表达。Charlie 与 Ashikhmin Velvet 是两个工业候选 NDF，配合 V_Charlie / V_Ashikhmin / V_Neubelt 几何项，再加上 sheen color、subsurface color 两参数，就能用同一个模型架构覆盖从棉麻到丝绸到天鹅绒的全谱系。本篇详解布料 BRDF 的物理动机、数学选型、以及 UE4、Filament、Unity SRP 的工程实践。</div>
+      <div class="post-excerpt">本文系统梳理 FFT 海洋模拟的完整技术链路：从 Phillips/JONSWAP 频谱的物理建模，到 Cooley-Tukey 蝶形算法的数学推导，再到多 Pass Compute Shader 的 GPU 工程实现。重点剖析雅可比行列式（Jacobian）驱动白沫生成的完整机制，并与浅水方程（SWE）进行深度横向对比。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/PBR/" class="post-tag">#PBR</a><a href="/tags/Sheen/" class="post-tag">#Sheen</a><a href="/tags/%E5%B8%83%E6%96%99%E6%B8%B2%E6%9F%93/" class="post-tag">#布料渲染</a><a href="/tags/Cloth-BRDF/" class="post-tag">#Cloth BRDF</a><a href="/tags/Charlie/" class="post-tag">#Charlie</a><a href="/tags/Ashikhmin/" class="post-tag">#Ashikhmin</a>
+  <a href="/tags/Ocean/" class="post-tag">#Ocean</a><a href="/tags/FFT/" class="post-tag">#FFT</a><a href="/tags/Compute-Shader/" class="post-tag">#Compute Shader</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/Rendering/" class="post-tag">#Rendering</a>
 
 </div>
       </div>

@@ -1583,6 +1583,13 @@
     var viewBox = svgEl.viewBox.baseVal;
     var nodes = instance.layoutData.nodes;
 
+    // 容器像素尺寸
+    var container = instance.container;
+    if (typeof container === 'string') container = document.querySelector(container);
+    var cw = container.clientWidth;
+    var ch = container.clientHeight;
+    if (!cw || !ch) return;
+
     // 计算所有可见节点的实际边界
     var minX = Infinity, minY = Infinity;
     var maxX = -Infinity, maxY = -Infinity;
@@ -1597,22 +1604,33 @@
     var contentH = Math.max(maxY - minY, 1);
     var padding = 80;
 
-    // 计算缩放比例：确保所有节点 + padding 都落在 viewBox 内
-    var scaleX = viewBox.width / (contentW + padding * 2);
-    var scaleY = viewBox.height / (contentH + padding * 2);
-    var scale = Math.min(scaleX, scaleY, 1);
+    // 目标：内容在容器像素中撑满画布
+    var targetScaleX = cw / (contentW + padding * 2);
+    var targetScaleY = ch / (contentH + padding * 2);
+    var targetScale = Math.min(targetScaleX, targetScaleY, 1);
+
+    // SVG 的 preserveAspectRatio="meet" 会按 viewBox→容器 映射缩放
+    // d3 zoom 操作在 viewBox 坐标系内，需补偿 meet 的缩放
+    var vbScaleX = cw / viewBox.width;
+    var vbScaleY = ch / viewBox.height;
+    var vbScale = Math.min(vbScaleX, vbScaleY);
+
+    // 最终 d3 zoom 缩放 = 目标像素缩放 / SVG 内置缩放
+    var zoomScale = targetScale / vbScale;
+    // 安全范围
+    zoomScale = Math.max(0.05, Math.min(zoomScale, 10));
 
     // 内容中心点
     var cx = (minX + maxX) / 2;
     var cy = (minY + maxY) / 2;
 
-    // 将内容中心平移到 SVG viewBox 中心，再缩放
+    // 将内容中心平移到 viewBox 中心，再缩放
     instance.svg
       .transition()
       .duration(750)
       .call(instance._zoom.transform, d3.zoomIdentity
         .translate(viewBox.width / 2, viewBox.height / 2)
-        .scale(scale)
+        .scale(zoomScale)
         .translate(-cx, -cy));
   }
 
