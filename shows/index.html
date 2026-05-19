@@ -75,7 +75,9 @@
 
   <!-- hexo injector head_end start -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+<link rel="stylesheet" href="/css/mindmap-core.min.css">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="/js/mindmap-core.min.js"></script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
 </head>
   <body>
     
@@ -428,5 +430,23 @@
     
 
 
-  </body>
+  <!-- hexo injector body_end start -->
+<script>
+(function () {
+  var containers = document.querySelectorAll('.hexo-mindmap');
+  if (containers.length === 0) return;
+
+  if (typeof Mindmap !== 'undefined' && Mindmap.autoRender) {
+    var config = {
+      direction: 'lr-both',
+      lineStyle: 'curved',
+      theme: 'rainbow',
+      collapseDepth: 2,
+      enableMinimap: true,
+      enableFocus: true
+    };
+    Mindmap.autoRender(config);
+  }
+})();
+</script><!-- hexo injector body_end end --></body>
 </html>

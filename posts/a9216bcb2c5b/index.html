@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        hexo-mindmap-svg 功能全覆盖测试 | Zerl'TA Blog
+      
+    </title>
+    <meta name="description" content="Hello World~ 欢迎来到 Zerl'TA Blog。作为一名拥有多年3D美术底蕴的 Technical Artist，我在这里专注分享图形学算法、实时渲染前沿技术、Shader 开发与 AIGC 工作流实践，持续探索感性美学与理性代码的完美交融。"/>
+    <meta name="keywords" content="Zerl,Technical Artist,TA,技术美术,图形学,实时渲染,Shader,渲染优化,3D Art,游戏开发,AIGC,CG"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.1/css/all.min.css"/>
+    
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L57YDNKXCB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L57YDNKXCB');
+</script>
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+  
+
+  <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<link rel="stylesheet" href="/css/mindmap-core.min.css">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="/js/mindmap-core.min.js"></script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+</head>
+  <body>
+    
+      <div id="search-mask" style="display:none">
+  <div class="search-main" id="search-main">
+    <div class="search__head">
+      <div class="search-form">
+        <svg t="1706347533072"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="7828"
+             width="20"
+             height="20">
+          <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" stroke="#000000" stroke-width="24" p-id="7829">
+          </path>
+        </svg>
+        <input id="search-input" placeholder="搜索文章">
+        <svg t="1706361500528"
+             id="search-clear"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="4351"
+             width="20"
+             height="20">
+          <path d="M512 562.688l-264.2944 264.2944-50.688-50.688L461.312 512 197.0176 247.7056l50.688-50.688L512 461.312l264.2944-264.2944 50.688 50.688L562.688 512l264.2944 264.2944-50.688 50.688L512 562.688z" fill="#00" p-id="4352">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <div class="search__body" id="search-result"></div>
+    <div class="search__foot"></div>
+  </div>
+</div>
+
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer"><div class="search" id="search-btn">
+  <svg t="1706347533072"
+       class="icon"
+       viewBox="0 0 1024 1024"
+       version="1.1"
+       xmlns="http://www.w3.org/2000/svg"
+       p-id="7828"
+       width="20"
+       height="20">
+    <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" stroke="#000000" stroke-width="24" p-id="7829"></path>
+  </svg>
+  <span>搜索</span>
+  <span class="search-shortcut-key">Ctrl K</span>
+</div></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/cg">图形学</a>
+              
+                <a class="nav-menu-item" href="/aes">美学</a>
+              
+                <a class="nav-menu-item" href="/aigc">AIGC</a>
+              
+                <a class="nav-menu-item" href="/note">札记</a>
+              
+            
+            
+              <a class="nav-menu-item" href='/shows/'>Shows</a>
+            
+            <a class="nav-menu-item" href='/now/'>Now</a>
+
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      
+      
+      <div class="post-content__head">
+        
+        
+        <h1 class="post-title">hexo-mindmap-svg 功能全覆盖测试</h1>
+        
+        <div class="post-info">
+          <div class="post-date">发布于 <strong>2026-05-19</strong> · 更新于<strong>2026-05-19</strong>
+          
+          <span style="float:right;"> <strong>11 分钟</strong>阅读</span>
+          </div>
+
+          
+  <a href="/tags/%E6%B5%8B%E8%AF%95/" class="post-tag">#测试</a><a href="/tags/MindMap/" class="post-tag">#MindMap</a>
+
+
+        </div>
+      </div>
+
+      
+      
+      
+      
+      
+      
+      <div class="floating-tools">
+        
+        
+        
+        
+        
+        <div class="tool-btn" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to Top">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 19V5M5 12l7-7 7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      
+      
+
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>这篇文章用于测试 <code>hexo-mindmap-svg</code> 插件的所有功能点，包括：布局方向（5种）、连线样式（4种）、主题（3种）、节点形状（10种）、多行文本、<strong>富文本</strong>标记、深度嵌套、内联配置语法。</p>
+<span id="more"></span>
+
+
+<h2 id="1-基础布局-左→右-直线连线-明亮主题"><a href="#1-基础布局-左→右-直线连线-明亮主题" class="headerlink" title="1. 基础布局 - 左→右 &#x2F; 直线连线 &#x2F; 明亮主题"></a>1. 基础布局 - 左→右 &#x2F; 直线连线 &#x2F; 明亮主题</h2><div class="hexo-mindmap" id="mindmap-ur3jaepv2" data-content="-%20%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF%E6%A0%88%0A%20%20-%20**React**%20%E7%94%9F%E6%80%81%20%24E%3Dmc%5E2%24%0A%20%20%20%20-%20Next.js%20%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%0A%20%20%20%20-%20Redux%20*%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86*%0A%20%20%20%20-%20React%20Router%20%E8%B7%AF%E7%94%B1%0A%20%20-%20*Vue*%20%E7%94%9F%E6%80%81%0A%20%20%20%20-%20Nuxt.js%20%E6%A1%86%E6%9E%B6%0A%20%20%20%20-%20Pinia%20%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%0A%20%20-%20%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7%0A%20%20%20%20-%20Vite%20%E5%BF%AB%E9%80%9F%E6%9E%84%E5%BB%BA%0A%20%20%20%20-%20webpack%20%E4%BC%A0%E7%BB%9F%E6%89%93%E5%8C%85%0A%20%20%20%20-%20esbuild%20Go%20%E8%AF%AD%E8%A8%80%E7%BC%96%E8%AF%91%E5%99%A8%0A%20%20-%20CSS%20%E6%96%B9%E6%A1%88%0A%20%20%20%20-%20Tailwind%20CSS%20%E5%8E%9F%E5%AD%90%E5%8C%96%0A%20%20%20%20-%20CSS%20Modules%20%E6%A8%A1%E5%9D%97%E5%8C%96%0A%20%20%20%20-%20%60styled-components%60%20CSS-in-JS" data-direction="lr" data-line-style="straight" data-theme="light" data-collapse-depth="2"></div>
+
+<hr>
+<h2 id="2-右→左-折线连线-暗黑主题-节点形状混排"><a href="#2-右→左-折线连线-暗黑主题-节点形状混排" class="headerlink" title="2. 右→左 &#x2F; 折线连线 &#x2F; 暗黑主题 + 节点形状混排"></a>2. 右→左 &#x2F; 折线连线 &#x2F; 暗黑主题 + 节点形状混排</h2><div class="hexo-mindmap" id="mindmap-cgnbjop2m" data-content="-%20%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6%0A%20%20-%20%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%20%7Bstyle%3Atopic%7D%0A%20%20%20%20-%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%0A%20%20%20%20-%20%E5%85%89%E6%A0%85%E5%8C%96%20(Rasterization)%20%7Bstyle%3Adiamond%7D%0A%20%20%20%20-%20%E7%89%87%E5%85%83%E7%9D%80%E8%89%B2%E5%99%A8%0A%20%20-%20%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%20%7Bstyle%3Ahexagon%7D%0A%20%20%20%20-%20Phong%20%E5%85%89%E7%85%A7%0A%20%20%20%20-%20PBR%20**%E7%89%A9%E7%90%86%E6%B8%B2%E6%9F%93**%0A%20%20%20%20-%20%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7%20%60GI%60%0A%20%20-%20%E5%87%A0%E4%BD%95%E5%A4%84%E7%90%86%20%7Bstyle%3Aparallelogram%7D%0A%20%20%20%20-%20%E7%BB%86%E5%88%86%E6%9B%B2%E9%9D%A2%20(Tessellation)%0A%20%20%20%20-%20LOD%20%E5%B1%82%E7%BA%A7%E7%BB%86%E8%8A%82%0A%20%20-%20%E5%90%8E%E5%A4%84%E7%90%86%E7%89%B9%E6%95%88%20%7Bstyle%3Aellipse%7D%0A%20%20%20%20-%20Bloom%20%E6%B3%9B%E5%85%89%0A%20%20%20%20-%20SSAO%20%E7%8E%AF%E5%A2%83%E5%85%89%E9%81%AE%E8%94%BD%0A%20%20%20%20-%20Motion%20Blur%20%E8%BF%90%E5%8A%A8%E6%A8%A1%E7%B3%8A" data-direction="rl" data-line-style="angled" data-theme="dark" data-collapse-depth="2"></div>
+
+<hr>
+<h2 id="3-上→下-有机曲线-彩虹主题-深度嵌套"><a href="#3-上→下-有机曲线-彩虹主题-深度嵌套" class="headerlink" title="3. 上→下 &#x2F; 有机曲线 &#x2F; 彩虹主题 + 深度嵌套"></a>3. 上→下 &#x2F; 有机曲线 &#x2F; 彩虹主题 + 深度嵌套</h2><div class="hexo-mindmap" id="mindmap-229enqztx" data-content="-%20%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%0A%20%20-%20%E5%89%8D%E7%AB%AF%E6%9E%B6%E6%9E%84%20%7Bstyle%3Arounded%7D%0A%20%20%20%20-%20%E7%BB%84%E4%BB%B6%E5%8C%96%E8%AE%BE%E8%AE%A1%0A%20%20%20%20%20%20-%20%E5%8E%9F%E5%AD%90%E7%BB%84%E4%BB%B6%0A%20%20%20%20%20%20%20%20-%20Button%20%60variant%3D%22primary%22%60%0A%20%20%20%20%20%20%20%20-%20Input%20*with%20validation*%0A%20%20%20%20%20%20-%20%E5%A4%8D%E5%90%88%E7%BB%84%E4%BB%B6%0A%20%20%20%20%20%20%20%20-%20DataTable%20%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%A0%BC%0A%20%20%20%20%20%20%20%20-%20**Form%20Wizard**%20%E8%A1%A8%E5%8D%95%E5%90%91%E5%AF%BC%0A%20%20%20%20-%20%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5%0A%20%20%20%20%20%20-%20%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%8A%B6%E6%80%81%0A%20%20%20%20%20%20-%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%8A%B6%E6%80%81%0A%20%20%20%20%20%20-%20URL%20%E7%8A%B6%E6%80%81%0A%20%20-%20%E5%90%8E%E7%AB%AF%E6%9E%B6%E6%9E%84%20%7Bstyle%3Arounded%7D%0A%20%20%20%20-%20%E5%BE%AE%E6%9C%8D%E5%8A%A1%E8%AE%BE%E8%AE%A1%0A%20%20%20%20%20%20-%20API%20Gateway%20%E7%BD%91%E5%85%B3%0A%20%20%20%20%20%20-%20Service%20Mesh%20%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC%0A%20%20%20%20-%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%80%89%E5%9E%8B%0A%20%20%20%20%20%20-%20PostgreSQL%20%E5%85%B3%E7%B3%BB%E5%9E%8B%0A%20%20%20%20%20%20-%20Redis%20%E7%BC%93%E5%AD%98%E5%B1%82%0A%20%20%20%20%20%20-%20Elasticsearch%20%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%0A%20%20-%20DevOps%20%E9%83%A8%E7%BD%B2%20%7Bstyle%3Acapsule%7D%0A%20%20%20%20-%20CI%2FCD%20%E6%B5%81%E6%B0%B4%E7%BA%BF%0A%20%20%20%20-%20Docker%20%E5%AE%B9%E5%99%A8%E5%8C%96%0A%20%20%20%20-%20Kubernetes%20%E7%BC%96%E6%8E%92" data-direction="tb" data-line-style="organic" data-theme="rainbow" data-collapse-depth="2"></div>
+
+<hr>
+<h2 id="4-下→上-贝塞尔曲线-明亮主题-多行文本"><a href="#4-下→上-贝塞尔曲线-明亮主题-多行文本" class="headerlink" title="4. 下→上 &#x2F; 贝塞尔曲线 &#x2F; 明亮主题 + 多行文本"></a>4. 下→上 &#x2F; 贝塞尔曲线 &#x2F; 明亮主题 + 多行文本</h2><div class="hexo-mindmap" id="mindmap-sj47hl1ad" data-content="-%20%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AF%B9%E6%AF%94%5Cn(Programming%20Languages)%0A%20%20-%20%E7%B3%BB%E7%BB%9F%E7%BA%A7%E8%AF%AD%E8%A8%80%20%7Bstyle%3Ahexagon%7D%0A%20%20%20%20-%20Rust%5Cn%E5%86%85%E5%AD%98%E5%AE%89%E5%85%A8%5Cn%E6%97%A0%20GC%0A%20%20%20%20-%20C%2B%2B%5Cn%E9%AB%98%E6%80%A7%E8%83%BD%5Cn%E6%89%8B%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%0A%20%20%20%20-%20Go%5Cn%E5%B9%B6%E5%8F%91%E5%8F%8B%E5%A5%BD%5Cn%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%0A%20%20-%20%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80%20%7Bstyle%3Aellipse%7D%0A%20%20%20%20-%20Python%5Cn%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%5Cn%E7%A7%91%E5%AD%A6%E8%AE%A1%E7%AE%97%0A%20%20%20%20-%20JavaScript%5Cn%E5%85%A8%E6%A0%88%E5%BC%80%E5%8F%91%5Cn%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%0A%20%20%20%20-%20Lua%5Cn%E5%B5%8C%E5%85%A5%E5%BC%8F%5Cn%E8%BD%BB%E9%87%8F%E7%BA%A7%0A%20%20-%20%E5%87%BD%E6%95%B0%E5%BC%8F%E8%AF%AD%E8%A8%80%20%7Bstyle%3Adiamond%7D%0A%20%20%20%20-%20Haskell%5Cn%E7%BA%AF%E5%87%BD%E6%95%B0%E5%BC%8F%5Cn%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC%0A%20%20%20%20-%20Elixir%5CnErlang%20VM%5Cn%E5%AE%B9%E9%94%99%E6%80%A7%0A%20%20%20%20-%20Scala%5CnJVM%20%E7%94%9F%E6%80%81%5Cn%E6%B7%B7%E5%90%88%E8%8C%83%E5%BC%8F" data-direction="bt" data-line-style="curved" data-theme="light" data-collapse-depth="2"></div>
+
+<hr>
+<h2 id="5-左右展开-有机曲线-彩虹主题-全节点形状展示"><a href="#5-左右展开-有机曲线-彩虹主题-全节点形状展示" class="headerlink" title="5. 左右展开 &#x2F; 有机曲线 &#x2F; 彩虹主题 + 全节点形状展示"></a>5. 左右展开 &#x2F; 有机曲线 &#x2F; 彩虹主题 + 全节点形状展示</h2><div class="hexo-mindmap" id="mindmap-ucpvh1d8y" data-content="-%20XMind%20%E8%8A%82%E7%82%B9%E5%BD%A2%E7%8A%B6%E5%B1%95%E7%A4%BA%0A%20%20-%20%E6%A0%87%E5%87%86%E5%BD%A2%E7%8A%B6%20%7Bstyle%3Arect%7D%0A%20%20%20%20-%20%E7%9F%A9%E5%BD%A2%E8%8A%82%E7%82%B9%20rect%20%7Bstyle%3Arect%7D%0A%20%20%20%20-%20%E5%9C%86%E8%A7%92%E7%9F%A9%E5%BD%A2%20rounded%20%7Bstyle%3Arounded%7D%0A%20%20%20%20-%20%E6%A4%AD%E5%9C%86%20ellipse%20%7Bstyle%3Aellipse%7D%0A%20%20%20%20-%20%E8%8F%B1%E5%BD%A2%20diamond%20%7Bstyle%3Adiamond%7D%0A%20%20-%20%E7%89%B9%E6%AE%8A%E5%BD%A2%E7%8A%B6%20%7Bstyle%3Atopic%7D%0A%20%20%20%20-%20%E5%B9%B3%E8%A1%8C%E5%9B%9B%E8%BE%B9%E5%BD%A2%20parallelogram%20%7Bstyle%3Aparallelogram%7D%0A%20%20%20%20-%20%E5%85%AD%E8%BE%B9%E5%BD%A2%20hexagon%20%7Bstyle%3Ahexagon%7D%0A%20%20%20%20-%20%E8%83%B6%E5%9B%8A%E5%BD%A2%20capsule%20%7Bstyle%3Acapsule%7D%0A%20%20%20%20-%20%E4%BA%91%E6%9C%B5%E5%BD%A2%20cloud%20%7Bstyle%3Acloud%7D%0A%20%20-%20%E6%96%87%E5%AD%97%E6%A0%B7%E5%BC%8F%20%7Bstyle%3Aunderline%7D%0A%20%20%20%20-%20**%E5%8A%A0%E7%B2%97%E6%96%87%E5%AD%97**%20%E6%B5%8B%E8%AF%95%0A%20%20%20%20-%20*%E6%96%9C%E4%BD%93%E6%96%87%E5%AD%97*%20%E6%B5%8B%E8%AF%95%0A%20%20%20%20-%20%60%E8%A1%8C%E5%86%85%E4%BB%A3%E7%A0%81%60%20%E6%B5%8B%E8%AF%95%0A%20%20%20%20-%20%E6%99%AE%E9%80%9A%E6%96%87%E5%AD%97%20%E6%B5%8B%E8%AF%95" data-direction="lr-both" data-line-style="organic" data-theme="rainbow" data-collapse-depth="2"></div>
+
+<hr>
+<h2 id="6-单页面多实例-左→右-简洁布局"><a href="#6-单页面多实例-左→右-简洁布局" class="headerlink" title="6. 单页面多实例 - 左→右 &#x2F; 简洁布局"></a>6. 单页面多实例 - 左→右 &#x2F; 简洁布局</h2><div class="hexo-mindmap" id="mindmap-t9h192jp5" data-content="-%20%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E6%8F%92%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%B8%85%E5%8D%95%0A%20%20-%20%E8%A7%A3%E6%9E%90%E8%83%BD%E5%8A%9B%0A%20%20%20%20-%20%E7%BC%A9%E8%BF%9B%E5%B1%82%E7%BA%A7%E8%A7%A3%E6%9E%90%0A%20%20%20%20-%20%E5%AF%8C%E6%96%87%E6%9C%AC%E6%A0%87%E8%AE%B0%0A%20%20%20%20-%20%E7%89%B9%E6%AE%8A%E5%B1%9E%E6%80%A7%20%60%7Bstyle%3Axxx%7D%60%0A%20%20-%20%E5%B8%83%E5%B1%80%E5%BC%95%E6%93%8E%0A%20%20%20%20-%205%20%E7%A7%8D%E5%B8%83%E5%B1%80%E6%96%B9%E5%90%91%0A%20%20%20%20-%20D3.tree()%20%E5%9D%90%E6%A0%87%E8%AE%A1%E7%AE%97%0A%20%20%20%20-%20%E5%8A%A8%E6%80%81%E6%8A%98%E5%8F%A0%2F%E5%B1%95%E5%BC%80%0A%20%20-%20%E4%BA%A4%E4%BA%92%E7%B3%BB%E7%BB%9F%0A%20%20%20%20-%20%E7%94%BB%E5%B8%83%E6%8B%96%E6%8B%BD%E5%B9%B3%E7%A7%BB%0A%20%20%20%20-%20%E6%BB%9A%E8%BD%AE%E7%BC%A9%E6%94%BE%200.3x~3x%0A%20%20%20%20-%20%E5%8F%8C%E5%87%BB%E8%8A%82%E7%82%B9%E6%8A%98%E5%8F%A0%0A%20%20-%20%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BD%0A%20%20%20%20-%20%E5%85%A8%E5%B1%80%E7%BC%A9%E7%95%A5%E5%9B%BE%20Minimap%0A%20%20%20%20-%20%E4%B8%93%E6%B3%A8%E6%A8%A1%E5%BC%8F%20Focus%20Mode%0A%20%20%20%20-%20%E5%AF%BC%E5%87%BA%20SVG%20%2F%20PNG%20%2F%20MD" data-direction="lr" data-line-style="curved" data-theme="light" data-collapse-depth="2"></div>
+
+<hr>
+<h2 id="7-投资与宏观分析-实际场景测试"><a href="#7-投资与宏观分析-实际场景测试" class="headerlink" title="7. 投资与宏观分析 - 实际场景测试"></a>7. 投资与宏观分析 - 实际场景测试</h2><div class="hexo-mindmap" id="mindmap-4pj9n7i1y" data-content="-%202026%20%E5%AE%8F%E8%A7%82%E6%8A%95%E8%B5%84%E7%AD%96%E7%95%A5%20%7Bstyle%3Atopic%7D%0A%20%20-%20%E6%9D%83%E7%9B%8A%E5%B8%82%E5%9C%BA%20%7Bstyle%3Arounded%7D%0A%20%20%20%20-%20A%20%E8%82%A1%E7%BB%93%E6%9E%84%E6%80%A7%E6%9C%BA%E4%BC%9A%0A%20%20%20%20%20%20-%20%E5%8D%8A%E5%AF%BC%E4%BD%93%E5%9B%BD%E4%BA%A7%E6%9B%BF%E4%BB%A3%0A%20%20%20%20%20%20-%20%E6%96%B0%E8%83%BD%E6%BA%90%E4%BA%A7%E4%B8%9A%E9%93%BE%0A%20%20%20%20%20%20-%20AI%20%E5%BA%94%E7%94%A8%E5%B1%82%0A%20%20%20%20-%20%E6%B8%AF%E8%82%A1%E4%BC%B0%E5%80%BC%E4%BF%AE%E5%A4%8D%0A%20%20%20%20%20%20-%20%E4%BA%92%E8%81%94%E7%BD%91%E5%B9%B3%E5%8F%B0%0A%20%20%20%20%20%20-%20%E6%B6%88%E8%B4%B9%E5%A4%8D%E8%8B%8F%0A%20%20-%20%E5%9B%BA%E5%AE%9A%E6%94%B6%E7%9B%8A%20%7Bstyle%3Arounded%7D%0A%20%20%20%20-%20%E5%88%A9%E7%8E%87%E5%80%BA%0A%20%20%20%20%20%20-%2010%20%E5%B9%B4%E6%9C%9F%E5%9B%BD%E5%80%BA%0A%20%20%20%20%20%20-%20LPR%20%E4%B8%8B%E8%B0%83%E9%A2%84%E6%9C%9F%0A%20%20%20%20-%20%E4%BF%A1%E7%94%A8%E5%80%BA%0A%20%20%20%20%20%20-%20%E5%9F%8E%E6%8A%95%E5%80%BA%E5%88%86%E5%8C%96%0A%20%20%20%20%20%20-%20%E4%BA%A7%E4%B8%9A%E5%80%BA%E7%B2%BE%E9%80%89%0A%20%20-%20%E5%8F%A6%E7%B1%BB%E8%B5%84%E4%BA%A7%20%7Bstyle%3Adiamond%7D%0A%20%20%20%20-%20%E9%BB%84%E9%87%91%E9%85%8D%E7%BD%AE%0A%20%20%20%20%20%20-%20%E5%9C%B0%E7%BC%98%E9%A3%8E%E9%99%A9%E5%AF%B9%E5%86%B2%0A%20%20%20%20%20%20-%20%E5%A4%AE%E8%A1%8C%E8%B4%AD%E9%87%91%E8%B6%8B%E5%8A%BF%0A%20%20%20%20-%20REITs%0A%20%20%20%20%20%20-%20%E4%BB%93%E5%82%A8%E7%89%A9%E6%B5%81%0A%20%20%20%20%20%20-%20%E4%BF%9D%E9%9A%9C%E6%80%A7%E7%A7%9F%E8%B5%81%E4%BD%8F%E6%88%BF%0A%20%20-%20%E9%A3%8E%E9%99%A9%E7%AE%A1%E7%90%86%20%7Bstyle%3Ahexagon%7D%0A%20%20%20%20-%20%E4%BB%93%E4%BD%8D%E6%8E%A7%E5%88%B6%0A%20%20%20%20-%20%E6%AD%A2%E6%8D%9F%E7%BA%AA%E5%BE%8B%0A%20%20%20%20-%20%E5%88%86%E6%95%A3%E9%85%8D%E7%BD%AE" data-direction="lr" data-line-style="curved" data-theme="dark" data-collapse-depth="2"></div>
+
+<hr>
+<h2 id="功能覆盖检查清单"><a href="#功能覆盖检查清单" class="headerlink" title="功能覆盖检查清单"></a>功能覆盖检查清单</h2><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>示例编号</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>lr</code> 左→右</td>
+<td>#1, #6</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>rl</code> 右→左</td>
+<td>#2</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>tb</code> 上→下</td>
+<td>#3</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>bt</code> 下→上</td>
+<td>#4</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>lr-both</code> 左右展开</td>
+<td>#5</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>straight</code> 直线</td>
+<td>#1</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>curved</code> 贝塞尔曲线</td>
+<td>#4, #6, #7</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>angled</code> 折线</td>
+<td>#2</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>organic</code> 有机曲线</td>
+<td>#3, #5</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>light</code> 明亮主题</td>
+<td>#1, #4, #6</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>dark</code> 暗黑主题</td>
+<td>#2, #7</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>rainbow</code> 彩虹主题</td>
+<td>#3, #5</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>10 种节点形状</td>
+<td>#5</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>**加粗**</code></td>
+<td>#1, #5</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>*斜体*</code></td>
+<td>#1, #5</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>`行内代码`</code></td>
+<td>#1, #3, #5</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>\n</code> 多行文本</td>
+<td>#4</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>深度嵌套 (4层+)</td>
+<td>#3</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>{style:xxx}</code> 属性</td>
+<td>#2, #3, #4, #5, #7</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>单页多实例 (&gt;1 个导图)</td>
+<td>#1~#7</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Minimap 缩略图</td>
+<td>全部</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>双击折叠&#x2F;展开</td>
+<td>全部</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>内联配置语法</td>
+<td>#1~#7</td>
+<td>✓</td>
+</tr>
+</tbody></table></div>
+
+      </div>
+      
+    </div>
+
+    
+    
+      <script src="https://unpkg.com/mermaid@11.14.0/dist/mermaid.min.js"></script>
+      <script>
+        if (window.mermaid) {
+          /* 添加 safe 过滤器防止 JSON 被转义 */
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+
+  
+  <div class="post__foot">
+    
+    
+    <div class="post-nav">
+  
+    <div class="post-nav-item-left"></div>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/posts/f88872c1cbea/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      SDFGI 技术解析：从距离场到实时全局光照
+    </a>
+  
+</div>
+
+    
+    
+      <div class="related-post">
+  <div class="related__head">
+  <a href="/tags/%E6%B5%8B%E8%AF%95/" class="post-tag">#测试</a><a href="/tags/MindMap/" class="post-tag">#MindMap</a>
+
+</div>
+  <div class="realated__body">
+    
+      <ul><li><a href="/posts/72f76782efd8/" title="Golang中的面对对象编程" rel="bookmark"><div class="related-post-title">Golang中的面对对象编程</div></a></li><li><a href="/posts/7fa2d90099c3/" title="Hello World" rel="bookmark"><div class="related-post-title">Hello World</div></a></li><li><a href="/posts/870fc14fd303/" title="博客扩展语法指南 (MD-Plus)" rel="bookmark"><div class="related-post-title">博客扩展语法指南 (MD-Plus)</div></a></li></ul>
+    
+  </div>
+</div>
+
+    
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+    <div class="foot__body">
+    
+      <div class="foot-social-icons">
+        
+          <a class="foot-social-icon" href="https://github.com/zerls" aria-label="GitHub"
+            target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="javascript:location.href = 'mailto:' + ['starsss747','gmail.com'].join('@')" aria-label="Email"
+            >
+            <i class="fas fa-envelope"></i>
+          </a>
+        
+          <a class="foot-social-icon" href="/atom.xml" aria-label="RSS"
+            >
+            <i class="fas fa-rss"></i>
+          </a>
+        
+      </div>
+    
+    </div>
+    <div class="copyright">
+      <a href="https://ta.zerl.top">Zerl'TA Blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;驱动
+    </div>
+</div>
+
+    
+    
+      <script src="/js/search.js"></script>
+      <script>
+        searchInitialize("/search.json")
+      </script>
+    
+    
+    <script src="/js/copy-code.js"></script>
+    
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"zerls","admin":"zerls","repo":"zerls.github.io","clientID":"Ov23li4uMGUtRLCFK8Nj","clientSecret":"3aff7167a256f202e83f494dc6776e3736e3cb07","distractionFreeMode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  let title = location.pathname.substr(0, 50); 
+  param.id = title
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+  <!-- hexo injector body_end start -->
+<script>
+(function () {
+  var containers = document.querySelectorAll('.hexo-mindmap');
+  if (containers.length === 0) return;
+
+  if (typeof Mindmap !== 'undefined' && Mindmap.autoRender) {
+    var config = {
+      direction: 'lr-both',
+      lineStyle: 'curved',
+      theme: 'rainbow',
+      collapseDepth: 2,
+      enableMinimap: true,
+      enableFocus: true
+    };
+    Mindmap.autoRender(config);
+  }
+})();
+</script><!-- hexo injector body_end end --></body>
+</html>

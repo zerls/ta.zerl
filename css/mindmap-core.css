@@ -1,0 +1,561 @@
+/**
+ * hexo-mindmap-svg 核心样式
+ * 使用 CSS Variables 支持明暗主题无缝切换
+ */
+
+/* === CSS 变量定义 (重塑 Albedo 基础色) === */
+.mindmap-container {
+  /* 背景：带一点灰度的冷白，视觉更舒适 */
+  --mm-bg: #f8fafc;
+  
+  /* 根节点：高饱和度的主题蓝，去掉描边 */
+  --mm-node-fill-root: #3b82f6;
+  --mm-node-stroke-root: transparent; 
+  --mm-node-text-root: #ffffff;
+  
+  /* 分支节点：纯白背景 + 非常淡的边框，弱化存在感 */
+  --mm-node-fill-branch: #ffffff;
+  --mm-node-stroke-branch: #e2e8f0;
+  --mm-node-text-branch: #334155;
+  
+  /* 叶子节点：类似文本框的极简状态 */
+  --mm-node-fill-leaf: transparent;
+  --mm-node-stroke-leaf: transparent;
+  --mm-node-text-leaf: #64748b;
+  
+  /* 连线：根部偏蓝，向外平滑过渡到浅灰 */
+  --mm-link-color: #cbd5e1;
+  --mm-link-color-root: #93c5fd;
+
+  position: relative;
+  width: 100%;
+  min-height: 500px;
+  background: var(--mm-bg);
+  border: 1px solid #e2e8f0; /* 弱化外边框 */
+  border-radius: 12px;       /* 更现代的圆角 */
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  user-select: none;
+}
+
+/* === 亮色主题（显式声明，与 dark/rainbow 同 specificity） === */
+.mindmap-container.light,
+.mindmap-theme-light .mindmap-container {
+  --mm-bg: #f8fafc;
+  --mm-node-fill-root: #3b82f6;
+  --mm-node-stroke-root: transparent;
+  --mm-node-text-root: #ffffff;
+  --mm-node-fill-branch: #ffffff;
+  --mm-node-stroke-branch: #e2e8f0;
+  --mm-node-text-branch: #334155;
+  --mm-node-fill-leaf: transparent;
+  --mm-node-stroke-leaf: transparent;
+  --mm-node-text-leaf: #64748b;
+  --mm-link-color: #cbd5e1;
+  --mm-link-color-root: #93c5fd;
+  border-color: #e2e8f0;
+}
+
+/* === 彩虹主题 === */
+.mindmap-container.rainbow,
+.mindmap-theme-rainbow .mindmap-container {
+  --mm-bg: #fafafa;
+  --mm-node-fill-root: #5B6ABF;
+  --mm-node-stroke-root: transparent;
+  --mm-node-text-root: #ffffff;
+  --mm-link-color: #e0e0e0;
+  --mm-link-color-root: #c4c9e8;
+  border-color: #e8e8e8;
+}
+
+.mindmap-theme-rainbow.dark {
+  --mm-bg: #0d0d1a;
+  --mm-node-fill-root: #7C8FFF;
+  --mm-link-color: #1e1e3a;
+  --mm-link-color-root: #2a2a5a;
+  border-color: #1e1e3a;
+}
+
+/* === 暗黑主题 (赛博/科技感氛围) === */
+.mindmap-container.dark {
+  /* 背景：深空蓝灰 */
+  --mm-bg: #0f172a;
+  
+  /* 根节点：亮一点的科技蓝 */
+  --mm-node-fill-root: #2563eb;
+  --mm-node-stroke-root: transparent;
+  --mm-node-text-root: #f8fafc;
+  
+  /* 分支节点：低亮度深灰，边缘微亮模拟菲涅尔 */
+  --mm-node-fill-branch: #1e293b;
+  --mm-node-stroke-branch: #334155;
+  --mm-node-text-branch: #e2e8f0;
+  
+  --mm-node-fill-leaf: transparent;
+  --mm-node-stroke-leaf: transparent;
+  --mm-node-text-leaf: #94a3b8;
+  
+  --mm-link-color: #334155;
+  --mm-link-color-root: #1e40af;
+  border-color: #1e293b;
+}
+
+/* === SVG 内部引用 CSS 变量与光影/动画特效 === */
+
+/* 1. 基础过渡动画配置 */
+.mindmap-svg .mindmap-node-shape {
+  fill: var(--mm-node-fill-branch);
+  stroke: var(--mm-node-stroke-branch);
+  /* 加入 filter 的过渡支持，使用更 Q 弹的贝塞尔曲线 */
+  transition: fill 0.3s ease, stroke 0.3s ease, filter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.3s ease;
+}
+
+.mindmap-svg .mindmap-node-text {
+  fill: var(--mm-node-text-branch);
+  pointer-events: none;
+  transition: fill 0.3s ease;
+}
+
+/* 连线也能有呼吸感 */
+.mindmap-svg .mindmap-link {
+  stroke: var(--mm-link-color);
+  transition: stroke 0.3s ease, stroke-width 0.3s ease, stroke-opacity 0.3s ease;
+}
+
+/* 2. 区分层级渲染 (模拟 AO 和空间深度) */
+.mindmap-svg .mindmap-node[data-depth="0"] .mindmap-node-shape {
+  fill: var(--mm-node-fill-root);
+  stroke: var(--mm-node-stroke-root);
+  /* 多层 Drop shadow 模拟柔和的体积光感 */
+  filter: drop-shadow(0 4px 6px rgba(59, 130, 246, 0.25)) drop-shadow(0 2px 4px rgba(59, 130, 246, 0.12));
+}
+
+/* 取消非标准形状 (菱形/六边形/平行四边形/云朵/胶囊/下划线) 的阴影 */
+.mindmap-svg .mindmap-node[data-shape="diamond"] .mindmap-node-shape,
+.mindmap-svg .mindmap-node[data-shape="hexagon"] .mindmap-node-shape,
+.mindmap-svg .mindmap-node[data-shape="parallelogram"] .mindmap-node-shape,
+.mindmap-svg .mindmap-node[data-shape="cloud"] .mindmap-node-shape,
+.mindmap-svg .mindmap-node[data-shape="capsule"] .mindmap-node-shape,
+.mindmap-svg .mindmap-node[data-shape="underline"] .mindmap-node-shape {
+  filter: none !important;
+}
+
+.mindmap-svg .mindmap-node[data-depth="0"] .mindmap-node-text {
+  fill: var(--mm-node-text-root);
+}
+
+.mindmap-svg .mindmap-node[data-depth="1"] .mindmap-node-shape {
+  /* 第一层分支给一点微弱的投影，拉开与背景的距离 */
+  /* filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.05)); */
+}
+
+.mindmap-svg .mindmap-link[data-depth="0"],
+.mindmap-svg .mindmap-link[data-depth="1"] {
+  stroke: var(--mm-link-color-root);
+}
+
+/* 3. 暗黑模式下的 Bloom (泛光) 处理 */
+.mindmap-container.dark .mindmap-svg .mindmap-node[data-depth="0"] .mindmap-node-shape {
+  filter: drop-shadow(0 0 16px rgba(59, 130, 246, 0.35)); /* 核心发光 */
+}
+.mindmap-container.dark .mindmap-svg .mindmap-node[data-depth="1"] .mindmap-node-shape {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5)); /* 加深暗部投影 */
+}
+
+/* 4. 交互反馈 (Hover 状态) — 用 !important 覆盖内联样式 */
+.mindmap-svg .mindmap-node:hover .mindmap-node-shape {
+  stroke: var(--mm-node-fill-root) !important;
+  stroke-width: 1.5px;
+  filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.08));
+}
+
+.mindmap-container.dark .mindmap-svg .mindmap-node:hover .mindmap-node-shape {
+  stroke: #60a5fa !important;
+  filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
+}
+
+/* 连线的 Hover 高亮 */
+.mindmap-svg .mindmap-link:hover {
+  stroke: var(--mm-node-fill-root) !important;
+  stroke-width: 3px;
+  stroke-opacity: 0.8;
+}
+
+/* === 折叠按钮样式 === */
+.mindmap-toggle-btn {
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+
+.mindmap-toggle-btn:hover {
+  fill: #e8f0fe;
+  stroke: #4A90D9;
+}
+
+/* === Minimap === */
+.mindmap-minimap {
+  transition: opacity 0.3s ease, transform 0.25s ease;
+  transform: translateX(4px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mindmap-container:hover .mindmap-minimap {
+  opacity: 0.85;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.mindmap-minimap:hover {
+  opacity: 1 !important;
+}
+
+/* === 面包屑 === */
+.mindmap-breadcrumb span:hover {
+  text-decoration: underline;
+}
+
+/* === 工具栏 (现代玻璃态设计) === */
+.mindmap-toolbar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  z-index: 100;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  /* 桌面端: 默认透明隐藏, hover 时显示 */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* 桌面端: 悬浮容器时显示工具栏 */
+.mindmap-container:hover .mindmap-toolbar {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.mindmap-container:hover .mindmap-toolbar:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.mindmap-toolbar button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  transition: all 0.18s ease;
+}
+
+.mindmap-toolbar button:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563eb;
+}
+
+.mindmap-toolbar button:active {
+  background: rgba(59, 130, 246, 0.14);
+  transform: scale(0.96);
+}
+
+/* 工具栏按钮图标前缀 */
+.mindmap-toolbar button::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+  opacity: 0.75;
+}
+
+.mindmap-toolbar > button:nth-child(1)::before { content: '⊡'; }
+.mindmap-toolbar > button:nth-child(2)::before { content: '⊞'; }
+.mindmap-toolbar > button:nth-child(3)::before { content: '⊟'; }
+.mindmap-toolbar > button:nth-child(4)::before { content: '◐'; }
+.mindmap-toolbar > button:nth-child(5)::before { content: '⛶'; }
+.mindmap-toolbar > .mindmap-dropdown > button::before { content: '⬇'; }
+
+/* === 导出下拉菜单 === */
+.mindmap-dropdown {
+  position: relative;
+}
+
+/* 修复悬浮间隙：不可见桥接元素，防止鼠标缓慢移动到菜单时触发消失 */
+.mindmap-dropdown::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 12px;
+}
+
+.mindmap-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  min-width: 140px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
+  display: none;
+  flex-direction: column;
+  gap: 1px;
+  z-index: 200;
+}
+
+.mindmap-dropdown.open .mindmap-dropdown-menu,
+.mindmap-dropdown:hover .mindmap-dropdown-menu {
+  display: flex;
+}
+
+.mindmap-dropdown-menu button {
+  width: 100%;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.mindmap-dropdown-menu button:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563eb;
+}
+
+/* 暗黑模式下拉菜单 */
+.mindmap-container.dark .mindmap-dropdown-menu {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(51, 65, 85, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.mindmap-container.dark .mindmap-dropdown-menu button {
+  color: #94a3b8;
+}
+
+.mindmap-container.dark .mindmap-dropdown-menu button:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+/* === 移动端工具栏切换按钮 === */
+.mindmap-toolbar-toggle {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 110;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #475569;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.mindmap-toolbar-toggle:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563eb;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.mindmap-toolbar-toggle:active {
+  transform: scale(0.94);
+}
+
+/* 移动端工具栏展开状态 */
+.mindmap-container.toolbar-open .mindmap-toolbar {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}
+
+/* === 暗黑模式工具栏 === */
+.mindmap-container.dark .mindmap-toolbar {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: rgba(51, 65, 85, 0.7);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.mindmap-container.dark .mindmap-toolbar button {
+  color: #94a3b8;
+}
+
+.mindmap-container.dark .mindmap-toolbar button:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.mindmap-container.dark .mindmap-toolbar-toggle {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(51, 65, 85, 0.8);
+  color: #94a3b8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mindmap-container.dark .mindmap-toolbar-toggle:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+/* === 全屏模式 === */
+.mindmap-container.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  border-radius: 0;
+  border: none;
+  min-height: auto;
+}
+
+.mindmap-container.fullscreen .mindmap-minimap {
+  opacity: 0.85;
+  pointer-events: auto;
+}
+
+.mindmap-container.fullscreen .mindmap-toolbar {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* 全屏关闭按钮 */
+.mindmap-fullscreen-close {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10010;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #475569;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.mindmap-container.fullscreen .mindmap-fullscreen-close {
+  display: flex;
+}
+
+.mindmap-fullscreen-close:hover {
+  background: rgba(239, 68, 68, 0.10);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.mindmap-container.dark .mindmap-fullscreen-close {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(51, 65, 85, 0.8);
+  color: #94a3b8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mindmap-container.dark .mindmap-fullscreen-close:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* === 响应式 === */
+@media (max-width: 768px) {
+  .mindmap-container {
+    min-height: 350px;
+  }
+  .mindmap-minimap {
+    display: none;
+  }
+  /* 移动端: 工具栏默认隐藏, 显示切换按钮 */
+  .mindmap-toolbar {
+    opacity: 0;
+    pointer-events: none;
+    top: 50px;
+    right: 8px;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .mindmap-toolbar button {
+    padding: 8px 14px;
+    font-size: 13px;
+    justify-content: flex-start;
+    width: 100%;
+    border-radius: 6px;
+  }
+  .mindmap-toolbar-toggle {
+    display: flex;
+  }
+  /* 禁用 desktop hover 行为 */
+  .mindmap-container:hover .mindmap-toolbar {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+  }
+  .mindmap-container.toolbar-open .mindmap-toolbar {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateY(0) !important;
+  }
+}

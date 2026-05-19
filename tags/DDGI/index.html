@@ -77,7 +77,9 @@
 
   <!-- hexo injector head_end start -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
+<link rel="stylesheet" href="/css/mindmap-core.min.css">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="/js/mindmap-core.min.js"></script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Zerl'TA Blog" type="application/atom+xml">
 </head>
   <body>
     
@@ -183,7 +185,7 @@
       <div class="post-excerpt">本文全面梳理了实时全局光照技术的演进脉络，深度解析 SSGI、PRT、VXGI、Surfel、DDGI 到 ReSTIR GI 的核心原理，并对比了 Lumen 与 APV 管线架构，提供工业级 GI 选型指南。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/DDGI/" class="post-tag">#DDGI</a><a href="/tags/ReSTIR/" class="post-tag">#ReSTIR</a><a href="/tags/RenderPipline/" class="post-tag">#RenderPipline</a><a href="/tags/UE5-Lumen/" class="post-tag">#UE5 Lumen</a><a href="/tags/Unity-APV/" class="post-tag">#Unity APV</a>
+  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/DDGI/" class="post-tag">#DDGI</a><a href="/tags/UE5-Lumen/" class="post-tag">#UE5 Lumen</a><a href="/tags/Unity-APV/" class="post-tag">#Unity APV</a><a href="/tags/ReSTIR/" class="post-tag">#ReSTIR</a><a href="/tags/RenderPipline/" class="post-tag">#RenderPipline</a>
 
 </div>
       </div>
@@ -205,7 +207,7 @@
       <div class="post-excerpt">漫反射 GI 的本质特征在于其低频性与强空间相关性。在合理的网格密度下，采样通常不会产生明显的走样。这意味着我们无需为每个像素独立追踪光线。DDGI 的核心思想是在场景中放置一组动态光照探针（Probes），每个探针缓存全方向的入射辐照度，并在着色阶段通过空间插值还原间接光照。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GPU/" class="post-tag">#GPU</a><a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/%E6%8E%A2%E9%92%88/" class="post-tag">#探针</a><a href="/tags/DDGI/" class="post-tag">#DDGI</a>
+  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/%E6%8E%A2%E9%92%88/" class="post-tag">#探针</a><a href="/tags/DDGI/" class="post-tag">#DDGI</a><a href="/tags/GPU/" class="post-tag">#GPU</a>
 
 </div>
       </div>
@@ -257,5 +259,23 @@
     
 
     
-  </body>
+  <!-- hexo injector body_end start -->
+<script>
+(function () {
+  var containers = document.querySelectorAll('.hexo-mindmap');
+  if (containers.length === 0) return;
+
+  if (typeof Mindmap !== 'undefined' && Mindmap.autoRender) {
+    var config = {
+      direction: 'lr-both',
+      lineStyle: 'curved',
+      theme: 'rainbow',
+      collapseDepth: 2,
+      enableMinimap: true,
+      enableFocus: true
+    };
+    Mindmap.autoRender(config);
+  }
+})();
+</script><!-- hexo injector body_end end --></body>
 </html>

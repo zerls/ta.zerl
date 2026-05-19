@@ -783,7 +783,6 @@ mjx-container:not([display="true"]) {
 }
 .nav-logo {
   position: relative;
-  z-index: 110;
   height: 60px;
   width: 60px;
   display: block;
