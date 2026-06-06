@@ -279,16 +279,17 @@ mjx-container[display="true"] + br {
     <div class="body">
       
   <article class="post-content">
+    
+    
+      <div class="post-banner">
+        <img src="https://lianera.github.io/post/2016/sh-lighting-exp/shbasis-vis.png" alt="Banner">
+      </div>
+    
     <div class="post-inner">
-      
+
       
       <div class="post-content__head">
-        
-          <div class="post-banner">
-            <img src="https://lianera.github.io/post/2016/sh-lighting-exp/shbasis-vis.png" alt="Banner">
-          </div>
-        
-        
+
         <h1 class="post-title">深入理解球谐光照 (Spherical Harmonics)：从数学理论到工业级代码实践</h1>
         
         <div class="post-info">
@@ -1229,7 +1230,7 @@ mjx-container[display="true"] + br {
 </div>
   <div class="realated__body">
     
-      <ul><li><a href="/posts/9dcb8ea1fef2/" title="PRTGI「预计算辐照度全局光照」：从理论到工程实践" rel="bookmark"><div class="related-post-title">PRTGI「预计算辐照度全局光照」：从理论到工程实践</div></a></li><li><a href="/posts/16400eceeb11/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark"><div class="related-post-title">DDGI「动态漫反射全局光照」：架构与工程概览</div></a></li><li><a href="/posts/5e9b6c3e8043/" title="ReSTIRGI：从 RIS 到 ReSTIR GI / PT" rel="bookmark"><div class="related-post-title">ReSTIRGI：从 RIS 到 ReSTIR GI / PT</div></a></li><li><a href="/posts/01ba4d5836c0/" title="大世界渲染：从四叉树剔除到 GPU-Driven Terrain" rel="bookmark"><div class="related-post-title">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</div></a></li><li><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark"><div class="related-post-title">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</div></a></li><li><a href="/posts/7d2a4ec6e9a6/" title="FFT 海洋模拟：从频谱推导到 GPU 实时渲染" rel="bookmark"><div class="related-post-title">FFT 海洋模拟：从频谱推导到 GPU 实时渲染</div></a></li></ul>
+      <ul><li><a href="/posts/9dcb8ea1fef2/" title="PRTGI「预计算辐照度全局光照」：从理论到工程实践" rel="bookmark"><div class="related-post-title">PRTGI「预计算辐照度全局光照」：从理论到工程实践</div></a></li><li><a href="/posts/16400eceeb11/" title="DDGI「动态漫反射全局光照」：架构与工程概览" rel="bookmark"><div class="related-post-title">DDGI「动态漫反射全局光照」：架构与工程概览</div></a></li><li><a href="/posts/5e9b6c3e8043/" title="ReSTIRGI：从 RIS 到 ReSTIR GI / PT" rel="bookmark"><div class="related-post-title">ReSTIRGI：从 RIS 到 ReSTIR GI / PT</div></a></li><li><a href="/posts/80970d0a10c2/" title="深入 LTC 实时面光源渲染：从微积分原理到 URP 落地" rel="bookmark"><div class="related-post-title">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</div></a></li><li><a href="/posts/7d2a4ec6e9a6/" title="FFT 海洋模拟：从频谱推导到 GPU 实时渲染" rel="bookmark"><div class="related-post-title">FFT 海洋模拟：从频谱推导到 GPU 实时渲染</div></a></li><li><a href="/posts/b7985f35b028/" title="WBOIT" rel="bookmark"><div class="related-post-title">WBOIT</div></a></li></ul>
     
   </div>
 </div>
@@ -1294,6 +1295,16 @@ mjx-container[display="true"] + br {
 </script>
 
   
+  <script>
+    (function() {
+      var body = document.body;
+      body.classList.add('post-page');
+
+      if (document.querySelector('.post-banner')) {
+        body.classList.add('has-banner');
+      }
+    })();
+  </script>
 
   </body>
 </html>

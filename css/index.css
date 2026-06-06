@@ -327,6 +327,46 @@ html {
   padding: 0 60px;
   scroll-snap-align: start;
 }
+/* 区块标题行：标题 + 全部文章链接 */
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding-bottom: 12px;
+}
+.section-header__head {
+  flex: 1;
+}
+.section-header__head .categories-title {
+  text-align: left;
+  margin-bottom: 6px;
+}
+.section-header__head .categories-subtitle {
+  text-align: left;
+  margin-bottom: 0;
+}
+.section-header__more {
+  font-family: sourceHanSerif, "Noto Serif SC", STZhongsong, serif;
+  font-size: 14px;
+  color: #6b6863;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.25s ease;
+  padding-bottom: 4px;
+}
+.section-header__more:hover {
+  color: #1a4b75;
+}
+.section-header__more:hover .section-header__arrow {
+  transform: translateX(4px);
+}
+.section-header__arrow {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
 .featured-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -848,6 +888,12 @@ html {
   .categories-subtitle {
     font-size: 14px;
     margin-bottom: 32px;
+  }
+  .section-header__head .categories-subtitle {
+    margin-bottom: 0;
+  }
+  .section-header__more {
+    font-size: 12px;
   }
   .cat-grid {
     grid-template-columns: repeat(2, 1fr);
