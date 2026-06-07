@@ -194,11 +194,12 @@
       <div class="post__head">
         <a href="/posts/f88872c1cbea/" class="post-title hover-line">SDFGI 技术解析：从距离场到实时全局光照</a>
         
+        <span class="post-date">2026.04.30</span>
       </div>
       <div class="post-excerpt">Godot引擎在4.x版本中引入了一项全新的GI方案——**SDFGI（Signed Distance Field Global Illumination）**。它的使命是：**一键开启，实时更新，全Vulkan设备支持，同时提供漫反射和镜面反射，甚至能驱动体积雾**。不依赖光线追踪硬件，甚至连VR都不强制使用TAA。 其核心技术建立在**Morgan McGuire的DDGI（Dynamic Diffuse Global Illumination）**思想之上，但将探针更新机制改为**有符号距离场球体追踪**，从而摆脱了对硬件RT的依赖。这份解析基于Godot联合创始人Juan Linietsky的公开技术讲义，我将从零开始，一步步剥离SDFGI的每一个细节，帮助你彻底理解背后的图形学魔法。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/SDFGI/" class="post-tag">#SDFGI</a><a href="/tags/SDF/" class="post-tag">#SDF</a><a href="/tags/Godot/" class="post-tag">#Godot</a>
+  <a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/SDFGI/" class="post-tag">SDFGI</a><a href="/tags/SDF/" class="post-tag">SDF</a><a href="/tags/Godot/" class="post-tag">Godot</a>
 
 </div>
       </div>
@@ -216,11 +217,12 @@
       <div class="post__head">
         <a href="/posts/12100649263c/" class="post-title hover-line">水体交互</a>
         
+        <span class="post-date">2026.04.18</span>
       </div>
       <div class="post-excerpt">在游戏引擎中，基于浅水方程（Shallow Water Equations, SWE）的2D流体模拟通常通过高度场（Height Field）来实现。这种方法假设流体的水平范围远大于其深度，因此可以忽略垂直方向的复杂速度变化，将流体简化为一个2D网格，每个网格点存储水面的"高度"。本文从波动方程的最简实现出发，按"轻量级 → 中级 → 高阶"三级方案展开，最后落到生产级 SWE 的多 Kernel 系统架构。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E6%B0%B4%E4%BD%93/" class="post-tag">#水体</a>
+  <a href="/tags/%E6%B0%B4%E4%BD%93/" class="post-tag">水体</a>
 
 </div>
       </div>
@@ -238,11 +240,12 @@
       <div class="post__head">
         <a href="/posts/01ba4d5836c0/" class="post-title hover-line">大世界渲染：从四叉树剔除到 GPU-Driven Terrain</a>
         
+        <span class="post-date">2026.03.20</span>
       </div>
       <div class="post-excerpt">在现代 3D 游戏引擎（如虚幻 5 及各类开放世界引擎）中，庞大世界的渲染是核心挑战。本文从最基础的空间划分结构（四叉树）讲起，先用 CPU 端原型实现建立认知，再剖析其性能瓶颈，自然引出当前应对庞大世界渲染的核心趋势——GPU-Driven Terrain（GPU 驱动地形渲染）。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GPU/" class="post-tag">#GPU</a><a href="/tags/%E5%9C%B0%E5%BD%A2/" class="post-tag">#地形</a><a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">#场景</a><a href="/tags/%E5%9B%9B%E5%8F%89%E6%A0%91/" class="post-tag">#四叉树</a><a href="/tags/%E5%89%94%E9%99%A4/" class="post-tag">#剔除</a>
+  <a href="/tags/GPU/" class="post-tag">GPU</a><a href="/tags/%E5%9C%B0%E5%BD%A2/" class="post-tag">地形</a><a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">场景</a><a href="/tags/%E5%9B%9B%E5%8F%89%E6%A0%91/" class="post-tag">四叉树</a><a href="/tags/%E5%89%94%E9%99%A4/" class="post-tag">剔除</a>
 
 </div>
       </div>
@@ -260,11 +263,12 @@
       <div class="post__head">
         <a href="/posts/419ab8c29e57/" class="post-title hover-line">体积云实时渲染解析</a>
         
+        <span class="post-date">2026.03.15</span>
       </div>
       <div class="post-excerpt"><p>笔者 3 月份参考不同体积云项目和各种论文实现了一套基于物理的体积云 Unity URP渲染系统，现在就一些核心实现进行梳理。</p></div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" class="post-tag">#体积渲染</a><a href="/tags/RayMarching/" class="post-tag">#RayMarching</a>
+  <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" class="post-tag">体积渲染</a><a href="/tags/RayMarching/" class="post-tag">RayMarching</a>
 
 </div>
       </div>
@@ -282,11 +286,12 @@
       <div class="post__head">
         <a href="/posts/7d2a4ec6e9a6/" class="post-title hover-line">FFT 海洋模拟：从频谱推导到 GPU 实时渲染</a>
         
+        <span class="post-date">2026.01.20</span>
       </div>
       <div class="post-excerpt">本文系统梳理 FFT 海洋模拟的完整技术链路：从 Phillips/JONSWAP 频谱的物理建模，到 Cooley-Tukey 蝶形算法的数学推导，再到多 Pass Compute Shader 的 GPU 工程实现。重点剖析雅可比行列式（Jacobian）驱动白沫生成的完整机制，并与浅水方程（SWE）进行深度横向对比。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/Ocean/" class="post-tag">#Ocean</a><a href="/tags/FFT/" class="post-tag">#FFT</a><a href="/tags/Compute-Shader/" class="post-tag">#Compute Shader</a><a href="/tags/Rendering/" class="post-tag">#Rendering</a>
+  <a href="/tags/Ocean/" class="post-tag">Ocean</a><a href="/tags/FFT/" class="post-tag">FFT</a><a href="/tags/Compute-Shader/" class="post-tag">Compute Shader</a><a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/Rendering/" class="post-tag">Rendering</a>
 
 </div>
       </div>
@@ -304,11 +309,12 @@
       <div class="post__head">
         <a href="/posts/32d75595feff/" class="post-title hover-line">现代实时 GI 技术全景</a>
         
+        <span class="post-date">2026.01.08</span>
       </div>
       <div class="post-excerpt">本文全面梳理了实时全局光照技术的演进脉络，深度解析 SSGI、PRT、VXGI、Surfel、DDGI 到 ReSTIR GI 的核心原理，并对比了 Lumen 与 APV 管线架构，提供工业级 GI 选型指南。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/DDGI/" class="post-tag">#DDGI</a><a href="/tags/ReSTIR/" class="post-tag">#ReSTIR</a><a href="/tags/UE5-Lumen/" class="post-tag">#UE5 Lumen</a><a href="/tags/Unity-APV/" class="post-tag">#Unity APV</a><a href="/tags/RenderPipline/" class="post-tag">#RenderPipline</a>
+  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">实时光追</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/DDGI/" class="post-tag">DDGI</a><a href="/tags/ReSTIR/" class="post-tag">ReSTIR</a><a href="/tags/RenderPipline/" class="post-tag">RenderPipline</a><a href="/tags/UE5-Lumen/" class="post-tag">UE5 Lumen</a><a href="/tags/Unity-APV/" class="post-tag">Unity APV</a>
 
 </div>
       </div>
@@ -326,11 +332,12 @@
       <div class="post__head">
         <a href="/posts/5e9b6c3e8043/" class="post-title hover-line">ReSTIRGI：从 RIS 到 ReSTIR GI / PT</a>
         
+        <span class="post-date">2025.12.13</span>
       </div>
       <div class="post-excerpt">ReSTIR 是过去五年间实时光线追踪领域最重要的算法突破之一，它的关键贡献并不是发明了一个全新的采样方法，而是把一个 2005 年就被提出但**长期没有被实时社区注意到**的算法 —— RIS (Resampled Importance Sampling) [Talbot 2005] —— 与 GPU 友好的水库采样 (Weighted Reservoir Sampling) 结合，并加入**时空复用**机制，使其在 1 spp 下也能产出近似离线渲染品质的结果。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/GPU/" class="post-tag">#GPU</a><a href="/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/" class="post-tag">#蒙特卡洛</a><a href="/tags/ReSTIR/" class="post-tag">#ReSTIR</a>
+  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">实时光追</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/GPU/" class="post-tag">GPU</a><a href="/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/" class="post-tag">蒙特卡洛</a><a href="/tags/ReSTIR/" class="post-tag">ReSTIR</a>
 
 </div>
       </div>
@@ -348,11 +355,12 @@
       <div class="post__head">
         <a href="/posts/16400eceeb11/" class="post-title hover-line">DDGI「动态漫反射全局光照」：架构与工程概览</a>
         
+        <span class="post-date">2025.12.11</span>
       </div>
       <div class="post-excerpt">漫反射 GI 的本质特征在于其低频性与强空间相关性。在合理的网格密度下，采样通常不会产生明显的走样。这意味着我们无需为每个像素独立追踪光线。DDGI 的核心思想是在场景中放置一组动态光照探针（Probes），每个探针缓存全方向的入射辐照度，并在着色阶段通过空间插值还原间接光照。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/%E6%8E%A2%E9%92%88/" class="post-tag">#探针</a><a href="/tags/DDGI/" class="post-tag">#DDGI</a><a href="/tags/GPU/" class="post-tag">#GPU</a>
+  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">实时光追</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/%E6%8E%A2%E9%92%88/" class="post-tag">探针</a><a href="/tags/DDGI/" class="post-tag">DDGI</a><a href="/tags/GPU/" class="post-tag">GPU</a>
 
 </div>
       </div>
@@ -370,11 +378,12 @@
       <div class="post__head">
         <a href="/posts/7dbd5de8d511/" class="post-title hover-line">深入理解球谐光照 (Spherical Harmonics)：从数学理论到工业级代码实践</a>
         
+        <span class="post-date">2025.12.07</span>
       </div>
       <div class="post-excerpt"><p>球谐光照 (SH) 是实时渲染里”压缩光照”的经典手段：把一张几 MB 的 HDR 环境图，浓缩为 <strong>27 个浮点数 (9 系数 × RGB)</strong>，运行时只需几个 <code>dot</code> 指令就能还原漫反射环境光。这篇笔记主要讲述了数学推导、工程实现、约定差异「最容易踩坑的部分」。</p></div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/Graphics/" class="post-tag">#Graphics</a><a href="/tags/IBL/" class="post-tag">#IBL</a><a href="/tags/Spherical-Harmonics/" class="post-tag">#Spherical Harmonics</a>
+  <a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/Graphics/" class="post-tag">Graphics</a><a href="/tags/IBL/" class="post-tag">IBL</a><a href="/tags/Spherical-Harmonics/" class="post-tag">Spherical Harmonics</a>
 
 </div>
       </div>
@@ -392,11 +401,12 @@
       <div class="post__head">
         <a href="/posts/9dcb8ea1fef2/" class="post-title hover-line">PRTGI「预计算辐照度全局光照」：从理论到工程实践</a>
         
+        <span class="post-date">2025.12.06</span>
       </div>
       <div class="post-excerpt">PRTGI 把光线追踪中"光线与场景求交"这一性能瓶颈下放到离线烘焙，运行时只做光照重建（Relight），从而让动态光源也能享受到"看似光追"的全局光照。本文从渲染方程切入，讲清楚 SH 球谐编码、探针布置、运行时插值，以及工业界绕不开的漏光与性能问题。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/SH/" class="post-tag">#SH</a>
+  <a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/SH/" class="post-tag">SH</a>
 
 </div>
       </div>

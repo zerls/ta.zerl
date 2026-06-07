@@ -54,14 +54,22 @@
 .post-card--sticky {
   display: flex;
   gap: 20px;
-  padding: 16px 20px;
-  border-bottom: 1px dashed #eee;
+  padding: 14px 20px;
+  border-top: 1px dashed #eee;
   transition: background-color 0.2s ease;
+}
+.post-card:last-child,
+.post-card--sticky:last-child {
+  border-bottom: 1px dashed #eee;
 }
 .post-card:hover,
 .post-card--sticky:hover {
   background-color: rgba(0,0,0,0.02);
-  border-bottom: 1px dashed #e03636;
+  border-top-color: #e03636;
+}
+.post-card:hover:last-child,
+.post-card--sticky:hover:last-child {
+  border-bottom-color: #e03636;
 }
 .post-card--sticky,
 .post-card--sticky--sticky {
@@ -72,12 +80,13 @@
   margin: 20px auto;
 }
 .post-tags {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 .post__head {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  justify-content: space-between;
 }
 .post-title {
   text-decoration: none;
@@ -129,6 +138,13 @@
 .post__foot {
   display: flex;
   align-items: center;
+}
+.post-date {
+  font-size: 13px;
+  color: #b0aca6;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 .text-link {
   display: inline-flex;
@@ -199,6 +215,24 @@
   border-color: #1a4b75;
   color: #1a4b75 !important;
   background-color: rgba(26,75,117,0.05);
+}
+/* 文章列表卡片内的标签：轻量文字 + 点分隔符 */
+.post__foot .post-tag {
+  display: inline-block;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 2px;
+  padding: 1px 6px;
+  margin: 0 4px 4px 0;
+  font-size: 12px;
+  color: #6b6863 !important;
+  text-decoration: none;
+}
+.post__foot .post-tag::after {
+  content: none;
+}
+.post__foot .post-tag:hover {
+  border-color: #1a4b75;
+  color: #1a4b75 !important;
 }
 /* 首页分类标题：宋体 + 诗意排版 */
 .wall-category-title {

@@ -194,11 +194,12 @@
       <div class="post__head">
         <a href="/posts/16400eceeb11/" class="post-title hover-line">DDGI「动态漫反射全局光照」：架构与工程概览</a>
         
+        <span class="post-date">2025.12.11</span>
       </div>
       <div class="post-excerpt">漫反射 GI 的本质特征在于其低频性与强空间相关性。在合理的网格密度下，采样通常不会产生明显的走样。这意味着我们无需为每个像素独立追踪光线。DDGI 的核心思想是在场景中放置一组动态光照探针（Probes），每个探针缓存全方向的入射辐照度，并在着色阶段通过空间插值还原间接光照。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">#实时光追</a><a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/%E6%8E%A2%E9%92%88/" class="post-tag">#探针</a><a href="/tags/DDGI/" class="post-tag">#DDGI</a><a href="/tags/GPU/" class="post-tag">#GPU</a>
+  <a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">实时光追</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/%E6%8E%A2%E9%92%88/" class="post-tag">探针</a><a href="/tags/DDGI/" class="post-tag">DDGI</a><a href="/tags/GPU/" class="post-tag">GPU</a>
 
 </div>
       </div>
@@ -216,11 +217,12 @@
       <div class="post__head">
         <a href="/posts/7dbd5de8d511/" class="post-title hover-line">深入理解球谐光照 (Spherical Harmonics)：从数学理论到工业级代码实践</a>
         
+        <span class="post-date">2025.12.07</span>
       </div>
       <div class="post-excerpt"><p>球谐光照 (SH) 是实时渲染里”压缩光照”的经典手段：把一张几 MB 的 HDR 环境图，浓缩为 <strong>27 个浮点数 (9 系数 × RGB)</strong>，运行时只需几个 <code>dot</code> 指令就能还原漫反射环境光。这篇笔记主要讲述了数学推导、工程实现、约定差异「最容易踩坑的部分」。</p></div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/Graphics/" class="post-tag">#Graphics</a><a href="/tags/IBL/" class="post-tag">#IBL</a><a href="/tags/Spherical-Harmonics/" class="post-tag">#Spherical Harmonics</a>
+  <a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/Graphics/" class="post-tag">Graphics</a><a href="/tags/IBL/" class="post-tag">IBL</a><a href="/tags/Spherical-Harmonics/" class="post-tag">Spherical Harmonics</a>
 
 </div>
       </div>
@@ -238,11 +240,12 @@
       <div class="post__head">
         <a href="/posts/9dcb8ea1fef2/" class="post-title hover-line">PRTGI「预计算辐照度全局光照」：从理论到工程实践</a>
         
+        <span class="post-date">2025.12.06</span>
       </div>
       <div class="post-excerpt">PRTGI 把光线追踪中"光线与场景求交"这一性能瓶颈下放到离线烘焙，运行时只做光照重建（Relight），从而让动态光源也能享受到"看似光追"的全局光照。本文从渲染方程切入，讲清楚 SH 球谐编码、探针布置、运行时插值，以及工业界绕不开的漏光与性能问题。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GI/" class="post-tag">#GI</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/SH/" class="post-tag">#SH</a>
+  <a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/SH/" class="post-tag">SH</a>
 
 </div>
       </div>
@@ -260,11 +263,12 @@
       <div class="post__head">
         <a href="/posts/80970d0a10c2/" class="post-title hover-line">深入 LTC 实时面光源渲染：从微积分原理到 URP 落地</a>
         
+        <span class="post-date">2025.11.26</span>
       </div>
       <div class="post-excerpt">LTC（Linearly Transformed Cosines）是 Eric Heitz 等人 2016 年在 SIGGRAPH 上推出的一套实时面光源算法。它在物理正确性、运行时开销、实现复杂度三者间找到了一个非常优雅的平衡点，目前已经是 Unity HDRP、Unreal Engine、以及众多自定义管线（VRChat 的 LTCGI 等）的事实标准实现。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/Area-Light/" class="post-tag">#Area Light</a><a href="/tags/LTC/" class="post-tag">#LTC</a><a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/GGX/" class="post-tag">#GGX</a>
+  <a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/Area-Light/" class="post-tag">Area Light</a><a href="/tags/LTC/" class="post-tag">LTC</a><a href="/tags/GGX/" class="post-tag">GGX</a>
 
 </div>
       </div>
@@ -282,11 +286,12 @@
       <div class="post__head">
         <a href="/posts/e03656215947/" class="post-title hover-line">降噪</a>
         
+        <span class="post-date">2025.11.19</span>
       </div>
       <div class="post-excerpt">实时/离线渲染中的噪声本质上来自**Monte Carlo 积分的方差** ：当样本 $N$ 很小（如实时渲染中 $N=1$），采样估计的方差 $\sigma^2 \propto 1/N$ 很大，表现为画面上的随机噪点。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/Denoise/" class="post-tag">#Denoise</a>
+  <a href="/tags/Denoise/" class="post-tag">Denoise</a>
 
 </div>
       </div>
@@ -304,11 +309,12 @@
       <div class="post__head">
         <a href="/posts/00da9f16bfa9/" class="post-title hover-line">大气散射渲染实战</a>
         
+        <span class="post-date">2025.10.25</span>
       </div>
       <div class="post-excerpt">大气散射是对现实世界大气现象的描述，其影响包括不限于白天和傍晚天际线的大气颜色变化，丁达尔现象的产生，人眼对于地球大气层的视觉感受。而对于追求“真实”的CG领域来说 大气散射则显得尤为重要，决定了大气层的真实与否。我们通常用 ray-march，path-tracing 方法来研究大气散射</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" class="post-tag">#体积渲染</a><a href="/tags/RayMarching/" class="post-tag">#RayMarching</a><a href="/tags/Compute/" class="post-tag">#Compute</a>
+  <a href="/tags/%E4%BD%93%E7%A7%AF%E6%B8%B2%E6%9F%93/" class="post-tag">体积渲染</a><a href="/tags/RayMarching/" class="post-tag">RayMarching</a><a href="/tags/Compute/" class="post-tag">Compute</a>
 
 </div>
       </div>
@@ -326,11 +332,12 @@
       <div class="post__head">
         <a href="/posts/d2fac87e3654/" class="post-title hover-line">从布料到绳索的 Mass-Spring 物理模拟</a>
         
+        <span class="post-date">2025.10.20</span>
       </div>
       <div class="post-excerpt">在计算机图形学中,我们看到的飘逸裙摆、随风舞动的发丝,本质上是计算机对**连续介质力学(Continuum Mechanics)** 的一次"离散化幻觉"。真实世界的布料是无数纤维交织的连续体,其行为遵循复杂的偏微分方程(PDE);但在以 60 FPS 运行的实时管线里,直接求解 PDE 是不切实际的算力黑洞。为了在"物理真实"与"计算效率"之间取得平衡,**弹簧质点系统(Mass-Spring System)** 应运而生。它将连续的拓扑面/线降维为离散的"点"(承载质量与状态)与"线"(提供约束与作用力)。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/Compute-Shader/" class="post-tag">#Compute Shader</a><a href="/tags/Physics-Simulation/" class="post-tag">#Physics Simulation</a><a href="/tags/XPBD/" class="post-tag">#XPBD</a>
+  <a href="/tags/Compute-Shader/" class="post-tag">Compute Shader</a><a href="/tags/Physics-Simulation/" class="post-tag">Physics Simulation</a><a href="/tags/XPBD/" class="post-tag">XPBD</a>
 
 </div>
       </div>
@@ -344,11 +351,12 @@
       <div class="post__head">
         <a href="/posts/e250a6a5ae31/" class="post-title hover-line">风场</a>
         
+        <span class="post-date">2025.10.19</span>
       </div>
       <div class="post-excerpt">3D 体积风场与流体模拟系统（Volumetric Wind & Fluid Simulation System）</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">#场景</a><a href="/tags/Field/" class="post-tag">#Field</a>
+  <a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">场景</a><a href="/tags/Field/" class="post-tag">Field</a>
 
 </div>
       </div>
@@ -366,11 +374,12 @@
       <div class="post__head">
         <a href="/posts/627b3a262a42/" class="post-title hover-line">大规模草地渲染</a>
         
+        <span class="post-date">2025.09.20</span>
       </div>
       <div class="post-excerpt">对马岛之魂草地渲染 Demo，Bezier 曲线 草形态控制</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">#场景</a><a href="/tags/Mesh/" class="post-tag">#Mesh</a><a href="/tags/Grass/" class="post-tag">#Grass</a>
+  <a href="/tags/%E5%9C%BA%E6%99%AF/" class="post-tag">场景</a><a href="/tags/Mesh/" class="post-tag">Mesh</a><a href="/tags/Grass/" class="post-tag">Grass</a>
 
 </div>
       </div>
@@ -384,11 +393,12 @@
       <div class="post__head">
         <a href="/posts/bdeb27834ae9/" class="post-title hover-line">实时阴影技术演进与 URP 自定义阴影管线</a>
         
+        <span class="post-date">2025.09.03</span>
       </div>
       <div class="post-excerpt">阴影是构建场景空间感与画面真实感的决定性因素。一个没有正确接地阴影的物体永远像悬在空中的纸片，PBR 再炫的金属高光也救不回来。但实时渲染中的阴影，本质是**画质需求**与**硬件预算（ALU、显存带宽、内存）**之间的极限平衡</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/Unity-URP/" class="post-tag">#Unity URP</a><a href="/tags/Shadow-Map/" class="post-tag">#Shadow Map</a><a href="/tags/PCSS/" class="post-tag">#PCSS</a><a href="/tags/VSM/" class="post-tag">#VSM</a><a href="/tags/PCF/" class="post-tag">#PCF</a><a href="/tags/%E5%B1%8F%E5%B9%95%E7%A9%BA%E9%97%B4%E9%98%B4%E5%BD%B1/" class="post-tag">#屏幕空间阴影</a><a href="/tags/%E6%8E%A5%E8%A7%A6%E9%98%B4%E5%BD%B1/" class="post-tag">#接触阴影</a><a href="/tags/%E7%BA%A7%E8%81%94%E9%98%B4%E5%BD%B1/" class="post-tag">#级联阴影</a><a href="/tags/RenderFeature/" class="post-tag">#RenderFeature</a>
+  <a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/Shadow-Map/" class="post-tag">Shadow Map</a><a href="/tags/PCSS/" class="post-tag">PCSS</a><a href="/tags/VSM/" class="post-tag">VSM</a><a href="/tags/PCF/" class="post-tag">PCF</a><a href="/tags/%E5%B1%8F%E5%B9%95%E7%A9%BA%E9%97%B4%E9%98%B4%E5%BD%B1/" class="post-tag">屏幕空间阴影</a><a href="/tags/%E6%8E%A5%E8%A7%A6%E9%98%B4%E5%BD%B1/" class="post-tag">接触阴影</a><a href="/tags/%E7%BA%A7%E8%81%94%E9%98%B4%E5%BD%B1/" class="post-tag">级联阴影</a><a href="/tags/RenderFeature/" class="post-tag">RenderFeature</a>
 
 </div>
       </div>
