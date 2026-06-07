@@ -199,7 +199,7 @@
       <div class="post-excerpt">漫反射 GI 的本质特征在于其低频性与强空间相关性。在合理的网格密度下，采样通常不会产生明显的走样。这意味着我们无需为每个像素独立追踪光线。DDGI 的核心思想是在场景中放置一组动态光照探针（Probes），每个探针缓存全方向的入射辐照度，并在着色阶段通过空间插值还原间接光照。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/GPU/" class="post-tag">GPU</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">实时光追</a><a href="/tags/DDGI/" class="post-tag">DDGI</a><a href="/tags/%E6%8E%A2%E9%92%88/" class="post-tag">探针</a>
+  <a href="/tags/GPU/" class="post-tag">GPU</a><a href="/tags/%E5%AE%9E%E6%97%B6%E5%85%89%E8%BF%BD/" class="post-tag">实时光追</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/%E6%8E%A2%E9%92%88/" class="post-tag">探针</a><a href="/tags/DDGI/" class="post-tag">DDGI</a>
 
 </div>
       </div>
@@ -222,7 +222,7 @@
       <div class="post-excerpt"><p>球谐光照 (SH) 是实时渲染里”压缩光照”的经典手段：把一张几 MB 的 HDR 环境图，浓缩为 <strong>27 个浮点数 (9 系数 × RGB)</strong>，运行时只需几个 <code>dot</code> 指令就能还原漫反射环境光。这篇笔记主要讲述了数学推导、工程实现、约定差异「最容易踩坑的部分」。</p></div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/Graphics/" class="post-tag">Graphics</a><a href="/tags/IBL/" class="post-tag">IBL</a><a href="/tags/Spherical-Harmonics/" class="post-tag">Spherical Harmonics</a>
+  <a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/Graphics/" class="post-tag">Graphics</a><a href="/tags/IBL/" class="post-tag">IBL</a><a href="/tags/Spherical-Harmonics/" class="post-tag">Spherical Harmonics</a>
 
 </div>
       </div>
@@ -245,7 +245,7 @@
       <div class="post-excerpt">PRTGI 把光线追踪中"光线与场景求交"这一性能瓶颈下放到离线烘焙，运行时只做光照重建（Relight），从而让动态光源也能享受到"看似光追"的全局光照。本文从渲染方程切入，讲清楚 SH 球谐编码、探针布置、运行时插值，以及工业界绕不开的漏光与性能问题。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/SH/" class="post-tag">SH</a>
+  <a href="/tags/GI/" class="post-tag">GI</a><a href="/tags/Unity-URP/" class="post-tag">Unity URP</a><a href="/tags/SH/" class="post-tag">SH</a>
 
 </div>
       </div>
@@ -337,7 +337,7 @@
       <div class="post-excerpt">在计算机图形学中,我们看到的飘逸裙摆、随风舞动的发丝,本质上是计算机对**连续介质力学(Continuum Mechanics)** 的一次"离散化幻觉"。真实世界的布料是无数纤维交织的连续体,其行为遵循复杂的偏微分方程(PDE);但在以 60 FPS 运行的实时管线里,直接求解 PDE 是不切实际的算力黑洞。为了在"物理真实"与"计算效率"之间取得平衡,**弹簧质点系统(Mass-Spring System)** 应运而生。它将连续的拓扑面/线降维为离散的"点"(承载质量与状态)与"线"(提供约束与作用力)。</div>
       <div class="post__foot">
         <div class="post-tags">
-  <a href="/tags/Compute-Shader/" class="post-tag">Compute Shader</a><a href="/tags/Physics-Simulation/" class="post-tag">Physics Simulation</a><a href="/tags/XPBD/" class="post-tag">XPBD</a>
+  <a href="/tags/Physics-Simulation/" class="post-tag">Physics Simulation</a><a href="/tags/Compute-Shader/" class="post-tag">Compute Shader</a><a href="/tags/XPBD/" class="post-tag">XPBD</a>
 
 </div>
       </div>
