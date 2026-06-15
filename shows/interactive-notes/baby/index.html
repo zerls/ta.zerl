@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>致我心爱的你 · 烟花城堡</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;500;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+/* ============================================
+   重置 & 像素风基础
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --gold: #f5c842;
+    --soft-gold: #ffe8a8;
+    --rose: #ff7093;
+    --deep-rose: #c0395b;
+    --ivory: #fff5e8;
+    --night: #120a1e;
+    --glass: rgba(13, 8, 28, 0.05);
+    --glass-border: rgba(255, 226, 166, 0.24);
+    --cycle-night: 0.72;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--night);
+    color: var(--ivory);
+    font-family: 'Noto Serif SC', 'SimSun', serif;
+    -webkit-font-smoothing: antialiased;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(7, 5, 20, 0.05), rgba(7, 5, 20, 0.18) 58%, rgba(7, 5, 20, 0.42)),
+        radial-gradient(ellipse 70% 44% at 50% 50%, transparent 40%, rgba(4, 2, 10, 0.30) 100%);
+}
+
+/* ============================================
+   城堡背景图（原图静态层）
+   ============================================ */
+.castle-bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: #050412;
+}
+
+.castle-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    animation: bg-breathe 22s ease-in-out infinite;
+    transform-origin: center 55%;
+}
+
+@keyframes bg-breathe {
+    0%, 100% { transform: scale(1.02); }
+    50%      { transform: scale(1.06); }
+}
+
+/* ============================================
+   水面波纹反射层（Canvas 2D）
+   ============================================ */
+.water-reflection {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 34vh;
+    z-index: 2;
+    pointer-events: none;
+    -webkit-mask-image:
+        linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.72) 24%, rgba(0,0,0,0.92) 72%, rgba(0,0,0,0.28) 100%),
+        radial-gradient(ellipse 34% 76% at 50% 44%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.88) 48%, rgba(0,0,0,0) 100%);
+            mask-image:
+        linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.72) 24%, rgba(0,0,0,0.92) 72%, rgba(0,0,0,0.28) 100%),
+        radial-gradient(ellipse 34% 76% at 50% 44%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.88) 48%, rgba(0,0,0,0) 100%);
+    -webkit-mask-composite: source-in;
+            mask-composite: intersect;
+    mix-blend-mode: screen;
+    opacity: 0.62;
+    clip-path: polygon(31% 0%, 69% 0%, 76% 58%, 67% 100%, 33% 100%, 24% 58%);
+    animation: water-shimmer 7s ease-in-out infinite;
+}
+
+@keyframes water-shimmer {
+    0%, 100% { opacity: 0.50; }
+    50%      { opacity: 0.70; }
+}
+
+.light-flicker {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 3;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.95;
+}
+
+/* ============================================
+   画布容器 —— 透明覆盖层（烟花/星空）
+   ============================================ */
+#canvas-container {
+    position: fixed;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+#canvas-container canvas {
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+    touch-action: none;
+    background: transparent;
+}
+
+/* ============================================
+   天空洗色层
+   ============================================ */
+.sky-wash {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 77% 25%, rgba(255, 206, 121, calc((1 - var(--cycle-night)) * 0.28)), transparent 24%),
+        radial-gradient(circle at 22% 22%, rgba(255, 112, 147, 0.10), transparent 32%),
+        radial-gradient(ellipse at 50% 64%, rgba(255, 198, 91, 0.06), transparent 28%),
+        linear-gradient(
+            180deg,
+            rgba(255, 150, 90, calc((1 - var(--cycle-night)) * 0.12)) 0%,
+            rgba(255, 100, 130, calc((1 - var(--cycle-night)) * 0.06)) 38%,
+            rgba(10, 5, 18, calc(var(--cycle-night) * 0.22)) 100%
+        );
+    mix-blend-mode: screen;
+}
+
+.aurora-glow {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background:
+        linear-gradient(115deg, transparent 8%, rgba(255, 112, 166, 0.06) 27%, transparent 46%),
+        linear-gradient(68deg, transparent 34%, rgba(90, 183, 255, 0.07) 54%, transparent 72%);
+    mix-blend-mode: screen;
+    animation: aurora-drift 16s ease-in-out infinite;
+}
+
+@keyframes aurora-drift {
+    0%, 100% { opacity: 0.48; transform: translate3d(-1.5%, 0, 0); }
+    50% { opacity: 0.78; transform: translate3d(1.5%, -1%, 0); }
+}
+
+.vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at center, transparent 0%, transparent 45%, rgba(10, 5, 18, 0.30) 80%, rgba(5, 2, 10, 0.72) 100%);
+}
+
+.scene-frame {
+    position: fixed;
+    inset: clamp(10px, 2vw, 24px);
+    z-index: 12;
+    pointer-events: none;
+    border: 1px solid rgba(255, 226, 166, 0.16);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+        inset 0 0 44px rgba(255, 196, 94, 0.06),
+        0 0 36px rgba(0, 0, 0, 0.20);
+}
+
+.frame-corner {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border-color: rgba(255, 226, 166, 0.62);
+    filter: drop-shadow(0 0 8px rgba(245, 200, 66, 0.24));
+}
+
+.frame-corner.tl { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
+.frame-corner.tr { top: -1px; right: -1px; border-top: 2px solid; border-right: 2px solid; }
+.frame-corner.bl { bottom: -1px; left: -1px; border-bottom: 2px solid; border-left: 2px solid; }
+.frame-corner.br { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
+
+/* ============================================
+   CRT 显像管后处理
+   ============================================ */
+.crt-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+}
+
+/* 扫描线 */
+.crt-scanlines {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 2px,
+        rgba(0, 0, 0, 0.28) 3px,
+        rgba(0, 0, 0, 0.28) 4px
+    );
+    mix-blend-mode: multiply;
+    opacity: 0.34;
+}
+
+/* RGB 荫罩条纹 */
+.crt-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.06),
+        rgba(0, 255, 0, 0.06) 1px,
+        rgba(0, 0, 255, 0.06) 2px,
+        transparent 3px
+    );
+    mix-blend-mode: screen;
+    opacity: 0.22;
+}
+
+/* 屏幕弯曲暗角 */
+.crt-curvature {
+    position: fixed;
+    inset: 0;
+    z-index: 7;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            ellipse 120% 120% at center,
+            transparent 55%,
+            rgba(8, 4, 16, 0.35) 78%,
+            rgba(4, 2, 8, 0.85) 100%
+        );
+}
+
+/* CRT 整体泛光 + 色散边缘 */
+.crt-glow {
+    position: fixed;
+    inset: 0;
+    z-index: 8;
+    pointer-events: none;
+    box-shadow:
+        inset 0 0 80px rgba(80, 60, 120, 0.25),
+        inset 0 0 200px rgba(20, 10, 40, 0.4);
+}
+
+/* 滚动横条（场频干扰） */
+.crt-rollbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 6%;
+    z-index: 9;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.04) 40%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.04) 60%,
+        transparent 100%
+    );
+    animation: crt-roll 8s linear infinite;
+}
+
+@keyframes crt-roll {
+    0%   { top: -10%; }
+    100% { top: 110%; }
+}
+
+/* 像素抖动（模拟场同步不稳） */
+.crt-flicker {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.008);
+    animation: crt-flicker 0.18s steps(2) infinite;
+}
+
+@keyframes crt-flicker {
+    0%   { opacity: 0.8; }
+    50%  { opacity: 0.3; }
+    100% { opacity: 0.9; }
+}
+
+/* ============================================
+   启动屏
+   ============================================ */
+.start-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:
+        radial-gradient(ellipse at 50% 48%, rgba(255, 213, 126, 0.18), transparent 23%),
+        radial-gradient(ellipse at 32% 18%, rgba(255, 115, 140, 0.22), transparent 46%),
+        radial-gradient(ellipse at 70% 24%, rgba(84, 172, 255, 0.16), transparent 34%),
+        linear-gradient(165deg, rgba(26, 12, 40, 0.92) 0%, rgba(16, 7, 26, 0.95) 55%, rgba(7, 3, 12, 0.98) 100%);
+    transition: opacity 1.8s cubic-bezier(.4,0,.2,1), visibility 1.8s;
+    cursor: pointer;
+}
+
+.start-screen::before {
+    content: '';
+    position: absolute;
+    inset: 9%;
+    border: 1px solid rgba(255, 226, 166, 0.16);
+    box-shadow: inset 0 0 80px rgba(245, 200, 66, 0.05);
+    pointer-events: none;
+}
+
+.start-screen::after {
+    content: '';
+    position: absolute;
+    width: min(62vw, 680px);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 112, 147, 0.18), rgba(245, 200, 66, 0.08) 38%, transparent 68%);
+    animation: start-orbit 9s ease-in-out infinite;
+}
+
+@keyframes start-orbit {
+    0%, 100% { transform: translate3d(-4%, 2%, 0) scale(0.96); opacity: 0.72; }
+    50% { transform: translate3d(4%, -2%, 0) scale(1.04); opacity: 1; }
+}
+
+.start-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.start-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    transform: translateY(-20px);
+    padding: 2rem;
+}
+
+.start-kicker {
+    font-family: 'Cinzel', serif;
+    margin-bottom: 1.4rem;
+    color: rgba(255, 232, 168, 0.74);
+    font-size: 0.76rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    text-shadow: 0 0 16px rgba(245, 200, 66, 0.24);
+}
+
+.heart-3d {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1.45rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.heart-shape {
+    font-size: 3.45rem;
+    color: var(--rose);
+    text-shadow:
+        0 0 16px rgba(255, 115, 140, 0.8),
+        0 0 36px rgba(192, 57, 91, 0.6),
+        0 0 56px rgba(192, 57, 91, 0.3);
+    animation: heartbeat 1.4s ease-in-out infinite;
+    z-index: 2;
+}
+
+.heart-ring {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: 1px solid rgba(255, 226, 166, 0.42);
+    border-radius: 50%;
+    animation: ring-pulse 2s ease-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    14%      { transform: scale(1.18); }
+    28%      { transform: scale(1); }
+    42%      { transform: scale(1.12); }
+    70%      { transform: scale(1); }
+}
+
+@keyframes ring-pulse {
+    0%   { transform: scale(0.8); opacity: 0.6; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+.start-title {
+    font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    color: var(--ivory);
+    letter-spacing: 0.18em;
+    margin-bottom: 0.65rem;
+    text-shadow:
+        0 0 26px rgba(255, 115, 140, 0.5),
+        0 0 52px rgba(192, 57, 91, 0.3);
+}
+
+.start-sub {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    color: rgba(245, 200, 66, 0.7);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-bottom: 2.1rem;
+}
+
+.start-enter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 172px;
+    padding: 0.92rem 2.5rem;
+    border: 1px solid rgba(255, 232, 168, 0.54);
+    border-radius: 999px;
+    font-size: 1rem;
+    letter-spacing: 0.24em;
+    color: #fff8d6;
+    background:
+        linear-gradient(180deg, rgba(255, 232, 168, 0.16), rgba(255, 112, 147, 0.07)),
+        rgba(14, 8, 28, 0.38);
+    transition: all 0.4s ease;
+    animation: enter-glow 2.5s ease-in-out infinite;
+    image-rendering: auto;
+}
+
+.start-enter:hover {
+    color: #fffbe6;
+    background:
+        linear-gradient(180deg, rgba(255, 232, 168, 0.24), rgba(255, 112, 147, 0.12)),
+        rgba(14, 8, 28, 0.48);
+    transform: translateY(-2px) scale(1.02);
+}
+
+.start-note {
+    max-width: 420px;
+    margin: 1.45rem auto 0;
+    color: rgba(255, 245, 232, 0.58);
+    font-size: 0.92rem;
+    line-height: 1.9;
+    letter-spacing: 0.08em;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.54);
+}
+
+@keyframes enter-glow {
+    0%, 100% {
+        box-shadow: 0 0 12px rgba(245, 200, 66, 0.2);
+        border-color: rgba(245, 200, 66, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 26px rgba(245, 200, 66, 0.5);
+        border-color: rgba(245, 200, 66, 0.8);
+    }
+}
+
+/* ============================================
+   祝福语
+   ============================================ */
+.blessing {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 14;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 2.5s ease;
+    image-rendering: auto;
+}
+
+.blessing.show { opacity: 1; }
+
+.blessing-card {
+    position: relative;
+    text-align: center;
+    padding: 2.1rem 3.4rem 2.2rem;
+    border-radius: 18px;
+    border: 1px solid var(--glass-border);
+    background:
+        linear-gradient(180deg, rgba(255, 245, 232, 0.03), rgba(255, 245, 232, 0.01)),
+        var(--glass);
+    box-shadow:
+        0 18px 70px rgba(4, 2, 12, 0.24),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    max-width: min(92vw, 760px);
+    overflow: hidden;
+}
+
+.blessing-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 226, 166, 0.18), transparent 42%),
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+    pointer-events: none;
+}
+
+.blessing-line.title {
+    position: relative;
+    font-family: 'Ma Shan Zheng', serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    color: var(--ivory);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.8rem;
+    text-shadow:
+        0 0 12px rgba(255, 180, 190, 0.9),
+        0 0 26px rgba(255, 100, 130, 0.6),
+        0 2px 4px rgba(0, 0, 0, 0.8);
+    animation: title-glow 4s ease-in-out infinite;
+}
+
+@keyframes title-glow {
+    0%, 100% {
+        text-shadow:
+            0 0 12px rgba(255, 180, 190, 0.9),
+            0 0 26px rgba(255, 100, 130, 0.6),
+            0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    50% {
+        text-shadow:
+            0 0 22px rgba(245, 200, 66, 0.9),
+            0 0 44px rgba(255, 100, 130, 0.7),
+            0 0 70px rgba(192, 57, 91, 0.4),
+            0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+}
+
+.blessing-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0 1.15rem;
+    opacity: 0.6;
+}
+
+.blessing-divider span {
+    color: var(--gold);
+    font-size: 1rem;
+    text-shadow: 0 0 10px rgba(245, 200, 66, 0.6);
+}
+
+.blessing-divider::before,
+.blessing-divider::after {
+    content: '';
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.blessing-text {
+    position: relative;
+    font-size: clamp(0.98rem, 1.8vw, 1.24rem);
+    line-height: 2.15;
+    color: rgba(255, 248, 236, 0.92);
+    letter-spacing: 0.10em;
+    text-shadow: 0 0 10px rgba(255, 100, 130, 0.32), 0 1px 4px rgba(0,0,0,0.72);
+}
+
+/* ============================================
+   底部提示
+   ============================================ */
+.hint {
+    position: fixed;
+    bottom: clamp(1.2rem, 3.4vh, 2.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: rgba(255, 248, 236, 0.70);
+    font-size: 0.85rem;
+    letter-spacing: 0.16em;
+    opacity: 0;
+    transition: opacity 1.5s ease 1.5s;
+    pointer-events: none;
+    image-rendering: auto;
+    padding: 0.72rem 1.2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 226, 166, 0.20);
+    background: rgba(9, 5, 21, 0.54);
+    box-shadow: 0 10px 34px rgba(0,0,0,0.20);
+}
+
+.hint.show { opacity: 1; animation: hint-fade 4s ease-in-out infinite; }
+
+@keyframes hint-fade {
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 0.7; }
+}
+
+.hint-icon { color: var(--gold); font-size: 0.7rem; }
+
+/* ============================================
+   音乐按钮
+   ============================================ */
+.music-toggle {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 20;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(10, 5, 24, 0.62);
+    border: 1px solid rgba(255, 226, 166, 0.34);
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    image-rendering: auto;
+}
+
+.music-toggle.show { opacity: 0.82; }
+
+.music-toggle:hover {
+    background: rgba(245, 200, 66, 0.18);
+    opacity: 1;
+    transform: scale(1.08);
+}
+
+.music-toggle.playing {
+    animation: music-spin 4s linear infinite;
+    color: #fffbe6;
+    border-color: rgba(245, 200, 66, 0.72);
+    box-shadow: 0 0 20px rgba(245, 200, 66, 0.28);
+}
+
+body[data-phase="sunset"] .music-toggle,
+body[data-phase="twilight"] .music-toggle {
+    background: rgba(255, 160, 110, 0.10);
+}
+
+@keyframes music-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* ============================================
+   响应式
+   ============================================ */
+@media (max-width: 768px) {
+    .scene-frame { inset: 8px; }
+    .frame-corner { width: 28px; height: 28px; }
+    .start-screen::before { inset: 5%; }
+    .start-inner {
+        padding: 1.2rem;
+        transform: translateY(-10px);
+    }
+    .start-kicker {
+        font-size: 0.66rem;
+        letter-spacing: 0.22em;
+        margin-bottom: 1rem;
+    }
+    .heart-3d {
+        width: 82px;
+        height: 82px;
+        margin-bottom: 1.15rem;
+    }
+    .heart-shape { font-size: 2.8rem; }
+    .heart-ring {
+        width: 82px;
+        height: 82px;
+    }
+    .start-title {
+        letter-spacing: 0.12em;
+    }
+    .start-sub {
+        font-size: 0.74rem;
+        letter-spacing: 0.22em;
+        margin-bottom: 1.75rem;
+    }
+    .start-enter {
+        min-width: 154px;
+        padding: 0.82rem 1.8rem;
+        letter-spacing: 0.18em;
+    }
+    .start-note {
+        font-size: 0.82rem;
+        max-width: 310px;
+    }
+    .blessing-card {
+        padding: 1.4rem 1.25rem 1.5rem;
+        border-radius: 14px;
+    }
+    .blessing-divider::before,
+    .blessing-divider::after { width: 30px; }
+    .hint {
+        width: min(88vw, 420px);
+        justify-content: center;
+        text-align: center;
+        line-height: 1.8;
+        letter-spacing: 0.12em;
+        bottom: 1.5rem;
+        padding: 0.64rem 0.95rem;
+    }
+    .music-toggle { top: 1rem; right: 1rem; }
+    .blessing-text { line-height: 2; letter-spacing: 0.07em; }
+}
+</style>
+</head>
+<body>
+    <div class="castle-bg-layer">
+        <img src="Castle.png" alt="烟花城堡夜景" class="castle-bg-img" id="castleBgImg">
+    </div>
+
+    <canvas class="water-reflection" id="waterReflection"></canvas>
+    <canvas class="light-flicker" id="lightFlicker"></canvas>
+    <div id="canvas-container"></div>
+
+    <div class="sky-wash"></div>
+    <div class="aurora-glow"></div>
+    <div class="vignette"></div>
+    <div class="scene-frame" aria-hidden="true">
+        <span class="frame-corner tl"></span>
+        <span class="frame-corner tr"></span>
+        <span class="frame-corner bl"></span>
+        <span class="frame-corner br"></span>
+    </div>
+
+    <div class="crt-overlay">
+        <div class="crt-scanlines"></div>
+        <div class="crt-mask"></div>
+        <div class="crt-curvature"></div>
+        <div class="crt-glow"></div>
+        <div class="crt-rollbar"></div>
+        <div class="crt-flicker"></div>
+    </div>
+
+    <div class="start-screen" id="startScreen">
+        <div class="start-inner">
+            <p class="start-kicker">Midnight Castle Fireworks</p>
+            <div class="heart-3d">
+                <span class="heart-shape">♥</span>
+                <div class="heart-ring"></div>
+            </div>
+            <h1 class="start-title">致我最爱的你</h1>
+            <p class="start-sub">A Night of Stars &amp; Fireworks</p>
+            <div class="start-enter" id="startBtn">
+                <span>轻触开启</span>
+            </div>
+            <p class="start-note">愿这一晚的星光、烟火和温柔，都只为你亮起。</p>
+        </div>
+    </div>
+
+    <div class="blessing" id="blessing">
+        <div class="blessing-card">
+            <div class="blessing-line title" data-text="亲爱的宝贝">亲爱的宝贝</div>
+            <div class="blessing-divider"><span>✦</span></div>
+            <p class="blessing-text">
+                你是我遇见的所有美好里<br>
+                最闪闪发光的那一个<br>
+                愿你的眼中永远有星辉<br>
+                愿你的脚下永远是坦途<br>
+                愿世间所有的温柔与烟火<br>
+                都偏爱地、只为你停留。
+            </p>
+        </div>
+    </div>
+
+    <div class="hint" id="hint">
+        <span class="hint-icon">✦</span>
+        <span>点击放烟花 · 让夜空为你绽放</span>
+        <span class="hint-icon">✦</span>
+    </div>
+
+    <div class="music-toggle" id="musicToggle" title="背景音乐">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+// ============================================
+// 像素风星空 + 月亮 + 落日
+// ============================================
+
+const StarField = {
+
+    group: null,
+    stars: null,
+    moon: null,
+    moonGlow: null,
+    sun: null,
+    nebula: null,
+
+    init(scene) {
+        this.group = new THREE.Group();
+        scene.add(this.group);
+
+        // 不再创建星云和太阳/月亮 —— 背景原图已有精美的夜空和月亮
+        // 只保留稀疏的闪烁星星作为动态增强
+        this.createStars();
+    },
+
+    // ---- 星云背景（彩色雾团） ----
+    createNebula() {
+        const colors = [
+            { c: 0x4a148c, x: -400, y: 150, z: -700, r: 280, o: 0.12 },
+            { c: 0xc2185b, x: 350, y: 200, z: -650, r: 250, o: 0.10 },
+            { c: 0x1a237e, x: 0, y: -50, z: -800, r: 350, o: 0.15 },
+            { c: 0x4a148c, x: 500, y: -80, z: -700, r: 200, o: 0.08 },
+        ];
+
+        colors.forEach(n => {
+            const geo = new THREE.IcosahedronGeometry(n.r, 2);
+            const mat = new THREE.MeshBasicMaterial({
+                color: n.c,
+                transparent: true,
+                opacity: n.o,
+                side: THREE.BackSide,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                fog: false,
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(n.x, n.y, n.z);
+            this.group.add(mesh);
+        });
+    },
+
+    // ---- 落日（像素暖色） ----
+    createSun() {
+        const sunGroup = new THREE.Group();
+        const sunGeo = new THREE.IcosahedronGeometry(46, 2);
+        const sunMat = new THREE.MeshBasicMaterial({
+            color: 0xffb35c,
+            transparent: true,
+            opacity: 0.95,
+            fog: false,
+        });
+        const sun = new THREE.Mesh(sunGeo, sunMat);
+        sunGroup.add(sun);
+
+        [74, 115, 170].forEach((r, i) => {
+            const glowGeo = new THREE.IcosahedronGeometry(r, 2);
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: i === 0 ? 0xffd06f : 0xff7a88,
+                transparent: true,
+                opacity: [0.12, 0.06, 0.025][i],
+                side: THREE.BackSide,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                fog: false,
+            });
+            sunGroup.add(new THREE.Mesh(glowGeo, glowMat));
+        });
+
+        sunGroup.position.set(420, 170, -620);
+        this.sun = sunGroup;
+        this.group.add(sunGroup);
+    },
+
+    // ---- 像素星星（稀疏闪烁，作为原图星空的动态增强）----
+    createStars() {
+        const count = 600;
+        const geo = new THREE.BufferGeometry();
+        const positions = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
+        const sizes = new Float32Array(count);
+
+        const palette = [
+            [1.0, 1.0, 1.0],
+            [1.0, 0.95, 0.8],
+            [1.0, 0.85, 0.6],
+            [0.85, 0.9, 1.0],
+            [1.0, 0.8, 0.9],
+            [0.9, 0.95, 1.0],
+        ];
+
+        for (let i = 0; i < count; i++) {
+            const i3 = i * 3;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const r = 900 + Math.random() * 500;
+
+            positions[i3]     = r * Math.sin(phi) * Math.cos(theta);
+            positions[i3 + 1] = Math.abs(r * Math.cos(phi)) + 20;
+            positions[i3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+
+            const c = palette[Math.floor(Math.random() * palette.length)];
+            const brightness = 0.5 + Math.random() * 0.5;
+            colors[i3]     = c[0] * brightness;
+            colors[i3 + 1] = c[1] * brightness;
+            colors[i3 + 2] = c[2] * brightness;
+
+            sizes[i] = Math.random() < 0.05
+                ? 3 + Math.random() * 2
+                : 0.5 + Math.random() * 1.5;
+        }
+
+        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3));
+        geo.setAttribute('size',     new THREE.BufferAttribute(sizes, 1));
+
+        const tex = this._makeStarTexture();
+
+        const mat = new THREE.PointsMaterial({
+            size: 2.2,
+            map: tex,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.55,
+            sizeAttenuation: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            fog: false,
+        });
+
+        this.stars = new THREE.Points(geo, mat);
+        this.group.add(this.stars);
+
+        // 大亮星（闪烁更明显的少数亮星）
+        const bigGeo = new THREE.BufferGeometry();
+        const bigPos = new Float32Array(20 * 3);
+        for (let i = 0; i < 20; i++) {
+            const i3 = i * 3;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const r = 600 + Math.random() * 300;
+            bigPos[i3]     = r * Math.sin(phi) * Math.cos(theta);
+            bigPos[i3 + 1] = Math.abs(r * Math.cos(phi)) + 30;
+            bigPos[i3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+        }
+        bigGeo.setAttribute('position', new THREE.BufferAttribute(bigPos, 3));
+        const bigMat = new THREE.PointsMaterial({
+            size: 7,
+            map: tex,
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            fog: false,
+        });
+        this.bigStars = new THREE.Points(bigGeo, bigMat);
+        this.group.add(this.bigStars);
+    },
+
+    // 像素星星纹理：6×6 十字星
+    _makeStarTexture() {
+        const s = 6;
+        const c = document.createElement('canvas');
+        c.width = c.height = s;
+        const ctx = c.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        const half = s / 2;
+        for (let x = 0; x < s; x++) {
+            for (let y = 0; y < s; y++) {
+                const dx = Math.abs(x - half + 0.5);
+                const dy = Math.abs(y - half + 0.5);
+                // 十字形：中心 + 上下左右
+                const isCross = (dx < 1.5 && dy < 0.5) || (dy < 1.5 && dx < 0.5);
+                const d = Math.max(dx, dy);
+                if (d < 0.5) ctx.fillStyle = 'rgba(255,255,255,1)';
+                else if (isCross && d < 1.5) ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                else if (d < 2) ctx.fillStyle = 'rgba(255,255,255,0.25)';
+                else ctx.fillStyle = 'rgba(255,255,255,0)';
+                ctx.fillRect(x, y, 1, 1);
+            }
+        }
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.minFilter = THREE.NearestFilter;
+        tex.magFilter = THREE.NearestFilter;
+        return tex;
+    },
+
+    // ---- 像素月亮 ----
+    createMoon() {
+        const moonGroup = new THREE.Group();
+
+        const moonGeo = new THREE.IcosahedronGeometry(35, 2);
+        const moonMat = new THREE.MeshBasicMaterial({
+            color: 0xfff8e1,
+            transparent: true,
+            opacity: 0.98,
+            fog: false,
+        });
+        const moon = new THREE.Mesh(moonGeo, moonMat);
+        moonGroup.add(moon);
+
+        const cratersTex = this._makeMoonTexture();
+        moonMat.map = cratersTex;
+        moonMat.needsUpdate = true;
+
+        const glowLayers = [
+            { r: 48, o: 0.18, c: 0xfff8e1 },
+            { r: 65, o: 0.10, c: 0xffe082 },
+            { r: 90, o: 0.05, c: 0xffd54f },
+            { r: 130, o: 0.02, c: 0xffd54f },
+        ];
+
+        glowLayers.forEach(g => {
+            const geo = new THREE.IcosahedronGeometry(g.r, 2);
+            const mat = new THREE.MeshBasicMaterial({
+                color: g.c,
+                transparent: true,
+                opacity: g.o,
+                side: THREE.BackSide,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                fog: false,
+            });
+            const glow = new THREE.Mesh(geo, mat);
+            moonGroup.add(glow);
+        });
+
+        moonGroup.position.set(-380, 280, -550);
+        this.moon = moonGroup;
+        this.group.add(moonGroup);
+
+        const moonLight = new THREE.DirectionalLight(0xfff5d6, 0.5);
+        moonLight.position.set(-380, 280, -550);
+        this.group.add(moonLight);
+    },
+
+    // 像素月亮纹理（硬边陨石斑）
+    _makeMoonTexture() {
+        const s = 32;
+        const c = document.createElement('canvas');
+        c.width = c.height = s;
+        const ctx = c.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.fillStyle = '#fff8e1';
+        ctx.fillRect(0, 0, s, s);
+
+        // 方块状陨石坑
+        for (let i = 0; i < 15; i++) {
+            const cx = Math.floor(Math.random() * s);
+            const cy = Math.floor(Math.random() * s);
+            const r = 2 + Math.floor(Math.random() * 5);
+
+            for (let x = cx - r; x <= cx + r; x++) {
+                for (let y = cy - r; y <= cy + r; y++) {
+                    if (x < 0 || x >= s || y < 0 || y >= s) continue;
+                    const dx = Math.abs(x - cx);
+                    const dy = Math.abs(y - cy);
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    if (d <= r) {
+                        const alpha = 0.15 + (d / r) * 0.2;
+                        ctx.fillStyle = `rgba(200,190,160,${alpha})`;
+                        ctx.fillRect(x, y, 1, 1);
+                    }
+                }
+            }
+        }
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.minFilter = THREE.NearestFilter;
+        tex.magFilter = THREE.NearestFilter;
+        return tex;
+    },
+
+    // ---- 每帧更新 ----
+    update(elapsed) {
+        const night = parseFloat(getComputedStyle(document.body).getPropertyValue('--cycle-night')) || 0;
+
+        if (this.stars) {
+            this.stars.rotation.y += 0.00008;
+            this.bigStars.rotation.y += 0.00005;
+            this.stars.material.opacity = 0.2 + night * 0.45;
+            this.bigStars.material.opacity = (0.15 + Math.sin(elapsed * 1.5) * 0.12) + night * 0.35;
+        }
+    },
+
+};
+</script>
+    <script>
+// ============================================
+// 像素风烟花系统 —— 方块粒子 + 硬边纹理
+// ============================================
+
+const FireworkColors = {
+    red: 0xff1744,
+    rose: 0xff4081,
+    pink: 0xff80ab,
+    orange: 0xff9100,
+    amber: 0xffab40,
+    gold: 0xffd54f,
+    yellow: 0xffea00,
+    green: 0x69f0ae,
+    lime: 0xb2ff59,
+    teal: 0x1de9b6,
+    cyan: 0x18ffff,
+    sky: 0x40c4ff,
+    blue: 0x448aff,
+    violet: 0x7c4dff,
+    magenta: 0xe040fb,
+    white: 0xffffff,
+    cream: 0xfff8e1,
+};
+
+// 暖色优先的调色板
+const FireworkPalette = [
+    [FireworkColors.red, FireworkColors.rose, FireworkColors.pink],
+    [FireworkColors.orange, FireworkColors.amber, FireworkColors.gold],
+    [FireworkColors.gold, FireworkColors.yellow, FireworkColors.cream],
+    [FireworkColors.red, FireworkColors.gold, FireworkColors.orange, FireworkColors.rose],
+    [FireworkColors.rose, FireworkColors.gold, FireworkColors.cream, FireworkColors.pink],
+    [FireworkColors.green, FireworkColors.lime, FireworkColors.teal],
+    [FireworkColors.cyan, FireworkColors.sky, FireworkColors.blue],
+    [FireworkColors.blue, FireworkColors.violet, FireworkColors.magenta],
+    [FireworkColors.red, FireworkColors.gold, FireworkColors.green, FireworkColors.blue, FireworkColors.violet],
+];
+
+const FireworkTex = { particle: null, glow: null };
+
+function _initFireworkTextures() {
+    // 像素方块纹理 —— 小 canvas + NearestFilter
+    const makePixelTex = (size, fillFn) => {
+        const c = document.createElement('canvas');
+        c.width = c.height = size;
+        const ctx = c.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+        fillFn(ctx, size);
+        const tex = new THREE.CanvasTexture(c);
+        tex.minFilter = THREE.NearestFilter;
+        tex.magFilter = THREE.NearestFilter;
+        return tex;
+    };
+
+    // 粒子纹理：3×3 硬边方块 + 1px 外围光晕
+    FireworkTex.particle = makePixelTex(8, (ctx, s) => {
+        const half = s / 2;
+        for (let x = 0; x < s; x++) {
+            for (let y = 0; y < s; y++) {
+                const dx = Math.abs(x - half + 0.5);
+                const dy = Math.abs(y - half + 0.5);
+                const d = Math.max(dx, dy);
+                if (d < 1.5) ctx.fillStyle = '#ffffff';
+                else if (d < 2.5) ctx.fillStyle = 'rgba(255,255,255,0.55)';
+                else if (d < 3.5) ctx.fillStyle = 'rgba(255,255,255,0.18)';
+                else ctx.fillStyle = 'rgba(255,255,255,0)';
+                ctx.fillRect(x, y, 1, 1);
+            }
+        }
+    });
+
+    // 光晕纹理：像素圆
+    FireworkTex.glow = makePixelTex(8, (ctx, s) => {
+        const half = s / 2;
+        for (let x = 0; x < s; x++) {
+            for (let y = 0; y < s; y++) {
+                const dx = Math.abs(x - half + 0.5);
+                const dy = Math.abs(y - half + 0.5);
+                const d = Math.sqrt(dx * dx + dy * dy);
+                if (d < 1) ctx.fillStyle = 'rgba(255,255,255,0.85)';
+                else if (d < 2.5) ctx.fillStyle = 'rgba(255,255,255,0.35)';
+                else if (d < 3.5) ctx.fillStyle = 'rgba(255,255,255,0.08)';
+                else ctx.fillStyle = 'rgba(255,255,255,0)';
+                ctx.fillRect(x, y, 1, 1);
+            }
+        }
+    });
+}
+
+class Firework {
+    constructor(opts = {}) {
+        if (!FireworkTex.particle) _initFireworkTextures();
+
+        this.scene = opts.scene;
+        this.startX = opts.x !== undefined ? opts.x : (Math.random() - 0.5) * 520;
+        this.startZ = opts.z !== undefined ? opts.z : -190 + (Math.random() - 0.5) * 280;
+        // 火箭从画面底部起飞
+        this.startY = opts.startY !== undefined ? opts.startY : -20;
+        // opts.y 是爆点的绝对世界 Y 坐标
+        this.targetHeight = opts.y !== undefined ? opts.y : 180 + Math.random() * 100;
+        this.palette = opts.palette || FireworkPalette[Math.floor(Math.random() * FireworkPalette.length)];
+        this.mainColor = this.palette[Math.floor(Math.random() * this.palette.length)];
+        this.type = opts.type || this._pickType();
+
+        this.dead = false;
+        this.exploded = false;
+        this.trail = [];
+        this.flashLife = 0;
+        this.secondary = [];
+
+        this._launch();
+    }
+
+    _pickType() {
+        const r = Math.random();
+        if (r < 0.16) return 'heart';
+        if (r < 0.34) return 'ring';
+        if (r < 0.52) return 'willow';
+        if (r < 0.68) return 'peony';
+        if (r < 0.84) return 'double';
+        return 'chrysanthemum';
+    }
+
+    _launch() {
+        const mat = new THREE.SpriteMaterial({
+            map: FireworkTex.glow,
+            color: this.mainColor,
+            transparent: true,
+            opacity: 1,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            fog: false,
+        });
+        this.rocket = new THREE.Sprite(mat);
+        this.rocket.scale.set(6, 6, 1);
+        this.rocket.position.set(this.startX, this.startY, this.startZ);
+        this.scene.add(this.rocket);
+
+        this.rocketLight = new THREE.PointLight(this.mainColor, 2.2, 90);
+        this.rocketLight.position.copy(this.rocket.position);
+        this.scene.add(this.rocketLight);
+
+        this.velocity = new THREE.Vector3(
+            (Math.random() - 0.5) * 0.35,
+            110 + Math.random() * 24,
+            (Math.random() - 0.5) * 0.28
+        );
+
+        this.trailGeo = new THREE.BufferGeometry();
+        this.trailMat = new THREE.PointsMaterial({
+            map: FireworkTex.particle,
+            color: this.mainColor,
+            size: 4.5,
+            transparent: true,
+            opacity: 0.88,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            fog: false,
+        });
+        this.trailPoints = new THREE.Points(this.trailGeo, this.trailMat);
+        this.scene.add(this.trailPoints);
+    }
+
+    _updateTrail() {
+        this.trail.push(this.rocket.position.clone());
+        if (this.trail.length > 16) this.trail.shift();
+
+        const pos = new Float32Array(this.trail.length * 3);
+        for (let i = 0; i < this.trail.length; i++) {
+            pos[i * 3] = this.trail[i].x;
+            pos[i * 3 + 1] = this.trail[i].y;
+            pos[i * 3 + 2] = this.trail[i].z;
+        }
+        this.trailGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    }
+
+    explode() {
+        this.exploded = true;
+        const pos = this.rocket.position.clone();
+
+        this.scene.remove(this.rocket);
+        this.scene.remove(this.rocketLight);
+        this.scene.remove(this.trailPoints);
+        this.rocket.material.dispose();
+        this.trailGeo.dispose();
+        this.trailMat.dispose();
+
+        const particles = this._createParticles(pos);
+        this._makeParticleCloud(particles);
+        this._flash(pos);
+    }
+
+    _createParticles(origin) {
+        const particles = [];
+        const add = (vel, color, opts = {}) => {
+            particles.push({
+                x: origin.x,
+                y: origin.y,
+                z: origin.z,
+                vx: vel.x,
+                vy: vel.y,
+                vz: vel.z,
+                r: ((color >> 16) & 255) / 255,
+                g: ((color >> 8) & 255) / 255,
+                b: (color & 255) / 255,
+                life: opts.life || 1,
+                decay: opts.decay || (0.42 + Math.random() * 0.32),
+                gravity: opts.gravity === undefined ? 16 : opts.gravity,
+                drag: opts.drag || 0.988,
+                sparkle: opts.sparkle !== false,
+                secondaryAt: opts.secondaryAt || 0,
+            });
+        };
+
+        const color = () => this.palette[Math.floor(Math.random() * this.palette.length)];
+        const spherical = (count, speedMin, speedMax, opts = {}) => {
+            for (let i = 0; i < count; i++) {
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const speed = speedMin + Math.random() * (speedMax - speedMin);
+                add(new THREE.Vector3(
+                    speed * Math.sin(phi) * Math.cos(theta),
+                    speed * Math.cos(phi),
+                    speed * Math.sin(phi) * Math.sin(theta)
+                ), color(), opts);
+            }
+        };
+
+        if (this.type === 'heart') {
+            for (let i = 0; i < 150; i++) {
+                const t = (i / 150) * Math.PI * 2;
+                const hx = 16 * Math.pow(Math.sin(t), 3);
+                const hy = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+                const jitter = 0.82 + Math.random() * 0.28;
+                add(new THREE.Vector3(hx * 3.2 * jitter, hy * 3.5 * jitter, (Math.random() - 0.5) * 28), color(), {
+                    decay: 0.34,
+                    gravity: 8,
+                    drag: 0.982,
+                });
+            }
+        } else if (this.type === 'ring') {
+            const axis = new THREE.Vector3(Math.random() - 0.5, 0.5, Math.random() - 0.5).normalize();
+            const tmp = Math.abs(axis.y) > 0.9 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
+            const u = new THREE.Vector3().crossVectors(axis, tmp).normalize();
+            const v = new THREE.Vector3().crossVectors(axis, u).normalize();
+            for (let i = 0; i < 128; i++) {
+                const a = (i / 128) * Math.PI * 2;
+                const dir = new THREE.Vector3().addScaledVector(u, Math.cos(a)).addScaledVector(v, Math.sin(a));
+                dir.multiplyScalar(76 + Math.random() * 15);
+                add(dir, color(), { decay: 0.38, gravity: 10 });
+            }
+        } else if (this.type === 'willow') {
+            for (let i = 0; i < 130; i++) {
+                const theta = Math.random() * Math.PI * 2;
+                const spread = Math.random() * Math.PI * 0.72;
+                const speed = 42 + Math.random() * 54;
+                add(new THREE.Vector3(
+                    speed * Math.sin(spread) * Math.cos(theta),
+                    speed * Math.cos(spread) * 0.42,
+                    speed * Math.sin(spread) * Math.sin(theta)
+                ), color(), { decay: 0.25, gravity: 27, drag: 0.985 });
+            }
+        } else if (this.type === 'double') {
+            spherical(70, 36, 70, { decay: 0.32, gravity: 11, secondaryAt: 0.58 });
+        } else if (this.type === 'chrysanthemum') {
+            spherical(190, 58, 118, { decay: 0.35, gravity: 13 });
+            spherical(80, 24, 56, { decay: 0.45, gravity: 9 });
+        } else {
+            spherical(145, 46, 92, { decay: 0.42, gravity: 14 });
+        }
+
+        return particles;
+    }
+
+    _makeParticleCloud(particles) {
+        this.particles = particles;
+        this.positions = new Float32Array(particles.length * 3);
+        this.colors = new Float32Array(particles.length * 3);
+
+        for (let i = 0; i < particles.length; i++) {
+            this._writeParticle(i, particles[i], 1);
+        }
+
+        this.geo = new THREE.BufferGeometry();
+        this.geo.setAttribute('position', new THREE.BufferAttribute(this.positions, 3));
+        this.geo.setAttribute('color', new THREE.BufferAttribute(this.colors, 3));
+        this.mat = new THREE.PointsMaterial({
+            map: FireworkTex.particle,
+            size: 6.5,
+            vertexColors: true,
+            transparent: true,
+            opacity: 1,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            fog: false,
+        });
+        this.points = new THREE.Points(this.geo, this.mat);
+        this.scene.add(this.points);
+    }
+
+    _writeParticle(index, p, alpha) {
+        const i3 = index * 3;
+        this.positions[i3] = p.x;
+        this.positions[i3 + 1] = p.y;
+        this.positions[i3 + 2] = p.z;
+        this.colors[i3] = p.r * alpha;
+        this.colors[i3 + 1] = p.g * alpha;
+        this.colors[i3 + 2] = p.b * alpha;
+    }
+
+    _flash(pos) {
+        this.flashLife = 1;
+        this.flashLight = new THREE.PointLight(this.mainColor, 9, 240);
+        this.flashLight.position.copy(pos);
+        this.scene.add(this.flashLight);
+
+        const mat = new THREE.SpriteMaterial({
+            map: FireworkTex.glow,
+            color: 0xffffff,
+            transparent: true,
+            opacity: 1,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            fog: false,
+        });
+        this.flash = new THREE.Sprite(mat);
+        this.flash.scale.set(14, 14, 1);
+        this.flash.position.copy(pos);
+        this.scene.add(this.flash);
+    }
+
+    _spawnSecondary(parent) {
+        const origin = new THREE.Vector3(parent.x, parent.y, parent.z);
+        const mini = [];
+        const count = 18;
+        for (let i = 0; i < count; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const speed = 20 + Math.random() * 44;
+            const c = this.palette[Math.floor(Math.random() * this.palette.length)];
+            mini.push({
+                x: origin.x,
+                y: origin.y,
+                z: origin.z,
+                vx: speed * Math.sin(phi) * Math.cos(theta),
+                vy: speed * Math.cos(phi),
+                vz: speed * Math.sin(phi) * Math.sin(theta),
+                r: ((c >> 16) & 255) / 255,
+                g: ((c >> 8) & 255) / 255,
+                b: (c & 255) / 255,
+                life: 0.85,
+                decay: 0.7,
+                gravity: 12,
+                drag: 0.984,
+                sparkle: true,
+                secondaryAt: 0,
+            });
+        }
+        this.particles.push(...mini);
+        this._rebuildBuffers();
+    }
+
+    _rebuildBuffers() {
+        this.positions = new Float32Array(this.particles.length * 3);
+        this.colors = new Float32Array(this.particles.length * 3);
+        for (let i = 0; i < this.particles.length; i++) {
+            this._writeParticle(i, this.particles[i], this.particles[i].life);
+        }
+        this.geo.setAttribute('position', new THREE.BufferAttribute(this.positions, 3));
+        this.geo.setAttribute('color', new THREE.BufferAttribute(this.colors, 3));
+    }
+
+    update(delta = 1 / 60) {
+        const dt = Math.min(delta, 0.033);
+
+        if (!this.exploded) {
+            this.rocket.position.x += this.velocity.x * dt;
+            this.rocket.position.y += this.velocity.y * dt;
+            this.rocket.position.z += this.velocity.z * dt;
+            this.velocity.y -= 18 * dt;
+            this.rocketLight.position.copy(this.rocket.position);
+            this.rocket.material.opacity = 0.78 + Math.random() * 0.22;
+            this._updateTrail();
+
+            if (this.rocket.position.y >= this.targetHeight || this.velocity.y < 18) {
+                this.explode();
+            }
+            return false;
+        }
+
+        let alive = 0;
+        for (let i = 0; i < this.particles.length; i++) {
+            const p = this.particles[i];
+            if (p.life <= 0) continue;
+
+            if (p.secondaryAt && p.life < p.secondaryAt) {
+                p.secondaryAt = 0;
+                if (this.particles.length < 420) this._spawnSecondary(p);
+            }
+
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.z += p.vz * dt;
+            p.vy -= p.gravity * dt;
+            p.vx *= Math.pow(p.drag, dt * 60);
+            p.vy *= Math.pow(p.drag, dt * 60);
+            p.vz *= Math.pow(p.drag, dt * 60);
+            p.life -= p.decay * dt;
+
+            const flicker = p.sparkle ? 0.72 + Math.random() * 0.28 : 1;
+            const alpha = Math.max(0, p.life) * flicker;
+            this._writeParticle(i, p, alpha);
+            if (p.life > 0) alive++;
+        }
+
+        if (this.geo) {
+            this.geo.attributes.position.needsUpdate = true;
+            this.geo.attributes.color.needsUpdate = true;
+            this.mat.opacity = Math.min(1, Math.max(0.08, alive / Math.max(1, this.particles.length) + 0.2));
+        }
+
+        if (this.flashLife > 0) {
+            this.flashLife -= dt * 2.9;
+            const v = Math.max(0, this.flashLife);
+            this.flash.material.opacity = v;
+            this.flash.scale.set(14 + (1 - v) * 26, 14 + (1 - v) * 26, 1);
+            this.flashLight.intensity = v * 9;
+            if (v <= 0) {
+                this.scene.remove(this.flash);
+                this.scene.remove(this.flashLight);
+                this.flash.material.dispose();
+                this.flash = null;
+                this.flashLight = null;
+            }
+        }
+
+        if (alive === 0 && !this.flash) {
+            this.dispose();
+            this.dead = true;
+        }
+
+        return this.dead;
+    }
+
+    dispose() {
+        if (this.points) this.scene.remove(this.points);
+        if (this.geo) this.geo.dispose();
+        if (this.mat) this.mat.dispose();
+    }
+}
+</script>
+    <script>
+// ============================================
+// 主入口：原图背景 + 透明 3D 烟花/星空 + 水面波纹 + CRT 后处理
+// ============================================
+
+// 低分辨率渲染尺寸（保持像素风）
+const PX_W = 480;
+const PX_H = 270;
+
+let scene, camera, renderer, clock;
+let fireworks = [];
+let autoTimer = 0;
+let started = false;
+let ambientLight, hemiLight;
+let pixelCanvas, pixelCtx;
+let displayCanvas, displayCtx;       // CRT 最终输出画布
+let waterCanvas, waterCtx;           // 水面波纹反射画布
+let waterBgImg = null;               // 背景图引用（用于倒影取样）
+let lightCanvas, lightCtx;           // 背景灯光闪烁层
+
+const dayNight = {
+    duration: 58,
+    t: 0.72,
+    lastPhase: '',
+};
+
+const backgroundFireworkSlots = [
+    { sx: 0.356, sy: 0.154, radius: 0.018, palette: 2 },
+    { sx: 0.245, sy: 0.274, radius: 0.014, palette: 4 },
+    { sx: 0.616, sy: 0.181, radius: 0.016, palette: 6 },
+    { sx: 0.714, sy: 0.214, radius: 0.017, palette: 7 },
+    { sx: 0.645, sy: 0.337, radius: 0.012, palette: 5 },
+    { sx: 0.325, sy: 0.341, radius: 0.010, palette: 4 },
+    { sx: 0.415, sy: 0.291, radius: 0.008, palette: 4 },
+];
+
+const waterConfig = {
+    screenTop: 0.62,
+    sampleTop: 0.47,
+    sampleHeight: 0.23,
+};
+
+const lightFlickerPoints = [
+    { sx: 0.514, sy: 0.312, r: 12, color: [255, 213, 126], power: 0.95 },
+    { sx: 0.514, sy: 0.365, r: 18, color: [255, 182, 94], power: 1.0 },
+    { sx: 0.517, sy: 0.446, r: 22, color: [255, 202, 118], power: 1.0 },
+    { sx: 0.515, sy: 0.548, r: 28, color: [255, 161, 88], power: 1.15 },
+    { sx: 0.430, sy: 0.516, r: 12, color: [255, 196, 105], power: 0.75 },
+    { sx: 0.596, sy: 0.522, r: 12, color: [255, 196, 105], power: 0.75 },
+    { sx: 0.322, sy: 0.672, r: 22, color: [255, 194, 95], power: 1.0 },
+    { sx: 0.640, sy: 0.713, r: 20, color: [255, 188, 85], power: 0.95 },
+    { sx: 0.722, sy: 0.574, r: 24, color: [255, 190, 92], power: 0.85 },
+    { sx: 0.866, sy: 0.548, r: 16, color: [255, 188, 84], power: 0.8 },
+    { sx: 0.077, sy: 0.651, r: 24, color: [255, 191, 90], power: 0.95 },
+    { sx: 0.093, sy: 0.311, r: 17, color: [255, 193, 86], power: 0.78 },
+    { sx: 0.030, sy: 0.223, r: 22, color: [255, 187, 82], power: 0.78 },
+    { sx: 0.132, sy: 0.662, r: 16, color: [255, 191, 92], power: 0.72 },
+    { sx: 0.266, sy: 0.601, r: 13, color: [255, 198, 106], power: 0.66 },
+    { sx: 0.738, sy: 0.638, r: 12, color: [255, 199, 102], power: 0.66 },
+    { sx: 0.910, sy: 0.600, r: 14, color: [255, 198, 95], power: 0.7 },
+    { sx: 0.246, sy: 0.697, r: 13, color: [255, 196, 94], power: 0.65 },
+    { sx: 0.480, sy: 0.790, r: 24, color: [255, 183, 84], power: 0.70 },
+    { sx: 0.516, sy: 0.793, r: 28, color: [255, 191, 92], power: 0.74 },
+    { sx: 0.840, sy: 0.648, r: 22, color: [255, 181, 86], power: 0.84 },
+];
+
+// ---- 初始化 ----
+function init() {
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0a0612, 0.0006);
+
+    // 相机 —— 正对画面，轻微透视
+    camera = new THREE.PerspectiveCamera(
+        50,
+        PX_W / PX_H,
+        0.1,
+        3000
+    );
+    camera.position.set(0, 30, 260);
+    camera.lookAt(0, 50, 0);
+
+    // 渲染器 —— 透明背景，低分辨率
+    renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+    renderer.setSize(PX_W, PX_H);
+    renderer.setPixelRatio(1);
+    renderer.setClearColor(0x000000, 0);   // 完全透明
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.NoToneMapping;
+    renderer.domElement.style.display = 'none';
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    clock = new THREE.Clock();
+
+    // 暖色全局光照（让烟花/星空更柔和）
+    ambientLight = new THREE.AmbientLight(0xffd4a8, 0.4);
+    scene.add(ambientLight);
+
+    hemiLight = new THREE.HemisphereLight(0xffe8cc, 0x2a1430, 0.4);
+    scene.add(hemiLight);
+
+    // 只初始化星空（保留夜空闪烁感）
+    StarField.init(scene);
+
+    // 后处理 Canvas（读取 WebGL 帧）
+    pixelCanvas = document.createElement('canvas');
+    pixelCanvas.width = PX_W;
+    pixelCanvas.height = PX_H;
+    pixelCtx = pixelCanvas.getContext('2d', { willReadFrequently: true });
+    pixelCtx.imageSmoothingEnabled = false;
+
+    // CRT 显示画布（最终可见输出）——放大到屏幕
+    displayCanvas = document.createElement('canvas');
+    displayCanvas.width = PX_W;
+    displayCanvas.height = PX_H;
+    displayCanvas.style.imageRendering = 'pixelated';
+    displayCanvas.style.width = '100vw';
+    displayCanvas.style.height = '100vh';
+    displayCanvas.style.objectFit = 'contain';
+    displayCanvas.style.touchAction = 'none';
+    displayCanvas.style.background = 'transparent';
+    displayCtx = displayCanvas.getContext('2d');
+    displayCtx.imageSmoothingEnabled = false;
+    document.getElementById('canvas-container').appendChild(displayCanvas);
+
+    // 水面波纹画布
+    waterCanvas = document.getElementById('waterReflection');
+    waterCtx = waterCanvas.getContext('2d');
+    waterBgImg = document.getElementById('castleBgImg');
+    lightCanvas = document.getElementById('lightFlicker');
+    lightCtx = lightCanvas ? lightCanvas.getContext('2d') : null;
+
+    // 事件
+    window.addEventListener('resize', onResize);
+    displayCanvas.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    displayCanvas.addEventListener('wheel', onWheel, { passive: false });
+    document.addEventListener('click', onClick);
+    displayCanvas.addEventListener('touchstart', onTouchStart, { passive: false });
+    displayCanvas.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    onResize();
+}
+
+// ---- 窗口缩放：调整水面画布分辨率 ----
+function onResize() {
+    if (waterCanvas) {
+        const w = Math.min(window.innerWidth, 960);
+        const h = Math.round(w * 0.34);
+        waterCanvas.width = w;
+        waterCanvas.height = h;
+        waterCanvas.style.width = window.innerWidth + 'px';
+        waterCanvas.style.height = Math.round(window.innerHeight * 0.34) + 'px';
+    }
+
+    if (lightCanvas) {
+        const scale = Math.min(window.devicePixelRatio || 1, 1.5);
+        lightCanvas.width = Math.round(window.innerWidth * scale);
+        lightCanvas.height = Math.round(window.innerHeight * scale);
+        lightCanvas.style.width = window.innerWidth + 'px';
+        lightCanvas.style.height = window.innerHeight + 'px';
+        lightCtx.setTransform(scale, 0, 0, scale, 0, 0);
+    }
+}
+
+// ---- 交互：点击/触摸发射烟花 ----
+function onPointerDown(e) {
+    if (!started || e.target.closest('.music-toggle')) return;
+    // 点击即发射烟花（不再有拖拽旋转）
+    launchFireworkAt(e.clientX, e.clientY);
+}
+
+function onPointerMove() {}
+function onPointerUp() {}
+
+function onWheel(e) {
+    // 保留滚轮交互：滚轮也触发烟花
+    if (!started) return;
+    e.preventDefault();
+}
+
+function onTouchStart(e) {
+    if (!started || e.target.closest('.music-toggle')) return;
+    if (e.touches.length === 1) {
+        e.preventDefault();
+        launchFireworkAt(e.touches[0].clientX, e.touches[0].clientY);
+    }
+}
+
+function onTouchMove(e) {
+    if (!started) return;
+    e.preventDefault();
+}
+
+function onTouchEnd() {}
+
+// ---- 点击发射烟花（screen -> 世界坐标）----
+function onClick(e) {
+    if (!started) return;
+    if (e.target.closest('.blessing') ||
+        e.target.closest('.start-screen') ||
+        e.target.closest('.music-toggle') ||
+        e.target.closest('.hint')) return;
+    launchFireworkAt(e.clientX, e.clientY);
+}
+
+// 将屏幕坐标映射到烟花爆发的天空区域
+// 背景图中城堡占据中下部分，天空在上半部分
+function launchFireworkAt(screenX, screenY) {
+    const point = screenToFireworkWorld(screenX, screenY);
+    const palette = FireworkPalette[Math.floor(Math.random() * FireworkPalette.length)];
+    new Firework({ scene, x: point.x, y: point.y, z: point.z, palette });
+}
+
+function screenToFireworkWorld(screenX, screenY, z = -180 - Math.random() * 80) {
+    const ndc = new THREE.Vector2(
+        (screenX / window.innerWidth) * 2 - 1,
+        -(screenY / window.innerHeight) * 2 + 1
+    );
+    const skyTop = 258;
+    const skyBottom = 58;
+    const safeY = THREE.MathUtils.clamp(screenY / window.innerHeight, 0.08, 0.48);
+    return {
+        x: ndc.x * 330,
+        y: THREE.MathUtils.lerp(skyTop, skyBottom, safeY / 0.48),
+        z,
+    };
+}
+
+function autoLaunch() {
+    if (fireworks.length > 14) return;
+    const slot = backgroundFireworkSlots[Math.floor(Math.random() * backgroundFireworkSlots.length)];
+    const point = screenToFireworkWorld(
+        slot.sx * window.innerWidth + (Math.random() - 0.5) * slot.radius * window.innerWidth,
+        slot.sy * window.innerHeight + (Math.random() - 0.5) * slot.radius * window.innerHeight,
+        -170 - Math.random() * 95
+    );
+    const palette = FireworkPalette[slot.palette] || FireworkPalette[Math.floor(Math.random() * FireworkPalette.length)];
+    new Firework({
+        scene,
+        palette,
+        x: point.x,
+        y: point.y,
+        z: point.z,
+    });
+}
+
+function openingFireworkShow() {
+    backgroundFireworkSlots.forEach((slot, i) => {
+        setTimeout(() => {
+            const point = screenToFireworkWorld(
+                slot.sx * window.innerWidth,
+                slot.sy * window.innerHeight,
+                -170 - i * 12
+            );
+            const palette = FireworkPalette[slot.palette] || FireworkPalette[i % FireworkPalette.length];
+            new Firework({ scene, x: point.x, y: point.y, z: point.z, palette });
+        }, i * 160);
+    });
+}
+
+// ---- 动画循环 ----
+function animate() {
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta();
+    const elapsed = clock.getElapsedTime();
+
+    updateDayNight(elapsed);
+
+    StarField.update(elapsed);
+
+    for (let i = fireworks.length - 1; i >= 0; i--) {
+        if (fireworks[i].update(delta)) fireworks.splice(i, 1);
+    }
+
+    if (started) {
+        autoTimer += delta;
+        if (autoTimer > 0.7 + Math.random() * 1.1) {
+            autoLaunch();
+            if (Math.random() < 0.28) setTimeout(autoLaunch, 140);
+            autoTimer = 0;
+        }
+    }
+
+    renderer.render(scene, camera);
+    applyCRTPost(elapsed);
+    updateWaterReflection(elapsed);
+    updateLightFlicker(elapsed);
+}
+
+// ============================================
+// CRT 显像管后处理（针对透明画布）
+// ============================================
+function applyCRTPost(elapsed) {
+    if (!displayCtx) return;
+
+    // 1. 抓取 WebGL 帧（只包含烟花/星空，背景透明）
+    pixelCtx.clearRect(0, 0, PX_W, PX_H);
+    pixelCtx.drawImage(renderer.domElement, 0, 0, PX_W, PX_H);
+    const imageData = pixelCtx.getImageData(0, 0, PX_W, PX_H);
+    const data = imageData.data;
+
+    const cx = PX_W / 2, cy = PX_H / 2;
+    const abBase = 0.8;
+    const tmp = new Uint8ClampedArray(data);
+
+    // 2. 径向色差（RGB 通道偏移）
+    for (let y = 0; y < PX_H; y++) {
+        for (let x = 0; x < PX_W; x++) {
+            const i = (y * PX_W + x) * 4;
+            // 透明像素跳过（性能优化）
+            if (tmp[i + 3] < 8) continue;
+
+            const dx = x - cx, dy = y - cy;
+            const dist = Math.sqrt(dx * dx + dy * dy) / Math.sqrt(cx * cx + cy * cy);
+            const shift = Math.round(abBase + dist * 1.6);
+
+            const rx = Math.max(0, Math.min(PX_W - 1, x + shift));
+            const bx = Math.max(0, Math.min(PX_W - 1, x - shift));
+            const ri = (y * PX_W + rx) * 4;
+            const bi = (y * PX_W + bx) * 4;
+
+            data[i]     = tmp[ri];
+            data[i + 1] = tmp[i + 1];
+            data[i + 2] = tmp[bi + 2];
+            // alpha 保持
+        }
+    }
+
+    // 3. 磷光余晖 —— 高亮像素向右渗漏
+    const bleed = 0.08;
+    for (let y = 1; y < PX_H - 1; y++) {
+        for (let x = 1; x < PX_W - 1; x++) {
+            const i = (y * PX_W + x) * 4;
+            if (data[i + 3] < 8) continue;
+            if (data[i] + data[i + 1] + data[i + 2] > 500) {
+                const ni = (y * PX_W + (x + 1)) * 4;
+                data[i]     = Math.min(255, data[i]     + tmp[ni]     * bleed);
+                data[i + 1] = Math.min(255, data[i + 1] + tmp[ni + 1] * bleed);
+                data[i + 2] = Math.min(255, data[i + 2] + tmp[ni + 2] * bleed);
+            }
+        }
+    }
+
+    // 4. 亮度呼吸（CRT 高压不稳）——只作用于非透明像素
+    const brightness = 0.94 + Math.sin(elapsed * 8.5) * 0.025 + Math.sin(elapsed * 0.7) * 0.03;
+    for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3] < 8) continue;
+        data[i]     *= brightness;
+        data[i + 1] *= brightness;
+        data[i + 2] *= brightness;
+    }
+
+    pixelCtx.putImageData(imageData, 0, 0);
+
+    // 5. 放大绘制到显示画布（pixelated）
+    displayCtx.imageSmoothingEnabled = false;
+    displayCtx.clearRect(0, 0, PX_W, PX_H);
+    displayCtx.drawImage(pixelCanvas, 0, 0);
+}
+
+// ============================================
+// 水面波纹反射动画
+// ============================================
+function updateWaterReflection(elapsed) {
+    if (!waterCtx || !waterCanvas) return;
+    const w = waterCanvas.width;
+    const h = waterCanvas.height;
+    if (w === 0 || h === 0) return;
+
+    waterCtx.clearRect(0, 0, w, h);
+
+    if (waterBgImg && waterBgImg.complete && waterBgImg.naturalWidth > 0) {
+        const metrics = getCoverImageMetrics(waterBgImg);
+        const step = 2;
+        waterCtx.save();
+        waterCtx.globalAlpha = 0.58;
+        for (let y = 0; y < h; y += step) {
+            const t = y / h;
+            const sourceScreenY = window.innerHeight * (waterConfig.sampleTop + (1 - t) * waterConfig.sampleHeight);
+            const sourceScreenH = window.innerHeight * waterConfig.sampleHeight / (h / step);
+            const src = screenRectToImageRect(metrics, 0, sourceScreenY, window.innerWidth, sourceScreenH);
+            const wave = Math.sin(y * 0.13 + elapsed * 2.1) * (1.5 + t * 8.5);
+            const shimmer = Math.sin(y * 0.33 + elapsed * 3.4) * 1.5;
+            waterCtx.drawImage(
+                waterBgImg,
+                src.x,
+                src.y,
+                src.width,
+                Math.max(1, src.height),
+                wave + shimmer,
+                y,
+                w + 12,
+                step + 1
+            );
+        }
+        waterCtx.restore();
+    }
+
+    const grad = waterCtx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, 'rgba(0,0,0,0.18)');
+    grad.addColorStop(0.42, 'rgba(0,0,0,0)');
+    grad.addColorStop(0.76, 'rgba(0,0,0,0.28)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.92)');
+    waterCtx.globalCompositeOperation = 'destination-out';
+    waterCtx.fillStyle = grad;
+    waterCtx.fillRect(0, 0, w, h);
+
+    const sideFade = waterCtx.createRadialGradient(w * 0.5, h * 0.42, w * 0.12, w * 0.5, h * 0.48, w * 0.45);
+    sideFade.addColorStop(0, 'rgba(0,0,0,0)');
+    sideFade.addColorStop(0.58, 'rgba(0,0,0,0.05)');
+    sideFade.addColorStop(1, 'rgba(0,0,0,0.86)');
+    waterCtx.fillStyle = sideFade;
+    waterCtx.fillRect(0, 0, w, h);
+    waterCtx.globalCompositeOperation = 'source-over';
+
+    waterCtx.globalCompositeOperation = 'screen';
+    const lineCount = 24;
+    for (let i = 0; i < lineCount; i++) {
+        const t = i / lineCount;
+        const baseY = h * (0.08 + t * 0.76);
+        const flicker = Math.sin(elapsed * 3 + i * 1.3) * 0.5 + 0.5;
+        const alpha = flicker * 0.24 * (1 - t * 0.62);
+        const offsetX = Math.sin(elapsed * 1.2 + i) * (5 + t * 14);
+        const lineW = w * (0.11 + t * 0.23 + Math.sin(elapsed + i) * 0.035);
+        const lineX = w / 2 - lineW / 2 + offsetX;
+        const color = i % 2 === 0
+            ? `rgba(255, 201, 102, ${alpha})`
+            : `rgba(112, 166, 255, ${alpha * 0.56})`;
+        waterCtx.fillStyle = color;
+        waterCtx.fillRect(lineX, baseY, lineW, 1);
+    }
+    waterCtx.globalCompositeOperation = 'source-over';
+
+    if (displayCanvas) {
+        waterCtx.save();
+        waterCtx.globalCompositeOperation = 'screen';
+        waterCtx.globalAlpha = 0.22;
+        const srcSliceH = PX_H * 0.46;
+        try {
+            waterCtx.translate(0, h);
+            waterCtx.scale(1, -1);
+            waterCtx.drawImage(
+                displayCanvas,
+                0, 0, PX_W, srcSliceH,
+                -w * 0.02, 0, w * 1.04, h * 0.42
+            );
+        } catch (e) {
+        }
+        waterCtx.restore();
+    }
+
+    waterCtx.globalCompositeOperation = 'overlay';
+    for (let y = 0; y < h; y += 3) {
+        const phase = Math.sin(y * 0.06 + elapsed * 1.7);
+        const alpha = 0.035 + Math.abs(phase) * 0.055;
+        waterCtx.fillStyle = phase > 0
+            ? `rgba(255,255,255,${alpha})`
+            : `rgba(0,12,45,${alpha})`;
+        waterCtx.fillRect(0, y, w, 1);
+    }
+    waterCtx.globalCompositeOperation = 'source-over';
+}
+
+function updateLightFlicker(elapsed) {
+    if (!lightCtx || !lightCanvas || !waterBgImg || !waterBgImg.naturalWidth) return;
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const night = parseFloat(getComputedStyle(document.body).getPropertyValue('--cycle-night')) || 0.7;
+    const metrics = getCoverImageMetrics(waterBgImg);
+
+    lightCtx.clearRect(0, 0, w, h);
+    lightCtx.globalCompositeOperation = 'lighter';
+
+    lightFlickerPoints.forEach((p, i) => {
+        const x = metrics.offsetX + p.sx * metrics.naturalW * metrics.scale;
+        const y = metrics.offsetY + p.sy * metrics.naturalH * metrics.scale;
+        if (x < -80 || x > w + 80 || y < -80 || y > h + 80) return;
+
+        const pulse = 0.52 + Math.sin(elapsed * (1.8 + (i % 5) * 0.37) + i * 1.91) * 0.22;
+        const tremble = Math.sin(elapsed * (8.5 + (i % 7)) + i * 2.7) * 0.08;
+        const randomBlink = Math.pow(Math.max(0, Math.sin(elapsed * (0.63 + i * 0.017) + i * 4.1)), 12) * 0.42;
+        const alpha = Math.max(0, (pulse + tremble + randomBlink) * p.power * (0.48 + night * 0.62));
+        const radius = p.r * metrics.scale * (1.18 + randomBlink * 0.45);
+        drawLightGlow(lightCtx, x, y, radius, p.color, alpha);
+    });
+
+    lightCtx.globalCompositeOperation = 'source-over';
+}
+
+function drawLightGlow(ctx, x, y, radius, color, alpha) {
+    const [r, g, b] = color;
+    const halo = ctx.createRadialGradient(x, y, 0, x, y, radius * 2.4);
+    halo.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${Math.min(0.95, alpha)})`);
+    halo.addColorStop(0.22, `rgba(${r}, ${g}, ${b}, ${alpha * 0.36})`);
+    halo.addColorStop(0.58, `rgba(${r}, ${g}, ${b}, ${alpha * 0.11})`);
+    halo.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+    ctx.fillStyle = halo;
+    ctx.fillRect(x - radius * 2.4, y - radius * 2.4, radius * 4.8, radius * 4.8);
+
+    ctx.fillStyle = `rgba(255, 245, 204, ${Math.min(1, alpha * 0.72)})`;
+    ctx.fillRect(Math.round(x) - 1, Math.round(y) - 1, 3, 3);
+}
+
+function getCoverImageMetrics(img) {
+    const screenW = window.innerWidth;
+    const screenH = window.innerHeight;
+    const scale = Math.max(screenW / img.naturalWidth, screenH / img.naturalHeight);
+    const drawW = img.naturalWidth * scale;
+    const drawH = img.naturalHeight * scale;
+    return {
+        scale,
+        offsetX: (screenW - drawW) / 2,
+        offsetY: (screenH - drawH) / 2,
+        naturalW: img.naturalWidth,
+        naturalH: img.naturalHeight,
+    };
+}
+
+function screenRectToImageRect(metrics, x, y, width, height) {
+    const ix = THREE.MathUtils.clamp((x - metrics.offsetX) / metrics.scale, 0, metrics.naturalW);
+    const iy = THREE.MathUtils.clamp((y - metrics.offsetY) / metrics.scale, 0, metrics.naturalH);
+    const iw = THREE.MathUtils.clamp(width / metrics.scale, 1, metrics.naturalW - ix);
+    const ih = THREE.MathUtils.clamp(height / metrics.scale, 1, metrics.naturalH - iy);
+    return { x: ix, y: iy, width: iw, height: ih };
+}
+
+function updateDayNight(elapsed) {
+    dayNight.t = (elapsed / dayNight.duration + 0.72) % 1;
+    const nightAmount = smoothstep(0.32, 0.60, dayNight.t) * (1 - smoothstep(0.90, 1, dayNight.t));
+
+    ambientLight.intensity = 0.4 * (1 - nightAmount) + 0.25 * nightAmount;
+    hemiLight.intensity = 0.4 * (1 - nightAmount) + 0.25 * nightAmount;
+
+    document.body.style.setProperty('--cycle-night', nightAmount.toFixed(3));
+    const phase = nightAmount > 0.75 ? 'night' : (nightAmount < 0.20 ? 'sunset' : 'twilight');
+    if (phase !== dayNight.lastPhase) {
+        document.body.dataset.phase = phase;
+        dayNight.lastPhase = phase;
+    }
+
+    // 背景图亮度跟随日夜循环微调（夜晚略暗一点）
+    const bg = document.getElementById('castleBgImg');
+    if (bg) {
+        const brightness = 1.0 - nightAmount * 0.15;
+        const saturate = 1.0 + nightAmount * 0.1;
+        bg.style.filter = `brightness(${brightness}) saturate(${saturate})`;
+    }
+}
+
+function smoothstep(e0, e1, x) {
+    const t = THREE.MathUtils.clamp((x - e0) / (e1 - e0), 0, 1);
+    return t * t * (3 - 2 * t);
+}
+
+// ---- 启动流程 ----
+function start() {
+    const startScreen = document.getElementById('startScreen');
+    const blessing = document.getElementById('blessing');
+    const hint = document.getElementById('hint');
+    const musicToggle = document.getElementById('musicToggle');
+
+    startScreen.addEventListener('click', () => {
+        if (started) return;
+        started = true;
+        startScreen.classList.add('hidden');
+        setTimeout(() => {
+            openingFireworkShow();
+        }, 400);
+        setTimeout(() => blessing.classList.add('show'), 1800);
+        setTimeout(() => { hint.classList.add('show'); musicToggle.classList.add('show'); }, 3000);
+        if (displayCanvas) displayCanvas.style.cursor = 'crosshair';
+        initAudio();
+        startMusic();
+    });
+}
+
+// ============================================
+// 背景音乐（Web Audio 合成）
+// ============================================
+let audioCtx = null, musicPlaying = false, musicNodes = [], musicTimer = null;
+let audioMaster = null, audioDelay = null, audioFeedback = null, audioFilter = null;
+let audioInitialized = false;
+
+function initAudio() {
+    if (audioInitialized) return;
+    audioInitialized = true;
+    const btn = document.getElementById('musicToggle');
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (musicPlaying) stopMusic(); else startMusic();
+    });
+}
+
+function startMusic() {
+    const btn = document.getElementById('musicToggle');
+    btn.classList.add('playing');
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        audioMaster = audioCtx.createGain();
+        audioFilter = audioCtx.createBiquadFilter();
+        audioDelay = audioCtx.createDelay(1.2);
+        audioFeedback = audioCtx.createGain();
+        audioMaster.gain.value = 0.34;
+        audioFilter.type = 'lowpass';
+        audioFilter.frequency.value = 2200;
+        audioDelay.delayTime.value = 0.36;
+        audioFeedback.gain.value = 0.22;
+        audioMaster.connect(audioFilter);
+        audioFilter.connect(audioCtx.destination);
+        audioFilter.connect(audioDelay);
+        audioDelay.connect(audioFeedback);
+        audioFeedback.connect(audioDelay);
+        audioDelay.connect(audioCtx.destination);
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (musicPlaying) return;
+    musicPlaying = true;
+
+    const chords = [
+        [261.63, 329.63, 392.00, 523.25],
+        [196.00, 293.66, 392.00, 493.88],
+        [220.00, 329.63, 440.00, 523.25],
+        [174.61, 261.63, 349.23, 440.00],
+    ];
+    const melody = [659.25, 587.33, 523.25, 659.25, 783.99, 698.46, 659.25, 523.25];
+    let ci = 0, mi = 0;
+
+    const playChord = () => {
+        if (!musicPlaying) return;
+        const now = audioCtx.currentTime;
+        chords[ci].forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = i === 0 ? 'sine' : 'triangle';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(i === 0 ? 0.08 : 0.045, now + 0.16);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 3.8);
+            osc.connect(gain); gain.connect(audioMaster);
+            osc.start(now); osc.stop(now + 4);
+            musicNodes.push(osc);
+        });
+        for (let i = 0; i < 3; i++) {
+            const f = melody[(mi + i) % melody.length];
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = f;
+            const s = now + 0.58 + i * 0.42;
+            gain.gain.setValueAtTime(0.001, s);
+            gain.gain.linearRampToValueAtTime(0.035, s + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, s + 1.2);
+            osc.connect(gain); gain.connect(audioMaster);
+            osc.start(s); osc.stop(s + 1.3);
+            musicNodes.push(osc);
+        }
+        ci = (ci + 1) % chords.length;
+        mi = (mi + 2) % melody.length;
+        musicTimer = setTimeout(playChord, 3800);
+    };
+    playChord();
+}
+
+function stopMusic() {
+    document.getElementById('musicToggle').classList.remove('playing');
+    musicPlaying = false;
+    if (musicTimer) clearTimeout(musicTimer);
+    musicTimer = null;
+    musicNodes.forEach(n => { try { n.stop(); } catch(e) {} });
+    musicNodes = [];
+}
+
+// 覆盖 Firework 构造，自动加入管理列表
+const _OrigFirework = Firework;
+Firework = class extends _OrigFirework {
+    constructor(opts) {
+        opts.scene = opts.scene || scene;
+        super(opts);
+        fireworks.push(this);
+    }
+};
+
+// ============================================
+// 启动
+// ============================================
+init();
+animate();
+start();
+</script>
+</body>
+</html>

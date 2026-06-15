@@ -246,6 +246,9 @@ html {
   justify-content: center;
   padding: 0 60px;
   scroll-snap-align: start;
+  position: relative;
+/* 微网格纹理 */
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,0,0,0.035) 49px, rgba(0,0,0,0.035) 50px), repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,0,0,0.035) 49px, rgba(0,0,0,0.035) 50px);
 }
 .categories-title {
   text-align: center;
@@ -326,6 +329,8 @@ html {
   justify-content: center;
   padding: 0 60px;
   scroll-snap-align: start;
+/* 微网格纹理 */
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,0,0,0.035) 49px, rgba(0,0,0,0.035) 50px), repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,0,0,0.035) 49px, rgba(0,0,0,0.035) 50px);
 }
 /* 区块标题行：标题 + 全部文章链接 */
 .section-header {
@@ -501,6 +506,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+/* 微网格纹理 */
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,0,0,0.035) 49px, rgba(0,0,0,0.035) 50px), repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,0,0,0.035) 49px, rgba(0,0,0,0.035) 50px);
 }
 .about {
   max-width: 1000px;
